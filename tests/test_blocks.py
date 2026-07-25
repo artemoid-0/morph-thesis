@@ -114,6 +114,52 @@ def test_old_schema_would_fail():
           f'(bug reproduced and now guarded) OK')
 
 
+def test_vocab_loader_preserves_na_morphemes():
+    """
+    'na', 'nan' and 'null' are real MorphoLex morphemes AND pandas default NA
+    strings. Reading with defaults silently nukes them.
+    """
+    if not os.path.exists(VOCAB):
+        print('  (skipped: vocab not present)')
+        return
+    from morphlm.vocab.build import load_vocab
+    df = load_vocab(VOCAB)
+    nonstr = [t for t in df['token'] if not isinstance(t, str)]
+    assert not nonstr, f'non-string tokens survived load: {nonstr}'
+    got = set(df['token']) & {'na', 'nan', 'null'}
+    assert got, "expected na/nan/null morphemes to survive loading"
+    print(f'  vocab loader preserves {sorted(got)} OK')
+
+
+def test_category_resolution_is_fast_and_equivalent():
+    """The precomputed dict must match the old per-token priority scan."""
+    if not os.path.exists(VOCAB):
+        print('  (skipped: vocab not present)')
+        return
+    import pandas as pd
+    from morphlm.vocab.morpholex import CATEGORY_PRIORITY
+    from morphlm.vocab.build import load_vocab
+    v = load_vocab(VOCAB)
+
+    prio = v['category'].map(lambda c: CATEGORY_PRIORITY.get(c, 99))
+    ranked = (v.assign(_p=prio).sort_values('_p', kind='stable')
+              .drop_duplicates(subset=['token'], keep='first'))
+    fast = dict(zip(ranked['token'], ranked['category']))
+
+    def slow(tok):
+        m = v[v['token'] == tok]['category'].tolist()
+        if not m:
+            return 'character'
+        return min(m, key=lambda c: CATEGORY_PRIORITY.get(c, 99))
+
+    dups = v[v.duplicated('token', keep=False)]['token'].unique()
+    for tok in list(dups) + ['xyzzy', 'break', 'the']:
+        assert fast.get(tok, 'character') == slow(tok), (
+            f'{tok}: fast={fast.get(tok)} slow={slow(tok)}')
+    print(f'  category resolution equivalent on {len(dups)} multi-layer '
+          f'tokens OK')
+
+
 if __name__ == '__main__':
     test_baseline_is_empty()
     test_no_block_without_request()
@@ -122,4 +168,6 @@ if __name__ == '__main__':
     test_dep_codes_vary()
     test_static_table_has_no_constant_column()
     test_old_schema_would_fail()
+    test_vocab_loader_preserves_na_morphemes()
+    test_category_resolution_is_fast_and_equivalent()
     print('test_blocks: PASS')

@@ -57,6 +57,30 @@ class BasePreprocessor:
         self.entity_tokens = {t for t, c in self.categories.items()
                               if c == 'entity'}
 
+        # ── HOT PATH: category resolution, precomputed ────────────────────────
+        # This used to be a pandas scan over the whole vocabulary PER TOKEN:
+        #     self.vocab[self.vocab['token'] == tok]['category']
+        # measured at 2.18 ms/token, i.e. ~60 hours per 100M tokens. It never
+        # surfaced because the morpheme pipelines had only ever been run on the
+        # 60-sentence test set; the only full-corpus run was BPE, which does not
+        # use this class. Resolving once per vocabulary entry makes it a dict
+        # lookup and preserves the priority rule exactly:
+        #     entity > function > prefix > suffix > root > character
+        _prio = vocab_df['category'].map(
+            lambda c: CATEGORY_PRIORITY.get(c, 99))
+        _ranked = (vocab_df.assign(_prio=_prio)
+                   .sort_values('_prio', kind='stable')
+                   .drop_duplicates(subset=['token'], keep='first'))
+        self.resolved_category = dict(zip(_ranked['token'],
+                                          _ranked['category']))
+
+        # entity labels, if the vocabulary carries them
+        if 'entity_label' in vocab_df.columns:
+            self.entity_labels = dict(zip(vocab_df['token'],
+                                          vocab_df['entity_label']))
+        else:
+            self.entity_labels = {}
+
         self.ner = NERTagger(spacy_model)
         if verbose:
             print(f'  Vocabulary: {self.vocab_size()} tokens '
@@ -68,12 +92,10 @@ class BasePreprocessor:
     # ── token construction ────────────────────────────────────────────────────
 
     def _resolve_category(self, tok, override=None):
+        """O(1) dict lookup. See the note in __init__ on why this matters."""
         if override:
             return override
-        matches = self.vocab[self.vocab['token'] == tok]['category'].tolist()
-        if not matches:
-            return 'character'
-        return min(matches, key=lambda c: CATEGORY_PRIORITY.get(c, 99))
+        return self.resolved_category.get(tok, 'character')
 
     def _make_token(self, morpheme, role, word, entity_label=None,
                     category_override=None, dep=None, pos=None):

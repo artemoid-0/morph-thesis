@@ -95,10 +95,21 @@ def build_vocabulary(morpholex_path, entity_csv_path=None,
 
 
 def load_vocab(path):
-    """Load a vocabulary CSV, tolerating the older label-free format."""
-    df = pd.read_csv(path)
+    """
+    Load a vocabulary CSV.
+
+    keep_default_na=False is REQUIRED, not cosmetic. Pandas' default NA list
+    includes 'na', 'nan' and 'null' — all of which are legitimate MorphoLex
+    morphemes ('nan' as in nanometer, 'null' as in nullify, 'na' as a suffix).
+    Reading with defaults silently converts them to NaN, which then fails every
+    dictionary lookup and sends those words to UNK. Row count is unaffected, so
+    token ids do not shift and existing caches stay valid.
+    """
+    df = pd.read_csv(path, keep_default_na=False, na_values=[])
     if 'entity_label' not in df.columns:
         df['entity_label'] = 'none'
+    else:
+        df['entity_label'] = df['entity_label'].replace('', 'none')
     return df
 
 
