@@ -44,8 +44,38 @@ def test_training_knobs_absent():
     print('  training knobs excluded from cache key OK')
 
 
+def test_ids_and_codes_keyed_separately():
+    """
+    Token ids do not depend on requested facts; only codes do. Keying them
+    together caused one full spaCy pass per fact request.
+    """
+    from morphlm.data.stream import codes_spec
+    ids_a = cache_stem('morph', 'train', None, '')
+    ids_b = cache_stem('morph', 'train', None, '')
+    assert ids_a == ids_b, 'ids key must not vary with facts'
+    c1 = codes_spec(['dep'], 'coarse')
+    c2 = codes_spec(['dep'], 'fine')
+    c3 = codes_spec(['dep', 'pos'], 'coarse')
+    assert len({c1, c2, c3}) == 3, 'codes spec must distinguish gran and facts'
+    assert codes_spec([], 'coarse') == '', 'no facts -> no codes file'
+    print('  ids/codes keyed separately OK')
+
+
+def test_spacy_native_free_ride():
+    """morph/det annotate on the pass they already pay for; bpe does not."""
+    from morphlm.config import ExperimentConfig, apply_overrides
+    from morphlm.data.stream import facts_to_build, ALL_CONTEXT_FACTS
+    m = apply_overrides(ExperimentConfig(), ['data.pipeline=morph'])
+    b = apply_overrides(ExperimentConfig(), ['data.pipeline=bpe'])
+    assert facts_to_build(m) == ALL_CONTEXT_FACTS, 'morph should free-ride'
+    assert facts_to_build(b) == (), 'bpe must not pay for unrequested spaCy'
+    print('  spaCy free-ride asymmetry OK')
+
+
 if __name__ == '__main__':
     test_backward_compatible_stems()
     test_feature_spec_changes_key()
     test_training_knobs_absent()
+    test_ids_and_codes_keyed_separately()
+    test_spacy_native_free_ride()
     print('test_cache_keys: PASS')

@@ -1010,4 +1010,306 @@ Reference numbers were gathered with proper caveats, to avoid the central trap: 
 
 ---
 
-*Document updated through the calibration of the experimental apparatus: dataset, model, training loop, and the BPE-baseline anchor result (64.9 ppl / 1.438 BPB), with literature grounding for the eventual paper.*
+*Document updated through the calibration of the experimental apparatus: dataset, model, training loop, and the BPE-baseline anchor result (64.9 ppl / 1.438 BPB), with literature grounding for the eventual paper.*---
+
+## 30. The Frozen Embedding Audit
+
+Everything was built, calibrated, and ready. The five Phase-1 cells were about
+to be launched. A last pre-flight review of the code — intended to check the
+step ceiling and nothing more — instead found that the frozen embedding was
+mostly empty.
+
+### What the measurement showed
+
+The frozen matrix was rebuilt from the actual `our_final_vocab.csv` (16,757
+rows) and every column inspected:
+
+| block | width | finding |
+|---|---|---|
+| category | 6 | varies — informative |
+| role | 5 | **redundant** — a deterministic function of category |
+| entity_label | 12 | **constant** — every row `none` |
+
+`role:root` had exactly 15,134 nonzero entries = 15,022 roots + 112 function
+words, confirming role is fully determined by category (6 categories → 5 roles,
+`function` and `root` collapsing together).
+
+**Across all 16,757 vocabulary rows there were 6 distinct frozen vectors.** The
+23-dimension block encoded one 6-way categorical — about 2.6 bits — and 12 of
+those dimensions were provably uninformative. A constant input dimension is
+just a bias term: it consumes embedding width and carries nothing.
+
+### Root cause
+
+`FrozenSchema.matrix()` built frozen vectors from static vocabulary rows, and
+those rows have no NER context, so `entity_label` was hardcoded to `None` for
+every token. This was noted in §27 as "one deferred decision" — but recorded as
+a missing *feature*, not as a bug that hollowed out half the block.
+
+The role redundancy has the same root cause. Role is context-dependent at
+encode time (the same token can occupy different roles in different words), but
+when reconstructed from a vocabulary row it can only be re-derived from
+category. Both dead blocks trace to building frozen vectors from static rows.
+
+### Why validation missed it
+
+§27 validated two things, and both passed:
+- the freeze is enforced (frozen slice byte-identical after an optimizer step)
+- every token category produces exactly the predicted 23-dim vector with 3
+  nonzero bits
+
+Both are **per-token** properties. Neither asks what the matrix looks like
+across the population. The frozen width was sized by the label inventories
+(6 + 5 + 12 = 23) rather than by realized information content, and nobody
+computed the rank or entropy of the result.
+
+**The lesson, recorded honestly:** per-instance correctness is not evidence of
+population-level correctness. When a design choice cannot be independently
+evaluated by the researcher, the load-bearing assumption must be made
+*checkable* — a script that fails loudly — not merely stated confidently. This
+is now `tests/test_blocks.py`, which asserts no requested block has a constant
+column, plus a regression test that reproduces the old 23-dim layout and
+confirms all 12 entity columns are constant. If that test ever stops failing,
+the check itself has broken.
+
+### Consequence for Q2
+
+As coded, `onehot` gave up 385,503 trainable parameters (23 of 128 dims, ~18%
+of embedding width) to buy a 6-way flag. A negative result would have been
+uninterpretable: "guaranteed linguistic flags don't help" could not be
+separated from "we spent 12 dimensions on a constant."
+
+**Decision: do not launch the two `onehot` cells.** Not because the result
+would be wrong, but because it answers a question nobody wants the answer to.
+
+---
+
+## 31. Parameter Tying vs Information Injection
+
+The dead dimensions turned out to be a symptom. Digging into *why* the frozen
+block was so thin exposed something more fundamental about the whole approach.
+
+### The reframe
+
+The frozen block is a function of the token id. So is the trained embedding.
+Both are lookups keyed on the same integer.
+
+Which means the frozen dimensions **cannot inject information the trained table
+could not already represent.** If "being a suffix" were useful, the trained row
+for that token could encode it. Freezing does not supply a fact the model
+lacks; it *constrains* 23 dimensions to equal `f(id)`.
+
+This demotes the §4 story. "Guaranteed information channels, always present,
+always readable" reads as though facts arrive from outside the system. They do
+not. What is actually happening is **structured parameter tying** — a real
+inductive bias, but a different and more modest one than advertised.
+
+Parameter tying can buy exactly three things:
+
+1. **Sample efficiency for rare tokens.** A root seen 3 times gets almost no
+   gradient signal, so its trained row is noise; its frozen flag is correct
+   from step 0 for free. (This is the §2 rare-token problem, restated.)
+2. **Forced similarity structure.** All 15,022 roots share a pattern, so they
+   are constrained to be near each other; the trained table would have to
+   discover that.
+3. **Guaranteed legibility** for the probing story.
+
+All three predict an effect concentrated in the **tail**, not the aggregate —
+which is likely why 2.6 bits over 23 dimensions looked so unpromising measured
+as "does overall perplexity drop." A single corpus-wide number averages the
+tail away. Hence `eval/buckets.py`: per-frequency-bucket perplexity, so
+"frozen flags help rare tokens by X% and leave frequent tokens unchanged"
+survives an aggregate null result.
+
+### The idea that got lost
+
+§5 contains the most valuable observation in this document: **preprocessor
+scope ≠ unit scope.** You may look at the entire sentence to decide what to
+stamp on one word. That is what would permit freezing syntactic role, or entity
+type in context, or word sense — facts a lookup table **provably cannot
+represent**, because they differ across occurrences of the same token id.
+
+The implementation dropped it entirely. Every occurrence of a token received an
+identical frozen block. The one idea that would have made freezing genuine
+information injection never reached the code.
+
+And the consequence was uncomfortable: the thesis is titled *Context-Aware
+Embeddings*, and the implementation was a static lookup table with no context
+in it anywhere.
+
+### Why it was dropped, and why that reason was wrong
+
+§28 decided "the dataset emits integer IDs only; the model owns the embedding,"
+reasoning that the embedding's trained part carries gradients and
+backpropagating into the dataloader would be wrong.
+
+**That reasoning does not extend to frozen metadata, which by definition has no
+gradients.** The dataset can emit small integer codes alongside the ids with no
+gradient problem at all. The principle ("dataset is a pure int-in/int-out
+machine") is fully preserved. A rule was mistaken for a constraint, and the
+cost was the §5 insight.
+
+### The new axis
+
+Frozen facts now split by whether a static table could represent them:
+
+| rung | frozen content | representable by a trained table? |
+|---|---|---|
+| A0 | nothing (control) | — |
+| A1 | category flags | **yes** — it is `f(id)` |
+| A2 | affix features, entity type, WordNet supersense | yes in principle, hard to learn for rare tokens |
+| A3 | dependency role, POS in context | **no** — varies across occurrences |
+
+A1 is parameter tying. A3 is information injection. **"Static freezing does
+little; context freezing helps"** is a real, measurable claim, and a better
+result than "freezing helps by 2%" whichever way it lands.
+
+**Decision: v1 injects ONE fact — dependency role**, the fact most provably
+unavailable to a static table. Coarse granularity (7 classes + none) so each
+class is seen often and stays legible in probing; `frozen.dep_granularity`
+switches to the full ~45-label set in one line. Injecting the full set at once
+was considered and deferred: one fact keeps the result unambiguous and the
+ladder legible.
+
+### The structural payoff
+
+Context facts do not require morphology. A BPE token sits inside a word, and
+that word has a dependency role. Aligning BPE tokens to spaCy tokens by
+character offset means **BPE can take context-freezing too**, which converts
+the matrix from an L-shape into a genuine 2×3:
+
+| | no freeze | static freeze | context freeze |
+|---|---|---|---|
+| **bpe** | ✓ anchor | — | ✓ newly possible |
+| **morph** | ✓ | ✓ | ✓ |
+| **det** | ✓ | ✓ | ✓ |
+
+This **decouples the two legs of the thesis**. Injection can now be tested
+independently of segmentation, and the interaction becomes answerable: does
+linguistic freezing help *more* when the units are already linguistic?
+
+### An unresolved fork, deliberately left open
+
+A word maps to several morphemes, so a word-level fact must be distributed:
+stamp every morpheme with the word's dependency role, or only the root? §6
+flagged this and never resolved it. It is wired into `BasePreprocessor` as
+`stamp='all' | 'root'` and left as a genuine comparison rather than a guess.
+
+---
+
+## 32. Restructuring — Reversing the Flat-Layout Decision
+
+§20 chose a flat 7-file layout, and its stated justification was
+**communication overhead in a collaborative development context**: deep
+hierarchies are expensive when files are pasted into a conversation one at a
+time.
+
+That premise expired. A packing script reduced sharing to one command, and the
+work ahead is a matrix across branches rather than debugging one pipeline.
+Recording this as a *premise change* rather than drift matters: the original
+reasoning was correct for its conditions, and the conditions changed.
+
+### The concrete trigger
+
+Two bugs the flat structure was about to produce:
+
+1. **Results overwrite on seed.** Results were written to
+   `results/{pipeline}_{variant}.json`, with no seed in the identity. Running
+   a second seed silently clobbered the first — exactly the run needed for
+   effect-size confidence.
+2. **Cache staleness on features.** The cache key was
+   `(pipeline, split, max_articles)`. Once the stream carries annotation codes,
+   that key cannot express which annotation produced it: change the stamping
+   rule, get a cache hit on stale data, train on silently wrong features. No
+   crash, no error — just an invalid result that looks fine.
+
+A third symptom of the same disease: `max_steps` had **three different
+defaults** in one codebase (2000, 40000, 50000), and `max_articles_train` had
+two. That is how the learning-rate confound below stayed invisible.
+
+### The learning-rate confound
+
+The cosine schedule was parameterized by `max_steps`:
+
+```python
+prog = (step - warmup) / max(max_steps - warmup, 1)
+```
+
+So `max_steps` was never merely a ceiling — it defined the entire LR
+trajectory. Two cells run to different lengths had **different learning rates
+at the same step** and were not comparable. The 40k calibration run and a 50k
+matrix cell were silently different experiments.
+
+**Decision: split the field.** `max_steps` decides when to stop; `lr_horizon`
+is the cosine denominator and is pinned across all cells. Config validation
+refuses `lr_horizon < max_steps`. Cells of different length are now comparable
+by construction, which removes the constraint the old code forced on us.
+
+### What changed
+
+| area | before | after |
+|---|---|---|
+| config | defaults scattered across modules | one `ExperimentConfig` tree, one default per knob |
+| LR schedule | cosine tied to `max_steps` | `lr_horizon` separate and pinned |
+| seeding | **none anywhere** | seeds torch/numpy/random/dataloader; `train.seed` |
+| run identity | `{pipeline}_{variant}.json` | `results/<config-hash>/` with `config.json` |
+| cache key | pipeline+split+cap | ids key unchanged; codes keyed separately |
+| frozen dims | fixed 23-dim schema classes | composed blocks, T derived not asserted |
+| context facts | impossible | `dep` / `pos` / `ectx` per position |
+| BPE freezing | impossible | possible via character-offset alignment |
+
+On seeding: there was none, so runs were not reproducible, and — worse — a
+single unseeded run per cell cannot distinguish a 1–3% difference from
+initialization noise. Note that seeding every cell identically does *not* give
+matched initialization across cells, since different vocabulary sizes draw
+different numbers of random values. Same seed buys reproducibility; multiple
+seeds buy variance control.
+
+### Two efficiency findings
+
+**spaCy was already parsing dependencies.** `spacy.load()` enables tagger,
+parser and NER by default, so the morpheme pipelines have always computed
+dependency parses and discarded them. Context facts are therefore close to free
+for morph/det; only BPE pays a genuinely new spaCy cost. The cache now computes
+*all* context facts on whichever pass happens first for spaCy-native pipelines,
+so the baseline pass and every later fact request share one traversal.
+
+**MorphoLex was parsed twice per pipeline construction.** Both
+`build_morpholex_lookup` and `extract_morpheme_sets` independently parsed the
+~70k-row workbook. Now cached in-process and on disk, keyed on the file's mtime
+and size.
+
+### Verification
+
+The refactor was validated before any GPU time: 7/7 checks passing, including
+the freeze guarantee (frozen buffers byte-identical after an optimizer step
+while the trained part moves) and — on the real pipeline — **3 token ids
+receiving multiple distinct dependency codes**, the direct empirical
+confirmation that context facts carry information a static table cannot.
+
+The pre-refactor state is preserved in git as the calibrated apparatus that
+produced the BPE anchor (64.9 ppl / 1.438 BPB), so the three baseline cells can
+serve as a behaviour-preserving regression test.
+
+---
+
+## Appendix additions — Key Decisions
+
+| Decision | Chosen Option | Rejected Options | Reason |
+|---|---|---|---|
+| Frozen block content | Composed blocks, width derived | Fixed 23-dim schema | Sized by label inventory, not information; 12 of 23 columns were constant |
+| Frozen fact axis | Static vs context source | Treat all frozen facts alike | Static = parameter tying; context = information a lookup table cannot hold |
+| v1 context fact | Dependency role only, coarse | Full set at once; fine-grained | Unambiguous result, legible ladder; granularity is a one-line switch |
+| Dataset payload | ids + integer codes | ids only (§28) | Frozen metadata has no gradients, so §28's reasoning never applied |
+| BPE freezing | Enabled via char-offset alignment | Morpheme pipelines only | Decouples segmentation from injection; makes the matrix a true 2×3 |
+| Onehot cells | Not run | Run as designed | Would confound "flags don't help" with "12 dims were constant" |
+| LR schedule | `lr_horizon` separate from `max_steps` | Single field | One field doing both jobs made different-length cells incomparable |
+| Seeding | Seeded, seed in run identity | Unseeded single runs | Small expected effect cannot be told from init noise |
+| Codebase layout | Package (`morphlm/`) | Flat 7 files (§20) | §20's premise (chat-paste overhead) expired; flat was about to cause two silent bugs |
+| Frozen validation | Population-level assertions in tests | Per-token spot checks | Per-token checks passed while the population property failed |
+
+---
+
+*Document updated through the frozen-embedding audit, the parameter-tying /
+information-injection reframe, and the restructure into the `morphlm` package.
+Phase 1 baselines pending.*
