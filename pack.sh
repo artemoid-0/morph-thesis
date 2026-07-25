@@ -1,89 +1,127 @@
 #!/usr/bin/env bash
 #
-# pack.sh — bundle the current project state into a single archive
-#           to share with a fresh assistant session.
+# pack.sh — bundle the project for sharing with a fresh assistant session.
+#
+# Writes ../morph_snapshot.tar.gz, OVERWRITING the previous one (no versioning:
+# only the current state is ever wanted).
+#
+# SELECTION MODEL
+#   1. an extension in INCLUDE_EXT is included by default
+#   2. anything under an EXCLUDE_DIR is dropped, whatever its extension
+#   3. EXCLUDE_GLOB drops specific paths that rule 1 would otherwise catch
+#   4. INCLUDE_PATH force-adds specific files whose extension is not in rule 1
+#
+# So the common case is "by file type", and the exceptions are explicit and
+# few, which is what keeps this readable a year from now.
 #
 # Usage:
-#   ./pack.sh            # writes morph_snapshot_YYYYMMDD_HHMM.tar.gz
-#   ./pack.sh --zip      # writes a .zip instead (if you prefer)
-#   ./pack.sh --no-csv   # code + docs only, skip the vocab CSVs
-#
-# Run from the project root (where the .py files live).
+#   ./pack.sh              # write ../morph_snapshot.tar.gz
+#   ./pack.sh --zip        # ../morph_snapshot.zip instead
+#   ./pack.sh --list       # show what would be packed, write nothing
+#   ./pack.sh --out DIR    # write somewhere other than the parent directory
 
 set -euo pipefail
 
-# --- locate project root (dir containing this script) ---
+# ── selection rules ───────────────────────────────────────────────────────────
+
+# included by extension
+INCLUDE_EXT=(py md sh toml cfg ini txt)
+
+# dropped wholesale, at any depth
+EXCLUDE_DIR=(__pycache__ .git .idea .vscode .pytest_cache node_modules
+             results wandb runs checkpoints)
+
+# dropped even though the extension matched
+#   data/cache      large regenerable token streams (.npy + .json)
+#   *.egg-info      build noise
+EXCLUDE_GLOB=('data/cache/*' '*.egg-info/*' '*.pyc' 'temp.py' 'scratch*.py')
+
+# force-added despite not matching INCLUDE_EXT
+#   the vocab CSVs are readable, small, and useful to inspect in-session.
+#   NOT included: data/MorphoLEX_en.xlsx    (binary, irreplaceable — back it up
+#                                            separately, it is not code)
+#                 data/bpe_tokenizer.json   (regenerable merge rules, low signal)
+INCLUDE_PATH=(data/our_final_vocab.csv data/entity_vocab.csv)
+
+# ── args ──────────────────────────────────────────────────────────────────────
+
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$ROOT"
 
-# --- parse flags ---
 USE_ZIP=0
-INCLUDE_CSV=1
-for arg in "$@"; do
-  case "$arg" in
-    --zip)    USE_ZIP=1 ;;
-    --no-csv) INCLUDE_CSV=0 ;;
-    *) echo "unknown flag: $arg" >&2; exit 1 ;;
-  esac
-done
-
-STAMP="$(date +%Y%m%d_%H%M)"
-# Write the archive to the parent dir (e.g. PycharmProjects/) so it lands
-# outside the packed tree and can't be swept into a later snapshot.
+LIST_ONLY=0
 OUTDIR="$(dirname "$ROOT")"
-NAME="${OUTDIR}/morph_snapshot_${STAMP}"
 
-# --- build the file list ---------------------------------------------------
-# Code: every .py in the root, but NOT temp.py / scratch files.
-FILES=()
-
-for f in *.py; do
-  [ -e "$f" ] || continue
-  case "$f" in
-    temp.py|scratch*.py) continue ;;   # skip scratch
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --zip)  USE_ZIP=1 ;;
+    --list) LIST_ONLY=1 ;;
+    --out)  shift; OUTDIR="$1" ;;
+    *) echo "unknown flag: $1" >&2; exit 1 ;;
   esac
-  FILES+=("$f")
+  shift
 done
 
-# Docs: the decision history. (HANDOFF.md lives in project knowledge, not on disk.)
-for doc in research_journey.md; do
-  [ -e "$doc" ] && FILES+=("$doc")
+# ── build the file list ───────────────────────────────────────────────────────
+
+FIND_ARGS=()
+for d in "${EXCLUDE_DIR[@]}"; do
+  FIND_ARGS+=( -name "$d" -prune -o )
 done
 
-# Lightweight, readable, regenerable assets (optional).
-if [ "$INCLUDE_CSV" -eq 1 ]; then
-  for csv in data/our_final_vocab.csv data/entity_vocab.csv; do
-    [ -e "$csv" ] && FILES+=("$csv")
+EXT_EXPR=()
+for e in "${INCLUDE_EXT[@]}"; do
+  EXT_EXPR+=( -name "*.${e}" -o )
+done
+unset 'EXT_EXPR[${#EXT_EXPR[@]}-1]'   # drop trailing -o
+
+mapfile -t CANDIDATES < <(
+  find . "${FIND_ARGS[@]}" \( "${EXT_EXPR[@]}" \) -type f -print \
+  | sed 's|^\./||' | sort
+)
+
+keep() {
+  local f="$1"
+  for g in "${EXCLUDE_GLOB[@]}"; do
+    # shellcheck disable=SC2053
+    [[ "$f" == $g ]] && return 1
   done
-fi
+  return 0
+}
 
-# --- explicitly EXCLUDED (documented here so it's obvious why) -------------
-#   data/cache/*            large, regenerable .npy/.json token streams
-#   data/MorphoLEX_en.xlsx  binary blob; irreplaceable but not code — back up separately
-#   data/bpe_tokenizer.json regenerable, low-signal merge rules
-#   __pycache__/            compiled junk
-#   temp.py                 scratch
+FILES=()
+for f in "${CANDIDATES[@]}"; do
+  keep "$f" && FILES+=("$f")
+done
+
+for f in "${INCLUDE_PATH[@]}"; do
+  [ -e "$f" ] && FILES+=("$f")
+done
 
 if [ "${#FILES[@]}" -eq 0 ]; then
-  echo "error: no files matched — are you in the project root?" >&2
+  echo "error: nothing matched — are you in the project root?" >&2
   exit 1
 fi
 
-# --- pack ------------------------------------------------------------------
+# ── report / pack ─────────────────────────────────────────────────────────────
+
+if [ "$LIST_ONLY" -eq 1 ]; then
+  printf '%s\n' "${FILES[@]}"
+  echo "---- ${#FILES[@]} files (nothing written)"
+  exit 0
+fi
+
 if [ "$USE_ZIP" -eq 1 ]; then
-  OUT="${NAME}.zip"
+  OUT="${OUTDIR}/morph_snapshot.zip"
   rm -f "$OUT"
   zip -q "$OUT" "${FILES[@]}"
 else
-  OUT="${NAME}.tar.gz"
+  OUT="${OUTDIR}/morph_snapshot.tar.gz"
+  rm -f "$OUT"
   tar -czf "$OUT" "${FILES[@]}"
 fi
 
-# --- report ----------------------------------------------------------------
 echo "packed ${#FILES[@]} files -> $OUT"
-echo "----"
-for f in "${FILES[@]}"; do
-  echo "  $f"
-done
-echo "----"
-du -h "$OUT" | cut -f1 | sed 's/^/size: /'
+printf '  %s\n' "${FILES[@]}" | head -40
+[ "${#FILES[@]}" -gt 40 ] && echo "  ... and $(( ${#FILES[@]} - 40 )) more"
+echo "size: $(du -h "$OUT" | cut -f1)"
