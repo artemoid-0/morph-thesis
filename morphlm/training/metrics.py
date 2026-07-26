@@ -132,3 +132,41 @@ def report(results_dir=RESULTS_DIR):
             print(f'  {r["label"]:22} {base["ppl"]:8.2f} -> {r["ppl"]:8.2f}  '
                   f'({d:+.2f}, {pct:+.1f}%){spread}')
     print()
+
+def save_checkpoint(cfg, model, results_dir=RESULTS_DIR):
+    """
+    Persist model weights alongside the result.
+
+    Without this, every post-hoc analysis — per-frequency-bucket perplexity,
+    probing classifiers, anything that needs the trained embedding — requires
+    retraining the cell from scratch. The first three baseline runs were saved
+    without weights, so those 2.5 GPU-hours cannot be re-analysed.
+    """
+    import torch
+    run_dir = os.path.join(results_dir, cfg.run_id())
+    os.makedirs(run_dir, exist_ok=True)
+    path = os.path.join(run_dir, 'model.pt')
+    torch.save({'state_dict': model.state_dict(),
+                'config': cfg.to_dict(),
+                'run_id': cfg.run_id()}, path)
+    return path
+
+
+def load_checkpoint(run_id, results_dir=RESULTS_DIR):
+    """Rebuild a model from a saved checkpoint for post-hoc analysis."""
+    import torch
+    from ..config import (ExperimentConfig, DataConfig, FrozenConfig,
+                          ModelConfig, TrainConfig)
+    from ..modeling.transformer import build_model
+    path = os.path.join(results_dir, run_id, 'model.pt')
+    blob = torch.load(path, map_location='cpu')
+    d = blob['config']
+    cfg = ExperimentConfig(
+        data=DataConfig(**d['data']),
+        frozen=FrozenConfig(**{**d['frozen'],
+                               'facts': tuple(d['frozen']['facts'])}),
+        model=ModelConfig(**d['model']),
+        train=TrainConfig(**d['train']))
+    model, _ = build_model(cfg, verbose=False)
+    model.load_state_dict(blob['state_dict'])
+    return model, cfg

@@ -53,10 +53,18 @@ CATEGORY_PRIORITY = {
 def parse_morpholex_segm(s):
     """
     Parse a MorphoLex segmentation string into (morphemes, roles).
-    Handles both format A (<un<{(happy)}) and format B ({<re<(search)}>er>).
+    Handles format A (<un<{(happy)}) and format B ({<re<(search)}>er>).
+
+    MULTI-ROOT FIX: roots are collected with findall, not search. MorphoLex
+    writes compounds with several parenthesized roots — {(high)(way)},
+    {(touch)(down)}>s>, {(book)(keep)}>er> — and taking only the first
+    silently discarded the rest, so `highway` parsed as `high` and
+    `touchdowns` as `touch`. Same family as the format-B bug of section 16:
+    a regex that matched one instance of something that occurs many times.
+    Found by the reconstruction audit, which showed those words could not be
+    rebuilt from their own token streams.
     """
-    root_match = re.search(r'\(([a-zA-Z]+)\)', s)
-    root = root_match.group(1) if root_match else None
+    roots = re.findall(r'\(([a-zA-Z]+)\)', s)
 
     brace_open = s.index('{') if '{' in s else len(s)
     brace_close = s.rindex('}') + 1 if '}' in s else 0
@@ -64,24 +72,23 @@ def parse_morpholex_segm(s):
     # format A: prefixes before the opening {
     format_a_prefixes = re.findall(r'<([a-zA-Z]+)<', s[:brace_open])
 
-    # format B: prefixes inside the opening { before the root
+    # format B: prefixes inside the opening { before the first root
     inner = s[brace_open:brace_close]
     paren_pos = inner.index('(') if '(' in inner else len(inner)
     format_b_prefixes = re.findall(r'<([a-zA-Z]+)<', inner[:paren_pos])
 
     prefixes = format_a_prefixes + format_b_prefixes
 
-    inner_after_root = re.sub(r'^[^)]*\)', '', inner).rstrip('}')
+    # strip to the LAST ')' so suffixes following a multi-root block are seen
+    inner_after_root = re.sub(r'^.*\)', '', inner, flags=re.S).rstrip('}')
     inner_suffixes = re.findall(r'>([a-zA-Z]+)>', inner_after_root)
     outer_suffixes = re.findall(r'>([a-zA-Z]+)>', s[brace_close:])
 
     suffixes = inner_suffixes + outer_suffixes
-    morphemes = prefixes + ([root] if root else []) + suffixes
-    roles = (
-        ['prefix'] * len(prefixes)
-        + (['root'] if root else [])
-        + ['suffix'] * len(suffixes)
-    )
+    morphemes = prefixes + roots + suffixes
+    roles = (['prefix'] * len(prefixes)
+             + ['root'] * len(roots)
+             + ['suffix'] * len(suffixes))
     return morphemes, roles
 
 

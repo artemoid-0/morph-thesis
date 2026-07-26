@@ -37,11 +37,14 @@ def _base_config(args) -> ExperimentConfig:
 
 def cmd_run(args):
     from .training.loop import train_cell
-    from .training.metrics import save_result
+    from .training.metrics import save_result, save_checkpoint
 
     cfg = _base_config(args)
     model, log, best = train_cell(cfg, verbose=True)
     path = save_result(cfg, log, best)
+    if not args.no_checkpoint:
+        ck = save_checkpoint(cfg, model)
+        print(f'[saved] {ck}')
 
     print(f'\n[saved] {path}')
     print(f'  {cfg.describe()}: ppl {best["perplexity"]:.2f} | '
@@ -141,6 +144,8 @@ def main():
     add_common(r)
     r.add_argument('--buckets', action='store_true',
                    help='also report per-frequency-bucket perplexity')
+    r.add_argument('--no-checkpoint', action='store_true',
+                   help='skip saving model weights (~14MB per run)')
     r.set_defaults(func=cmd_run)
 
     c = sub.add_parser('cache', help='build the token cache only')
