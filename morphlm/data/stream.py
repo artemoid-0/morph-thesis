@@ -105,11 +105,17 @@ def build_stream(pipeline, cfg, split='train', max_articles=None,
     build_facts = list(facts_to_build(cfg))
     gran = cfg.frozen.dep_granularity
 
-    ids_stem = cache_stem(cfg.data.pipeline, split, max_articles, '')
+    # surface options change the ID STREAM ITSELF, so they belong in the ids
+    # key, not just the codes key. Omitting them would mean a stale hit and
+    # training on silently wrong data.
+    sfc = cfg.surface_spec()
+    ids_stem = cache_stem(cfg.data.pipeline, split, max_articles, sfc)
     ids_npy = os.path.join(cache_dir, ids_stem + '.npy')
     ids_meta = os.path.join(cache_dir, ids_stem + '.json')
 
     c_spec = codes_spec(build_facts, gran)
+    if sfc:
+        c_spec = f'{sfc}|{c_spec}' if c_spec else sfc
     codes_stem = cache_stem(cfg.data.pipeline, split, max_articles, c_spec)
     codes_npy = os.path.join(cache_dir, codes_stem + '.codes.npy')
     codes_meta_path = os.path.join(cache_dir, codes_stem + '.codes.json')

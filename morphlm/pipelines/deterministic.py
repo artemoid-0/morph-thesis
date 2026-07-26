@@ -19,9 +19,10 @@ from ..vocab.morpholex import (
 class DeterministicPipeline(BasePreprocessor):
 
     def __init__(self, vocab_df, morpholex_path,
-                 spacy_model='en_core_web_sm', stamp='all', verbose=True):
+                 spacy_model='en_core_web_sm', stamp='all',
+                 surface=None, verbose=True):
         super().__init__(vocab_df, morpholex_path, spacy_model,
-                         stamp=stamp, verbose=verbose)
+                         stamp=stamp, surface=surface, verbose=verbose)
         if verbose:
             print('  Loading MorphoLex...')
         self.morpholex = build_morpholex_lookup(morpholex_path)

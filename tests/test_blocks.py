@@ -29,8 +29,12 @@ def test_no_block_without_request():
     cfg = apply_overrides(ExperimentConfig(), ['frozen.facts=cat'])
     blocks = build_blocks(cfg)
     assert len(blocks) == 1 and blocks[0].name == 'cat'
-    assert frozen_width(cfg) == 6, f'cat should be 6 dims, got {frozen_width(cfg)}'
-    print('  only requested blocks are built OK')
+    # 11 categories since the information-preserving layers were added:
+    # prefix suffix root function entity character punct digit infl space case
+    expect = len(blocks[0].classes)
+    assert frozen_width(cfg) == expect == 11, \
+        f'cat should be 11 dims, got {frozen_width(cfg)}'
+    print(f'  only requested blocks are built OK (cat={expect} dims)')
 
 
 def test_source_classification():
@@ -81,12 +85,18 @@ def test_static_table_has_no_constant_column():
     block = build_blocks(cfg)[0]
     table = np.stack([block.onehot(block.code(dict(r)))
                       for _, r in vocab.iterrows()])
-    dead = [j for j in range(table.shape[1])
+    present = set(vocab['category'])
+    dead = [block.classes[j] for j in range(table.shape[1])
             if table[:, j].min() == table[:, j].max()]
-    assert not dead, f'constant columns: {[block.classes[j] for j in dead]}'
+    # a column is only a BUG if its category exists in this vocabulary; the
+    # information-preserving layers appear once the vocab is rebuilt
+    real_dead = [d for d in dead if d in present]
+    assert not real_dead, f'constant columns for present categories: {real_dead}'
     distinct = len(np.unique(table, axis=0))
-    print(f'  cat block: {table.shape[1]} cols, all vary, '
-          f'{distinct} distinct rows OK')
+    print(f'  cat block: {table.shape[1]} cols, {len(dead)} unused '
+          f'(categories absent from this vocab), {distinct} distinct rows OK')
+    if dead:
+        print(f'    absent: {dead}  <- rebuild vocab to populate')
 
 
 def test_old_schema_would_fail():

@@ -38,9 +38,11 @@ class BasePreprocessor:
     """Subclasses implement _segment_word(word) -> [(morpheme, role), ...]."""
 
     def __init__(self, vocab_df, morpholex_path, spacy_model='en_core_web_sm',
-                 stamp='all', verbose=True):
+                 stamp='all', surface=None, verbose=True):
+        from ..config import SurfaceConfig
         self.vocab = vocab_df
         self.stamp = stamp
+        self.surface = surface if surface is not None else SurfaceConfig()
         self.token2id = {row['token']: idx for idx, row in vocab_df.iterrows()}
         self.id2token = {idx: row['token'] for idx, row in vocab_df.iterrows()}
         self.categories = {row['token']: row['category']
@@ -123,57 +125,146 @@ class BasePreprocessor:
 
     # ── encoding ──────────────────────────────────────────────────────────────
 
+    # ── surface helpers (journey section 33) ──────────────────────────────────
+
+    WS_MAP = {' ': '<sp>', '\n': '<nl>', '\t': '<tab>'}
+
+    def _surface_token(self, tok, category, word, dep=None, pos=None):
+        """Emit a non-morphological token (whitespace, punct, digit, case, infl)."""
+        return {
+            'token_id': self.token2id.get(tok, self.UNK_ID),
+            'token': tok,
+            'category': category,
+            'role': category,
+            'entity_label': None,
+            'word': word,
+            'dep': dep,
+            'pos': pos,
+        }
+
+    @staticmethod
+    def case_marker(surface):
+        """
+        Case as a marker token rather than capitalised vocabulary variants.
+
+        Doubling the vocabulary to carry case would add ~16k rows and worsen the
+        parameter asymmetry against BPE; one marker token costs a single row.
+        """
+        if not surface or not surface[0].isalpha():
+            return None
+        if surface.isupper() and len(surface) > 1:
+            return '<upper>'
+        if surface[0].isupper():
+            return '<cap>'
+        return None
+
+    # ── encoding ──────────────────────────────────────────────────────────────
+
     def encode(self, text):
         """
         Text -> list of token dicts.
 
-        Each dict carries the context facts (dep, pos, entity_label) of the
-        spaCy token it originated from, so downstream fact blocks can encode
-        occurrence-level information that a static id->vector table cannot.
+        Information-preserving by default. Each channel is a SurfaceConfig flag
+        so its contribution can be ablated:
+
+          whitespace   the exact gap between spaCy tokens, as <sp>/<nl>/<tab>
+          case         <cap> / <upper> before a word
+          punct/digit  previously dropped by `if not is_alpha: continue`
+          inflection   explicit <plur>/<past>/... from spaCy morph features
+
+        Context facts (dep, pos, entity_label) ride along on every token so
+        frozen fact blocks can encode occurrence-level information.
         """
         doc = self.ner.nlp(text)
         entity_spans, entity_indices = self.ner.get_entity_spans(doc)
+        sfc = self.surface
 
         result = []
+        prev_end = 0
         i = 0
+
+        def emit_gap(upto):
+            if not sfc.emit_whitespace:
+                return
+            for ch in text[prev_end:upto]:
+                result.append(self._surface_token(
+                    self.WS_MAP.get(ch, '<sp>'), 'space', ch))
+
         while i < len(doc):
             spacy_tok = doc[i]
+            emit_gap(spacy_tok.idx)
 
-            if not spacy_tok.is_alpha:
-                i += 1
-                continue
-
+            # ── multi-word entity span ────────────────────────────────────────
             if spacy_tok.i in entity_spans:
                 surface, label = entity_spans[spacy_tok.i]
                 dep, pos = spacy_tok.dep_, spacy_tok.pos_
+                last = i
+                while last < len(doc) and doc[last].i in entity_indices:
+                    last += 1
+                span_text = text[spacy_tok.idx:
+                                 doc[last - 1].idx + len(doc[last - 1].text)]
+                if sfc.emit_case:
+                    cm = self.case_marker(span_text)
+                    if cm:
+                        result.append(self._surface_token(
+                            cm, 'case', span_text, dep, pos))
                 if surface in self.entity_tokens:
                     result.append(self._make_token(
                         surface, 'entity', surface,
                         entity_label=label, category_override='entity',
                         dep=dep, pos=pos))
                 else:
-                    # unknown entity -> honest character fallback, but the
-                    # context facts of the span head still apply
                     for w in surface.split('_'):
                         for ch in w:
                             result.append(self._make_token(
                                 ch, 'char', w, entity_label=label,
                                 dep=dep, pos=pos))
-                while i < len(doc) and doc[i].i in entity_indices:
-                    i += 1
+                prev_end = doc[last - 1].idx + len(doc[last - 1].text)
+                i = last
                 continue
 
             if spacy_tok.i in entity_indices:
                 i += 1
                 continue
 
-            word = spacy_tok.text
+            surface = spacy_tok.text
             dep, pos = spacy_tok.dep_, spacy_tok.pos_
-            for morpheme, role in self._segment_word(word):
-                result.append(self._make_token(morpheme, role, word,
-                                               dep=dep, pos=pos))
+            prev_end = spacy_tok.idx + len(surface)
+
+            if spacy_tok.is_alpha:
+                if sfc.emit_case:
+                    cm = self.case_marker(surface)
+                    if cm:
+                        result.append(self._surface_token(
+                            cm, 'case', surface, dep, pos))
+                pieces = list(self._segment_word(surface))
+                for morpheme, role in pieces:
+                    result.append(self._make_token(morpheme, role, surface,
+                                                   dep=dep, pos=pos))
+                if sfc.emit_inflection:
+                    from ..features.inflection import (inflection_of,
+                                                       already_marked)
+                    infl = inflection_of(spacy_tok)
+                    if infl and not already_marked(
+                            infl, [m for m, _ in pieces]):
+                        result.append(self._surface_token(
+                            infl, 'infl', surface, dep, pos))
+            else:
+                # punctuation, digits, symbols, mixed tokens like "1990s"
+                for ch in surface:
+                    if ch.isdigit():
+                        if sfc.emit_digits:
+                            result.append(self._surface_token(
+                                ch, 'digit', surface, dep, pos))
+                    elif ch.isalpha():
+                        result.append(self._make_token(
+                            ch, 'char', surface, dep=dep, pos=pos))
+                    elif sfc.emit_punctuation:
+                        result.append(self._surface_token(
+                            ch, 'punct', surface, dep, pos))
             i += 1
 
+        emit_gap(len(text))
         return result
 
     def encode_ids(self, text):

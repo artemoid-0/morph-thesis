@@ -47,6 +47,10 @@ FUNCTION_WORDS = {
 CATEGORY_PRIORITY = {
     'entity': 0, 'function': 1, 'prefix': 2,
     'suffix': 3, 'root': 4, 'character': 5,
+    # information-preserving layers (journey section 33). Low priority values
+    # so they win over a same-string morpheme: '<sp>' must never resolve to a
+    # root, and 's' as an inflection token is distinct from 's' as a suffix.
+    'punct': 6, 'digit': 7, 'infl': 8, 'space': 9,
 }
 
 

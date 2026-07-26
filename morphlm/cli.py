@@ -122,6 +122,31 @@ def cmd_build(args):
         print('building entity vocabulary (with labels)...')
         extract_entities(max_articles=args.articles,
                          spacy_model=cfg.data.spacy_model)
+    if args.what in ('bpe', 'all'):
+        from .pipelines.bpe import BPEPipeline
+        from datasets import load_dataset
+        print(f'training BPE (vocab={args.bpe_vocab}, '
+              f'pre_tokenizer={args.pre_tokenizer})...')
+        ds = load_dataset('wikitext', 'wikitext-103-raw-v1', split='train')
+
+        def texts():
+            n = 0
+            for row in ds:
+                t = row['text'].strip()
+                if not t or t.startswith(' ='):
+                    continue
+                yield t
+                n += 1
+                if args.bpe_lines and n >= args.bpe_lines:
+                    break
+
+        bpe = BPEPipeline(tokenizer_path=None, vocab_size=args.bpe_vocab,
+                          verbose=True)
+        bpe.train(texts(), save_path=args.bpe_out,
+                  pre_tokenizer=args.pre_tokenizer)
+        print(f'  saved -> {args.bpe_out}')
+        print('  NOTE: point runs at it with -o data.bpe_path=' + args.bpe_out)
+
     if args.what in ('vocab', 'all'):
         from .vocab.build import build_vocabulary
         print('building vocabulary...')
@@ -160,8 +185,14 @@ def main():
     rep.set_defaults(func=cmd_report)
 
     b = sub.add_parser('build', help='build data assets')
-    b.add_argument('what', choices=['entities', 'vocab', 'all'])
+    b.add_argument('what', choices=['entities', 'vocab', 'bpe', 'all'])
     b.add_argument('--articles', type=int, default=6000)
+    b.add_argument('--bpe-vocab', type=int, default=10000)
+    b.add_argument('--bpe-lines', type=int, default=0,
+                   help='0 = full corpus')
+    b.add_argument('--bpe-out', default='data/bpe_bytelevel.json')
+    b.add_argument('--pre-tokenizer', default='bytelevel',
+                   choices=['bytelevel', 'whitespace'])
     add_common(b)
     b.set_defaults(func=cmd_build)
 

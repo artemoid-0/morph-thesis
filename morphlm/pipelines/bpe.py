@@ -60,14 +60,45 @@ class BPEPipeline:
 
     # ── training ──────────────────────────────────────────────────────────────
 
-    def train(self, texts, save_path=None):
+    def train(self, texts, save_path=None, pre_tokenizer='bytelevel'):
+        """
+        Train a BPE tokenizer.
+
+        pre_tokenizer='bytelevel'  (default, GPT-2 standard)
+            LOSSLESS: whitespace is folded into the following token as a Ġ
+            prefix, so decode(encode(text)) == text exactly. Required for BPB to
+            be a genuine compression rate comparable to published numbers.
+
+        pre_tokenizer='whitespace'  (the original choice)
+            Splits on word/non-word boundaries and DISCARDS whitespace, so it cannot
+            reconstruct the input. Kept only to reproduce the legacy anchor.
+
+        The coverage audit showed whitespace is 18.8% of corpus bytes. Both the
+        old BPE and the old morpheme pipelines dropped it, so it never biased
+        Q1 — but it meant neither BPB was a real compression rate.
+        """
         from tokenizers.trainers import BpeTrainer
+        if pre_tokenizer == 'bytelevel':
+            from tokenizers.pre_tokenizers import ByteLevel
+            from tokenizers.decoders import ByteLevel as ByteLevelDecoder
+            self.tokenizer.pre_tokenizer = ByteLevel(add_prefix_space=True)
+            self.tokenizer.decoder = ByteLevelDecoder()
+            alphabet = ByteLevel.alphabet()
+        elif pre_tokenizer == 'whitespace':
+            from tokenizers.pre_tokenizers import Whitespace
+            self.tokenizer.pre_tokenizer = Whitespace()
+            alphabet = []
+        else:
+            raise ValueError(f'unknown pre_tokenizer {pre_tokenizer!r}')
+
         trainer = BpeTrainer(
             vocab_size=self.vocab_size,
             special_tokens=['[UNK]', '[PAD]', '[BOS]', '[EOS]'],
+            initial_alphabet=alphabet,
             show_progress=True,
         )
-        print(f'  Training BPE (vocab_size={self.vocab_size})...')
+        print(f'  Training BPE (vocab_size={self.vocab_size}, '
+              f'pre_tokenizer={pre_tokenizer})...')
         self.tokenizer.train_from_iterator(texts, trainer=trainer)
         print(f'  Done. Actual vocab size: {self.tokenizer.get_vocab_size()}')
         if save_path:

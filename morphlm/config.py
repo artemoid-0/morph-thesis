@@ -81,6 +81,76 @@ class FrozenConfig:
 
 
 @dataclass(frozen=True)
+class SurfaceConfig:
+    """
+    How the pipeline encodes content that is not morphological.
+
+    Every field here corresponds to a measured information channel from the
+    audits (journey section 33). They are flags rather than hardcoded fixes so
+    each channel's contribution can be ABLATED and reported separately — the
+    audits told us the channels exist; ablation tells us what each one costs.
+
+    Defaults are all-on, i.e. information-preserving.
+
+      emit_punctuation / emit_digits
+          The old encode loop began `if not spacy_tok.is_alpha: continue`, so
+          the morpheme pipelines emitted NOTHING for punctuation, digits or
+          symbols. Measured at 5.32% of corpus bytes that BPE encodes and morph
+          did not, while BPB divided both by the same denominator. This was the
+          single largest bias and it was ASYMMETRIC between the two arms of Q1.
+
+      emit_inflection
+          MorphoLex stores lemmas, so `cat` and `cats` both mapped to [cat] —
+          a genuine collision. Measured cost 0.0440 BPB. Emitting explicit
+          inflectional morphemes removes the collision and is linguistically
+          more correct: section 5 already classifies inflection as morphology.
+
+      emit_case
+          _make_token lowercased every morpheme, so 'The' and 'the' produced
+          the same token. BPE preserves case, making this another ASYMMETRIC
+          loss. Restored with a marker token before capitalised words rather
+          than by doubling the vocabulary with capitalised variants.
+
+      emit_whitespace
+          Whitespace is 18.8% of corpus bytes and BOTH pipelines dropped it, so
+          it never biased Q1 — but it means neither BPB was a real compression
+          rate or comparable to any published figure. With this on (and BPE
+          retrained with a ByteLevel pre-tokenizer) both become genuinely
+          lossless.
+
+          NOTE the encoding schemes differ in EFFICIENCY: morph emits a
+          separate boundary token per word, while ByteLevel BPE folds the space
+          into the following token. Both encode the same information, so BPB is
+          fair, but morph pays more tokens for it. Run with emit_whitespace off
+          for the cleanest segmentation-only comparison, and on for the
+          literature-comparable compression rate. Two questions, one flag.
+    """
+    emit_punctuation: bool = True
+    emit_digits: bool = True
+    emit_inflection: bool = True
+    emit_whitespace: bool = True
+    emit_case: bool = True
+
+    def spec(self) -> str:
+        """
+        Canonical string for the cache key. MUST vary with every field: these
+        options change the token stream, and a stale cache hit here would mean
+        training on silently wrong data.
+        """
+        bits = [
+            'p' if self.emit_punctuation else '-',
+            'd' if self.emit_digits else '-',
+            'i' if self.emit_inflection else '-',
+            'w' if self.emit_whitespace else '-',
+            'c' if self.emit_case else '-',
+        ]
+        s = ''.join(bits)
+        # all-off reproduces the legacy stream, so it must map to the
+        # historical cache filename and keep those caches valid
+        return '' if s == '-----' else f'sfc:{s}'
+
+
+@dataclass(frozen=True)
 class ModelConfig:
     """The fixed apparatus. Identical across every cell except vocab size."""
     d_model: int = 128
@@ -111,6 +181,7 @@ class TrainConfig:
 @dataclass(frozen=True)
 class ExperimentConfig:
     data: DataConfig = field(default_factory=DataConfig)
+    surface: SurfaceConfig = field(default_factory=SurfaceConfig)
     frozen: FrozenConfig = field(default_factory=FrozenConfig)
     model: ModelConfig = field(default_factory=ModelConfig)
     train: TrainConfig = field(default_factory=TrainConfig)
@@ -125,10 +196,36 @@ class ExperimentConfig:
         blob = json.dumps(self.to_dict(), sort_keys=True, default=str)
         return hashlib.md5(blob.encode()).hexdigest()[:12]
 
+    def surface_spec(self) -> str:
+        """
+        Surface spec RELEVANT TO THIS PIPELINE.
+
+        The SurfaceConfig flags drive the morpheme encoder, so they mean nothing
+        for BPE — its punctuation and whitespace behaviour is fixed by the
+        pre-tokenizer baked into its tokenizer file. For BPE the stream instead
+        depends on WHICH tokenizer file is loaded, so that identity goes in the
+        key. Retraining BPE with a ByteLevel pre-tokenizer to a new filename
+        therefore invalidates its cache automatically, which is the behaviour we
+        want: the old Whitespace stream and the new ByteLevel stream are
+        different data.
+        """
+        import os as _os
+        if self.data.pipeline == 'bpe':
+            stem = _os.path.basename(self.data.bpe_path)
+            stem = stem[:-5] if stem.endswith('.json') else stem
+            return '' if stem == 'bpe_tokenizer' else f'tok:{stem}'
+        return self.surface.spec()
+
     def label(self) -> str:
         """Human-readable cell name, e.g. 'morph_dep' or 'bpe_baseline'."""
         facts = '+'.join(self.frozen.facts) if self.frozen.facts else 'baseline'
-        return f'{self.data.pipeline}_{facts}'
+        sfc = self.surface_spec()
+        tag = ''
+        if sfc.startswith('sfc:'):
+            tag = '_S' + sfc[4:]
+        elif sfc.startswith('tok:'):
+            tag = '_' + sfc[4:]
+        return f'{self.data.pipeline}_{facts}{tag}'
 
     def describe(self) -> str:
         return f'{self.label()} [seed {self.train.seed}] ({self.run_id()})'
@@ -214,7 +311,7 @@ def apply_overrides(cfg: ExperimentConfig, overrides) -> ExperimentConfig:
         section, key = parts
         if not hasattr(cfg, section):
             raise ValueError(f'unknown config section {section!r}; '
-                             f'choose from data/frozen/model/train')
+                             f'choose from data/surface/frozen/model/train')
         sub = getattr(cfg, section)
         if not is_dataclass(sub):
             raise ValueError(f'{section!r} is not a config section')

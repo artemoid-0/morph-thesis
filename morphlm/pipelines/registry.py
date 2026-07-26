@@ -31,7 +31,7 @@ def _build_morph(cfg, verbose=True):
     vocab_df = load_vocab(cfg.data.vocab_csv)
     return MorphemePipeline(vocab_df, cfg.data.morpholex_path,
                             spacy_model=cfg.data.spacy_model,
-                            verbose=verbose)
+                            surface=cfg.surface, verbose=verbose)
 
 
 @register_pipeline('det')
@@ -41,7 +41,7 @@ def _build_det(cfg, verbose=True):
     vocab_df = load_vocab(cfg.data.vocab_csv)
     return DeterministicPipeline(vocab_df, cfg.data.morpholex_path,
                                  spacy_model=cfg.data.spacy_model,
-                                 verbose=verbose)
+                                 surface=cfg.surface, verbose=verbose)
 
 
 def build_pipeline(cfg, verbose=True):

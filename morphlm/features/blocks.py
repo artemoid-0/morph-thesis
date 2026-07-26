@@ -102,7 +102,8 @@ class CategoryBlock(FactBlock):
     adding information.
     """
     source = 'vocab'
-    classes = ('prefix', 'suffix', 'root', 'function', 'entity', 'character')
+    classes = ('prefix', 'suffix', 'root', 'function', 'entity', 'character',
+               'punct', 'digit', 'infl', 'space', 'case')
 
     def code(self, token: dict) -> int:
         return self.index(token.get('category'))

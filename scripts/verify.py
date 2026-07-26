@@ -71,7 +71,8 @@ def t_imports():
 def t_suites():
     import subprocess
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    for suite in ('test_cache_keys.py', 'test_config.py', 'test_blocks.py'):
+    for suite in ('test_cache_keys.py', 'test_config.py', 'test_blocks.py',
+                  'test_lossless.py'):
         p = subprocess.run([sys.executable, os.path.join(root, 'tests', suite)],
                            capture_output=True, text=True, cwd=root)
         if p.returncode != 0:

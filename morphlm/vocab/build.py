@@ -23,6 +23,21 @@ import pandas as pd
 from .morpholex import (
     extract_morpheme_sets, FUNCTION_WORDS, CATEGORY_PRIORITY,
 )
+from ..features.inflection import INFLECTION_TOKENS
+
+#: Layer 7 — ASCII punctuation and symbols. Previously dropped entirely, which
+#: the coverage audit measured at 15,207 of 422,168 validation bytes (3.6%)
+#: that BPE encoded and the morpheme pipelines did not.
+PUNCTUATION = tuple('!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~')
+
+#: Layer 8 — digits, emitted one per character so arbitrary numbers work.
+#: Measured at a further 8,098 bytes (1.9%) previously dropped.
+DIGITS = tuple('0123456789')
+
+#: Layer 10 — whitespace. Dropped by BOTH pipelines before, so never a Q1 bias,
+#: but 18.8% of corpus bytes, which is why neither BPB was a true compression
+#: rate. <sp> is a single space; runs emit repeated tokens.
+WHITESPACE = ('<sp>', '<nl>', '<tab>')
 
 
 def build_vocabulary(morpholex_path, entity_csv_path=None,
@@ -77,8 +92,24 @@ def build_vocabulary(morpholex_path, entity_csv_path=None,
         entries.append({'token': c, 'category': 'character', 'layer': 6,
                         'entity_label': 'none'})
 
-    non_char = pd.DataFrame([e for e in entries if e['category'] != 'character'])
-    char = pd.DataFrame([e for e in entries if e['category'] == 'character'])
+    # ── information-preserving layers (journey section 33) ────────────────────
+    for p in PUNCTUATION:
+        entries.append({'token': p, 'category': 'punct', 'layer': 7,
+                        'entity_label': 'none'})
+    for d in DIGITS:
+        entries.append({'token': d, 'category': 'digit', 'layer': 8,
+                        'entity_label': 'none'})
+    for t in INFLECTION_TOKENS:
+        entries.append({'token': t, 'category': 'infl', 'layer': 9,
+                        'entity_label': 'none'})
+    for w in WHITESPACE:
+        entries.append({'token': w, 'category': 'space', 'layer': 10,
+                        'entity_label': 'none'})
+
+    PROTECTED = ('character', 'punct', 'digit', 'infl', 'space')
+    non_char = pd.DataFrame([e for e in entries
+                             if e['category'] not in PROTECTED])
+    char = pd.DataFrame([e for e in entries if e['category'] in PROTECTED])
     if not non_char.empty:
         non_char['_pri'] = non_char['category'].map(
             lambda c: CATEGORY_PRIORITY.get(c, 99))
