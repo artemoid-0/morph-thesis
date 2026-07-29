@@ -208,16 +208,20 @@ class BasePreprocessor:
                     if cm:
                         result.append(self._surface_token(
                             cm, 'case', span_text, dep, pos))
+                # `word` must be the ORIGINAL span text, not the lowercased
+                # entity key. Passing the key split the case marker off into a
+                # separate "word" for every capitalised entity, which made the
+                # collision audit report one enormous phantom group.
                 if surface in self.entity_tokens:
                     result.append(self._make_token(
-                        surface, 'entity', surface,
+                        surface, 'entity', span_text,
                         entity_label=label, category_override='entity',
                         dep=dep, pos=pos))
                 else:
                     for w in surface.split('_'):
                         for ch in w:
                             result.append(self._make_token(
-                                ch, 'char', w, entity_label=label,
+                                ch, 'char', span_text, entity_label=label,
                                 dep=dep, pos=pos))
                 prev_end = doc[last - 1].idx + len(doc[last - 1].text)
                 i = last
@@ -242,11 +246,22 @@ class BasePreprocessor:
                     result.append(self._make_token(morpheme, role, surface,
                                                    dep=dep, pos=pos))
                 if sfc.emit_inflection:
-                    from ..features.inflection import (inflection_of,
-                                                       already_marked)
+                    from ..features.inflection import (
+                        inflection_of, already_marked, residue_marker)
+                    morphemes = [m for m, _ in pieces]
                     infl = inflection_of(spacy_tok)
-                    if infl and not already_marked(
-                            infl, [m for m, _ in pieces]):
+                    if infl is None:
+                        # spaCy's POS can HIDE an inflection: gerunds are
+                        # tagged NOUN ('gaming'), participles ADJ ('seasoned'),
+                        # and MorphoLex root mismatches are invisible to any
+                        # feature at all ('news' -> root 'new'). Falling back to
+                        # the trailing difference between the morphemes and the
+                        # surface catches all three, and it is deterministic on
+                        # the surface string, so injectivity is guaranteed
+                        # rather than hoped for.
+                        infl = residue_marker(''.join(morphemes),
+                                              surface.lower())
+                    if infl and not already_marked(infl, morphemes):
                         result.append(self._surface_token(
                             infl, 'infl', surface, dep, pos))
             else:
@@ -265,7 +280,32 @@ class BasePreprocessor:
             i += 1
 
         emit_gap(len(text))
-        return result
+        return self._byte_fallback(result)
+
+    def _byte_fallback(self, tokens):
+        """
+        Replace every UNK with its UTF-8 bytes.
+
+        UNK is a collision sink: each distinct unknown string maps to the same
+        id, so two different inputs become one stream and information is lost.
+        The audit caught exactly this — en-dash, em-dash, degree and pound all
+        collapsed together. Spelling unknowns out in bytes makes the encoding
+        TOTAL, so injectivity no longer depends on the vocabulary happening to
+        cover the input.
+        """
+        out = []
+        for t in tokens:
+            if t['token_id'] != self.UNK_ID:
+                out.append(t)
+                continue
+            for b in str(t['token']).encode('utf-8'):
+                bt = dict(t)
+                bt['token'] = f'<b{b:02x}>'
+                bt['token_id'] = self.token2id.get(bt['token'], self.UNK_ID)
+                bt['category'] = 'byte'
+                bt['role'] = 'byte'
+                out.append(bt)
+        return out
 
     def encode_ids(self, text):
         return [t['token_id'] for t in self.encode(text)]

@@ -53,13 +53,20 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 def group_words(tokens):
     """Yield (surface_word, token_id_tuple) for each source word in a stream."""
-    # 'space', 'punct' and 'digit' are standalone content, not part of a word.
-    # 'infl' and 'case' DO belong to their word and are what break collisions,
-    # so they must stay inside the sequence.
-    STANDALONE = ('space', 'punct', 'digit')
+    # Skip ONLY whitespace: it sits between words and would otherwise merge
+    # neighbouring groups. Everything else — punctuation, digits, inflection,
+    # case — belongs to the word whose `word` field it carries. Skipping digits
+    # previously made 29a collide with a, and 20th with 19th, which inflated the
+    # measured correction by roughly 70%.
+    # Whitespace SEPARATES groups rather than being skipped: skipping it made
+    # two adjacent identical words merge, so '1 1' was recorded as '1' with the
+    # sequence (1,1) and collided with '11'.
     cur_src, cur_ids = None, []
     for t in tokens:
-        if t.get('category') in STANDALONE:
+        if t.get('category') == 'space':
+            if cur_ids:
+                yield cur_src, tuple(cur_ids)
+                cur_ids, cur_src = [], None
             continue
         src = t.get('word')
         if src != cur_src and cur_ids:
@@ -76,6 +83,11 @@ def main():
     ap.add_argument('--pipeline', default='det', choices=['det', 'morph'])
     ap.add_argument('--lines', type=int, default=2000)
     ap.add_argument('--split', default='validation')
+    ap.add_argument('--gap', type=float, default=None,
+                    help='observed BPB gap to compare against. NO DEFAULT on '
+                         'purpose: the old 0.0894 came from a lossy pipeline '
+                         'and a Whitespace BPE, so quoting it now would be '
+                         'comparing against a number that no longer exists.')
     args = ap.parse_args()
 
     from morphlm.config import ExperimentConfig, apply_overrides
@@ -147,18 +159,27 @@ def main():
     print(f'  MISSING INFORMATION     : {total_bits:,.0f} bits')
     print(f'  BPB CORRECTION (upper bd): {correction:.4f}')
     print()
-    print(f'  observed morph-vs-BPE gap: 0.0894 BPB')
-    if correction < 0.0894:
-        print(f'  corrected advantage     : >= {0.0894-correction:.4f} BPB '
-              f'({100*(0.0894-correction)/1.4162:.2f}%)')
-        print(f'  correction is {100*correction/0.0894:.0f}% of the gap')
+    if args.gap is None:
+        print('  No reference gap supplied, and that is deliberate: pass')
+        print('  --gap X once you have a CURRENT morph-vs-BPE difference.')
         print()
-        print('  => the advantage SURVIVES even under the worst-case,')
-        print('     context-free correction. A context-aware decoder would')
-        print('     recover part of these bits, so the true advantage is higher.')
+        if correction < 0.005:
+            print('  This correction is negligible in absolute terms. The')
+            print('  token stream is information-preserving, so BPB measured')
+            print('  on it means what it claims.')
+        else:
+            print('  This correction is large enough to matter. Any BPB')
+            print('  comparison using this pipeline needs it subtracted.')
     else:
-        print('  => the correction EXCEEDS the observed gap. The Q1 advantage')
-        print('     cannot be claimed from BPB without a lossless pipeline.')
+        gap = args.gap
+        print(f'  supplied gap            : {gap:.4f} BPB')
+        print(f'  correction is {100*correction/gap:.0f}% of it')
+        if correction < gap:
+            print(f'  corrected advantage     : >= {gap-correction:.4f} BPB')
+            print('  => survives the worst-case, context-free correction.')
+        else:
+            print('  => the correction EXCEEDS the gap; the advantage cannot')
+            print('     be claimed from BPB.')
 
     print()
     print('  largest collision groups (surface forms sharing one token seq):')

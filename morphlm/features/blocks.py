@@ -103,7 +103,7 @@ class CategoryBlock(FactBlock):
     """
     source = 'vocab'
     classes = ('prefix', 'suffix', 'root', 'function', 'entity', 'character',
-               'punct', 'digit', 'infl', 'space', 'case')
+               'punct', 'digit', 'infl', 'space', 'case', 'byte')
 
     def code(self, token: dict) -> int:
         return self.index(token.get('category'))

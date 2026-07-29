@@ -34,6 +34,19 @@ PUNCTUATION = tuple('!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~')
 #: Measured at a further 8,098 bytes (1.9%) previously dropped.
 DIGITS = tuple('0123456789')
 
+#: Layer 12 — UTF-8 byte fallback. Any character absent from every other layer
+#: is emitted as its raw bytes, which makes the encoding total: no input can
+#: reach UNK, so no two distinct inputs can collide there. The collision audit
+#: found en-dash, em-dash, degree and pound signs all mapping to UNK together
+#: (645 occurrences, ~60% of the residual correction). ASCII-only punctuation
+#: was always going to be whack-a-mole; this closes the class.
+BYTE_FALLBACK = tuple(f'<b{i:02x}>' for i in range(256))
+
+#: Layer 11 — case markers. Restores capitalisation without doubling the
+#: vocabulary with capitalised variants of every morpheme (~16k extra rows,
+#: which would badly worsen the parameter asymmetry against BPE).
+CASE_MARKERS = ('<cap>', '<upper>')
+
 #: Layer 10 — whitespace. Dropped by BOTH pipelines before, so never a Q1 bias,
 #: but 18.8% of corpus bytes, which is why neither BPB was a true compression
 #: rate. <sp> is a single space; runs emit repeated tokens.
@@ -105,8 +118,15 @@ def build_vocabulary(morpholex_path, entity_csv_path=None,
     for w in WHITESPACE:
         entries.append({'token': w, 'category': 'space', 'layer': 10,
                         'entity_label': 'none'})
+    for c in CASE_MARKERS:
+        entries.append({'token': c, 'category': 'case', 'layer': 11,
+                        'entity_label': 'none'})
+    for b in BYTE_FALLBACK:
+        entries.append({'token': b, 'category': 'byte', 'layer': 12,
+                        'entity_label': 'none'})
 
-    PROTECTED = ('character', 'punct', 'digit', 'infl', 'space')
+    PROTECTED = ('character', 'punct', 'digit', 'infl', 'space', 'case',
+                 'byte')
     non_char = pd.DataFrame([e for e in entries
                              if e['category'] not in PROTECTED])
     char = pd.DataFrame([e for e in entries if e['category'] in PROTECTED])

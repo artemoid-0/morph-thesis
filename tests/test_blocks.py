@@ -29,11 +29,11 @@ def test_no_block_without_request():
     cfg = apply_overrides(ExperimentConfig(), ['frozen.facts=cat'])
     blocks = build_blocks(cfg)
     assert len(blocks) == 1 and blocks[0].name == 'cat'
-    # 11 categories since the information-preserving layers were added:
-    # prefix suffix root function entity character punct digit infl space case
+    # 12 categories after the information-preserving layers: prefix suffix root
+    # function entity character punct digit infl space case byte
     expect = len(blocks[0].classes)
-    assert frozen_width(cfg) == expect == 11, \
-        f'cat should be 11 dims, got {frozen_width(cfg)}'
+    assert frozen_width(cfg) == expect == 12, \
+        f'cat should be 12 dims, got {frozen_width(cfg)}'
     print(f'  only requested blocks are built OK (cat={expect} dims)')
 
 

@@ -55,6 +55,38 @@ def load_results(results_dir=RESULTS_DIR):
     return out
 
 
+def encoding_regime(cfg_dict):
+    """
+    Which comparison set a run belongs to.
+
+    Runs are only comparable if they encode the SAME INFORMATION. A lossy
+    morpheme stream and a Whitespace-pretokenized BPE both silently skip parts
+    of the corpus while BPB divides by all of it, so their numbers cannot be
+    put in a table beside lossless ones. Mixing them is exactly how the retired
+    'morph beats BPE by 6.3%' result arose.
+    """
+    pipe = cfg_dict.get('data', {}).get('pipeline')
+    if pipe == 'bpe':
+        path = str(cfg_dict.get('data', {}).get('bpe_path', ''))
+        return 'lossless' if 'bytelevel' in path else 'legacy'
+    sfc = cfg_dict.get('surface') or {}
+    if not sfc:
+        return 'legacy'
+    return 'lossless' if all(sfc.values()) else 'partial'
+
+
+def _load_configs(results_dir=RESULTS_DIR):
+    out = {}
+    if not os.path.isdir(results_dir):
+        return out
+    for entry in sorted(os.listdir(results_dir)):
+        p = os.path.join(results_dir, entry, 'config.json')
+        if os.path.exists(p):
+            with open(p) as f:
+                out[entry] = json.load(f)
+    return out
+
+
 def _agg(records):
     """Group by (label) and average across seeds, reporting spread."""
     groups = {}
@@ -77,15 +109,41 @@ def _agg(records):
     return rows
 
 
-def report(results_dir=RESULTS_DIR):
+def report(results_dir=RESULTS_DIR, regime=None):
     records = load_results(results_dir)
     if not records:
         print('No results yet. Run some cells first.')
         return
 
+    configs = _load_configs(results_dir)
+    for r in records:
+        r['regime'] = encoding_regime(configs.get(r['run_id'], {}))
+
+    regimes = sorted({r['regime'] for r in records})
+    if len(regimes) > 1 and regime is None:
+        print(f'\n  NOTE: results span {len(regimes)} encoding regimes '
+              f'{regimes}.')
+        print('  Cross-regime numbers are NOT comparable — a lossy stream is')
+        print('  credited with bytes it never encodes. Reporting each')
+        print('  separately. Use --regime to pick one.\n')
+
+    for reg in regimes:
+        if regime is not None and reg != regime:
+            continue
+        subset = [r for r in records if r['regime'] == reg]
+        print(f'\n{"=" * 66}')
+        print(f'REGIME: {reg}   ({len(subset)} run(s))')
+        if reg != 'lossless':
+            print('  WARNING: these streams are not information-preserving.')
+            print('  Their BPB is inflated in their own favour.')
+        print('=' * 66)
+        _report_one(subset)
+
+
+def _report_one(records):
     rows = _agg(records)
 
-    print('\n=== results (best-val, averaged over seeds) ===\n')
+    print('\n--- results (best-val, averaged over seeds) ---\n')
     hdr = f'{"cell":22} {"n":>2} {"ppl":>9} {"ppl range":>17} {"bpb":>8}'
     print(hdr)
     print('-' * len(hdr))
@@ -98,17 +156,19 @@ def report(results_dir=RESULTS_DIR):
 
     # ── Q1: segmentation, cross-pipeline -> BPB ──────────────────────────────
     print('\n--- Q1: segmentation (cross-pipeline -> BPB) ---')
-    anchor = by_label.get('bpe_baseline')
-    if anchor:
-        print(f'  bpe_baseline BPB {anchor["bpb"]:.4f}  (anchor)')
-        for name in ('morph_baseline', 'det_baseline'):
-            r = by_label.get(name)
-            if r:
-                d = r['bpb'] - anchor['bpb']
-                print(f'  {name:22} BPB {r["bpb"]:.4f}  ({d:+.4f}, '
-                      f'{"better" if d < 0 else "worse"} than BPE)')
+    # find the BPE baseline of THIS regime rather than a hardcoded label
+    anchors = [r for r in rows if r['pipeline'] == 'bpe' and not r['facts']]
+    if anchors:
+        anchor = anchors[0]
+        print(f'  {anchor["label"]:26} BPB {anchor["bpb"]:.4f}  (anchor)')
+        for r in sorted(rows, key=lambda x: x['label']):
+            if r['pipeline'] == 'bpe' or r['facts']:
+                continue
+            d = r['bpb'] - anchor['bpb']
+            print(f'  {r["label"]:26} BPB {r["bpb"]:.4f}  ({d:+.4f}, '
+                  f'{"better" if d < 0 else "worse"} than BPE)')
     else:
-        print('  (run bpe_baseline to populate the anchor)')
+        print('  (no BPE baseline in this regime to anchor against)')
 
     # ── Q2: freezing, within-pipeline -> perplexity ──────────────────────────
     print('\n--- Q2: freezing (within-pipeline -> per-token perplexity) ---')

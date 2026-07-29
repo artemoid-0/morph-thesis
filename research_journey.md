@@ -1313,3 +1313,141 @@ serve as a behaviour-preserving regression test.
 *Document updated through the frozen-embedding audit, the parameter-tying /
 information-injection reframe, and the restructure into the `morphlm` package.
 Phase 1 baselines pending.*
+---
+
+## 34. The Information-Fair Rerun — Q1 Falls, Q2 Holds
+
+With the pipeline made information-preserving (§33), every earlier number was
+void and the whole matrix was re-measured. The two legs of the thesis came apart
+cleanly, and in opposite directions.
+
+### Q1 — segmentation: the advantage was an artifact
+
+| cell | old (lossy) | new (information-fair) |
+|---|---|---|
+| bpe | 1.4162 | **1.3946** |
+| morph | 1.3268 | 1.5292 |
+| det | 1.3271 | 1.5246 |
+| morph − bpe | −0.0894 | **+0.1346** |
+
+Morpheme segmentation went from 6.3% better to 9.7% worse. A prediction made
+before the run was wrong in an instructive way: ByteLevel BPE was expected to
+get *worse*, since it now pays for whitespace the old Whitespace pre-tokenizer
+skipped. It improved instead (1.4162 → 1.3946) at essentially unchanged token
+count, because folding the space into `Ġthe` encodes 18.8% more information for
+free. Morph encodes the same information at **+104% tokens**.
+
+### Locating the loss
+
+A per-category bit accounting was run on the saved checkpoints rather than
+guessing. A prior hypothesis — that whitespace tokens explained the gap — was
+refuted by measurement: `<sp>` costs **0.245 bits/token**, not the 0.721 the
+hypothesis required, and whitespace is only 2.9% of morph's bits. Removing it
+entirely still leaves morph behind (1.4656 vs 1.3946).
+
+The real distribution:
+
+| category | % of bits | bits/token |
+|---|---|---|
+| root | 36.6% | 8.472 |
+| **character** | **24.8%** | 2.654 |
+| function | 16.1% | 3.996 |
+| infl | 1.6% | **0.807** |
+| suffix | 1.2% | **1.622** |
+| space | 2.9% | 0.245 |
+
+Two findings sit in that table. **Morphological tokens are cheap**: inflection
+at 0.807 bits and suffixes at 1.622 are far below any BPE token, so the model
+demonstrably learns and exploits the morphological structure. And **character
+fallback is the loss**: it handles 14.1% of the corpus at 2.654 bits/byte,
+nearly double both morph's own average and BPE's. Priced against plausible BPE
+rates on rare text, that excess accounts for 56–155% of the entire gap.
+
+So the correct statement is not "morphological segmentation is worse". It is:
+*where the pipeline can analyse a word it does well; where it cannot, it spells
+the word out one character at a time and pays double.*
+
+The OOV audit then identified the population precisely: 13.07% of words fall to
+characters, and **77.5% of those are capitalised** — `Meridian`, `Tikal`,
+`Radcliffe`, `Kawaguchi`. Named entities the frequency-gated entity vocabulary
+(§23, built over 6k articles with `freq>=10` for single words) never admitted.
+This is a corpus-coverage limit, not a morphological one, and it is the
+weakness §19, §21 and §26 already described qualitatively — now quantified and
+priced.
+
+### Q2 — freezing: a clean positive, with the control that proves it
+
+The frozen-embedding leg was run for the first time, injecting **one** context
+fact: coarse dependency role, 8 dimensions carved OUT of the 128 (not added).
+
+| pipeline | baseline | shuffled dep | real dep |
+|---|---|---|---|
+| morph | 6.30 | 6.51 | **6.02** |
+| det | 6.25 | 6.45 | **5.97** |
+
+| comparison | morph | det |
+|---|---|---|
+| shuffled vs baseline | +3.28% | +3.19% |
+| real dep vs baseline | **−4.46%** | **−4.58%** |
+| real dep vs shuffled | **−7.49%** | **−7.53%** |
+
+The effect appears by step 5,000 and holds in **91 of 91 evaluations** in both
+pipelines, and it is achieved with **2.63% FEWER trainable parameters**
+(5,080,552 vs 5,217,792) — 8 dimensions of guaranteed dependency role beating
+8 dimensions of free parameters.
+
+**The shuffled control is what makes this claimable.** Permuting the codes
+within each window preserves their distribution, the frozen width and the
+parameter count, removing only the alignment to tokens. Shuffled codes make the
+model *worse than baseline*, so the gain cannot be attributed to "any fixed
+structured input helps" or to a regularisation effect. `dep` vs `dep-SHUF`
+isolates the linguistic content exactly: **7.5%**.
+
+### The mechanism is the predicted one
+
+Per-frequency-bucket comparison, scored from checkpoints:
+
+| train frequency | % of val tokens | morph | det |
+|---|---|---|---|
+| 100–1k | 0.45% | −14.53% | −14.66% |
+| 1k–10k | 2.91% | −14.80% | −15.19% |
+| 10k–100k | 9.66% | −13.14% | −14.27% |
+| 100k–1M | 10.95% | −10.13% | −11.07% |
+| 1M+ | **75.97%** | −1.95% | −1.87% |
+
+Monotonic in both pipelines: rare tokens benefit **~7.5× more** than frequent
+ones. This is exactly the sample-efficiency argument from §31 — a token seen
+rarely gets little gradient signal, so its trained row is noise, while a frozen
+fact about it is correct from step 0. Because 76% of validation tokens sit in
+the highest-frequency bucket where the effect is smallest, the headline 4.5%
+substantially *understates* the mechanism.
+
+### The limitation that must be stated
+
+`spacy_tok.dep_` comes from a parser that has seen the **whole sentence**. The
+language model is autoregressive, so the dependency code at position *i* encodes
+information about tokens *i+1..N*. When the model sees `cat[nsubj]`, that label
+implies a verb is coming.
+
+This is an **oracle-feature condition**, and the result is therefore an upper
+bound on what causally-available linguistic features could provide. That is a
+standard and defensible framing in the literature, but it has to be declared
+rather than discovered by a reader. A causal variant — features derived from a
+prefix-only parse — is the natural follow-up and is left as future work.
+
+Note what the shuffled control does and does not settle: it proves the gain is
+*information*, not structure or regularisation. It does not separate locally
+available linguistic information from lookahead. Comparing `dep` against `pos`
+(far more locally determined) is the cheap partial probe, since both code sets
+are already cached.
+
+### Where this leaves the thesis
+
+The two legs separated. The **segmentation** claim — borrowed from the tokenizer
+literature — does not survive an information-fair comparison in its current
+form, and the reason is localised to OOV handling rather than to morphology. The
+**representation** claim, which is what the title was always about, produced a
+replicated 4.5% overall gain (7.5% against its own control), concentrated in
+rare tokens exactly as predicted, at a lower parameter count.
+
+---

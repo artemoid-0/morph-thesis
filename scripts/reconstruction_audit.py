@@ -54,12 +54,14 @@ def naive_reconstruct(tokens):
     This is an UPPER bound on reconstruction quality — a real decoder has no
     word-boundary oracle. If even this fails, the stream is definitively lossy.
     """
-    STANDALONE = ('space', 'punct', 'digit')
     words = []
     current = []
     current_src = None
     for t in tokens:
-        if t.get('category') in STANDALONE:
+        if t.get('category') == 'space':
+            if current:
+                words.append((current_src, ''.join(current)))
+                current, current_src = [], None
             continue
         src = t.get('word')
         if src != current_src and current:

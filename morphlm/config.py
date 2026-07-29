@@ -54,10 +54,25 @@ class FrozenConfig:
 
     Blocks only exist if requested, so the dead-dimension bug of the previous
     design (12 of 23 columns constant) cannot recur by construction.
+
+    shuffle_codes is the ABLATION CONTROL for context facts. It permutes the
+    per-position codes within each window, preserving their exact distribution
+    while destroying their alignment to the tokens. The frozen block keeps the
+    same width and the model keeps the same parameter count, so the ONLY thing
+    removed is the linguistic content.
+
+        dep beats baseline           -> could be information, could be an
+                                        artifact of having 8 frozen dims
+        shuffled dep beats baseline  -> it was the artifact
+        shuffled dep ~= baseline     -> the gain really is the linguistics
+
+    Without this control a positive Q2 result cannot distinguish 'guaranteed
+    linguistic facts help' from 'any fixed structured input helps'.
     """
     facts: Tuple[str, ...] = ()
     dep_granularity: str = 'coarse'     # coarse | fine  (one-line switch)
     amplify: int = 1                    # Lever 2: tile the frozen block
+    shuffle_codes: bool = False         # ABLATION CONTROL — see below
 
     def spec(self) -> str:
         """
@@ -219,6 +234,8 @@ class ExperimentConfig:
     def label(self) -> str:
         """Human-readable cell name, e.g. 'morph_dep' or 'bpe_baseline'."""
         facts = '+'.join(self.frozen.facts) if self.frozen.facts else 'baseline'
+        if self.frozen.facts and self.frozen.shuffle_codes:
+            facts += '-SHUF'
         sfc = self.surface_spec()
         tag = ''
         if sfc.startswith('sfc:'):

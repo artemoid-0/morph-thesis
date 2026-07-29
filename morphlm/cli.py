@@ -79,7 +79,7 @@ def cmd_cache(args):
 
 def cmd_report(args):
     from .training.metrics import report
-    report()
+    report(regime=args.regime)
 
 
 def cmd_inspect(args):
@@ -182,6 +182,9 @@ def main():
     i.set_defaults(func=cmd_inspect)
 
     rep = sub.add_parser('report', help='comparison table from saved results')
+    rep.add_argument('--regime', choices=['lossless', 'partial', 'legacy'],
+                     help='restrict to one encoding regime; results from '
+                          'different regimes are not comparable')
     rep.set_defaults(func=cmd_report)
 
     b = sub.add_parser('build', help='build data assets')

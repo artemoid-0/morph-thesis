@@ -81,9 +81,17 @@ def t_suites():
 
 # ── 3-5. torch paths ──────────────────────────────────────────────────────────
 
-def _fake_vocab(n=200):
+def _fake_vocab(n=240):
+    """
+    Synthetic vocabulary covering EVERY category.
+
+    It must cover all of them: assert_blocks_informative() rightly refuses a
+    constant frozen column, so a fixture missing the information-preserving
+    categories fails the check for the wrong reason.
+    """
     import pandas as pd
-    cats = ['prefix', 'suffix', 'root', 'function', 'entity', 'character']
+    cats = ['prefix', 'suffix', 'root', 'function', 'entity', 'character',
+            'punct', 'digit', 'infl', 'space', 'case', 'byte']
     ents = ['ORG', 'PERSON', 'GPE', 'none']
     return pd.DataFrame({
         'token': [f'tok{i}' for i in range(n)],

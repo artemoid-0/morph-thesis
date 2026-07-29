@@ -81,7 +81,12 @@ class BPEPipeline:
         if pre_tokenizer == 'bytelevel':
             from tokenizers.pre_tokenizers import ByteLevel
             from tokenizers.decoders import ByteLevel as ByteLevelDecoder
-            self.tokenizer.pre_tokenizer = ByteLevel(add_prefix_space=True)
+            # add_prefix_space MUST be False for exact round-trip. With True,
+            # a space is prepended before encoding and the decoder faithfully
+            # returns it, so decode(encode(t)) == ' ' + t. That is not
+            # information loss (a constant prefix) but it breaks the
+            # losslessness check and shifts per-line byte counts.
+            self.tokenizer.pre_tokenizer = ByteLevel(add_prefix_space=False)
             self.tokenizer.decoder = ByteLevelDecoder()
             alphabet = ByteLevel.alphabet()
         elif pre_tokenizer == 'whitespace':
@@ -101,6 +106,27 @@ class BPEPipeline:
               f'pre_tokenizer={pre_tokenizer})...')
         self.tokenizer.train_from_iterator(texts, trainer=trainer)
         print(f'  Done. Actual vocab size: {self.tokenizer.get_vocab_size()}')
+        if pre_tokenizer == 'bytelevel':
+            probes = [
+                'The cat sat on the mat.',
+                'Researchers found 42 yards, including 3 touchdowns.',
+                'Multi-word  spacing\tand "quotes" (parens) 1990s.',
+            ]
+            bad = []
+            for t in probes:
+                d = self.tokenizer.decode(self.tokenizer.encode(t).ids)
+                if d != t:
+                    bad.append((t, d))
+            if bad:
+                print('  ROUND-TRIP FAILED — this tokenizer is NOT lossless:')
+                for t, d in bad:
+                    print(f'    in : {t!r}')
+                    print(f'    out: {d!r}')
+                raise RuntimeError(
+                    'ByteLevel BPE failed its round-trip check; refusing to '
+                    'save a tokenizer that cannot reconstruct its input.')
+            print(f'  round-trip verified on {len(probes)} probes: LOSSLESS')
+
         if save_path:
             self.tokenizer.save(save_path)
             print(f'  Saved to {save_path}')

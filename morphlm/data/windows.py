@@ -30,10 +30,12 @@ from torch.utils.data import Dataset
 
 class LMWindowDataset(Dataset):
 
-    def __init__(self, stream_meta, seq_len=256):
+    def __init__(self, stream_meta, seq_len=256, shuffle_codes=False, seed=0):
         self.ids = stream_meta['ids']
         self.codes = stream_meta.get('codes')
         self.fact_names = stream_meta.get('fact_names', [])
+        self.shuffle_codes = shuffle_codes
+        self.shuffle_seed = seed
         self.seq_len = seq_len
         self.num_tokens = stream_meta['num_tokens']
         self.num_bytes = stream_meta['num_bytes']
@@ -55,7 +57,14 @@ class LMWindowDataset(Dataset):
         else:
             block = np.asarray(self.codes[:, start: start + self.seq_len],
                                dtype=np.int64)
-            c = torch.from_numpy(block)
+            if self.shuffle_codes:
+                # ABLATION: permute codes within the window. Same multiset,
+                # same frozen width, same parameter count — only the alignment
+                # between a code and its token is destroyed. Seeded by window
+                # index so the ablation is reproducible.
+                rng = np.random.default_rng(self.shuffle_seed * 1_000_003 + idx)
+                block = block[:, rng.permutation(block.shape[1])]
+            c = torch.from_numpy(np.ascontiguousarray(block))
         return x, y, c
 
     # ── metrics ───────────────────────────────────────────────────────────────
@@ -89,8 +98,14 @@ def make_datasets(pipeline, cfg, verbose=True):
                             max_articles=cfg.data.max_articles_val,
                             verbose=verbose)
 
-    train_ds = LMWindowDataset(train_meta, seq_len=cfg.data.seq_len)
-    val_ds = LMWindowDataset(val_meta, seq_len=cfg.data.seq_len)
+    shuf = getattr(cfg.frozen, 'shuffle_codes', False)
+    train_ds = LMWindowDataset(train_meta, seq_len=cfg.data.seq_len,
+                               shuffle_codes=shuf, seed=cfg.train.seed)
+    val_ds = LMWindowDataset(val_meta, seq_len=cfg.data.seq_len,
+                             shuffle_codes=shuf, seed=cfg.train.seed)
+    if shuf and verbose:
+        print('  ABLATION: context codes are SHUFFLED within each window '
+              '(distribution preserved, alignment destroyed)')
 
     if verbose:
         print(f'  train: {len(train_ds):,} windows '

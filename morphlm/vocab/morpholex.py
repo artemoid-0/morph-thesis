@@ -50,7 +50,7 @@ CATEGORY_PRIORITY = {
     # information-preserving layers (journey section 33). Low priority values
     # so they win over a same-string morpheme: '<sp>' must never resolve to a
     # root, and 's' as an inflection token is distinct from 's' as a suffix.
-    'punct': 6, 'digit': 7, 'infl': 8, 'space': 9,
+    'punct': 6, 'digit': 7, 'infl': 8, 'space': 9, 'case': 10, 'byte': 11,
 }
 
 

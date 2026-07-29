@@ -132,3 +132,68 @@ def already_marked(infl, morphemes):
         return False
     last = str(morphemes[-1]).lower()
     return last in _EXPECTED_SUFFIX.get(infl, ())
+
+
+#: Trailing differences that a single inflection marker can explain.
+#: Longest first so 'ing' is tried before 'g', 'est' before 'es'/'s'.
+_RESIDUE_SUFFIXES = (
+    ("'s", '<poss>'),
+    ('ing', '<prog>'),
+    ('est', '<sup>'),
+    ('ed', '<past>'),
+    ('es', '<plur>'),
+    ('er', '<cmp>'),
+    ('en', '<pastpart>'),
+    ('d', '<past>'),
+    ('n', '<pastpart>'),
+    ('s', '<plur>'),
+)
+
+
+def residue_marker(concat, surface):
+    """
+    Explain a TRAILING difference between the morphemes and the surface.
+
+    Needed because spaCy's POS tags hide real inflection:
+
+        gaming    tagged NOUN  -> no Tense feature at all
+        seasoned  tagged ADJ   -> no Tense feature at all
+        news      root 'new'   -> no feature could ever see this
+
+    All three collided with their base form in the audit. Deriving the marker
+    from the surface STRING instead of from features is deterministic, so
+    distinct surfaces get distinct markers and injectivity is guaranteed.
+
+    Only TRAILING differences are marked. Internal orthographic variation
+    (beauty+ful -> "beautyful" vs "beautiful") is deliberately left alone: it
+    does not collide with anything, so it needs no repair, and marking it would
+    cost a token for no information gain. That distinction is the whole reason
+    the collision audit supersedes the reconstruction audit.
+    """
+    if not concat or not surface or surface == concat:
+        return None
+
+    # straightforward addition: cat -> cats, new -> news, state -> stated
+    # NOTE: no early return here. 'shipping' starts with 'ship' but its tail
+    # ('ping') matches nothing, and it must still fall through to the
+    # doubled-consonant branch below.
+    if surface.startswith(concat):
+        tail = surface[len(concat):]
+        for suf, mark in _RESIDUE_SUFFIXES:
+            if tail == suf:
+                return mark
+
+    # doubled final consonant: ship + ing -> shipping, run + ing -> running
+    if len(concat) > 1 and surface.startswith(concat + concat[-1]):
+        tail = surface[len(concat) + 1:]
+        for suf, mark in _RESIDUE_SUFFIXES:
+            if tail == suf:
+                return mark
+
+    # one dropped character, i.e. silent e: game + ing -> gaming
+    if len(concat) > 2 and surface.startswith(concat[:-1]):
+        tail = surface[len(concat) - 1:]
+        for suf, mark in _RESIDUE_SUFFIXES:
+            if tail == suf:
+                return mark
+    return None
