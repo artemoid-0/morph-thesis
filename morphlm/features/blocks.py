@@ -59,13 +59,35 @@ class FactBlock:
     name: str = 'unnamed'
     source: str = 'vocab'
     classes: tuple = ('none',)
+    width: int = 0          # 0 means 'same as n_classes', i.e. a one-hot
 
     def __init__(self, cfg=None):
         self.cfg = cfg
 
     @property
-    def dim(self) -> int:
+    def n_classes(self) -> int:
+        """Size of the label inventory."""
         return len(self.classes)
+
+    @property
+    def dim(self) -> int:
+        """
+        Embedding dimensions this block occupies.
+
+        CARDINALITY vs WIDTH. For small inventories the two coincide and the
+        frozen representation is a one-hot: 8 dependency classes -> 8 dims.
+        Root identity has ~15k classes and cannot one-hot into 16 dims, so
+        `width` may be smaller than `n_classes`. When it is, the frozen
+        representation becomes a FIXED RANDOM PROJECTION — every class still
+        gets a distinct unchanging vector, in far fewer dimensions. That is
+        Lever 3 from journey section 27, unbuilt until now.
+        """
+        return self.width or len(self.classes)
+
+    @property
+    def is_projection(self) -> bool:
+        """True when a one-hot is impossible because width < n_classes."""
+        return self.dim < self.n_classes
 
     def index(self, value) -> int:
         """Map a raw label to a class index, falling to the sentinel."""
@@ -79,12 +101,14 @@ class FactBlock:
 
     def onehot(self, idx: int) -> np.ndarray:
         v = np.zeros(self.dim, dtype=np.float32)
-        v[idx] = 1.0
+        if idx < self.dim:
+            v[idx] = 1.0
         return v
 
     def __repr__(self):
         return (f'{self.__class__.__name__}(name={self.name!r}, '
-                f'source={self.source!r}, dim={self.dim})')
+                f'source={self.source!r}, classes={self.n_classes}, '
+                f'dim={self.dim})')
 
 
 # ── static facts (function of token id) ───────────────────────────────────────
@@ -237,6 +261,96 @@ class EntityContextBlock(FactBlock):
 
     def code(self, token: dict) -> int:
         return self.index(token.get('entity_label'))
+
+
+# ── morphological facts (attachable to ANY tokenizer, incl. BPE) ─────────────
+
+@register_fact('mstruct')
+class MorphStructBlock(FactBlock):
+    """
+    Morphological structure of the word a token belongs to: simple, prefixed,
+    suffixed, both, compound, entity, unanalysed.
+
+    CONTEXT-sourced even though it is a property of the word type, because for
+    BPE the same token id appears inside different words — `ing` sits in
+    `running` (suffixed) and in `thing` (simple). A static id->fact table
+    therefore cannot express it.
+    """
+    source = 'context'
+
+    def __init__(self, cfg=None):
+        super().__init__(cfg)
+        from .morph_analysis import STRUCT_CLASSES
+        self.classes = STRUCT_CLASSES
+
+    def code(self, token: dict) -> int:
+        return self.index(token.get('mstruct'))
+
+
+@register_fact('mrole')
+class MorphRoleBlock(FactBlock):
+    """
+    Which region of its word a token covers: prefix, root, suffix or whole.
+    Tells a BPE model that `uring` is suffix material while `fig` is root
+    material — a distinction its frequency-driven merges never encode.
+    """
+    source = 'context'
+
+    def __init__(self, cfg=None):
+        super().__init__(cfg)
+        from .morph_analysis import ROLE_CLASSES
+        self.classes = ROLE_CLASSES
+
+    def code(self, token: dict) -> int:
+        return self.index(token.get('mrole'))
+
+
+@register_fact('mroot')
+class MorphRootBlock(FactBlock):
+    """
+    Lemma-normalised ROOT of the word a token belongs to. The strongest
+    morphological fact available and the one BPE structurally cannot have:
+    its merges are frequency-driven, so `running`, `runner` and `ran` are
+    unrelated symbols to it.
+
+    ~15k classes, so one-hot is impossible; width comes from
+    `frozen.root_width` (default 16). Frozen mode uses a fixed random
+    projection; learned mode uses an nn.Embedding of the same shape.
+
+    Unlike `dep` this fact has NO LOOKAHEAD — the root of a word depends only
+    on that word, so it is causally available during generation.
+    """
+    source = 'context'
+
+    def __init__(self, cfg=None):
+        super().__init__(cfg)
+        self.width = int(getattr(getattr(cfg, 'frozen', None),
+                                 'root_width', 16) or 16)
+        n = int(getattr(getattr(cfg, 'frozen', None), 'n_roots', 0) or 0)
+        if not n:
+            from ..vocab.build import load_vocab
+            v = load_vocab(cfg.data.vocab_csv)
+            # MUST match WordAnalyser.root_classes exactly: roots + entities +
+            # none. A mismatch here would silently shift every cached code.
+            n = (int((v['category'] == 'root').sum())
+                 + int((v['category'] == 'entity').sum()) + 1)
+        # placeholder labels: only the COUNT matters for sizing, and materialising
+        # 15k strings on every block construction would be wasteful
+        self.classes = tuple(range(n))
+        assert n < 32767, ('root inventory exceeds int16, which is the cache '
+                           'code dtype')
+
+    def index(self, value) -> int:
+        if value is None:
+            return self.n_classes - 1
+        try:
+            v = int(value)
+        except (TypeError, ValueError):
+            return self.n_classes - 1
+        return v if 0 <= v < self.n_classes else self.n_classes - 1
+
+    def code(self, token: dict) -> int:
+        return self.index(token.get('mroot'))
 
 
 # ── assembly ──────────────────────────────────────────────────────────────────

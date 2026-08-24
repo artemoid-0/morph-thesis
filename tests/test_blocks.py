@@ -170,6 +170,94 @@ def test_category_resolution_is_fast_and_equivalent():
           f'tokens OK')
 
 
+def test_morph_facts_are_context_sourced():
+    """
+    Morphological facts must be CONTEXT facts for BPE. The same BPE token id
+    appears inside different words — 'ing' in 'running' (root=run) and in
+    'thing' (root=thing) — so a static id->fact table cannot express them.
+    """
+    from morphlm.registry import context_facts, static_facts
+    for f in ('mroot', 'mstruct', 'mrole'):
+        assert f in context_facts((f,)), f'{f} must be context-sourced'
+        assert f not in static_facts((f,)), f'{f} must not be vocab-sourced'
+    print('  morphological facts are context-sourced OK')
+
+
+def test_root_block_is_a_projection():
+    """
+    Root identity has ~15k classes and cannot one-hot into 16 dims, so the
+    block must report width < n_classes and be flagged as a projection.
+    """
+    if not os.path.exists(VOCAB):
+        print('  (skipped: vocab not present)')
+        return
+    cfg = apply_overrides(ExperimentConfig(),
+                          ['data.pipeline=bpe', 'frozen.facts=mroot'])
+    b = build_blocks(cfg)[0]
+    assert b.n_classes > 1000, f'expected a large root inventory, got {b.n_classes}'
+    assert b.dim == 16, f'expected default width 16, got {b.dim}'
+    assert b.is_projection, 'root block must be a projection'
+    assert b.n_classes < 32767, 'root codes must fit int16 (the cache dtype)'
+    print(f'  root block: {b.n_classes:,} classes -> {b.dim} dims, projection OK')
+
+
+def test_root_inventory_matches_analyser():
+    """
+    The root block sizes itself from the vocabulary; the analyser builds the
+    actual class list. If the two disagree by even one, every cached code
+    decodes to the wrong root and the experiment is silently invalid.
+    """
+    if not os.path.exists(VOCAB):
+        print('  (skipped: vocab not present)')
+        return
+    from morphlm.vocab.build import load_vocab
+    cfg = apply_overrides(ExperimentConfig(),
+                          ['data.pipeline=bpe', 'frozen.facts=mroot'])
+    block = build_blocks(cfg)[0]
+    v = load_vocab(cfg.data.vocab_csv)
+    n = (int((v['category'] == 'root').sum())
+         + int((v['category'] == 'entity').sum()) + 1)
+    assert block.n_classes == n, \
+        f'block says {block.n_classes}, analyser inventory is {n}'
+    print(f'  root inventory consistent: {n:,} classes OK')
+
+
+def test_bpe_free_ride_builds_every_context_fact():
+    """
+    One expensive BPE pass must serve every future BPE experiment. If it built
+    only the requested fact, each new experiment would need its own multi-hour
+    spaCy+MorphoLex pass and its own codes file.
+    """
+    from morphlm.data.stream import facts_to_build, ALL_CONTEXT_FACTS, codes_spec
+    base = apply_overrides(ExperimentConfig(), ['data.pipeline=bpe'])
+    assert facts_to_build(base) == (), 'a plain BPE baseline must pay nothing'
+    specs = set()
+    for f in ('mroot', 'mstruct', 'dep', 'mroot,mstruct'):
+        c = apply_overrides(base, [f'frozen.facts={f}'])
+        assert facts_to_build(c) == ALL_CONTEXT_FACTS
+        specs.add(codes_spec(list(facts_to_build(c)), 'coarse'))
+    assert len(specs) == 1, f'requests must share one codes file, got {specs}'
+    print('  BPE free-ride: one codes file serves all fact requests OK')
+
+
+def test_bpe_alignment_scans_the_span():
+    """
+    Regression test for the bug that would have voided every BPE context-fact
+    run: ByteLevel folds the preceding space into the token, so the start
+    offset lands on unannotated whitespace.
+    """
+    from morphlm.pipelines.bpe import _first_annotated
+    ann = [None] * 22
+    for s_, e_, v in [(0, 3, 'det'), (4, 7, 'nsubj')]:
+        for c in range(s_, e_):
+            ann[c] = v
+    assert _first_annotated(ann, 3, 7) == 'nsubj', \
+        'word-initial token must resolve despite its leading space'
+    assert _first_annotated(ann, 0, 3) == 'det'
+    assert _first_annotated(ann, 10, 14) is None
+    print('  BPE span-scan alignment OK (start-offset bug guarded)')
+
+
 if __name__ == '__main__':
     test_baseline_is_empty()
     test_no_block_without_request()
@@ -180,4 +268,9 @@ if __name__ == '__main__':
     test_old_schema_would_fail()
     test_vocab_loader_preserves_na_morphemes()
     test_category_resolution_is_fast_and_equivalent()
+    test_morph_facts_are_context_sourced()
+    test_root_block_is_a_projection()
+    test_root_inventory_matches_analyser()
+    test_bpe_free_ride_builds_every_context_fact()
+    test_bpe_alignment_scans_the_span()
     print('test_blocks: PASS')

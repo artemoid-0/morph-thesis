@@ -75,6 +75,8 @@ def main():
     pipe = build_pipeline(cfg, verbose=False)
 
     ds = load_dataset('wikitext', 'wikitext-103-raw-v1', split=args.split)
+    from morphlm.progress import Progress
+    prog = Progress(total=args.lines)
 
     total_words = 0
     char_words = 0
@@ -126,7 +128,7 @@ def main():
 
         processed += 1
         if processed % 500 == 0:
-            print(f'  {processed} lines, {total_words:,} words...')
+            print(f'  {processed} lines, {total_words:,} words | {prog.status(processed)}')
 
     print()
     print('=' * 70)

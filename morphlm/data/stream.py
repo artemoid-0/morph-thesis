@@ -46,7 +46,7 @@ import numpy as np
 CACHE_DIR = 'data/cache'
 
 #: Every context fact worth computing on a free-ride pass.
-ALL_CONTEXT_FACTS = ('dep', 'pos', 'ectx')
+ALL_CONTEXT_FACTS = ('dep', 'pos', 'ectx', 'mstruct', 'mrole', 'mroot')
 
 #: Pipelines that already run spaCy for their own reasons.
 SPACY_NATIVE = ('morph', 'det')
@@ -76,13 +76,21 @@ def facts_to_build(cfg):
     Which context facts this pass should COMPUTE (not necessarily use).
 
     spaCy-native pipelines compute everything, because the parse is already
-    paid for. BPE computes only what was asked, because for it the parse is new.
+    paid for.
+
+    BPE now does the same AS SOON AS ANY context fact is requested. Its pass is
+    genuinely new — spaCy plus, for morphological facts, MorphoLex — so it is
+    expensive, but it is expensive ONCE. Computing only the requested fact would
+    mean a fresh multi-hour pass for every new BPE experiment, and each pass
+    would write a different codes file. Building all of them together is the
+    single decision that keeps the Level-2 experiment programme to one cache
+    build.
     """
     from ..registry import context_facts
     requested = context_facts(cfg.frozen.facts)
     if cfg.data.pipeline in SPACY_NATIVE:
         return ALL_CONTEXT_FACTS
-    return tuple(requested)
+    return ALL_CONTEXT_FACTS if requested else ()
 
 
 def build_stream(pipeline, cfg, split='train', max_articles=None,
@@ -160,6 +168,7 @@ def build_stream(pipeline, cfg, split='train', max_articles=None,
                   'parses with spaCy)')
 
     from datasets import load_dataset
+    from ..progress import Progress, fmt_duration
     ds = load_dataset('wikitext', 'wikitext-103-raw-v1', split=split)
 
     blocks = [get_fact(name)(cfg) for name in build_facts]
@@ -169,8 +178,20 @@ def build_stream(pipeline, cfg, split='train', max_articles=None,
     num_bytes = 0
     num_chars = 0
     processed = 0
+    seen_rows = 0
+
+    # Progress is tracked over ROWS CONSUMED, not articles kept: blank lines and
+    # headers are skipped, so `processed` advances unevenly and would give a
+    # misleading ETA. When max_articles caps the run, that cap is the total.
+    try:
+        total_rows = len(ds)
+    except TypeError:
+        total_rows = None
+    prog = Progress(total=(max_articles if max_articles is not None
+                           else total_rows))
 
     for row in ds:
+        seen_rows += 1
         if max_articles is not None and processed >= max_articles:
             break
         text = row['text'].strip()
@@ -194,7 +215,9 @@ def build_stream(pipeline, cfg, split='train', max_articles=None,
         num_chars += len(text)
         processed += 1
         if verbose and processed % 2000 == 0:
-            print(f'    {processed} articles, {len(all_ids):,} tokens...')
+            done = processed if max_articles is not None else seen_rows
+            print(f'    {processed:,} articles, {len(all_ids):,} tokens '
+                  f'| {prog.status(done)}')
 
     arr = np.asarray(all_ids, dtype=np.int32)
     np.save(ids_npy, arr)
@@ -229,7 +252,8 @@ def build_stream(pipeline, cfg, split='train', max_articles=None,
 
     if verbose:
         print(f'  [cached] {ids_stem}: {meta["num_tokens"]:,} tokens, '
-              f'{meta["num_bytes"]:,} bytes')
+              f'{meta["num_bytes"]:,} bytes '
+              f'| built in {fmt_duration(prog.elapsed)}')
         if blocks:
             print(f'  [cached] codes {build_facts} -> {codes_stem}')
 

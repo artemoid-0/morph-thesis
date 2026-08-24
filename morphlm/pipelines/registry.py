@@ -18,9 +18,19 @@ def _needs_context(cfg) -> bool:
 @register_pipeline('bpe')
 def _build_bpe(cfg, verbose=True):
     from .bpe import BPEPipeline
+    from ..data.stream import facts_to_build
+    analyser = None
+    # the analyser loads MorphoLex, so build it only when a morphological fact
+    # will actually be computed on this pass
+    if set(facts_to_build(cfg)) & {'mroot', 'mstruct', 'mrole'}:
+        from ..features.morph_analysis import build_analyser
+        if verbose:
+            print('  loading morphological analyser for BPE feature injection...')
+        analyser = build_analyser(cfg, verbose=verbose)
     return BPEPipeline(tokenizer_path=cfg.data.bpe_path,
                        spacy_model=cfg.data.spacy_model,
                        want_context=_needs_context(cfg),
+                       analyser=analyser,
                        verbose=verbose)
 
 

@@ -29,16 +29,44 @@ is never loaded and this pipeline behaves exactly as before.
 from __future__ import annotations
 
 
+def _first_annotated(arr, start, end):
+    """
+    First annotated character inside a token's span.
+
+    CRITICAL, and the source of a bug that would have silently voided every
+    BPE + context-fact experiment: ByteLevel folds the preceding space INTO the
+    following token, so a word-initial token spans " cat" and its START OFFSET
+    lands on whitespace, which no spaCy token covers. Indexing by start offset
+    therefore returned None for every word-initial token — 78% of the BPE
+    stream (211,300 of 270,848, measured in category_bits). Scanning the span
+    fixes it: 17% -> 100% alignment on a synthetic sentence.
+
+    Same class of error as the region-attribution bug in coverage_economics
+    (journey section 35). Alignment logic is the default suspect here.
+    """
+    if arr is None:
+        return None
+    n = len(arr)
+    for c in range(max(start, 0), min(end, n)):
+        if arr[c] is not None:
+            return arr[c]
+    return None
+
+
 class BPEPipeline:
     """HuggingFace BPE wrapped in the shared pipeline interface."""
 
     def __init__(self, tokenizer_path=None, vocab_size=10000,
                  spacy_model='en_core_web_sm', want_context=False,
-                 verbose=True):
+                 analyser=None, verbose=True):
         from tokenizers import Tokenizer
 
         self.vocab_size = vocab_size
         self.want_context = want_context
+        # WordAnalyser, present only when morphological facts are wanted.
+        # This is what lets a BPE-tokenized model receive morphology WITHOUT
+        # adopting morphological segmentation — the Level-2 design.
+        self.analyser = analyser
         self._spacy_model = spacy_model
         self._nlp = None
         self.align_ok = 0
@@ -153,6 +181,9 @@ class BPEPipeline:
         deps = [None] * n
         poss = [None] * n
         ents = [None] * n
+        mroot = [None] * n
+        mstruct = [None] * n
+        mrole = [None] * n
         for tok in doc:
             start, end = tok.idx, tok.idx + len(tok.text)
             label = tok.ent_type_ if tok.ent_type_ else None
@@ -160,31 +191,45 @@ class BPEPipeline:
                 deps[c] = tok.dep_
                 poss[c] = tok.pos_
                 ents[c] = label
-        return deps, poss, ents
+            if self.analyser is None or not tok.is_alpha:
+                continue
+            root, struct, regions = self.analyser.analyse(tok.text)
+            rcode = self.analyser.root_code(root)
+            for c in range(start, min(end, n)):
+                mroot[c] = rcode
+                mstruct[c] = struct
+            for a, b, role in regions:
+                for c in range(start + a, min(start + b, n)):
+                    mrole[c] = role
+        return deps, poss, ents, mroot, mstruct, mrole
 
     # ── encoding ──────────────────────────────────────────────────────────────
 
     def encode(self, text):
         encoding = self.tokenizer.encode(text)
 
-        deps = poss = ents = None
+        deps = poss = ents = mroot = mstruct = mrole = None
         if self.want_context:
-            deps, poss, ents = self._char_annotation_map(text)
+            (deps, poss, ents,
+             mroot, mstruct, mrole) = self._char_annotation_map(text)
 
         result = []
         for idx, (token, token_id) in enumerate(
                 zip(encoding.tokens, encoding.ids)):
             dep = pos = ent = None
+            mr = ms = mrl = None
             if self.want_context:
                 start, end = encoding.offsets[idx]
-                if 0 <= start < len(deps):
-                    dep, pos, ent = deps[start], poss[start], ents[start]
-                    if dep is None:
-                        self.align_fail += 1
-                    else:
-                        self.align_ok += 1
-                else:
+                dep = _first_annotated(deps, start, end)
+                pos = _first_annotated(poss, start, end)
+                ent = _first_annotated(ents, start, end)
+                mr = _first_annotated(mroot, start, end)
+                ms = _first_annotated(mstruct, start, end)
+                mrl = _first_annotated(mrole, start, end)
+                if dep is None:
                     self.align_fail += 1
+                else:
+                    self.align_ok += 1
             result.append({
                 'token_id': token_id,
                 'token': token,
@@ -194,6 +239,9 @@ class BPEPipeline:
                 'word': token,
                 'dep': dep,
                 'pos': pos,
+                'mroot': mr,
+                'mstruct': ms,
+                'mrole': mrl,
             })
         return result
 

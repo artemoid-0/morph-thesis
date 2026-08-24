@@ -1,6 +1,19 @@
+# Python
 __pycache__/
-*.pyc
-data/cache/
-results/
-.ipynb_checkpoints/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+
+# IDE / OS
 .idea/
+.DS_Store
+
+# 12 GB of regenerable token streams + the morpholex pickle
+data/cache/
+
+# Keep the JSON metrics, drop the weights and bundles
+results/**/*.pt
+results/**/*.npy
+results/**/*.zip

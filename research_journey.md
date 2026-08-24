@@ -3,6 +3,18 @@
 
 *A chronological record of every decision, fork, dead end, and breakthrough from initial idea to working implementation.*
 
+> **Companion documents.**
+> `results_reference.md` — every experimental number, all 23 run IDs, the full
+> model and training configuration, all audit results, the script inventory, the
+> known-limitations table and the bug record. This document explains *why*;
+> that one holds the *data*.
+> `literature_analysis.md` — full reads of MorphPiece, Hou et al. 2023,
+> Bostrom & Durrett 2020, FLOTA and Factored Neural LMs, with a
+> dimension-by-dimension comparison against this project.
+>
+> Together with the codebase these three files are intended to be a complete
+> source of truth: no result quoted anywhere should be absent from them.
+
 ---
 
 ## Table of Contents
@@ -36,6 +48,16 @@
 27. [Designing the Frozen Embedding Layer](#27-designing-the-frozen-embedding-layer)
 28. [The Dataset, Model, and the Fairness Metric](#28-the-dataset-model-and-the-fairness-metric)
 29. [Calibration and Literature Grounding](#29-calibration-and-literature-grounding)
+30. [The Frozen Embedding Audit](#30-the-frozen-embedding-audit)
+31. [Parameter Tying vs Information Injection](#31-parameter-tying-vs-information-injection)
+32. [Restructuring — Reversing the Flat-Layout Decision](#32-restructuring--reversing-the-flat-layout-decision)
+33. [The Information Channel Audit — Making the Comparison Fair](#33-the-information-channel-audit--making-the-comparison-fair)
+34. [The Information-Fair Rerun — Q1 Falls, Q2 Holds](#34-the-information-fair-rerun--q1-falls-q2-holds)
+35. [Localising the Q1 Deficit — Coverage, Decomposition, and the Unified Finding](#35-localising-the-q1-deficit--coverage-decomposition-and-the-unified-finding)
+36. [Literature Grounding — Who Has Done This Already](#36-literature-grounding--who-has-done-this-already)
+37. [Completing the Controls — Matched Vocabulary, Frozen vs Learned, and Signal Scale](#37-completing-the-controls--matched-vocabulary-frozen-vs-learned-and-signal-scale)
+38. [Why English Resists — and the Turn from Confrontation to Cooperation](#38-why-english-resists--and-the-turn-from-confrontation-to-cooperation)
+39. [Level 2 — Morphology as Features on a BPE-Tokenized Model](#39-level-2--morphology-as-features-on-a-bpe-tokenized-model)
 
 ---
 
@@ -972,46 +994,6 @@ Reference numbers were gathered with proper caveats, to avoid the central trap: 
 
 **Reporting rules locked in:** never compare raw perplexity to the 18.3 leaderboard (different units); headline cross-pipeline metric is BPB; the honest peer class is "small models trained from scratch on WikiText-103 with BPE," with GPT-2 Small's ~29 as a "what 35× more parameters buys" reference point.
 
----
-
-## Appendix: Key Decisions Summary
-
-| Decision | Chosen Option | Rejected Options | Reason |
-|---|---|---|---|
-| Intervention point | Embedding layer | Tokenizer only; full architecture change | Transformer unchanged; clean separation |
-| Unit granularity | Morpheme-level | Word-level; phrase-level | Smaller vocab; closer to BPE; better OOV |
-| Named entity handling | Atomic units | Morpheme-segment them; ignore them | Proper nouns not compositionally meaningful |
-| Vocabulary threshold | Source-based (MorphoLex) | Frequency-based | Frequency conflates noise with rare-but-real |
-| Morfessor role | Affix-only fallback | Full segmentation; removal | Roots unreliable; affixes more trustworthy |
-| Capitalisation guard | Rejected | Applied temporarily | Typographic heuristic, not linguistic principle |
-| Number of pipelines | Three (BPE + morph + det) | Two (BPE + morph) | Isolates Morfessor's contribution |
-| Codebase structure | Flat (7 files) | Deep hierarchy (15+ files) | Communication overhead too high |
-| Evaluation method | Perplexity + probing | Generation-based metrics | No generation needed; probing more informative |
-| Entity threshold | Split threshold (multi-word≥3, single≥10) | Flat threshold; MorphoLex exclusion; length filter; curated list | Structure of token is a reliable signal of misclassification risk |
-| Compound splitting | Implemented with particle exception | Not implemented; minimum length only | Concrete wins; false positive risk negligible for genuine OOV |
-| Compound particle handling | FUNCTION_WORDS exception for 2-char right parts | Minimum length 4; ignore particles | Particles are linguistically productive; blocking them causes `star+tup` class errors |
-| Frozen dim content | One-hot (A) and feature vectors (B) — both built | Pretrained GloVe (C) | C muddles the thesis with externally learned signal |
-| Frozen/trained combination | Concatenation | Addition | Addition lets training cancel the frozen signal, defeating guaranteed presence |
-| Ragged structure | Fixed schema, zero-fill, explicit 'none' slots | Variable-width per token | Frozen vector must be uniform width; 'none' is meaningful, not missing |
-| Frozen signal strength | Small N default + amplification/projection/probe levers in reserve | Accept weak 4.5% signal at N=512 | Frozen block must be a meaningful fraction of the vector to matter |
-| Option B root features | B1 (one-hot) now; B3 (WordNet) later | B2 (coarse hand-annotated roots) | 15k roots can't be hand-annotated; WordNet is a discrete taxonomy, hand-features infeasible |
-| Embedding experiment design | Phased matrix (pipelines × frozen variants) | Single fixed embedding design | Turns design uncertainty into measurable comparison, like the 3 pipelines |
-| Embedding ownership | Model owns HybridEmbedding; dataset emits IDs only | Dataset emits vectors | Embedding is the thesis contribution; its trained part has gradients |
-| Cross-pipeline metric | Bits-per-byte (BPB) | Per-token perplexity; BPC | Per-token PPL not comparable across tokenizations; BPB robust to non-ASCII; Mielke→Pile→Paloma lineage |
-| Within-pipeline metric | Per-token perplexity | BPB only | Same tokenization → fair and more sensitive for detecting freezing effect |
-| Document boundaries | Ignore (concatenate-and-chop) | Respect boundaries | Standard GPT-2 practice; seam noise negligible at L=256 |
-| Corpus caching | Tokenize once, save int stream, mmap | Re-tokenize each epoch | spaCy + morpheme segmentation far too slow to repeat |
-| Model role | Fixed apparatus, small, standard | Best/largest model | Transformer measures the embedding, isn't the variable; small keeps hypothesis testable |
-| d_model | 128 (= N) | 256/512 | Pinned by frozen-fraction (Lever 1): 23-dim block must be a meaningful share |
-| Model depth | 4 layers (shallow on purpose) | 6+ layers | Shallow keeps reliance on input representation, where the hypothesis lives; calibration-confirmed |
-| Output tying | Configurable; 'none' for Phase 1 | Always tied; always untied | Untied keeps frozen role on input side; option C (tie frozen) reserved as hook |
-| Architecture selection | Calibrate against BPE-baseline curve | Choose size by argument | Measurement beats judgment; confirmed Goldilocks regime (64.9 ppl / 1.438 BPB) |
-| Reported metric point | Best-val (early-stopped) | Last-val | Overfitting after the minimum must not contaminate the comparison |
-
----
-
-*Document updated through the calibration of the experimental apparatus: dataset, model, training loop, and the BPE-baseline anchor result (64.9 ppl / 1.438 BPB), with literature grounding for the eventual paper.*---
-
 ## 30. The Frozen Embedding Audit
 
 Everything was built, calibrated, and ready. The five Phase-1 cells were about
@@ -1293,26 +1275,194 @@ serve as a behaviour-preserving regression test.
 
 ---
 
-## Appendix additions — Key Decisions
+## 33. The Information Channel Audit — Making the Comparison Fair
 
-| Decision | Chosen Option | Rejected Options | Reason |
-|---|---|---|---|
-| Frozen block content | Composed blocks, width derived | Fixed 23-dim schema | Sized by label inventory, not information; 12 of 23 columns were constant |
-| Frozen fact axis | Static vs context source | Treat all frozen facts alike | Static = parameter tying; context = information a lookup table cannot hold |
-| v1 context fact | Dependency role only, coarse | Full set at once; fine-grained | Unambiguous result, legible ladder; granularity is a one-line switch |
-| Dataset payload | ids + integer codes | ids only (§28) | Frozen metadata has no gradients, so §28's reasoning never applied |
-| BPE freezing | Enabled via char-offset alignment | Morpheme pipelines only | Decouples segmentation from injection; makes the matrix a true 2×3 |
-| Onehot cells | Not run | Run as designed | Would confound "flags don't help" with "12 dims were constant" |
-| LR schedule | `lr_horizon` separate from `max_steps` | Single field | One field doing both jobs made different-length cells incomparable |
-| Seeding | Seeded, seed in run identity | Unseeded single runs | Small expected effect cannot be told from init noise |
-| Codebase layout | Package (`morphlm/`) | Flat 7 files (§20) | §20's premise (chat-paste overhead) expired; flat was about to cause two silent bugs |
-| Frozen validation | Population-level assertions in tests | Per-token spot checks | Per-token checks passed while the population property failed |
+The first Phase-1 results arrived and looked like a clean win: morph 1.3268 BPB
+and det 1.3271 against a BPE anchor of 1.4162, a 6.3% advantage that appeared by
+step 5,000 and held flat to 50k. The parameter asymmetry (+51% for the morpheme
+pipelines, from a larger vocabulary hitting both the embedding and the untied
+output head) was noted as a limitation, and the result looked ready to write up.
 
----
+It was an artifact. Finding that out took four audits and reversed the sign of
+the headline number.
 
-*Document updated through the frozen-embedding audit, the parameter-tying /
-information-injection reframe, and the restructure into the `morphlm` package.
-Phase 1 baselines pending.*
+### The question that started it
+
+Bits-per-byte divides the model's total surprise by the byte count of the
+**original text**. That normalisation is only fair if both token streams encode
+the same information. BPE is lossless by construction — concatenating its tokens
+reproduces the input. The morpheme pipelines might not be, and the journey's own
+tables said so:
+
+```
+cats       -> cat            the plural -s is gone
+running    -> run            the progressive -ing is gone
+beautiful  -> beauty + ful   concatenates to "beautyful"
+```
+
+§9 celebrated MorphoLex's lemma normalisation as solving morphophonology "for
+free". For a tagger that is a feature. For a language model scored in BPB it is
+a liability: a stream that cannot reconstruct the bytes is being credited with
+bytes it never predicted.
+
+### Audit 1 — reconstruction (and what it got wrong)
+
+The first audit asked whether concatenating a word's morphemes reproduces the
+surface form. Result: **18.06% of words could not be rebuilt**, 72% byte
+recovery.
+
+That number, and the correction estimated from it, turned out to overstate the
+problem — and understanding *why* sharpened the whole investigation. The test
+that matters for BPB is not reconstruction but **injectivity**: do two
+*different* texts map to the *same* token sequence?
+
+```
+cat  -> [cat]  and  cats -> [cat]      COLLISION. Information destroyed.
+beautiful -> [beauty, ful]             concatenation fails, but no OTHER word
+                                       maps here, so a decode table recovers it
+```
+
+BPE's merge table is side information too, and nobody counts it against BPE. A
+morpheme→surface table is the same kind of object. What cannot be excused is two
+distinct inputs producing one output. This distinction retired the reconstruction
+audit in favour of a collision audit, and it is the single most useful conceptual
+move in this section.
+
+### A real bug found on the way
+
+The reconstruction failures included a class where whole morphemes vanished:
+`highway → high`, `touchdowns → touch`. Investigation found
+`parse_morpholex_segm` collecting roots with `re.search` — first match only —
+while MorphoLex writes compounds with several parenthesised roots:
+`{(high)(way)}`, `{(book)(keep)}>er>`.
+
+Same family as the format-B bug of §16: a regex matching one instance of
+something that occurs many times. **8,453 entries affected (12.3% of MorphoLex)
+— larger than §16's 4,941.** The fix recovered Greek/Latin combining forms as
+well as compounds: `log` (267 occurrences), `graph` (158), `meter`, `amphi`,
+`alti`. So `photograph` now shares `graph` with `telegraph` — morpheme sharing
+that is exactly the mechanism the thesis argues for, and that was invisible
+before. Vocabulary grew by 83 roots.
+
+### Audit 2 — collisions
+
+Grouping surface forms by token-ID sequence and summing −log2 P(surface | seq)
+gives the exact context-free correction. First measurement: **0.0440 BPB**, with
+2,064 colliding groups covering 28.5% of word occurrences — almost entirely
+inflectional paradigms:
+
+```
+{include:40, included:88, includes:18, including:140}
+{year:120, years:108}
+{make:49, made:123, makes:8, making:23}
+```
+
+### Audit 3 — coverage, and the channel nobody had looked for
+
+The collision audit's output contained a group that made no linguistic sense:
+punctuation and digits appearing as surface forms. Tracing it led to a line in
+`encode()`:
+
+```python
+if not spacy_tok.is_alpha:
+    continue
+```
+
+**The morpheme pipelines emitted nothing at all for punctuation, digits or
+symbols.** BPE's pre-tokenizer splits on word/non-word boundaries and *does*
+emit them. Both were divided by the same byte count.
+
+Measured: **det covered 1.9% of punctuation bytes and 5.5% of digit bytes
+against BPE's 99.5% and 99.7% — an asymmetry of 22,480 bytes, 5.32% of the
+corpus.** Unlike the collision problem, which is a shared limitation in kind,
+this was asymmetric between the two arms of Q1, so it biased the comparison
+directly. It was also larger than everything else found.
+
+At that point the ledger said the advantage was gone: coverage bias ~0.092 plus
+collision 0.044 = 0.136 BPB against an observed gap of 0.089.
+
+### The six channels
+
+The audits together identified every way the morpheme stream differed from the
+text it was scored against:
+
+| # | channel | measured | lossy? | fix |
+|---|---|---|---|---|
+| 1 | punctuation & digits dropped | 5.32% of corpus | yes | emit as tokens |
+| 2 | inflection collapsed | 0.0440 BPB | yes | explicit `<plur>`/`<past>`/… |
+| 3 | case lowercased | asymmetric | yes | `<cap>`/`<upper>` marker |
+| 4 | whitespace dropped | 18.8% of bytes | by BOTH | `<sp>`/`<nl>`/`<tab>` |
+| 5 | orthographic (`beauty+ful`) | injective | **no** | decode table, document it |
+| 6 | UNK as collision sink | 645 occurrences | yes | UTF-8 byte fallback |
+
+Channel 5 is the one that needed *no* change, and saying so matters: the
+lemma-normalised root is what makes `beauty` shareable across *beauty,
+beautiful, beautify, beautician*. That is the thesis mechanism, and it does not
+collide with anything.
+
+Channel 4 was symmetric, so it never biased Q1 — but it meant neither BPB was a
+true compression rate or comparable to any published figure.
+
+### Building the information-preserving pipeline
+
+Every channel became a `SurfaceConfig` flag rather than a hardcoded fix, so each
+one's contribution can be ablated and reported separately; all-off reproduces
+the legacy stream byte-for-byte, and a test asserts it. On the BPE side the
+tokenizer was retrained with a **ByteLevel** pre-tokenizer (GPT-2 standard,
+lossless by construction), with a round-trip check that refuses to save a
+tokenizer that cannot reconstruct its input.
+
+Two rounds of measurement then drove the remaining work:
+
+- Inflection from spaCy's POS features alone missed cases where the tag hides
+  the inflection — gerunds tagged NOUN (`gaming`), participles ADJ (`seasoned`),
+  and MorphoLex root mismatches invisible to any feature (`news` → root `new`).
+  A `residue_marker` deriving the marker from the trailing surface difference
+  fixed all of them, and — importantly — is deterministic on the surface string,
+  so injectivity is guaranteed rather than hoped for. It deliberately does *not*
+  fire on channel 5 cases.
+- UNK turned out to be a collision sink: every unknown string mapping to one id.
+  En-dash, em-dash, degree and pound all collapsed together. A 256-row UTF-8
+  byte fallback makes the encoding **total**, so injectivity no longer depends
+  on the vocabulary happening to cover the input.
+
+Final vocabulary: 17,151 entries across twelve categories.
+
+### Result
+
+**Collision correction 0.0440 → 0.0008 BPB.** Colliding occurrences 28.5% →
+0.75%. Coverage asymmetry 5.32% → −0.02% (det now covers marginally *more* than
+BPE). The stream is information-preserving.
+
+The residual collisions are findings rather than bugs, and belong in the thesis
+as stated costs of lemma-normalised, database-driven segmentation:
+
+- **dialectal normalisation** — `{honor, honour}`, `{colour, color}`,
+  `{travelled, traveled}`: MorphoLex stores American spellings
+- **homograph conflation** — `{found:57, founded:10}`, `{surveillance, survey}`:
+  one root for two words; no surface rule can separate them
+- **multi-word entity spans** — whitespace inside an entity span is dropped
+
+### What this section is actually worth
+
+Every number in the project before this point was void, and roughly a week of
+measurement produced no new capability. But the methodological finding
+generalises well beyond this pipeline:
+
+**Cross-tokenizer BPB comparisons are invalid unless both streams are
+collision-free and cover the same bytes.** Tokenizer papers report BPB routinely
+without checking either. Here is a worked case where a plausible morpheme
+tokenizer appears to beat BPE by 6.3% and, once the comparison is made
+information-fair, loses — with the four audit scripts that find it.
+
+A note on how the estimates went, because the honest record matters: the
+correction was estimated three times before it was measured (0.015–0.055, then
+0.0275, then "70% artifact"), and each estimate was made against a measurement
+that later proved flawed. Only the fourth figure — taken after coverage was
+closed *and* the grouping bug in the audit itself was fixed — was trustworthy.
+The lesson is the same one §30 recorded: build the check, do not reason about
+what the check would say.
+
 ---
 
 ## 34. The Information-Fair Rerun — Q1 Falls, Q2 Holds
@@ -1451,3 +1601,924 @@ replicated 4.5% overall gain (7.5% against its own control), concentrated in
 rare tokens exactly as predicted, at a lower parameter count.
 
 ---
+
+## 35. Localising the Q1 Deficit — Coverage, Decomposition, and the Unified Finding
+
+§34 established that morpheme segmentation loses to BPE by 0.1346 BPB under an
+information-fair comparison, and that character fallback consumed 24.8% of
+morph's bits for 14.1% of the corpus. That located the loss but did not explain
+it. Three questions remained:
+
+1. How many words actually fall through, and what does each pipeline spend on
+   them?
+2. On words morph *can* analyse, is it competitive?
+3. If not, does the deficit depend on how frequent the word is?
+
+All three are answered below on 400 WikiText-103 validation lines, scoring the
+saved baseline checkpoints (det `0e7cd8838192`, bpe `03b9423bfe83`).
+
+### A methodological note on the measurement itself
+
+Restricting a comparison to words one pipeline can handle is **selection on the
+outcome**. It cannot support "our tokenizer is better"; it can only support a
+claim about *where* a deficit comes from. That framing was fixed before the
+measurement was run, and the falsifiable prediction stated in advance: if morph
+loses even on covered words, coverage is not the explanation and vocabulary
+expansion will not fix it.
+
+Two bugs in the analysis code were found and fixed before the numbers below
+were trusted, both of the same kind — **misattribution during alignment**:
+
+- BPE tokens were being assigned to a text region by their *start offset*.
+  ByteLevel folds the preceding space into the token (`Ġcat` spans `" cat"`), so
+  nearly every word-initial BPE token was charged to the whitespace region. This
+  produced the impossible reading of BPE at 0.1354 BPB on words and 4.6757 on
+  punctuation. The fix was structural: attach whitespace to the word it
+  precedes, making the partition symmetric across the two encoding schemes, and
+  distribute each token's bits *proportionally* across its span rather than by a
+  single offset.
+- `freq_bucket` sent words unseen in the frequency sample to the *last* bucket
+  instead of the first, which would have placed every unseen word in the "most
+  frequent" band and inverted Part 3 entirely.
+
+Both were caught by numbers that were impossible rather than merely surprising.
+The same lesson as §30 and §33: build the check, and treat alignment logic as
+the default suspect.
+
+### Part 1 — tokenization economics
+
+| word class | words | % | bytes | morph tok/word | BPE tok/word |
+|---|---|---|---|---|---|
+| analysed cleanly | 19,736 | 87.8% | 93,698 | 1.51 | 1.18 |
+| character fallback | 2,744 | 12.2% | 26,117 | **9.54** | 3.20 |
+
+Fallback words are 12.2% of words but **21.8% of word bytes** — the
+unanalysable words are the long ones. At 9.54 tokens for an average 9.5-byte
+word, morph is spending roughly one token per byte: pure character spelling. It
+uses **2.98× the tokens BPE does** on those words.
+
+### Part 2 — restricted bits-per-byte
+
+Both models see the full text as context; only the scored positions are
+partitioned.
+
+| region | bytes | morph BPB | BPE BPB | delta | share of gap | morph worse by |
+|---|---|---|---|---|---|---|
+| words analysed cleanly | 113,240 | 1.2672 | 1.1937 | +0.0735 | 35.5% | 6.2% |
+| words in char fallback | 28,774 | 2.4076 | 2.0172 | +0.3904 | **47.9%** | 19.4% |
+| punct / digits | 13,809 | 1.8004 | 1.5189 | +0.2815 | 16.6% | 18.5% |
+| **ALL** | 155,823 | **1.5250** | **1.3746** | **+0.1505** | 100% | 10.9% |
+
+**The coverage hypothesis is half right.** Fallback words are 18.5% of bytes but
+contribute 47.9% of the gap — disproportionate, exactly as predicted. But morph
+loses in *every* region, including words it analyses perfectly, so coverage is
+not a complete explanation.
+
+Two extrapolations bracket what a vocabulary rebuild could buy:
+
+- **optimistic** — fallback words become as cheap as clean ones:
+  morph 1.3145 vs BPE 1.3746, **morph wins by 0.0601**
+- **realistic** — fallback words merely match BPE's own rate on them:
+  morph 1.4529 vs BPE 1.3746, **morph still loses by 0.0783**
+
+The truth lies between. Newly covered words would be rare ones, harder than the
+average covered word, so the optimistic figure is a ceiling and not a forecast.
+
+### Part 3 — the deficit depends on word frequency, and not monotonically
+
+Clean words only, stratified by frequency in a 40,000-line training sample
+(~1/30 of the corpus, so these bands map to roughly 30× higher full-corpus
+counts).
+
+| word frequency | bytes | % of clean bytes | morph BPB | BPE BPB | delta | verdict |
+|---|---|---|---|---|---|---|
+| 1–10 | 5,475 | 5.8% | 1.8925 | 2.1707 | **−0.2782** | **morph wins by 12.8%** |
+| 10–100 | 16,552 | 17.7% | 1.6822 | 1.6731 | +0.0091 | tie |
+| 100–1k | 33,732 | 36.0% | 1.4418 | 1.3049 | +0.1369 | morph loses by 10.5% |
+| 1k–10k | 18,697 | 20.0% | 1.4687 | 1.4038 | +0.0649 | morph loses |
+| 10k–100k | 13,338 | 14.2% | 1.5668 | 1.5660 | +0.0008 | tie |
+| 100k+ | 5,904 | 6.3% | 0.7280 | 0.7451 | −0.0171 | morph wins slightly |
+
+The shape is a **U**, not a monotone. **On the rarest words morpheme
+segmentation beats BPE by 12.8%** — where BPE has no good whole-word merge and
+must hack the word into arbitrary fragments, morphological decomposition shares
+statistical strength across the family and wins clearly.
+
+The loss is concentrated in the **middle band**: words frequent enough that BPE
+has learned a whole-word token, but not so frequent that prediction is trivial.
+These are inflected content words — `played`, `including`, `yards`. BPE spends
+one token; morph spends `play + <past>`. That band holds 56% of clean-word
+bytes.
+
+At the very top (100k+, essentially function words) both pipelines have single
+well-trained tokens and the difference vanishes.
+
+### The unified finding
+
+The two legs of the thesis, measured by completely different mechanisms, agree:
+
+| | rare items | frequent items |
+|---|---|---|
+| **Q2** — frozen dependency role vs none | −14.5% | −1.9% |
+| **Q1** — morpheme segmentation vs BPE | −12.8% | +10.5% |
+
+> **Linguistic structure helps exactly where statistical learning is
+> data-starved, and costs where statistics are already sufficient.**
+
+This is a stronger and more useful claim than "our tokenizer wins", because it
+says *when* and *why* rather than reporting a single number. It also explains
+the whole shape of the project's results: the frozen-embedding gain concentrates
+in rare tokens (§34), the segmentation gain concentrates in rare words (here),
+and both dissolve where the data is plentiful.
+
+### What the finding implies for design
+
+The deficit has **two independent causes with two independent fixes**:
+
+1. **Coverage** (47.9% of the gap) — 77.5% of fallback words are capitalised
+   named entities the frequency-gated entity vocabulary never admitted (§34).
+   Fix: rebuild entity extraction over more articles and revisit §23's
+   single-word threshold, which was tuned on 6k articles and never adjusted.
+2. **Unconditional decomposition** (the middle-band loss) — the pipeline
+   decomposes every word, including frequent inflected forms that BPE handles
+   in a single well-trained token. Fix: **frequency-aware decomposition** —
+   admit the most frequent inflected surface forms to the vocabulary as whole
+   entries and decompose only below that threshold. Losslessness is preserved,
+   because the whole form is stored rather than reconstructed.
+
+The second is the more interesting one: it is what BPE does statistically
+without knowing any linguistics, and doing it with a principled threshold plus
+linguistic decomposition for the tail is a design that follows *from the
+measurement* rather than from intuition.
+
+---
+
+---
+
+## 36. Literature Grounding — Who Has Done This Already
+
+Up to this point the project had been developed almost entirely from first
+principles, with the literature consulted only for the bits-per-byte lineage
+(§28) and the calibration reference points (§29). With both experimental legs
+now measured, it became urgent to find out whether the field had already
+answered these questions — partly to avoid claiming a known result, partly to
+learn from other people's mistakes rather than repeating them.
+
+Five primary sources turned out to matter.
+
+### A. MorphPiece (Jabbar, 2023) — our Q1, built at scale
+
+A tokenizer that looks each word up in a morpheme dictionary and, when the
+lookup fails, falls back to BPE.
+
+| | this project | MorphPiece |
+|---|---|---|
+| morpheme source | MorphoLex, 68,608 words | **MorphyNet, 346,340 words** (134,943 after a freq≥5 trim) |
+| OOV handling | character fallback | **BPE fallback** |
+| segmentation form | canonical / lemma | canonical / lemma |
+| vocabulary | 17,151 | 18,304 morphemes + 32,000 BPE = 50,006 |
+| model | 3.4–5.2M, from scratch | GPT-2 Base, 117M |
+| corpus | WikiText-103 | OpenWebText |
+
+MorphGPT beat GPT-2 on Penn Treebank perplexity (61.9 → 38.3), on LAMBADA, on
+zero-shot GLUE and across all seven MTEB embedding tasks, in roughly half the
+training steps.
+
+**Three details in their paper are our findings, arrived at independently:**
+
+1. They use canonical (lemma) segmentation — `batting` → `bat` + `ing`, not
+   `bat` + `ting` — and name it as a likely source of their gains. Identical to
+   our MorphoLex-based design.
+2. Their tokenizer produces **17% more tokens than BPE**. They list this as a
+   limitation and leave "fusing morphemes to reduce these extra tokens" to
+   derivative work. That is exactly the mid-frequency deficit §35 measured.
+3. Their limitations note that MorphyNet does not cover all lexical families —
+   our coverage problem, at five times our dictionary size.
+
+**And one detail is a gap we can fill.** Their Section 7 acknowledges that
+token-level perplexity is not comparable across vocabularies, citing Cotterell
+et al. (2018), and then argues for using it anyway on the grounds that
+downstream gains corroborate it. That is honest, but it is precisely the hole
+our audits (§33) close.
+
+### B. Hou, Katinskaia, Vu & Yangarber (2023) — the most useful paper for us
+
+Not a new tokenizer, but a careful controlled comparison: BPE against two
+unsupervised morphological segmenters (Morfessor and StateMorph), across four
+languages, two architectures, several vocabulary sizes and two model sizes.
+Their four research questions were perplexity, convergence speed, downstream
+performance, and performance at reduced model size.
+
+**The English numbers changed how this project should be read:**
+
+| language | BPE | morphological | outcome |
+|---|---|---|---|
+| **English**, vocab 151k | 19.82 | Morfessor **20.05** | **BPE wins** |
+| **English**, vocab 177k | 20.33 | StateMorph 18.93 | morph wins 7% |
+| **English**, vocab 107k | 17.92 | StateMorph-pruned 17.55 | morph wins **2%** |
+| **Finnish**, vocab 78k | 23.69 | StateMorph-pruned **16.65** | morph wins **30%** |
+| **Turkish**, vocab 60k | 12.93 | StateMorph-pruned 10.67 | morph wins **17%** |
+
+**For English the benefit is small or negative; for morphologically rich
+languages it is large.** Our Q1 negative result is therefore not anomalous — it
+is the expected outcome for the language we chose, published independently.
+
+Two further items we adopted:
+
+- **Vocabulary matching.** They deliberately tune BPE's vocabulary to match the
+  morphological segmenter's, stating it is "only to make the comparison fair."
+  We had documented a +51% parameter advantage to morph since §34 and never
+  removed it. Acted on in §37.
+- **Word-initial marking** (their Appendix A.1). BPE marks word-initial tokens;
+  morphological segmenters do not, so they mark all word-initial tokens with a
+  symbol, as BPE does. This is precisely the fix for our `<sp>` overhead —
+  32.6% of all morph tokens.
+
+They also make convergence speed a first-class metric, which we had never
+computed despite having the data (rectified in §37).
+
+### C. Bostrom & Durrett (2020) — the standard citation
+
+Compared BPE against Unigram LM tokenization using identical transformer
+models, on English and Japanese. Unigram recovers subword units that align more
+closely with morphology, avoiding artifacts of BPE's greedy merging, and
+matches or outperforms BPE downstream. This is the reference everyone cites for
+"BPE mis-segments morphology" and is the paper our Q1 must be positioned
+against.
+
+### D. FLOTA (Hofmann, Schütze & Pierrehumbert, 2022) — the cheap baseline
+
+Uses the **existing BPE vocabulary** but changes how words are split,
+recursively taking the longest vocabulary substring, so `undesirable` becomes
+`un` + `desirable` rather than `und` + `es` + `irable`. No new vocabulary, no
+retraining. A very cheap baseline sitting between our two arms — statistical
+vocabulary, linguistic segmentation — and one a reviewer may ask why we omitted.
+
+### E. Alexandrescu & Kirchhoff (2006), *Factored Neural Language Models* — the ancestor of our Q2
+
+A word is represented not as one symbol but as a **set of features** — stem,
+affixes, POS, capitalisation — each with its **own embedding**, concatenated to
+form the input vector. Introduced specifically to help with rare words, extended
+to neural machine translation by Sennrich & Haddow (2016).
+
+**Architecturally this is our Q2 exactly.** The difference is that their factor
+embeddings are **learned** and ours are **frozen**. In the sources reviewed no
+one appears to have compared the two, nor run a shuffled-feature control. That
+observation set the agenda for §37.
+
+### What this review established
+
+| | status |
+|---|---|
+| Q1, morpheme segmentation vs BPE | **well-trodden** — four papers, several with far more compute |
+| Q1's English negative result | **expected and citable**, not an anomaly |
+| Our audit methodology | **unoccupied** — MorphPiece names the problem and proceeds anyway |
+| Frequency-stratified localisation | **unoccupied** — nobody partitions the comparison by word frequency |
+| Q2, frozen vs learned factors | **untested** — the obvious next experiment |
+| Shuffled-feature control | **unoccupied** |
+
+The conclusion was uncomfortable but clarifying: **the tokenizer is not the
+contribution.** The instrumentation and the frozen-factor question are.
+
+---
+
+---
+
+## 37. Completing the Controls — Matched Vocabulary, Frozen vs Learned, and Signal Scale
+
+The literature review (§36) produced three concrete experiments, all cheap, all
+addressing confounds we had documented but never removed. Each changed the
+conclusion.
+
+### 37.1 Matched vocabulary — the Q1 confound, finally removed
+
+Since §34 the morpheme pipelines had carried a **+51% parameter advantage**: a
+17,151-entry vocabulary against BPE's 10,000, hitting both the embedding and the
+untied output head. Hou et al. match vocabularies explicitly to make the
+comparison fair; we had only documented the asymmetry.
+
+Retraining the ByteLevel BPE tokenizer at 17,151 took under a minute.
+
+| cell | vocab | trainable params | val tokens | bytes/token | BPB |
+|---|---|---|---|---|---|
+| BPE 10k | 10,004 | 3,387,136 | 270,848 | 4.195 | 1.3946 |
+| **BPE 17k** | 17,155 | **5,217,792** | 252,160 | 4.507 | **1.3477** |
+| morph | 17,155 | **5,217,792** | 654,592 | 1.737 | 1.5292 |
+| det | 17,155 | **5,217,792** | 655,360 | 1.734 | 1.5246 |
+
+Parameter counts are now byte-identical.
+
+**Removing the confound made Q1 worse, not better.** BPE improved with the
+larger vocabulary (1.3946 → 1.3477), so the controlled gap widened from +0.1346
+(9.7%) to **+0.1815 BPB, 13.5%**.
+
+There is a structural asymmetry worth stating in the write-up: **BPE's
+vocabulary size is a free hyperparameter that buys performance; a morpheme
+vocabulary is fixed by the linguistics.** BPE can always spend its way up. The
+morpheme pipeline cannot.
+
+### 37.2 Frozen vs learned factors — the thesis claim, tested directly
+
+Factored NLMs learn their factor embeddings. This project freezes them. Nobody
+had compared the two, so the comparison had to be built: `frozen.trainable`
+selects between a fixed identity matrix (a registered buffer) and an
+`nn.Embedding` of identical shape. Both index the same codes and occupy the same
+8 dimensions.
+
+The learned table adds **64 parameters — 0.0013%** — so the comparison is
+controlled by construction, and `verify.py` now asserts it stays under 0.1%.
+
+| condition | morph | det | vs baseline |
+|---|---|---|---|
+| shuffled dep | 6.51 | 6.45 | **+3.2%** (worse) |
+| baseline | 6.30 | 6.25 | — |
+| frozen dep @ scale 1.0 | 6.02 | 5.97 | −4.5% |
+| frozen dep @ scale 0.22 | 6.00 | 5.94 | −4.9% |
+| **learned dep** | **5.88** | **5.87** | **−6.4%** |
+
+**Learned factors beat frozen ones**, by 2.29% (morph) and 1.68% (det).
+
+### 37.3 The scale confound — found in our own implementation
+
+Before accepting that result, an arithmetic check on the implementation:
+
+| component | L2 norm at initialisation |
+|---|---|
+| trained embedding slice (120 dims, std 0.02) | 0.219 |
+| positional embedding (128 dims, std 0.02) | 0.226 |
+| **frozen factor (one-hot, 8 dims)** | **1.000** |
+| learned factor (8 dims, std 0.02) | 0.057 |
+
+**The frozen one-hot entered the residual stream 4.6× louder than the entire
+trained embedding**, and pre-norm LayerNorm then normalised the sum, squashing
+everything else. A learned table initialises at std 0.02, is balanced by
+construction, and can additionally adjust its own magnitude during training.
+
+So the frozen-vs-learned comparison as first run confounded **trainability**
+with **scale** — a defect of our implementation, not of the hypothesis. A
+`frozen.scale` parameter was added and the comparison rerun at 0.22, matching
+the trained slice.
+
+**Result: the confound was real but minor.** Rescaling gained 0.02 perplexity in
+both pipelines, closing **16% (morph) and 23% (det)** of the gap to learned. The
+remainder is genuine trainability.
+
+**Conclusion: the specific claim that freezing beats learning is refuted**, and
+now refuted under a properly controlled comparison rather than resting on an
+initialisation accident.
+
+### 37.4 What survives, and what it means
+
+The ladder is complete, monotonic, and replicated across two pipelines:
+
+```
+shuffled dep   +3.2%   worse than baseline
+baseline        0.0%
+frozen dep     -4.9%
+learned dep    -6.4%
+```
+
+Read carefully, this is a strong object even though the headline claim fell:
+
+- **Injecting the dependency role helps a great deal** — 6.4% at the top of the
+  ladder, and the effect is replicated.
+- **The shuffled control proves the gain is linguistic content**, not the mere
+  presence of extra structured input. Permuting the codes — same distribution,
+  same width, same parameter count — makes the model *worse than baseline*.
+- **Freezing captures roughly 75% of the available benefit at zero parameter
+  cost**, which is a real trade-off rather than a failure.
+- **Trainability adds the remaining 25%**, plausibly because a learned table can
+  place the eight dependency classes in a geometry reflecting their similarity,
+  whereas one-hot forces them equidistant.
+
+### 37.5 Convergence speed — a free finding
+
+Hou et al. treat convergence speed as a first-class metric (their RQ2). We had
+the data in every training log and had never looked.
+
+| cell | steps to ppl ≤ 6.5 | steps to ppl ≤ 6.3 |
+|---|---|---|
+| det baseline | 29,000 | 41,500 |
+| det + frozen dep | **19,500** | **25,500** |
+| morph baseline | 30,500 | never reached |
+| morph + frozen dep | **21,000** | **27,000** |
+
+**Frozen dependency features reach the same perplexity in 33–39% fewer steps.**
+An independent second axis on which Q2 wins, at zero cost, matching a metric the
+literature already values.
+
+### 37.6 One claim from §27 still untested
+
+The original argument for freezing (§4, §27) had two parts:
+
+1. **lower perplexity** — refuted above
+2. **guaranteed legibility** — the fact is always present and always readable,
+   at every layer, for any attention head that wants it
+
+Part 2 has never been measured, and it is the one place freezing can still win
+by construction: a frozen one-hot is trivially decodable, whereas a learned 8×8
+table is free to collapse classes together if the loss does not punish it. If
+frozen dimensions remain linearly readable at depth while learned ones do not,
+the trade-off is 2% perplexity for guaranteed interpretability — a defensible
+result rather than a loss.
+
+`scripts/probe_dep.py` was written for this: a linear probe on the hidden state
+after every layer, run against baseline, frozen and learned checkpoints. The
+baseline arm is the informative one — if a probe can already read dependency
+role off a model that never saw the labels, then injection is partly redundant
+and the gain must come from precision or from earlier availability.
+
+---
+
+---
+
+## 38. Why English Resists — and the Turn from Confrontation to Cooperation
+
+By this point both legs had been measured under proper controls, and the picture
+was uncomfortable: Q1 negative and widening, Q2 positive but with its
+distinguishing mechanism refuted. The obvious question — *is there any point in
+offering a morphological inductive bias to English at all?* — had to be answered
+before deciding what to build next.
+
+Answering it properly turned out to change the direction of the project.
+
+### 38.1 Why English BPE is so hard to beat
+
+**Measurement first.** From §35's tokenization economics:
+
+| | tokens per word |
+|---|---|
+| BPE, clean words (88% of words) | **1.18** |
+| BPE, fallback words (12%) | 3.20 |
+| BPE, overall | 1.43 |
+| morph, clean words | 1.51 |
+| morph, fallback words | 9.54 |
+| morph, overall | 2.49 |
+
+**For 88% of English words BPE emits essentially one token.** English words are
+short, the Zipf curve is steep, and a 17k vocabulary holds nearly every common
+word whole. BPE is therefore not really a subword tokenizer for English — it is
+a **word-level tokenizer with a subword escape hatch for the tail**.
+
+Morphological decomposition takes a representation that already works and
+fragments it. It can only help inside the escape hatch. Which is exactly the
+U-shape §35 measured: morph wins 12.8% where BPE must fragment, loses 10.5%
+where BPE has the whole word.
+
+**Five structural reasons, in order of force:**
+
+1. **Almost nothing to decompose.** Our own pipeline measures **1.51 morphemes
+   per clean word**. Roughly half of English words are a single morpheme. In
+   Finnish, `taloissanikin` = *talo+i+ssa+ni+kin* ("in my houses too") — one
+   word, five morphemes, where English uses five separate words.
+
+2. **Tiny paradigms.** An English noun has 2 forms; a verb 4–5; an adjective 3.
+   A Finnish noun has roughly 2,000 (15 cases × number × possessive × clitic).
+   This is the sparsity argument: if a noun has 2,000 forms then *every form is
+   rare even when the lemma is common*, and decomposition collapses 2,000 sparse
+   types into one frequent lemma plus a few frequent affixes. In English `cats`
+   is common enough by itself. **There is nothing to share.**
+
+3. **English derivation is lexicalised, not compositional.** §26 already recorded
+   `demonstrated → de + monster + ate`. English derivational morphology is
+   largely fossilised Latin and Greek borrowing that no longer means what it
+   says, so decomposition often injects noise rather than signal. Agglutinative
+   affixes mean the same thing every time.
+
+4. **English orthography hides morphology.** `ran` ≠ `run` + past. Irregular
+   verbs and suppletion mean that even where morphology exists it is not
+   recoverable from the surface string — precisely the `{found, founded}`
+   collision the audit caught in §33.
+
+5. **BPE has already learned English morphology.** Our vocabulary contains
+   **338 affixes** (127 prefixes + 211 suffixes), of which the productive
+   inflectional set is **8**. Those eight are so frequent that BPE's merge
+   process learns `-ing`, `-ed`, `-s`, `un-` automatically, with no linguistic
+   knowledge at all. **For English, BPE already is a morphological segmenter.**
+   Finnish has hundreds of affixes, each individually rarer, and a 32k
+   vocabulary cannot absorb them — which is the gap explicit morphology fills,
+   and which English does not have.
+
+### 38.2 How much of the deficit is ours, and how much is the language
+
+Separating implementation defects from language properties, using §35's regional
+decomposition:
+
+| cause | share of gap | status |
+|---|---|---|
+| character fallback | **47.9%** | fixable — MorphPiece uses BPE fallback |
+| punctuation/digits emitted one per character | 16.6% | fixable — group digit runs as BPE does |
+| clean words (whitespace + unconditional decomposition) | 35.5% | partly fixable |
+
+**Most of the deficit is our implementation, not English.** But the budget is
+sobering:
+
+```
+morph today                                1.5250
++ BPE fallback for OOV                     1.4529
++ word-initial marking (kills <sp> tokens) 1.4087
++ digit grouping                           1.3962
+BPE-10k                                    1.3746
+BPE-17k (parameter-matched)                1.3477
+```
+
+**Every realistic implementation fix lands morph at about 1.40** — level with
+BPE-10k, still behind the parameter-matched BPE-17k. Implementation explains
+most of the gap but not all of it. The residue is the language.
+
+A useful consistency check fell out of this: the band-weighted clean-word delta
+is **+0.0468** on word bytes alone, while §35's Part 2 measured **+0.0735**
+including leading whitespace. The 0.027 difference is exactly the `<sp>`
+overhead — two independent measurements agreeing.
+
+### 38.3 The path considered and rejected — data starvation
+
+If the mechanism is data starvation rather than Finnish specifically, the same
+condition can be created in English by shrinking the corpus. Taking §35's
+per-band deltas and shifting the frequency distribution (a 10× smaller corpus
+moves every word down one band) gives a quantitative forecast:
+
+| data fraction | predicted clean-word delta | |
+|---|---|---|
+| 100% | +0.0468 | morph loses *(matches measurement)* |
+| 10% | −0.0255 | morph wins |
+| 1% | −0.1402 | morph wins decisively |
+
+The crossover is predicted between 10% and 100% of the corpus, and the design
+would be sound provided BPE is **retrained at each data size** (its vocabulary
+is learned from the corpus; MorphoLex is external and does not shrink).
+
+**Rejected, on the researcher's objection**, and the objection was correct: the
+experiment changes *the conditions* rather than *the method*. It would report
+"morphology wins when BPE is handicapped" — a weaker claim than "morphology adds
+something BPE cannot get". Low-resource modelling is a real setting and this
+remains a legitimate future experiment, but it is not the thesis.
+
+### 38.4 The reframe — stop confronting BPE
+
+The researcher's counter-proposal: instead of competing with BPE, find where it
+struggles and help it. Both methods have strengths; the question is whether they
+can cooperate.
+
+**The decisive observation: §35's frequency table is not a comparison, it is an
+assignment.**
+
+| word frequency | % of clean bytes | delta | who should handle it |
+|---|---|---|---|
+| 1–10 | 5.8% | −0.2782 | **morph** |
+| 10–100 | 17.7% | +0.0091 | tie |
+| 100–1k | 36.0% | +0.1369 | **BPE** |
+| 1k–10k | 20.0% | +0.0649 | **BPE** |
+| 10k–100k | 14.2% | +0.0008 | tie |
+| 100k+ | 6.3% | −0.0171 | **morph** |
+
+Each method has a measured region of competence. Nothing in the project's data
+says one should replace the other.
+
+### 38.5 Two levels of cooperation
+
+**Level 1 — routing at the tokenizer.** Choose the better tokenizer per word:
+
+```
+entity                → entity token
+frequent word         → BPE (it holds the whole word, well-trained)
+rare and analysable   → morphemes (shares strength across the family)
+unanalysable          → BPE fallback
+```
+
+The threshold is a free parameter, and sweeping it *is* the result: T→0 is pure
+BPE, T→∞ is pure morph, so the sweep contains both baselines as endpoints and
+measures where the crossover lies. MorphPiece explicitly left this to future
+work ("fusing morphemes to reduce these extra tokens"), so it is unoccupied.
+
+Budget, on top of the implementation fixes:
+
+```
++ route the 100–10k band to BPE            1.3588
+BPE-10k                                    1.3746
+BPE-17k                                    1.3477
+```
+
+**Predicted to beat BPE-10k and approach BPE-17k, with nothing handicapped.**
+
+**Level 2 — feature injection at the embedding.** Do not compete over
+segmentation at all. Use **BPE tokens**, which the measurement says are better
+for English, and inject **morphological facts as embedding factors**.
+
+The logic is the project's own two results, put together:
+
+> Q1: morphology-as-**segmentation** loses in English.
+> Q2: linguistic-features-as-**embedding** wins by 6.4%.
+> Therefore: **segment with BPE, inform with morphology.**
+
+This also restores the thesis title. *Context-Aware **Embeddings*** was always a
+claim about the embedding layer; Q1 was the supporting comparison, and it has now
+established that segmentation is the wrong place to spend English morphology.
+
+The mechanism already exists: §33 gave the BPE pipeline character-offset
+alignment so it could carry context facts, and the same machinery carries
+morphological ones. The strongest candidate is **root identity** — BPE sees
+`running` as one token, unrelated to `runner`, `runs`, `ran`, because its merges
+are frequency-driven rather than lexical. A root factor ties them together.
+
+Parameter accounting, taking 16 dimensions out of the 128 exactly as `dep` took
+8:
+
+| | embedding parameters |
+|---|---|
+| BPE-17k baseline | 2,195,840 |
+| BPE-17k + root factor | 1,921,360 + 241,680 = **2,163,040** |
+
+**32,800 fewer parameters** — the same controlled-substitution design, so the
+comparison is clean by construction. Every control built for Q2 transfers:
+shuffled roots, frozen versus learned, frequency-bucket stratification.
+
+### 38.6 Where this leaves the project
+
+The arc is now coherent in a way it was not before:
+
+1. Morphological segmentation was tested against BPE in English and lost.
+2. The loss was localised precisely — coverage, unconditional decomposition,
+   and the fact that BPE has already absorbed English's eight productive
+   affixes.
+3. The same morphological knowledge, delivered as **features** rather than as
+   segmentation, produces a replicated 6.4% gain with a control proving it is
+   the linguistic content.
+4. The natural synthesis — BPE for segmentation, morphology for features — is
+   the next experiment, and it is the one the thesis title always named.
+
+**Decision: pursue Level 2 first.** It builds on the positive result rather than
+rescuing the negative one, needs no new vocabulary or tokenizer, and yields the
+cleaner claim: *morphological knowledge helps English language models — as
+features, not as segmentation.* Level 1 remains available afterwards, and the
+two compose.
+
+---
+
+---
+
+## 39. Level 2 — Morphology as Features on a BPE-Tokenized Model
+
+Section 38 concluded with a decision: stop competing with BPE over segmentation
+and instead use BPE tokens while injecting morphological knowledge as embedding
+features. This section records the build and the result.
+
+**The result is the strongest in the project, and the first cell that beats its
+own best baseline.**
+
+### 39.1 A bug found before anything ran
+
+The BPE + context-fact path had been written in section 33 but never executed.
+Reviewing it before committing compute turned up a defect that would have
+silently voided the entire experiment.
+
+`ByteLevel` folds the preceding space INTO the following token, so a
+word-initial token spans `" cat"` and its **start offset lands on whitespace** —
+which no spaCy token covers. The code indexed annotations by that start offset:
+
+```
+old logic (arr[start]) : aligned 1/6 = 17%
+fixed logic (scan span): aligned 6/6 = 100%
+```
+
+Word-initial tokens are **78% of the BPE stream** (211,300 of 270,848, measured
+in the category bit accounting). Every BPE feature-injection run would have
+received `none` for nearly every token, trained normally, and produced a
+convincing null result. The cache would then have needed rebuilding.
+
+This is the same class of error as the region-attribution bug in
+`coverage_economics` (section 35) and the grouping bug in the collision audit
+(section 33). **Alignment logic is now treated as the default suspect in this
+codebase**, and a regression test guards it.
+
+### 39.2 Design decisions taken to avoid re-runs
+
+Three, all chosen specifically because a mistake would have cost a multi-hour
+cache pass.
+
+**One cache serves every BPE experiment.** As soon as any context fact is
+requested, BPE now computes all six — `dep`, `pos`, `ectx`, `mstruct`, `mrole`,
+`mroot` — in a single pass and writes one codes file. Computing only the
+requested fact would have meant a fresh spaCy + MorphoLex pass for every new
+experiment.
+
+**Cardinality separated from width.** Root identity has ~16k classes and cannot
+one-hot into 16 dimensions, so blocks now declare `n_classes` and `width`
+independently. When `width < n_classes` the frozen representation becomes a
+**fixed random projection** — every class gets a distinct, unchanging vector
+with no parameters. That is **Lever 3 from section 27**, unbuilt since then.
+
+**Entities carry their own root.** A preflight found 39.1% of BPE tokens sitting
+in words for which no root was returned. An entity's lexical identity is itself
+(`london` is its own lemma), so entity surface forms became root classes:
+15,105 roots + 1,259 entities + `none` = **16,365 classes**. This only moved the
+figure to 37.6%, because most of the remainder is character-fallback words, not
+entities — the same coverage limit that sank Q1, resurfacing at the feature
+layer. A test now asserts the block's class count matches the analyser's
+inventory exactly, since a mismatch of one would make every cached code decode
+to the wrong root.
+
+### 39.3 The preflight, and what it predicted
+
+A pre-flight script measured, on 300 validation lines and in six seconds,
+everything that could void the run:
+
+| check | result |
+|---|---|
+| alignment rate | **99.99%** (the old bug would show ~20%) |
+| code distribution | all six facts vary; none constant |
+| tokens carrying a root | **42.9%** |
+| within-token-id variance, `mroot` | **11.1%** of ids receive >1 code |
+| int16 safety | 16,365 < 32,767 |
+| parameter arithmetic | every cell has FEWER parameters than baseline |
+
+Two of those numbers set expectations honestly in advance. The root is
+informative for only 42.9% of tokens, and it is genuinely *contextual* for only
+11.1% of token ids — for the rest, `Ġrunning` always has root `run`, which a
+static embedding table could already learn. **The prediction recorded before
+running was 1–3%, not the 6.4% seen for `dep`.**
+
+The cache build then took **4h37m** for 120,625,719 training tokens, at a
+measured alignment rate of 99.98%.
+
+### 39.4 The results
+
+Baseline is the parameter-matched `bpe_17k` cell from section 37: 1.3477 BPB.
+
+| cell | ppl | BPB | vs base | params vs base |
+|---|---|---|---|---|
+| + `mroot` **SHUFFLED** (learned) | 68.26 | 1.3519 | **+0.31%** | −0.24% |
+| baseline (bpe 17k) | 67.36 | 1.3477 | — | — |
+| + `mstruct` **SHUFFLED** (frozen) | 66.60 | 1.3440 | −0.27% | −2.63% |
+| + `mroot` frozen **projection** | 63.66 | 1.3296 | −1.34% | −5.26% |
+| + `mstruct` frozen one-hot | 62.25 | 1.3225 | −1.87% | −2.63% |
+| + `mroot` learned | 59.42 | 1.3076 | −2.98% | −0.24% |
+| **+ `mroot`+`mstruct`+`mrole` learned** | **56.72** | **1.2927** | **−4.08%** | **−4.51%** |
+
+Monotonic, nothing overfitted, every cell still descending at the step ceiling,
+and **every cell carries fewer parameters than the baseline it beats.**
+
+### 39.5 Seed replication — the last thing being asserted rather than shown
+
+| cell | seed 0 | seed 1 | spread | mean |
+|---|---|---|---|---|
+| baseline | 1.3477 | 1.3482 | **0.0005** | 1.3480 |
+| all three facts, learned | 1.2927 | 1.2837 | 0.0090 | 1.2882 |
+
+- **seed noise (max spread): 0.0090 BPB**
+- **effect (mean difference): 0.0598 BPB**
+- **effect / noise: 6.6×**
+- **mean improvement: 4.44% BPB**
+
+All four cross-seed pairings hold: every treatment run beats every baseline run.
+The baseline's own spread of 0.0005 is remarkably tight, which is itself
+reassuring about the apparatus.
+
+### 39.6 Three findings beyond the headline
+
+**The facts compose.** Root alone gives 0.0401 BPB; structure alone 0.0252;
+combined with role, 0.0550 — **84% of what pure additivity would predict**. So
+structural morphology carries information the root does not; it is not a coarse
+proxy for lexical identity.
+
+**Lever 3 works.** The frozen random projection — 16,365 classes into 16 fixed
+dimensions, zero trainable factor parameters — beats baseline by 1.34% *while
+carrying a 5.26% parameter handicap*. Learned still wins (−2.98%), but that
+comparison is confounded by capacity, so the honest statement is "learned is
+better, though by less than the raw gap suggests."
+
+**The two shuffled controls behave differently, and the asymmetry is
+explainable.**
+
+| | shuffled vs baseline | real vs shuffled |
+|---|---|---|
+| `mroot` (learned) | **+0.31%** worse | −3.28% |
+| `mstruct` (frozen) | **−0.27%** slightly better | −1.61% |
+
+Shuffled roots hurt; shuffled structure marginally helps. This is the section-37
+scale finding resurfacing: a **frozen one-hot enters at L2 norm 1.0 against a
+trained slice of 0.219**, so even random one-hots inject a loud
+constant-magnitude signal that plausibly acts as regularisation. A learned table
+initialises at std 0.02, is quiet, and random codes there are simply wasted
+dimensions. The control still does its job — real beats shuffled in both cases —
+but `mstruct`'s should be reported as *"shuffling removes the gain"* rather than
+*"shuffling hurts"*.
+
+### 39.7 The oracle question, substantially answered
+
+Section 37.6 flagged that `dep` comes from a full-sentence parse and therefore
+leaks information about tokens not yet predicted. The concern was that most of
+the Q2 gain was this oracle effect.
+
+| feature | loss reduction | lookahead? |
+|---|---|---|
+| `dep` on morph | −3.75% | **yes** — full-sentence parse |
+| `mroot` on BPE | **−2.98%** | **no** — the root depends only on the word |
+
+**About 80% of the effect survives with no lookahead at all.** These are
+different features on different tokenizers, so this is strong evidence rather
+than proof — but the worry was that the gain was *mostly* oracle, and it plainly
+is not. Morphological features are causally available during generation in a way
+the dependency parse is not.
+
+### 39.8 What the thesis now claims
+
+> **Morphological knowledge improves English language modeling — as embedding
+> features, not as segmentation.** Injected into a parameter-matched BPE model
+> it reduces bits-per-byte by **4.44%** (mean of two seeds, 6.6× the seed
+> noise), using **4.5% fewer trainable parameters**, with a shuffled control
+> confirming the gain is linguistic content and no lookahead in the features.
+
+The project's arc is now coherent end to end:
+
+1. Morphological segmentation was tested against BPE in English and lost by
+   13.5% under a parameter-matched comparison (sections 34, 37).
+2. The loss was localised precisely: OOV coverage, unconditional decomposition
+   of frequent words, and the fact that BPE has already absorbed English's eight
+   productive affixes (sections 35, 38).
+3. The same morphological knowledge, delivered as **features** on the better
+   tokenizer, improves it by 4.44% (this section).
+
+The negative result is not a failure that was later rescued; it is the
+measurement that told us where to spend the morphology.
+
+---
+
+---
+
+## Appendix: Key Decisions Summary
+
+| Decision | Chosen Option | Rejected Options | Reason |
+|---|---|---|---|
+| Intervention point | Embedding layer | Tokenizer only; full architecture change | Transformer unchanged; clean separation |
+| Unit granularity | Morpheme-level | Word-level; phrase-level | Smaller vocab; closer to BPE; better OOV |
+| Named entity handling | Atomic units | Morpheme-segment them; ignore them | Proper nouns not compositionally meaningful |
+| Vocabulary threshold | Source-based (MorphoLex) | Frequency-based | Frequency conflates noise with rare-but-real |
+| Morfessor role | Affix-only fallback | Full segmentation; removal | Roots unreliable; affixes more trustworthy |
+| Capitalisation guard | Rejected | Applied temporarily | Typographic heuristic, not linguistic principle |
+| Number of pipelines | Three (BPE + morph + det) | Two (BPE + morph) | Isolates Morfessor's contribution |
+| Codebase structure | Flat (7 files) | Deep hierarchy (15+ files) | Communication overhead too high |
+| Evaluation method | Perplexity + probing | Generation-based metrics | No generation needed; probing more informative |
+| Entity threshold | Split threshold (multi-word≥3, single≥10) | Flat threshold; MorphoLex exclusion; length filter; curated list | Structure of token is a reliable signal of misclassification risk |
+| Compound splitting | Implemented with particle exception | Not implemented; minimum length only | Concrete wins; false positive risk negligible for genuine OOV |
+| Compound particle handling | FUNCTION_WORDS exception for 2-char right parts | Minimum length 4; ignore particles | Particles are linguistically productive; blocking them causes `star+tup` class errors |
+| Frozen dim content | One-hot (A) and feature vectors (B) — both built | Pretrained GloVe (C) | C muddles the thesis with externally learned signal |
+| Frozen/trained combination | Concatenation | Addition | Addition lets training cancel the frozen signal, defeating guaranteed presence |
+| Ragged structure | Fixed schema, zero-fill, explicit 'none' slots | Variable-width per token | Frozen vector must be uniform width; 'none' is meaningful, not missing |
+| Frozen signal strength | Small N default + amplification/projection/probe levers in reserve | Accept weak 4.5% signal at N=512 | Frozen block must be a meaningful fraction of the vector to matter |
+| Option B root features | B1 (one-hot) now; B3 (WordNet) later | B2 (coarse hand-annotated roots) | 15k roots can't be hand-annotated; WordNet is a discrete taxonomy, hand-features infeasible |
+| Embedding experiment design | Phased matrix (pipelines × frozen variants) | Single fixed embedding design | Turns design uncertainty into measurable comparison, like the 3 pipelines |
+| Embedding ownership | Model owns HybridEmbedding; dataset emits IDs only | Dataset emits vectors | Embedding is the thesis contribution; its trained part has gradients |
+| Cross-pipeline metric | Bits-per-byte (BPB) | Per-token perplexity; BPC | Per-token PPL not comparable across tokenizations; BPB robust to non-ASCII; Mielke→Pile→Paloma lineage |
+| Within-pipeline metric | Per-token perplexity | BPB only | Same tokenization → fair and more sensitive for detecting freezing effect |
+| Document boundaries | Ignore (concatenate-and-chop) | Respect boundaries | Standard GPT-2 practice; seam noise negligible at L=256 |
+| Corpus caching | Tokenize once, save int stream, mmap | Re-tokenize each epoch | spaCy + morpheme segmentation far too slow to repeat |
+| Model role | Fixed apparatus, small, standard | Best/largest model | Transformer measures the embedding, isn't the variable; small keeps hypothesis testable |
+| d_model | 128 (= N) | 256/512 | Pinned by frozen-fraction (Lever 1): 23-dim block must be a meaningful share |
+| Model depth | 4 layers (shallow on purpose) | 6+ layers | Shallow keeps reliance on input representation, where the hypothesis lives; calibration-confirmed |
+| Output tying | Configurable; 'none' for Phase 1 | Always tied; always untied | Untied keeps frozen role on input side; option C (tie frozen) reserved as hook |
+| Architecture selection | Calibrate against BPE-baseline curve | Choose size by argument | Measurement beats judgment; confirmed Goldilocks regime (64.9 ppl / 1.438 BPB) |
+| Reported metric point | Best-val (early-stopped) | Last-val | Overfitting after the minimum must not contaminate the comparison |
+| Frozen block content | Composed blocks, width derived | Fixed 23-dim schema | Sized by label inventory, not information; 12 of 23 columns were constant |
+| Frozen fact axis | Static vs context source | Treat all frozen facts alike | Static = parameter tying; context = information a lookup table cannot hold |
+| v1 context fact | Dependency role only, coarse | Full set at once; fine-grained | Unambiguous result, legible ladder; granularity is a one-line switch |
+| Dataset payload | ids + integer codes | ids only (§28) | Frozen metadata has no gradients, so §28's reasoning never applied |
+| BPE freezing | Enabled via char-offset alignment | Morpheme pipelines only | Decouples segmentation from injection; makes the matrix a true 2×3 |
+| Onehot cells | Not run | Run as designed | Would confound "flags don't help" with "12 dims were constant" |
+| LR schedule | `lr_horizon` separate from `max_steps` | Single field | One field doing both jobs made different-length cells incomparable |
+| Seeding | Seeded, seed in run identity | Unseeded single runs | Small expected effect cannot be told from init noise |
+| Codebase layout | Package (`morphlm/`) | Flat 7 files (§20) | §20's premise (chat-paste overhead) expired; flat was about to cause two silent bugs |
+| Frozen validation | Population-level assertions in tests | Per-token spot checks | Per-token checks passed while the population property failed |
+| Q1 restricted comparison | Report as diagnosis only | Report as headline | Restricting to covered words is selection on the outcome |
+| Region partition for restricted BPB | Whitespace attached to following word | Whitespace as its own region | ByteLevel folds space into the next token; otherwise the two models are measured on different partitions |
+| Token-to-region attribution | Proportional over the token's span | By start offset | Start offset charged every Ġ-prefixed BPE token to the whitespace region |
+| Q1 remedy | Two fixes: entity coverage AND frequency-aware decomposition | Vocabulary expansion alone | Coverage is 47.9% of the gap; the rest is unconditional decomposition of frequent words |
+| BPE vocabulary size | Matched to morph (17,151) | Left at 10,000 | Hou et al. match explicitly; the +51% parameter advantage was a real confound |
+| Frozen vs learned factors | Both built and compared | Assume freezing is better | Factored NLM (2006) is the direct ancestor and learns its factors; the comparison was untested |
+| Factor signal scale | Exposed as `frozen.scale`, tested at 0.22 | Leave one-hot at norm 1.0 | A frozen one-hot entered 4.6x louder than the trained slice, confounding trainability with magnitude |
+| Freezing claim | Refuted for perplexity; legibility still open | Claim freezing wins | Learned beats frozen by 1.7-2.3% under a controlled comparison |
+| Convergence speed | Reported as a metric | Ignore it | Hou et al. make it RQ2; frozen dep reaches target perplexity in 33-39% fewer steps |
+| Data-starvation sweep | Rejected as the main path | Run it as the headline experiment | It changes the conditions rather than the method; "morph wins when BPE is handicapped" is a weaker claim |
+| Q1 strategy | Cooperate: route by frequency, or inject morphology as features | Keep competing with BPE | The frequency table is an assignment, not a comparison; each method has a measured region of competence |
+| Next experiment | BPE segmentation + morphological features | Fix the morpheme tokenizer further | Q1 says segmentation is the wrong place for English morphology; Q2 says features work |
+| BPE context alignment | Scan the token's span | Index by start offset | ByteLevel folds the space into the token, so 78% of the stream would have received `none` |
+| BPE fact computation | Build all six context facts on one pass | Build only the requested fact | Each new fact would otherwise need its own multi-hour spaCy+MorphoLex pass |
+| High-cardinality facts | Separate `n_classes` from `width`; frozen becomes a random projection | One-hot only | 16,365 root classes cannot one-hot into 16 dims; this finally builds Lever 3 |
+| Entity lexical identity | Entities occupy their own root classes | Entities fall to the `none` sentinel | An entity's lemma is itself; 39.1% of tokens had no root without this |
+| Level-2 headline cell | `mroot` learned, T=16 | All three facts together | At T=29 frozen carries a 9.5% capacity handicap; T=16 learned is parameter-neutral at -0.24% |
+| Seed replication | Two seeds on baseline and best cell | Single runs | The effect/noise ratio (6.6x) is what converts a large effect into a demonstrated one |
+
+---
+
+*Document updated through the Level-2 result. Q1 (morphology as SEGMENTATION)
+loses to a parameter-matched BPE by 13.5% in English, with the loss localised to
+OOV coverage, unconditional decomposition of frequent words, and BPE having
+already absorbed English's eight productive affixes. Q2 (morphology and syntax
+as EMBEDDING FEATURES) works: on the best BPE baseline, injecting root identity,
+word structure and morpheme role reduces bits-per-byte by 4.44% (mean of two
+seeds, 6.6x the seed noise) using 4.5% fewer trainable parameters, with a
+shuffled control confirming the gain is linguistic content and with no lookahead
+in the features. The negative segmentation result is what told us where to spend
+the morphology. Remaining: the legibility probe, a causal variant of the
+dependency feature, downstream task evaluation, and the routed-hybrid tokenizer
+(Level 1) which remains unbuilt.*

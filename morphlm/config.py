@@ -55,6 +55,30 @@ class FrozenConfig:
     Blocks only exist if requested, so the dead-dimension bug of the previous
     design (12 of 23 columns constant) cannot recur by construction.
 
+    trainable selects between the two conditions the thesis compares:
+
+        False  factor table is a fixed identity matrix; the linguistic signal
+               is GUARANTEED and no gradient can reshape it. Thesis condition.
+        True   factor table is an nn.Embedding of identical shape; the model
+               may reshape the factor space. This is Factored Neural Language
+               Models (Alexandrescu & Kirchhoff, 2006), the direct ancestor of
+               this architecture and the baseline a reviewer will ask for.
+
+    Both occupy the same T dimensions and index the same codes, so the only
+    variable is whether the signal is fixed or negotiable.
+
+    scale exists because that claim was NOT initially true. A frozen one-hot
+    has L2 norm 1.0, while the trained 120-dim slice initialises at std 0.02
+    and so has norm ~0.22, and the positional embedding ~0.23. The frozen
+    factor therefore entered the residual stream ~4.6x louder than the entire
+    trained embedding, and pre-norm LayerNorm then squashed everything else. A
+    LEARNED table initialises at std 0.02 and is balanced by construction, and
+    can additionally adjust its own magnitude during training.
+
+    So a naive frozen-vs-learned comparison confounds TRAINABILITY with SCALE.
+    Setting scale to ~0.22 matches the frozen factor to the trained slice and
+    isolates trainability properly. Run both before drawing a conclusion.
+
     shuffle_codes is the ABLATION CONTROL for context facts. It permutes the
     per-position codes within each window, preserving their exact distribution
     while destroying their alignment to the tokens. The frozen block keeps the
@@ -73,6 +97,10 @@ class FrozenConfig:
     dep_granularity: str = 'coarse'     # coarse | fine  (one-line switch)
     amplify: int = 1                    # Lever 2: tile the frozen block
     shuffle_codes: bool = False         # ABLATION CONTROL — see below
+    trainable: bool = False             # False = frozen (thesis condition)
+                                        # True  = learned (2006 FNLM baseline)
+    scale: float = 1.0                  # magnitude of the frozen factor
+    root_width: int = 16                # dims for the ~15k-class root factor
 
     def spec(self) -> str:
         """
@@ -93,6 +121,10 @@ class FrozenConfig:
             else:
                 parts.append(name)
         return '+'.join(parts)
+
+    def morph_facts(self):
+        """Requested facts that need the morphological analyser."""
+        return tuple(f for f in self.facts if f in ('mroot', 'mstruct', 'mrole'))
 
 
 @dataclass(frozen=True)
@@ -236,6 +268,10 @@ class ExperimentConfig:
         facts = '+'.join(self.frozen.facts) if self.frozen.facts else 'baseline'
         if self.frozen.facts and self.frozen.shuffle_codes:
             facts += '-SHUF'
+        if self.frozen.facts and self.frozen.trainable:
+            facts += '-LEARN'
+        elif self.frozen.facts and self.frozen.scale != 1.0:
+            facts += f'-S{self.frozen.scale:g}'
         sfc = self.surface_spec()
         tag = ''
         if sfc.startswith('sfc:'):

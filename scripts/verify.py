@@ -134,8 +134,8 @@ def t_freeze():
     emb = HybridEmbedding(cfg, V, vocab_df=vocab, verbose=False)
     model = TransformerLM(cfg, emb, V)
 
-    before_static = emb.static_table.clone()
-    before_eye = emb.ctx_eye_0.clone()
+    before_static = emb.static_codes_0.clone()
+    before_eye = emb.factor_eye_0.clone()
     before_trained = emb.trained.weight.detach().clone()
 
     ids = torch.randint(0, V, (2, cfg.data.seq_len))
@@ -146,13 +146,72 @@ def t_freeze():
     _, loss = model(ids, tgt, codes=codes)
     opt.zero_grad(); loss.backward(); opt.step()
 
-    assert torch.equal(before_static, emb.static_table), \
-        'static frozen table CHANGED — the freeze is not enforced'
-    assert torch.equal(before_eye, emb.ctx_eye_0), \
-        'context identity table CHANGED — the freeze is not enforced'
+    assert torch.equal(before_static, emb.static_codes_0), \
+        'static code table CHANGED — the freeze is not enforced'
+    assert torch.equal(before_eye, emb.factor_eye_0), \
+        'factor identity table CHANGED — the freeze is not enforced'
+    assert emb.factor_parameters() == 0, \
+        'frozen mode must expose zero trainable factor parameters'
     moved = (emb.trained.weight.detach() - before_trained).abs().max().item()
     assert moved > 0, 'trained part did not move — nothing is learning'
     print(f'        frozen byte-identical; trained moved by {moved:.2e}')
+
+
+@check('FROZEN vs LEARNED factors are a controlled comparison')
+def t_frozen_vs_learned():
+    """
+    The frozen-vs-learned experiment is only meaningful if the two conditions
+    differ in exactly one thing. This asserts that:
+      - both occupy the same T dimensions
+      - both index identical codes
+      - frozen exposes zero trainable factor parameters
+      - learned adds only n_classes x dim per block
+      - total parameter counts stay within 0.1%
+    Otherwise the comparison would confound trainability with capacity.
+    """
+    import torch
+    from morphlm.config import ExperimentConfig, apply_overrides
+    from morphlm.modeling.embedding import HybridEmbedding
+    from morphlm.modeling.transformer import TransformerLM
+
+    vocab = _fake_vocab()
+    V = len(vocab) + 4
+    fz = apply_overrides(ExperimentConfig(), ['frozen.facts=dep'])
+    ln = apply_overrides(fz, ['frozen.trainable=true'])
+
+    e_f = HybridEmbedding(fz, V, vocab_df=vocab, verbose=False)
+    e_l = HybridEmbedding(ln, V, vocab_df=vocab, verbose=False)
+    assert e_f.T == e_l.T, f'width differs: {e_f.T} vs {e_l.T}'
+    assert e_f.factor_parameters() == 0, 'frozen has trainable factor params'
+    assert e_l.factor_parameters() > 0, 'learned has no trainable factor params'
+
+    m_f = TransformerLM(fz, e_f, V)
+    m_l = TransformerLM(ln, e_l, V)
+    p_f, p_l = m_f.num_params(), m_l.num_params()
+    rel = abs(p_l - p_f) / p_f
+    assert rel < 0.001, f'param counts differ by {100*rel:.3f}% — not controlled'
+
+    # frozen factors must be exactly one-hot
+    ids = torch.randint(0, V, (1, fz.data.seq_len))
+    codes = torch.randint(0, 8, (1, 1, fz.data.seq_len))
+    out = e_f(ids, codes)[:, :, :e_f.T]
+    assert torch.allclose(out.sum(-1), torch.ones_like(out.sum(-1))), \
+        'frozen factor is not one-hot'
+    # scale must actually change the factor magnitude — this is the control
+    # that separates trainability from signal strength
+    sc = apply_overrides(fz, ['frozen.scale=0.22'])
+    e_s = HybridEmbedding(sc, V, vocab_df=vocab, verbose=False)
+    o_f = e_f(ids, codes)[:, :, :e_f.T]
+    o_s = e_s(ids, codes)[:, :, :e_s.T]
+    n_f = o_f.norm(dim=-1).mean().item()
+    n_s = o_s.norm(dim=-1).mean().item()
+    assert abs(n_s / n_f - 0.22) < 1e-4, f'scale not applied: {n_s/n_f}'
+    trained_norm = e_f.trained.weight.detach().norm(dim=-1).mean().item()
+    print(f'        T={e_f.T} both | frozen params 0, learned '
+          f'{e_l.factor_parameters()} | total {p_f:,} vs {p_l:,} '
+          f'({100*rel:.4f}% apart)')
+    print(f'        factor norm: frozen@1.0={n_f:.3f} frozen@0.22={n_s:.3f} '
+          f'trained slice={trained_norm:.3f}')
 
 
 @check('forward/backward reduces loss on synthetic data')
@@ -262,6 +321,7 @@ def main():
     t_suites()
     t_build()
     t_freeze()
+    t_frozen_vs_learned()
     t_learns()
     t_cache()
     if args.spacy:

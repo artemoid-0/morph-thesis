@@ -100,6 +100,8 @@ def main():
     pipe = build_pipeline(cfg, verbose=False)
 
     ds = load_dataset('wikitext', 'wikitext-103-raw-v1', split=args.split)
+    from morphlm.progress import Progress
+    prog = Progress(total=args.lines)
 
     # seq -> Counter(surface):  how many distinct words share a token sequence
     seq_to_surface = defaultdict(Counter)
@@ -125,7 +127,7 @@ def main():
         total_bytes += len(text.encode('utf-8'))
         processed += 1
         if processed % 500 == 0:
-            print(f'  {processed} lines, {total_words:,} words...')
+            print(f'  {processed} lines, {total_words:,} words | {prog.status(processed)}')
 
     # ── the correction ────────────────────────────────────────────────────────
     total_bits = 0.0

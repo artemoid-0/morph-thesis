@@ -129,11 +129,15 @@ def train_cell(cfg, verbose=True):
         prog = min(prog, 1.0)
         return peak * (0.1 + 0.9 * 0.5 * (1 + math.cos(math.pi * prog)))
 
+    from ..progress import Progress, fmt_duration
     log = []
     best = None
     best_state = None
     since_improve = 0
     step = 0
+    # ETA is to max_steps, so it is an UPPER BOUND: early stopping can end the
+    # run sooner, and the printed estimate does not try to predict that.
+    prog = Progress(total=cfg.train.max_steps)
     t0 = time.time()
     model.train()
     done = False
@@ -177,7 +181,7 @@ def train_cell(cfg, verbose=True):
                           f'val {ev["mean_loss"]:.3f} | '
                           f'ppl {ev["perplexity"]:8.2f} | '
                           f'bpb {ev["bits_per_byte"]:.4f} | '
-                          f'{ev["elapsed"]:.0f}s{marker}')
+                          f'{prog.status(step)}{marker}')
 
                 if (cfg.train.patience is not None
                         and since_improve >= cfg.train.patience):
@@ -195,5 +199,9 @@ def train_cell(cfg, verbose=True):
 
     if best_state is not None:
         model.load_state_dict(best_state)
+
+    if verbose:
+        print(f'  finished {step:,} steps in {fmt_duration(prog.elapsed)} '
+              f'({prog.rate(step):.1f} steps/s)')
 
     return model, log, best
