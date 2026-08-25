@@ -8,7 +8,7 @@ writes compounds with several parenthesized roots: {(high)(way)},
 discarded, so those words could not be rebuilt from their own token streams —
 which is how the reconstruction audit surfaced it.
 
-This reports the scale, the same way section 16 reported 4,941 format-B entries.
+This reports the scale, the same way section 7 reported 4,941 format-B entries.
 Run it after applying the fix; it compares old and new parses directly.
 
     python scripts/multiroot_audit.py
@@ -96,7 +96,7 @@ def main():
         print(f'    {c:6,}  {m}')
 
     print()
-    print(f'  compare: the format-B fix of section 16 recovered prefixes for')
+    print(f'  compare: the format-B fix of section 7 recovered prefixes for')
     print(f'  4,941 entries. This one affects {affected:,}.')
     print()
     print('  NOTE: fixing this changes the vocabulary (new roots become')

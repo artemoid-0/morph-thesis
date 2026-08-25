@@ -42,7 +42,7 @@ def _first_annotated(arr, start, end):
     fixes it: 17% -> 100% alignment on a synthetic sentence.
 
     Same class of error as the region-attribution bug in coverage_economics
-    (journey section 35). Alignment logic is the default suspect here.
+    (journey section 19). Alignment logic is the default suspect here.
     """
     if arr is None:
         return None

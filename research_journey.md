@@ -1,181 +1,231 @@
 # Context-Aware Embeddings for Tokenizer-Free Language Models
-## Complete Research Journey
+## Research Journey
 
-*A chronological record of every decision, fork, dead end, and breakthrough from initial idea to working implementation.*
+*The record of how this project reached its conclusions: the decisions, the
+forks, the dead ends, and the several occasions on which a result we believed
+turned out to be an artifact of our own measurement.*
 
 > **Companion documents.**
-> `results_reference.md` — every experimental number, all 23 run IDs, the full
-> model and training configuration, all audit results, the script inventory, the
-> known-limitations table and the bug record. This document explains *why*;
-> that one holds the *data*.
+> `results_reference.md` — the data: 23 runs with identifiers, every
+> configuration, every audit result, the limitations table and the bug record.
+> This document explains *why*; that one holds the *numbers*.
 > `literature_analysis.md` — full reads of MorphPiece, Hou et al. 2023,
-> Bostrom & Durrett 2020, FLOTA and Factored Neural LMs, with a
-> dimension-by-dimension comparison against this project.
+> Bostrom & Durrett 2020, FLOTA and Factored Neural Language Models, compared
+> dimension by dimension against this project.
 >
-> Together with the codebase these three files are intended to be a complete
-> source of truth: no result quoted anywhere should be absent from them.
+> Together with the codebase these three files are the complete source of
+> truth. No result quoted anywhere should be absent from them.
+
+**How to read this.** The document is chronological, in six parts. Parts I–II
+build a morphological tokenizer and a vocabulary. Part III builds the measuring
+apparatus. **Part IV is where the project turns**: a series of audits shows that
+the headline result of Parts I–II was an artifact, and reverses its sign. Part V
+grounds the work in the literature and completes the controls. Part VI reaches
+the finding the project actually stands on.
+
+Readers short of time can get the conclusion from Part VI and the reasoning
+behind it from Parts IV–V. Parts I–II matter mainly for *why* the tokenizer was
+built the way it was, and for the audit methodology that grew out of finding it
+wrong.
+
+A note on the arc: **the negative result in Part IV is not a setback that was
+later rescued.** It is the measurement that identified where morphological
+knowledge should be spent, and Part VI follows directly from it.
 
 ---
 
-## Table of Contents
+## Contents
 
-1. [The Starting Point](#1-the-starting-point)
-2. [Understanding the Pipeline](#2-understanding-the-pipeline)
-3. [Identifying the Intervention Point](#3-identifying-the-intervention-point)
-4. [The Hybrid Frozen/Trained Embedding Idea](#4-the-hybrid-frozentraned-embedding-idea)
-5. [Linguistics Crash Course](#5-linguistics-crash-course)
-6. [Granularity Decision — Word vs Morpheme](#6-granularity-decision--word-vs-morpheme)
-7. [What the Preprocessor Can and Cannot Do](#7-what-the-preprocessor-can-and-cannot-do)
-8. [The Vocabulary Design](#8-the-vocabulary-design)
-9. [Tool Survey — MorphoLex, Morfessor, spaCy](#9-tool-survey--morpholex-morfessor-spacy)
-10. [Dataset Choice and First Vocabulary Build](#10-dataset-choice-and-first-vocabulary-build)
-11. [The Frequency Threshold Problem](#11-the-frequency-threshold-problem)
-12. [Redesigning the Vocabulary Without Thresholds](#12-redesigning-the-vocabulary-without-thresholds)
-13. [BPE Baseline Build and First Comparison](#13-bpe-baseline-build-and-first-comparison)
-14. [Building the Preprocessor](#14-building-the-preprocessor)
-15. [Bug Hunting — Category Priority](#15-bug-hunting--category-priority)
-16. [The MorphoLex Format B Bug](#16-the-morpholex-format-b-bug)
-17. [Large-Scale Testing and New Problems](#17-large-scale-testing-and-new-problems)
-18. [The Morfessor Noise Problem](#18-the-morfessor-noise-problem)
-19. [The Three Pipelines Decision](#19-the-three-pipelines-decision)
-20. [Refactoring into Final Structure](#20-refactoring-into-final-structure)
-21. [Post-Refactor: Dissatisfaction with BPE Losses](#21-post-refactor-dissatisfaction-with-bpe-losses)
-22. [Entity Vocabulary — The Frequency Threshold Wars](#22-entity-vocabulary--the-frequency-threshold-wars)
-23. [The Split Threshold Solution](#23-the-split-threshold-solution)
-24. [Compound Word Splitting](#24-compound-word-splitting)
-25. [The star+tup Problem and the Particle Fix](#25-the-startup-problem-and-the-particle-fix)
-26. [Current State and What Comes Next](#26-current-state-and-what-comes-next)
-27. [Designing the Frozen Embedding Layer](#27-designing-the-frozen-embedding-layer)
-28. [The Dataset, Model, and the Fairness Metric](#28-the-dataset-model-and-the-fairness-metric)
-29. [Calibration and Literature Grounding](#29-calibration-and-literature-grounding)
-30. [The Frozen Embedding Audit](#30-the-frozen-embedding-audit)
-31. [Parameter Tying vs Information Injection](#31-parameter-tying-vs-information-injection)
-32. [Restructuring — Reversing the Flat-Layout Decision](#32-restructuring--reversing-the-flat-layout-decision)
-33. [The Information Channel Audit — Making the Comparison Fair](#33-the-information-channel-audit--making-the-comparison-fair)
-34. [The Information-Fair Rerun — Q1 Falls, Q2 Holds](#34-the-information-fair-rerun--q1-falls-q2-holds)
-35. [Localising the Q1 Deficit — Coverage, Decomposition, and the Unified Finding](#35-localising-the-q1-deficit--coverage-decomposition-and-the-unified-finding)
-36. [Literature Grounding — Who Has Done This Already](#36-literature-grounding--who-has-done-this-already)
-37. [Completing the Controls — Matched Vocabulary, Frozen vs Learned, and Signal Scale](#37-completing-the-controls--matched-vocabulary-frozen-vs-learned-and-signal-scale)
-38. [Why English Resists — and the Turn from Confrontation to Cooperation](#38-why-english-resists--and-the-turn-from-confrontation-to-cooperation)
-39. [Level 2 — Morphology as Features on a BPE-Tokenized Model](#39-level-2--morphology-as-features-on-a-bpe-tokenized-model)
+**Part I — The Question**
 
----
+1. [The Starting Point and the Intervention Point](#1-the-starting-point-and-the-intervention-point)
+2. [The Hybrid Frozen/Trained Embedding](#2-the-hybrid-frozentrained-embedding)
+3. [What Can Be Known, and Where](#3-what-can-be-known-and-where)
+4. [Choosing the Unit, and How to Evaluate It](#4-choosing-the-unit-and-how-to-evaluate-it)
 
-## 1. The Starting Point
+**Part II — Building the Morphological Tokenizer**
 
-**The thesis topic:** *Context-Aware Embeddings for Tokenizer-Free Language Models*
+5. [The Vocabulary: Why Frequency Is the Wrong Criterion](#5-the-vocabulary-why-frequency-is-the-wrong-criterion)
+6. [Named Entities: The Threshold Wars and a Structural Answer](#6-named-entities-the-threshold-wars-and-a-structural-answer)
+7. [The Segmenter, and the Bug That Cost Thousands of Prefixes](#7-the-segmenter-and-the-bug-that-cost-thousands-of-prefixes)
+8. [Morfessor's Null Result and the Three-Pipeline Decision](#8-morfessors-null-result-and-the-three-pipeline-decision)
+9. [Compound Splitting and the Particle Fix](#9-compound-splitting-and-the-particle-fix)
+10. [What the First Comparison Showed — and What It Concealed](#10-what-the-first-comparison-showed--and-what-it-concealed)
 
-The initial goal was vague: create some representation of text based on morphology, syntax, or semantics that would replace tokens. No concrete idea of what the unit should be, where in the model to intervene, or how to evaluate success.
+**Part III — The Apparatus**
 
-**The first question asked:** Is the unit a word? Part of a word? If a part, does it have to be meaningful?
+11. [Designing the Frozen Embedding Layer](#11-designing-the-frozen-embedding-layer)
+12. [The Dataset, Model, and the Fairness Metric](#12-the-dataset-model-and-the-fairness-metric)
+13. [Calibration and Literature Grounding](#13-calibration-and-literature-grounding)
 
-At this point, several directions were on the table:
-- Morpheme-based embeddings (BPE-like but linguistically motivated)
-- Character n-gram embeddings (FastText-style)
-- Syntactic span embeddings (constituency-based)
-- Continuous semantic units (CTC-style soft segmentation)
+**Part IV — The Audits**
 
-No decision was made yet. The first priority was to understand what the current pipeline actually does.
+14. [The Frozen Embedding Audit](#14-the-frozen-embedding-audit)
+15. [Parameter Tying vs Information Injection](#15-parameter-tying-vs-information-injection)
+16. [Restructuring — Reversing the Flat-Layout Decision](#16-restructuring--reversing-the-flat-layout-decision)
+17. [The Information Channel Audit — Making the Comparison Fair](#17-the-information-channel-audit--making-the-comparison-fair)
+18. [The Information-Fair Rerun — Q1 Falls, Q2 Holds](#18-the-information-fair-rerun--q1-falls-q2-holds)
+19. [Localising the Q1 Deficit — Coverage, Decomposition, and the Unified Finding](#19-localising-the-q1-deficit--coverage-decomposition-and-the-unified-finding)
+
+**Part V — Grounding and Controls**
+
+20. [Literature Grounding — Who Has Done This Already](#20-literature-grounding--who-has-done-this-already)
+21. [Completing the Controls — Matched Vocabulary, Frozen vs Learned, and Signal Scale](#21-completing-the-controls--matched-vocabulary-frozen-vs-learned-and-signal-scale)
+22. [Why English Resists — and the Turn from Confrontation to Cooperation](#22-why-english-resists--and-the-turn-from-confrontation-to-cooperation)
+
+**Part VI — The Synthesis**
+
+23. [Level 2 — Morphology as Features on a BPE-Tokenized Model](#23-level-2--morphology-as-features-on-a-bpe-tokenized-model)
+24. [Where the Project Stands](#24-where-the-project-stands)
+
+- [Appendix A — Decision Record](#appendix-a--decision-record)
+
+- [Appendix B — Section Mapping](#appendix-b--section-mapping)
 
 ---
 
-## 2. Understanding the Pipeline
+# Part I — The Question
 
-Before designing anything, we needed to understand what we were replacing. The standard LLM pipeline was mapped out:
+*What we were asking, where in a language model to intervene, and what
+linguistics says is knowable at each scope. This part is design only; nothing
+was built yet.*
+
+---
+
+## 1. The Starting Point and the Intervention Point
+
+**The thesis topic:** *Context-Aware Embeddings for Tokenizer-Free Language
+Models.* The initial goal was vague — build some representation of text based
+on morphology, syntax or semantics that replaces tokens. No decision had been
+made about what the unit should be, where in the model to intervene, or how
+success would be judged.
+
+The first question was whether the unit is a word, part of a word, and whether
+that part must be meaningful. Four directions were open: morpheme-based
+embeddings, character n-grams in the FastText style, syntactic span embeddings,
+and continuous CTC-style soft segmentation. Rather than choose immediately, the
+first priority was to understand precisely what was being replaced.
+
+### What the standard pipeline actually does
 
 ```
-text → [tokenizer] → [integer IDs] → [embedding table lookup] → [vectors] → [transformer]
+text → [tokenizer] → [integer ids] → [embedding lookup] → [vectors] → [transformer]
 ```
 
-**Key insight about the embedding table:** It is simply a matrix of shape `[vocab_size × embedding_dim]`. Each row is one token's vector. Looking up token ID 7 means fetching row 7. That's the entire operation. There is no intelligence here — just a matrix lookup.
+The embedding table is a matrix of shape `[vocab_size × embedding_dim]`. Each
+row is one token's vector; looking up token 7 fetches row 7. **There is no
+intelligence in this step — it is a matrix indexing operation.**
 
-**How the embedding table learns:** During training, gradients flow backward from the loss through all transformer layers and eventually reach the embedding table. Only the rows corresponding to tokens that appeared in that batch get updated. Rare tokens appear infrequently, get updated rarely, and therefore have worse representations than common tokens. This is a known, real problem.
+Two properties of it turned out to drive the entire project.
 
-**The static vs contextual distinction:** The embedding table produces the *same vector* for a word regardless of context. The word "bank" always gets the same starting vector whether it means a financial institution or a river bank. Context-sensitivity only arrives later, inside the attention layers.
+**Gradient sparsity.** During training, gradients reach the embedding table only
+for tokens that appeared in the batch. Rare tokens are updated rarely and
+therefore have worse representations than common ones. This is a known and real
+problem, and it is the mechanism that every positive result in this project
+eventually traces back to.
 
-**The critical implication:** Because the embedding is static and context-free, it must somehow pre-encode everything useful about a word's identity before context is available. For common, unambiguous words this is fine. For rare words, ambiguous words, or morphologically complex words, the single-row constraint is a real limitation.
+**Context-independence.** The table produces the *same* vector for a word
+regardless of context. `bank` gets one vector whether it means a financial
+institution or a river bank; context-sensitivity arrives later, inside
+attention. The implication is sharp: because the embedding is static, it must
+pre-encode everything useful about a token's identity *before* any context is
+available. For common unambiguous words this is fine. For rare, ambiguous or
+morphologically complex words the single-row constraint is a real limitation.
 
----
+### Where to intervene
 
-## 3. Identifying the Intervention Point
+Three options: replace the tokenizer only, replace the embedding table only, or
+replace both.
 
-**Fork: Where do we intervene?**
+**Decision: target the embedding layer, not the model architecture.** A
+transformer receives a sequence of vectors and does not care where they came
+from. Better vectors require no architectural change. This fixed the shape of
+every experiment that followed:
 
-Three options were considered:
-- Replace the tokenizer only (feed different IDs into the same embedding table)
-- Replace the embedding table (keep the tokenizer, change how IDs become vectors)
-- Replace both (our own segmentation *and* our own embedding construction)
-
-**Decision: target the embedding layer, not the model architecture.**
-
-The transformer receives a sequence of vectors and does not care where they came from. If we can produce better vectors, the transformer works unchanged. No architecture modification needed.
-
-**What this means practically:** We replace the two-step pipeline (tokenizer → lookup table) with our own pipeline that produces vectors more directly. The transformer remains a standard architecture.
-
-**The comparison experiment design:** Two flows, same transformer:
 - Flow A: text → BPE → embedding table (standard)
-- Flow B: text → our preprocessor → embedding layer (ours)
+- Flow B: text → our preprocessor → our embedding layer
 
-The transformer is identical. The only difference is the embedding step.
-
----
-
-## 4. The Hybrid Frozen/Trained Embedding Idea
-
-**The original insight:** Instead of an embedding vector where all N dimensions are learned freely, split the vector into two parts:
-
-```
-[frozen dims (T) | trained dims (N-T)]
-```
-
-- **Frozen dims:** Encode linguistically certain facts we inject at preprocessing time. These are never updated by backprop.
-- **Trained dims:** Learned normally by the model during training.
-
-**Why this is principled:** The frozen dimensions create guaranteed information channels. Normally, nothing stops the model from learning to ignore or distort any part of what the embedding encodes. By freezing some dimensions, we guarantee that certain information is always present, always readable, at every layer, for every attention head that wants it.
-
-**The burden question:** This raises a clear question about division of labor. If the embedding table handles everything through training, we are easing the *embedding layer's* burden — not the attention layers' burden. The attention layers already handle context, syntax resolution, and word sense disambiguation. We are targeting what the embedding layer struggles with before any context is available.
-
-**The experiment becomes sharper:** Does giving the model guaranteed correct morphological information as a starting point actually help? The answer is not obvious, which makes it worth investigating.
+with the transformer held identical between them. Everything in this document
+is a comparison of that form.
 
 ---
 
-## 5. Linguistics Crash Course
+## 2. The Hybrid Frozen/Trained Embedding
 
-To decide what to freeze, we needed to understand what linguistic information is actually available at different scopes.
+The central idea. Instead of an embedding vector whose N dimensions are all
+learned freely, split it:
+
+```
+[ frozen dims (T) | trained dims (N − T) ]
+```
+
+The frozen dimensions encode linguistically certain facts injected at
+preprocessing time and are never updated by backpropagation. The rest are
+learned normally.
+
+**The argument for it.** Frozen dimensions create guaranteed information
+channels. Nothing normally stops a model from learning to ignore or distort any
+part of what an embedding encodes. Freezing some dimensions guarantees that
+certain information is always present, always readable, at every layer, for any
+attention head that wants it.
+
+**The division-of-labour question this raises.** If the trained table already
+handles everything, freezing eases the burden of the *embedding layer*, not of
+the attention layers. Attention already handles context, syntactic resolution
+and word-sense disambiguation well. The target is specifically what the
+embedding layer must do before any context exists.
+
+That framing produced the sharp version of the question: *does giving the model
+guaranteed correct morphological information as a starting point actually
+help?* The answer was not obvious, which is what made it worth investigating.
+
+Two things about this section are worth flagging in advance, because both were
+substantially revised later. The claim that frozen dimensions supply
+information the model otherwise lacks turns out to be **false for facts that
+are a function of the token id** — see §15. And the claim that freezing beats
+learning was **tested directly and refuted** — see §21. What survives is the
+mechanism, not the original explanation of it.
+
+---
+
+## 3. What Can Be Known, and Where
+
+To decide what to freeze, we needed to know what linguistic information is
+actually available at each scope.
 
 ### Morphology
 
-Morphology is about the internal structure of words. A morpheme is the smallest meaningful unit. `unbreakable` = `un` (negation prefix) + `break` (root) + `able` (capable-of suffix).
+A morpheme is the smallest meaningful unit: `unbreakable` = `un` (negation) +
+`break` (root) + `able` (capable-of). Free morphemes stand alone (`break`,
+`cat`); bound ones do not (`-ing`, `un-`, `-able`). Inflectional morphemes mark
+grammatical properties (`-s` plural, `-ed` past); derivational ones change
+meaning or category (`-ness` nominalises, `re-` adds repetition).
 
-Key morpheme types:
-- **Free morphemes:** Can stand alone (`break`, `cat`, `run`)
-- **Bound morphemes:** Only exist attached to something (`-ing`, `un-`, `-able`)
-- **Inflectional morphemes:** Mark grammatical properties (`-s` for plural, `-ed` for past tense)
-- **Derivational morphemes:** Change word meaning or category (`-ness` nominalizes, `re-` adds repetition)
+From a single word in isolation, morphology yields the root, the affixes and
+their meanings, and often the part of speech — many suffixes are
+category-specific, since `-ness` almost always makes a noun and `-ly` almost
+always an adverb.
 
-What morphology can tell us from a single word: the root, what affixes are attached and what they mean, and often the part of speech (because many suffixes are category-specific: `-ness` almost always makes a noun, `-ly` almost always makes an adverb).
+### Syntax and semantics
 
-### Syntax
+**Dependency syntax** describes grammatical relations: in "the cat chased the
+dog", `cat` is subject of `chased`. These relations are *relational* — a word's
+syntactic role cannot be determined by looking at it alone.
 
-Syntax is about how words combine into sentences. Two key frameworks:
+**Constituency syntax** groups words into phrases that behave as units.
+Membership requires sentence-level analysis.
 
-**Dependency syntax:** Describes grammatical relations between words. In "the cat chased the dog," `cat` is the subject of `chased` and `dog` is the object. These relations are *relational* — you cannot determine a word's syntactic role by looking at it in isolation. You need the full sentence.
+**The key insight:** syntactic role is not a property of a word. It is a
+property of a word *in a particular sentence*. It cannot be frozen per-word
+without sentence context.
 
-**Constituency syntax:** Words group into phrases that behave as units. A noun phrase (NP) like "the old cat" can be replaced by "it," can be moved around the sentence as one block, and is a real linguistic object. Phrase type membership requires sentence-level analysis.
+Lexical semantics is partly available at word level (`cat` is always an animal)
+but polysemous words need context. Compositional semantics is entirely
+context-dependent.
 
-**The key insight:** Syntactic role (subject, object, modifier) is *not* a property of a word — it is a property of a word *in a particular sentence*. You cannot freeze it per-word without sentence context.
+### The scope table
 
-### Semantics
-
-Two levels:
-
-**Lexical semantics:** The meaning of individual words. Some is available word-level (`cat` is always an animal), but polysemous words (`bank`, `light`, `left`) require context.
-
-**Compositional semantics:** How words combine to create sentence meaning. Entirely context-dependent.
-
-### The Scope Table
-
-| What you can know | Morpheme | Word | Phrase | Sentence |
+| What can be known | Morpheme | Word | Phrase | Sentence |
 |---|---|---|---|---|
 | Morpheme type | ✓ | ✓ | ✓ | ✓ |
 | Inflection (tense, plural) | partial | ✓ | ✓ | ✓ |
@@ -185,671 +235,503 @@ Two levels:
 | Unambiguous lexical meaning | ✗ | partial | ✓ | ✓ |
 | Contextual meaning | ✗ | ✗ | partial | ✓ |
 
-### A Critical Realization — Preprocessor Scope ≠ Unit Scope
+### The observation that mattered most
 
-**Important insight arrived at during this discussion:** The scope of what the preprocessor *looks at* when making a decision is independent of the scope of the *unit* it produces.
+**Preprocessor scope ≠ unit scope.** The scope of what the preprocessor *looks
+at* when making a decision is independent of the scope of the *unit* it
+produces. We can examine an entire sentence to decide what tag to attach to one
+word; the model still receives word-level vectors. The preprocessor is simply a
+smarter tagger.
 
-We can look at the whole sentence to decide what tag to put on one word. The model still receives word-level (or morpheme-level) vectors. The preprocessor is just a smarter tagger. This significantly expands what we can freeze — syntactic role, which requires sentence context to determine, can be frozen at the word level if our preprocessor runs a dependency parser first.
+This vastly expands what can be frozen. Syntactic role — which requires
+sentence context to determine — can be frozen at the word level if the
+preprocessor runs a dependency parser first.
 
----
-
-## 6. Granularity Decision — Word vs Morpheme
-
-**The central design question:** What does one vector represent?
-
-This choice determines what information you can and cannot encode.
-
-**Word-level units:**
-- Can encode: morphological facts (derived from internal structure), POS, syntactic role (with sentence-level analysis), named entity type
-- Cannot encode: compositional meaning, word sense for ambiguous words
-- Vocabulary size: large (50k+ for typical BPE, still large for true words)
-- Handles OOV: poorly (a word not seen in training has no vector)
-
-**Morpheme-level units:**
-- Can encode: morpheme type (prefix/root/suffix), morpheme meaning class
-- Cannot encode: word-level POS (unless whole-word POS is mapped to the head morpheme), syntactic role without extra machinery
-- Vocabulary size: small (few thousand productive morphemes in English)
-- Handles OOV: better (even unknown words have known affixes)
-
-**The argument for morphemes:**
-- Much closer to BPE in pipeline structure → cleaner comparison
-- Smaller vocabulary → each entry trains more often → better embeddings
-- OOV handling is linguistically grounded rather than statistical
-
-**The argument against morphemes:**
-- POS tags and syntactic roles attach to words, not morphemes
-- Phrasal verbs and multiword expressions break compositional assumptions
-
-**The named entity insight:** Some words cannot be meaningfully decomposed into morphemes. `Microsoft` does not break into `micro` + `soft` in any semantically useful way. `SolidGoldMagikarp` is a compound proper noun with no compositional meaning. These should be treated as atomic units.
-
-**The tripartite theory:** Every word is one of:
-1. **Decomposable into meaningful morphemes** — process morphologically
-2. **A named entity** — treat as atomic unit with entity type label
-3. **Unknown/garbage** — fall to character-level honestly
-
-**Fork: Word-level or morpheme-level units?**
-
-**Decision: Morpheme-level units, with named entities treated atomically.**
-
-This gives a smaller vocabulary, closer comparison to BPE, and linguistically grounded OOV handling. Named entities as atomic units is a natural consequence of the tripartite theory.
+**This is the most valuable observation in the document, and the
+implementation lost it for the entire first half of the project.** It was
+recovered only in §15, and the experiment it enables is the one that produced
+every positive result the project has.
 
 ---
 
-## 7. What the Preprocessor Can and Cannot Do
+## 4. Choosing the Unit, and How to Evaluate It
 
-### Division of Labor in the Transformer
+### Word-level or morpheme-level?
 
-The transformer has two distinct phases:
+Word-level units can encode morphological facts, POS, syntactic role and entity
+type, but not compositional meaning or sense for ambiguous words. The
+vocabulary is large and out-of-vocabulary handling is poor — an unseen word has
+no vector at all.
 
-**Embedding phase:** Converts each token to a vector *independently*, with zero awareness of other tokens. Static, context-free.
+Morpheme-level units encode morpheme type and meaning class. The vocabulary is
+small — English has only a few thousand productive morphemes — so each entry
+trains more often, and OOV handling is linguistically grounded rather than
+statistical, since even an unknown word usually has known affixes. The costs
+are that POS and syntactic role attach to words rather than morphemes, and that
+phrasal verbs and multiword expressions break compositional assumptions.
 
-**Attention layers:** Let all tokens "talk to each other." Every token looks at every other token and updates its representation. Context enters here.
+**An observation that forced a third category.** Some words cannot be
+meaningfully decomposed. `Microsoft` does not break into `micro` + `soft` in any
+useful sense. This produced a tripartite theory: every word is either
+**decomposable into meaningful morphemes**, a **named entity** to be treated as
+an atomic unit, or **unknown**, in which case it falls to characters honestly.
 
-**MLP layers:** After attention in each transformer block. Research suggests MLPs act as key-value memory, storing factual associations. They also apply nonlinear transformations that attention alone cannot.
+**Decision: morpheme-level units, with named entities atomic.** Smaller
+vocabulary, closer structural comparison to BPE, and principled OOV handling.
 
-**What we are targeting:** The embedding phase. We are not easing the burden of attention or MLP — those are good at what they do. We are giving the embedding phase a head start by guaranteeing certain linguistic facts are present before context arrives.
+### Evaluating without generation
 
-**What attention handles well (that we should not try to replicate):**
-- Word sense disambiguation (which "bank"?)
-- Syntactic role in context (subject vs object)
-- Phrasal verb detection (give + up = quit)
-- Coreference resolution (he = John)
-- Named entity context (nearby words reveal entity type)
+**Decision: text generation is not required.** Three strategies avoid it.
 
-**What the embedding struggles with (our target):**
-- Internal word structure (the embedding treats `unbreakable` and `breakable` as unrelated)
-- Morphological identity (same root with different inflections = unrelated rows)
-- Guaranteed presence of linguistic facts (model can learn to ignore or distort anything)
+**Perplexity** measures how surprised the model is by held-out text. Lower is
+better and it is directly comparable between approaches.
 
-### Evaluating Without Generation
+**Probing** trains a small classifier on the embeddings to predict a linguistic
+property. If the embeddings encode it, the classifier learns easily from little
+data. This directly tests whether frozen dimensions are actually *used* rather
+than merely present.
 
-**Fork: Must we generate text to evaluate?**
+**Word similarity benchmarks** correlate embedding cosine similarity against
+human judgements.
 
-**Decision: No.** Text generation is not required to compare models. Three evaluation strategies that avoid generation:
+The intended strategy was perplexity as the headline number and probing as the
+mechanistic story: *"our embeddings produce lower perplexity, and probing shows
+the frozen dimensions are actively used."*
 
-1. **Perplexity:** How surprised is the model by held-out text? Lower = better language model. Directly comparable between approaches. No generation needed.
-
-2. **Probing tasks:** Train a tiny classifier on top of embeddings to predict some linguistic property (POS tag, named entity type). If the embeddings encode that information, the classifier learns easily from little data. This directly tests whether frozen dimensions are actually useful.
-
-3. **Word similarity benchmarks:** Datasets like SimLex-999 with human-judged similarity scores. Measure correlation between embedding cosine similarity and human judgments.
-
-**The recommended evaluation strategy for the thesis:**
-- Perplexity as the headline comparison number
-- Probing tasks as the mechanistic story ("why" one model is better)
-- Together: "our embeddings produce lower perplexity AND probing shows the frozen dimensions are actively used"
+Two notes on how this aged. The perplexity half was pursued throughout, though
+§12 shows that comparing perplexity across tokenizers is invalid and
+bits-per-byte must be used instead. **The probing half was never run.** The
+extraction code and a full probing script exist; the classifier was deliberately
+deferred until the results indicated what was worth probing, and the project
+reached its conclusions before that happened. It remains the single largest
+piece of unfinished evaluation.
 
 ---
 
-## 8. The Vocabulary Design
+# Part II — Building the Morphological Tokenizer
 
-### Early Design — Frequency-Based
+*Six months of design compressed: how the vocabulary was decided, how the
+segmenter was built, which bugs mattered, and what the first comparison against
+BPE appeared to show.*
 
-The first vocabulary design used a frequency threshold: morphemes appearing at least 5 times in 10k training articles stay in the vocabulary; others are cut. Named entities required frequency ≥ 10 and length ≥ 5.
+*A warning that applies to this entire part: the comparisons reported here were
+later found to be **invalid**, because the two token streams being compared did
+not encode the same information. Part IV establishes this and reverses the
+conclusion. The design decisions remain sound and are the reason the later,
+valid comparison was possible at all — but no number in this part should be
+quoted as a result.*
 
-**Problem discovered:** Running the coverage check on WikiText-103 validation set showed that 34.8% of words fell to character-level fallback. Many of these were common English words like `known`, `related`, `closely` — words that clearly exist and have morphological structure, but didn't make the frequency cutoff because we only sampled 10k articles.
+---
 
-**Root cause:** The frequency threshold was conflating two different things:
-- Low frequency because it is a rare but real morpheme (should keep)
-- Low frequency because it is Morfessor noise (should discard)
+## 5. The Vocabulary: Why Frequency Is the Wrong Criterion
 
-Frequency cannot distinguish between these cases.
+### The first design, and its failure
 
-### The Better Design — Source-Based
+The initial vocabulary used a frequency threshold: morphemes appearing at least
+5 times in 10,000 training articles were kept, others cut. Named entities
+required frequency ≥ 10 and length ≥ 5.
 
-**Fork: How do we decide what counts as a real morpheme?**
+**Dataset choice: WikiText-103** — a standard language-modeling benchmark of
+verified Good and Featured Wikipedia articles, roughly 103 million tokens across
+28,000 articles. Clean prose, high named-entity density, and standard enough
+that results are comparable to published work.
 
-**Decision: Use MorphoLex itself as the definition of what counts as a real morpheme.**
+The first build over 10,000 articles produced 10,462 unique morphemes against a
+target vocabulary of 10,000 — already over budget with zero slots left for
+entities. Worse, running a coverage check on the validation set showed **34.8%
+of words falling to character-level fallback**, and the content of that fallback
+was alarming: `known`, `related`, `closely`, `parts`, `eastern`, `becoming` —
+completely ordinary English words with clear morphological structure, present in
+MorphoLex, which simply had not appeared often enough in a 10,000-article
+sample.
 
-MorphoLex is a hand-curated database of ~70k English words with their morpheme decompositions. Every morpheme that appears anywhere in MorphoLex is, by definition, a real English morpheme. No frequency threshold needed.
+### The diagnosis
 
-**The six-layer vocabulary:**
+The threshold was conflating two different things:
+
+- low frequency because a morpheme is **rare but real** — should keep
+- low frequency because it is **segmenter noise** — should discard
+
+**Frequency cannot distinguish these cases.** No choice of threshold can,
+because the distinction is not about frequency at all.
+
+### The redesign: source determines validity
+
+The insight was that a hand-curated linguistic database was already in hand.
+MorphoLex maps roughly 70,000 English words to their morpheme decompositions.
+**Any morpheme appearing anywhere in MorphoLex is, by definition, a real English
+morpheme.** Any morpheme not in it is either noise or a genuine OOV that should
+fall to characters. No threshold is needed.
+
+This produced the six-layer vocabulary:
 
 | Layer | Category | Source | Threshold | Count |
 |---|---|---|---|---|
-| 1 | Prefixes | MorphoLex | None | 127 |
-| 2 | Suffixes | MorphoLex | None | 211 |
-| 3 | Roots | MorphoLex | None | ~15,000 |
-| 4 | Function words | Hardcoded list | None | 112 |
-| 5 | Named entities | Dataset frequency | freq≥10, len≥5 | ~394 |
-| 6 | Characters | a–z | Never removed | 26 |
+| 1 | Prefixes | MorphoLex | none | 127 |
+| 2 | Suffixes | MorphoLex | none | 211 |
+| 3 | Roots | MorphoLex | none | ~15,000 |
+| 4 | Function words | hardcoded closed class | none | 112 |
+| 5 | Named entities | dataset frequency | see §6 | 1,259 |
+| 6 | Characters | a–z | never removed | 26 |
 
-**Why only layer 5 uses frequency:** Named entities only deserve an embedding slot if the model will see them enough times to learn from. A named entity that appears once cannot be meaningfully represented regardless of how many dimensions it gets. For all other layers, frequency is irrelevant — a real morpheme deserves an embedding whether it appears once or a million times.
+**Only layer 5 uses frequency, and only because the justification is different
+there.** A named entity deserves an embedding slot only if the model will see it
+enough times to learn from; one that appears once cannot be meaningfully
+represented however many dimensions it gets. For every other layer frequency is
+irrelevant — a real morpheme deserves an embedding whether it appears once or a
+million times.
 
-**The fourth category — function words:** Function words (`the`, `and`, `of`, `in`, `is`, `was`, ...) are a closed class with no morphological structure and no compositional meaning. They exist in MorphoLex as single-morpheme roots, but they deserve their own frozen dimension flag. Adding a `function` category as layer 4 provides this signal for free.
+**Function words as a fourth category.** Function words (`the`, `and`, `of`) are
+a closed class with no morphological structure and no compositional meaning.
+They exist in MorphoLex as single-morpheme roots, but they deserve their own
+flag, so a `function` layer provides that signal for free.
 
-**Priority ordering:** Because some tokens appear in multiple layers (e.g., `and` is both a suffix in MorphoLex and a function word), deduplication must respect priority: entity > function > prefix > suffix > root > character.
+**Characters always survive.** The character layer is never deduplicated even
+when a character also appears as an affix. This guarantees 100% coverage: any
+string can be spelled out.
 
-**Characters always survive:** The character layer is never deduplicated even if a character also appears as a prefix or suffix. This guarantees 100% coverage — any string can be spelled out as individual characters.
+**Priority ordering.** Some tokens appear in several layers — `and` is both a
+MorphoLex suffix and a function word. Deduplication must therefore respect
+priority rather than insertion order: `entity > function > prefix > suffix >
+root > character`. Getting this wrong produced a real bug, discussed in §7.
 
----
-
-## 9. Tool Survey — MorphoLex, Morfessor, spaCy
-
-### MorphoLex
-
-**What it is:** A hand-curated Excel database mapping ~70k English words to their morpheme decompositions with a custom notation format.
-
-**The notation format:**
-- `{(beauty)}>ful>` — root `beauty`, suffix `ful`
-- `<un<{(happy)}` — prefix `un`, root `happy`
-- `{<re<(search)}>er>` — format B (prefix inside braces), prefix `re`, root `search`, suffix `er`
-
-**Format B bug discovered late:** Our initial parser only handled format A (prefix before the opening brace). 4,941 out of ~70k entries use format B, meaning we were silently losing the prefix for all these words. `researchers` was being parsed as just `[('suffix', 'er')]` instead of `[('prefix', 're'), ('root', 'search'), ('suffix', 'er')]`.
-
-**The fix:** Detect whether the prefix appears before or inside the opening brace, and extract accordingly.
-
-**MorphoLex's lemmatization:** MorphoLex stores normalized roots, not surface forms. `beautiful` → root `beauty` (not `beauti`). `running` → root `run` (not `runn`). This solves the morphophonological normalization problem for free — for all 66k words in the database.
-
-### Morfessor
-
-**What it is:** An unsupervised statistical morpheme segmenter. Given a word list, it learns to segment words by minimizing description length (MDL principle).
-
-**How it was intended to be used:** As a fallback for words not in MorphoLex, to produce some segmentation rather than falling straight to characters.
-
-**What actually happened:** When trained on a small seed list, Morfessor produces reasonable segmentations for words with clear morpheme boundaries. However it also produces noise — Morfessor found `bi` (a real prefix) + `den` (a real root) inside `biden`, producing a confident but wrong parse.
-
-**The normalization problem:** Morfessor produces surface-form segments, not normalized roots. `beautiful` → `beauti + ful`, not `beauty + ful`. A set of rules was written to handle the three English morphophonological alternations:
-1. Doubled consonant before vowel suffix: `runn+ing` → `run+ing`
-2. `i`→`y` before vowel/certain suffixes: `happi+er` → `happy+er`
-3. Missing silent e: `mak+ing` → `make+ing`
-
-**Morfessor's ultimate contribution:** Minimal. Every useful segmentation in our test set came from MorphoLex or prefix stripping. Morfessor's own segmentations either produced noise or were redundant with what prefix stripping already found.
-
-### spaCy
-
-**What it is:** Industrial-strength NLP library providing tokenization, POS tagging, dependency parsing, and named entity recognition.
-
-**Our use:** Named entity recognition only. spaCy uses IOB tags (B = beginning of entity, I = inside entity, O = outside) to identify entity spans.
-
-**Key behaviors observed:**
-- Multi-word entities (`Joe Biden`, `New York Times`, `Goldman Sachs`) correctly grouped as single spans
-- Possessives (`Apple's`) correctly strip the possessive and tag just the name
-- Nationality adjectives (`British`, `French`, `American`) tagged as NORP — debated whether to include
-- Dates (`last January`), numbers (`42`), and temporal expressions tagged but excluded from our entity vocabulary by design
-- Some entities missed (`River Thames` not tagged)
-- Some common words mistagged (`love`, `church`, `us`)
-
-**The article stripping fix:** Entity spans sometimes include leading articles (`the United States` → tagged as one span including `the`). Articles are stripped before the entity surface form is stored: `the_united_states` → `united_states`.
-
-**Entity types kept:** ORG, PERSON, GPE, LOC, FAC, NORP, PRODUCT, EVENT, WORK_OF_ART, LAW, LANGUAGE
-
-**Entity types excluded:** DATE, CARDINAL, ORDINAL, PERCENT, TIME, MONEY, QUANTITY — these are compositional and infinite in variety, so treating them as atomic units makes no sense.
+The vocabulary settled at roughly 15,700 entries, later 17,151 after the
+information-preserving layers of §17 were added. Larger than BPE's 10,000, but
+every entry linguistically justified.
 
 ---
 
-## 10. Dataset Choice and First Vocabulary Build
-
-**Dataset chosen: WikiText-103**
-
-WikiText-103 is a standard language modeling benchmark consisting of verified Good and Featured Wikipedia articles. It contains ~103 million tokens across ~28k articles. It is clean English prose with good named entity density, freely available via HuggingFace datasets in one line.
-
-**Why WikiText-103 over alternatives:**
-- Standard benchmark → results comparable to existing literature
-- Clean text → less preprocessing noise
-- Large enough → meaningful statistics
-- Wikipedia → rich in named entities for our entity vocabulary layer
-
-**First vocabulary build (10k articles):**
-- Unique morphemes seen: 10,462
-- Unique named entities seen: 14,667
-- Target vocabulary size: 10,000
-
-**Immediate problem:** 10,462 morphemes already exceeds 10,000, leaving zero slots for named entities. The frequency threshold of 5 was the only thing controlling vocabulary size, and it wasn't working as intended.
-
-**Entity quality issues found:** Many high-frequency "entities" were nationality adjectives being mistagged: `british` (280), `german` (262), `french` (207). Others were clearly wrong: `us` (pronoun), `white` (adjective), `love`. The frequency+length filter (`freq≥10, len≥5`) removed most of these by coincidence rather than by design.
-
----
-
-## 11. The Frequency Threshold Problem
-
-**The coverage measurement:** Running coverage on the WikiText-103 validation set showed:
-- 65.2% of words covered by our vocabulary
-- 34.8% falling to character fallback
-- 0.0% truly uncovered (character fallback handles everything)
-
-**The alarming content of the fallback:** Words like `known`, `closely`, `related`, `parts`, `eastern`, `becoming` — completely normal, common English words — were falling to character-level. These words exist in MorphoLex and have clear morphological structure, but they didn't appear enough times in our 10k article sample.
-
-**Root cause:** The frequency threshold of 5 was designed to filter Morfessor noise, but it also incorrectly filtered real words that were common but underrepresented in our small sample.
-
-**The structural problem:** Frequency cannot distinguish:
-- Low frequency because it is a rare but real morpheme (should keep)
-- Low frequency because it is Morfessor noise (should discard)
-
-This led directly to the redesign in the next section.
-
----
-
-## 12. Redesigning the Vocabulary Without Thresholds
-
-**The key insight:** We already have a hand-curated linguistic database — MorphoLex. Any morpheme that appears in MorphoLex is real by definition. Any morpheme that doesn't appear in MorphoLex is either noise (from Morfessor) or a genuine OOV that should fall to characters.
-
-**New design principle:** Source determines validity, not frequency.
-
-- MorphoLex prefixes → always valid (78 found, expands to 141 after format B fix)
-- MorphoLex suffixes → always valid (240 found)
-- MorphoLex roots → always valid (~15,000 found)
-- Function words → always valid (hardcoded closed class)
-- Named entities → frequency-gated (only category where frequency is justified)
-- Characters → always present, never removed
-
-**Total vocabulary: ~15,739 entries** — larger than BPE's 10,000 but every entry is linguistically justified.
-
-**The deduplication fix:** When building the vocabulary, some tokens appear in multiple layers (e.g., `and` is both a suffix in MorphoLex layer 2 and a function word in layer 4). Simple `drop_duplicates` keeps the first occurrence, which might be the wrong category. The fix: sort by priority before deduplication so the highest-priority category always wins.
-
-**Priority order:** entity(0) > function(1) > prefix(2) > suffix(3) > root(4) > character(5)
-
----
-
-## 13. BPE Baseline Build and First Comparison
-
-**BPE implementation:** Standard GPT-2 style BPE using HuggingFace `tokenizers` library. Trained on the same 10k WikiText-103 articles for direct comparability. Target vocabulary: 10,000 tokens.
-
-**First side-by-side comparison on test words:**
-
-| Word | Our pipeline | BPE |
-|---|---|---|
-| `unbreakable` | `un + break + able` | `un \| break \| able` |
-| `beautiful` | `beauty + ful` | `beautiful` (one token) |
-| `quickly` | `quick + ly` | `quickly` (one token) |
-| `running` | `run` (lemmatized) | `running` (one token) |
-| `cats` | `cat` (lemmatized) | `c \| ats` |
-| `Microsoft` | atomic entity [ORG] | `Mic \| ros \| oft` |
-| `happiness` | `happy + ness` | `happ \| iness` |
-
-**Key observations:**
-- BPE wins zero comparisons, ties on a few
-- `cats → c | ats` and `Microsoft → Mic | ros | oft` are BPE's most embarrassing failures
-- Our pipeline correctly lemmatizes (`running → run`, `cats → cat`)
-- BPE vocabulary has 739 non-alphabetic tokens (punctuation/symbols) vs zero in ours
-- BPE has 1,068 tokens of length ≤ 2 vs our character layer which is intentional
-
-**BPE frequency distribution:** Much flatter than ours. Almost all 9,745 BPE tokens appear at least 5 times. Our morpheme vocabulary had a long tail of rare items before the redesign.
-
----
-
-## 14. Building the Preprocessor
-
-**The preprocessor's job:** Take a raw sentence, return a sequence of token IDs plus metadata for the frozen dimensions.
-
-**Initial pipeline design:**
-```
-sentence → spaCy NER → entity spans
-         → for each token:
-             if named entity → emit atomic unit
-             elif in MorphoLex → emit morphemes from lookup
-             elif Morfessor produces valid segments → emit those
-             else → emit characters
-```
-
-**Morfessor training:** Rather than training on all 66k MorphoLex words (which caused memory crashes in our environment), a curated seed list of ~3,000 words was used. The seed list included common OOV patterns: inflected forms, prefixed words, technical terms.
-
-**The `encode()` output format per token:**
-```python
-{
-    'token_id':     int,    # index into vocabulary
-    'token':        str,    # the morpheme/entity/character string
-    'category':     str,    # prefix/suffix/root/function/entity/character
-    'role':         str,    # morphological role within its word
-    'entity_label': str,    # spaCy NER label if entity, else None
-    'word':         str,    # original surface word this came from
-}
-```
-
-**Helper methods added:**
-- `encode_ids(text)` — returns just the list of integer IDs
-- `pretty_print(text)` — formatted table for debugging
-- `decode(ids)` — best-effort reconstruction (acknowledged as imperfect)
-
----
-
-## 15. Bug Hunting — Category Priority
-
-**Bug 1: `and` classified as suffix**
-
-`and` appeared in the vocabulary as a suffix (it appears as a suffix in MorphoLex in some entries) AND as a function word. The `categories` dict in the preprocessor took whatever was inserted last, giving `suffix` as the category. This caused `and[suffix]` to appear in output instead of `and[function]`.
-
-**Fix:** The `_resolve_category` method was added. Instead of looking up category from a flat dict, it queries all rows for that token in the vocabulary DataFrame and returns the minimum-priority category. This ensures entity > function > prefix > suffix > root > character always holds.
-
-**Bug 2: `london` classified as root despite being in entity vocabulary**
-
-`london` was in `entity_tokens` but `_segment_word` checked function words and MorphoLex before checking entities. MorphoLex also contains `london` as a root (it's a proper noun that appears in many compound entries).
-
-**Fix:** Entity vocabulary check added as the *first* step in `_segment_word`, before function words and MorphoLex.
-
-**Bug 3: Character fallback tokens inheriting wrong category**
-
-Single character `a` appearing in a character fallback context was being classified as `function` (because `a` is also the article `a` in the function word layer) despite having role `char`.
-
-**Fix:** In `_make_token`, if role is `char`, category is always forced to `character` regardless of what the vocabulary says. Character fallback always overrides vocabulary category.
-
----
-
-## 16. The MorphoLex Format B Bug
-
-**Discovery:** Running `test_sentences.py` on a larger set revealed that `researchers` produced only `er[suffix]` — the root `search` and prefix `re` were being lost entirely.
-
-**Investigation:** Checking MorphoLex directly showed `researchers` stored as `{<re<(search)}>er>`. Our parser was looking for prefixes in the string *before* the opening `{`, but in format B entries, the prefix is *inside* the opening brace.
-
-**Two formats in MorphoLex:**
-- Format A: `<un<{(happy)}` — prefix BEFORE the opening brace
-- Format B: `{<re<(search)}>er>` — prefix INSIDE the opening brace
-
-**Scale of the problem:** 4,941 out of ~70k entries use format B. This means thousands of words were missing their prefixes silently.
-
-**Notable examples fixed by the parser fix:**
-- `researchers → re + search + er` (was: `er` only)
-- `prosecution → pro + secute + ion` (was: `ion` only)
-- `aline → a + line` (Latin prefix `a-`)
-- `universe → uni + verse`
-
-**Fix:** Parser updated to detect prefix position relative to parenthesized root:
-
-```python
-# format A: prefixes before the opening {
-format_a_prefixes = re.findall(r'<([a-zA-Z]+)<', s[:brace_open])
-
-# format B: prefixes inside the opening { before the root
-inner = s[brace_open:brace_close]
-paren_pos = inner.index('(') if '(' in inner else len(inner)
-format_b_prefixes = re.findall(r'<([a-zA-Z]+)<', inner[:paren_pos])
-
-prefixes = format_a_prefixes + format_b_prefixes
-```
-
-**Side effect:** Prefix count expanded from 78 to 141 — the 63 new prefixes are format B prefixes that were previously invisible. This includes single-letter Latin prefixes like `a-`, `e-`, `o-`.
-
----
-
-## 17. Large-Scale Testing and New Problems
-
-**Test set created:** 60 sentences across 11 categories:
-- Morphologically rich
-- Inflected forms
-- Named entities (single and multiword)
-- Function words
-- OOV and rare words
-- Unknown proper nouns
-- Compound words
-- Ambiguous words
-- Morphologically simple
-- Mixed realistic
-
-**New problem found: single-character prefix/suffix noise**
-
-The format B fix added 63 new prefixes to the vocabulary, including single-letter prefixes like `a`, `e`, `o`, `i` (real Latin prefixes). When Morfessor segments an OOV word into pieces, single-character pieces that happen to be in the prefix or suffix set were being assigned `prefix` or `suffix` roles instead of falling to characters.
-
-Result: outputs like `e[prefix]`, `o[prefix]`, `n[suffix]` inside character soup — single characters being confidently labeled as morphemes.
-
-**Minimum length filter applied to Morfessor validation:** A segment must be at least 2 characters long to be accepted as a valid morpheme from Morfessor output. Single characters from Morfessor always become character fallback.
-
-**New problem: the confidence of wrongness issue**
-
-`biden → bi[prefix] + den[root]` — Morfessor found two real English morphemes (`bi` = two, `den` = lair) inside a proper noun. The result is confident but wrong.
-
-**Fork: what to do with unknown proper nouns?**
-
-**Option considered: capitalisation guard** — if a word starts with a capital letter and isn't in MorphoLex or the entity vocabulary, fall straight to characters.
-
-**Problem with capitalisation guard:** Sentence-initial words are always capitalised. Stylistic capitalisation (`God`, `Internet`). Lowercase proper nouns in informal text. The guard relies on a typographic convention, not a linguistic category. This violates our design principle of not using surface-form heuristics.
-
-**Decision: remove the capitalisation guard, accept `bi+den` style noise.**
-
-Reasoning: At scale, `bi+den` appearing consistently across thousands of Biden mentions will cluster with political context regardless of the wrong morpheme split. The model doesn't know morphemes are supposed to be meaningful — it just sees consistent co-occurrence patterns. Character soup (`b+i+d+e+n`) is more honestly unknown but equally uninformative.
-
-The capitalisation guard was a band-aid that would obscure the real limitation (entity vocabulary coverage at dataset scale) with a brittle heuristic.
-
----
-
-## 18. The Morfessor Noise Problem
-
-**The growing concern:** Looking at the full test output, Morfessor's contribution was almost entirely negative:
-- Useful cases: almost zero (every good segmentation came from MorphoLex or prefix stripping)
-- Harmful cases: `bi+den`, `y+n+stag+ram`, single-character prefix/suffix noise throughout OOV words
-
-**Fork: what to do about Morfessor?**
-
-**Option 1 — Remove Morfessor entirely.** Pipeline: entity → function → MorphoLex → prefix strip + MorphoLex on remainder → characters. Fully deterministic, no statistical noise. Cleaner design.
-
-**Option 2 — Keep Morfessor but only accept affixes.** Morfessor's root guesses are unreliable; its affix identification is more trustworthy. Only accept Morfessor segments if they are known prefixes or suffixes. Root-position segments → characters.
-
-**Option 3 — Revert to 78 prefixes.** Discard the single-letter prefixes that came from the format B fix. This removes the noise source but also throws away 63 legitimate prefixes.
-
-**Option 3 was rejected** as unprincipled ("just discard half the prefixes and hope the problematic ones were there").
-
-**Option 2 was implemented** as the affix-only rule in `pipeline_morpheme.py`. The tradeoff: cleaner output for OOV words (no wrong root assignments), at the cost of slightly more character soup where a root-position segment might have been correct.
-
-**The three-pipeline decision:** Rather than choosing between Morfessor and no-Morfessor, build both as separate pipelines and compare. This turns the uncertainty into a research finding. If the two pipelines perform similarly in training, it confirms that Morfessor adds noise without adding value. If the Morfessor pipeline performs better on specific word types, that's a useful positive finding.
-
----
-
-## 19. The Three Pipelines Decision
-
-**The comparison design:**
-
-| Pipeline | Name | Description |
-|---|---|---|
-| 1 | BPE | Standard GPT-2 style BPE, 10k vocabulary, baseline |
-| 2 | morph | Morpheme-based with Morfessor fallback (affix-only rule) |
-| 3 | det | Morpheme-based, fully deterministic, no Morfessor |
-
-**Why three pipelines are better than two:**
-- Isolates what Morfessor specifically contributes (or doesn't)
-- Makes the comparison more rigorous for the thesis
-- Costs almost nothing extra since the pipelines share most code
-
-**What the comparison reveals (from test output):**
-- Pipelines 2 and 3 produce identical output on ~55/60 test sentences
-- Differences only appear in character soup regions where Morfessor might find a valid affix
-- This itself is a finding: Morfessor adds almost nothing over the deterministic pipeline for English with MorphoLex coverage
-
-**Clear wins for both morpheme pipelines vs BPE:**
-- Inflected forms: `cats → cat[r]`, `running → run[r]`, `happiest → happy[r]+est[s]`
-- Function words: `whether → whether[f]` (1 token) vs BPE's `W|he|ther` (3 tokens)
-- Simple words: consistent single tokens vs BPE splitting `b|at`, `du|ck`, `sil|ence`
-
-**Clear losses vs BPE:**
-- Unknown multi-word entities: `Goldman Sachs`, `North Korea` → character soup (BPE handles via training data statistics)
-- Complex OOV: `blockchain`, `cryptocurrency`, `recontextualized` → characters (BPE produces shorter sequences)
-
----
-
-## 20. Refactoring into Final Structure
-
-**The problem:** By the end of the exploration phase, the codebase consisted of several large `*.py` files with overlapping functionality, accumulated patches, and no clear separation of concerns.
-
-**Fork: deep folder hierarchy or flat structure?**
-
-Initially proposed: a deep folder hierarchy with `common/`, `pipelines/bpe/`, `pipelines/morpheme/`, `pipelines/morpheme_deterministic/`, `tests/`, `data/`, `main.py` — about 15 files across multiple folders.
-
-**Decision: flat structure with 7 files.**
-
-Reasoning: The communication overhead of a deep hierarchy in this collaborative development context outweighs the organizational benefits. With a flat structure, every file has an obvious, single purpose and location.
-
-**Final file structure:**
-
-```
-Morph/
-├── data/
-│   ├── MorphoLEX_en.xlsx
-│   ├── entity_vocab.csv
-│   ├── our_final_vocab.csv
-│   └── bpe_tokenizer.json
-├── common.py                  # MorphoLex parser, NER, vocab builder, BasePreprocessor
-├── pipeline_bpe.py            # Pipeline 1 — BPE baseline
-├── pipeline_morpheme.py       # Pipeline 2 — morpheme + Morfessor (affix-only)
-├── pipeline_deterministic.py  # Pipeline 3 — morpheme, no Morfessor
-├── build_vocabs.py            # Run once: entity extraction, vocab build, BPE training
-├── test_sentences.py          # 60-sentence structured comparison runner
-└── main.py                    # Entry point: `python main.py build` / `python main.py test`
-```
-
-**The `BasePreprocessor` class:** Common logic shared by pipelines 2 and 3 was extracted into a base class in `common.py`. Subclasses only implement `_segment_word()` — the one method that differs between the two pipelines. Everything else (NER handling, entity span resolution, `encode()`, `encode_ids()`, `pretty_print()`) is inherited.
-
-**The `build_vocabs.py` workflow:**
-```
-python main.py build entities  → extract named entities from WikiText-103
-python main.py build vocab     → build our_final_vocab.csv from MorphoLex + entities
-python main.py build bpe       → train BPE tokenizer and save to bpe_tokenizer.json
-python main.py build           → all three steps
-```
-
----
-
-## 21. Post-Refactor: Dissatisfaction with BPE Losses
-
-After the refactor produced clean, working three-pipeline output, we reviewed the comparison honestly. Two categories were clear losses against BPE:
-
-**Unknown multi-word entities** — `Goldman Sachs`, `North Korea`, `European Union` → character soup in our pipelines. BPE handles these via training data statistics, producing short subword sequences.
-
-**Complex OOV compounds** — `blockchain`, `cryptocurrency`, `recontextualized` → characters. BPE produces shorter, statistically motivated sequences.
-
-The root cause of both problems was diagnosed: the entity vocabulary was built on only 6,000 Wikipedia articles with a frequency threshold of 10. Many real entities simply didn't appear 10+ times in that small sample. `north_korea` had count=5, `european_union` count=9, `san_francisco` count=7 — all just below the threshold.
-
-**First fix attempt:** Run entity extraction on more articles. Result: vocabulary grew from 394 to 403 entities — almost no change, because the threshold was still too high relative to the sample size, and `goldman_sachs` wasn't in the CSV at all (never appeared as a recognised entity span in those articles).
-
----
-
-## 22. Entity Vocabulary — The Frequency Threshold Wars
-
-**Attempt 1 — lower threshold to 3:** This picked up `north_korea` (5), `european_union` (9), `san_francisco` (7). But at threshold 3, common English words that spaCy occasionally misclassifies also snuck in: `light` (3), `world`, `child`, `group` appearing as `[e]` entities. The entity layer grew to 2,049 entries, many of them noise.
-
-**Attempt 2 — exclude MorphoLex roots:** The idea: if a token is already a known MorphoLex root, it's a common English word being misclassified. Only real named entities (like `north_korea`) are not in MorphoLex.
-
-**Problem:** MorphoLex covers proper nouns too. `london`, `france`, `germany`, `california` are all in MorphoLex as roots. The filter correctly removed `light` and `world`, but also incorrectly removed `london`, `england`, `france`, `germany`, `australia`, `florida`, `chicago` — a serious regression.
-
-**Attempt 3 — curated ambiguity list:** Explicitly list common words that spaCy misclassifies (`light`, `world`, `child`, `group`, etc.) and exclude only those. Rejected as incomplete and unmaintainable — there are too many such words and the list would need constant curation.
-
-**The correct insight:** The real distinguishing feature is already encoded in the token structure itself.
-
----
-
-## 23. The Split Threshold Solution
-
-**The key observation:** Multi-word entity strings contain underscores. `north_korea`, `european_union`, `san_francisco` — these are always genuine named entities. spaCy only produces them by recognising a multi-word span. There is no common English phrase `north_korea` that could be a misclassification.
-
-Single-word entities are different. `light`, `world`, `child` are overwhelmingly common words that spaCy occasionally mislabels at low frequency.
-
-**The principled rule: split thresholds by structure.**
-
-- Multi-word entities (containing `_`): `freq ≥ 3` — they cannot be misclassifications
-- Single-word entities: `freq ≥ 10` — needs higher confidence to distinguish genuine proper nouns from noise
-
-This is not a heuristic — it is a structural linguistic observation. The result:
+## 6. Named Entities: The Threshold Wars and a Structural Answer
+
+Layer 5 was the one place frequency was still doing work, and it took three
+failed attempts to get right. The problem: spaCy's named-entity recogniser
+occasionally mislabels common words, so a low threshold admits noise while a
+high one excludes real entities.
+
+**Attempt 1 — lower the threshold to 3.** This correctly admitted
+`north_korea` (5), `european_union` (9) and `san_francisco` (7). It also
+admitted `light` (3), `world`, `child` and `group` as entities. The layer grew
+to 2,049 entries, many of them noise.
+
+**Attempt 2 — exclude anything that is a MorphoLex root.** The reasoning: a
+token already known as an English root is a common word being misclassified.
+**This failed badly**, because MorphoLex covers proper nouns too. The filter
+correctly removed `light` and `world`, but also removed `london`, `england`,
+`france`, `germany`, `australia`, `florida` and `chicago`.
+
+**Attempt 3 — a curated list of ambiguous words.** Rejected before
+implementation as incomplete and unmaintainable: there are too many such words
+and the list would need permanent curation.
+
+### The structural answer
+
+The distinguishing feature was already present in the token itself.
+
+**Multi-word entity strings contain underscores.** `north_korea`,
+`european_union`, `san_francisco` are produced only when spaCy recognises a
+multi-word span. There is no common English phrase `north_korea` that could be
+a misclassification. Single-word entities are different — `light`, `world`,
+`child` are overwhelmingly ordinary words that spaCy occasionally mislabels at
+low frequency.
+
+**The rule: split the threshold by structure.**
+
+- multi-word entities (containing `_`): frequency ≥ 3 — they cannot be misclassifications
+- single-word entities: frequency ≥ 10 — higher confidence required
 
 | Token | Type | Count | Threshold | Result |
 |---|---|---|---|---|
-| `north_korea` | multi-word | 5 | 3 | **included** ✓ |
-| `european_union` | multi-word | 9 | 3 | **included** ✓ |
-| `san_francisco` | multi-word | 7 | 3 | **included** ✓ |
-| `london` | single-word | 97 | 10 | **included** ✓ |
-| `light` | single-word | 3 | 10 | **excluded** ✓ |
-| `world` | single-word | low | 10 | **excluded** ✓ |
+| `north_korea` | multi-word | 5 | 3 | included |
+| `european_union` | multi-word | 9 | 3 | included |
+| `san_francisco` | multi-word | 7 | 3 | included |
+| `london` | single-word | 97 | 10 | included |
+| `light` | single-word | 3 | 10 | excluded |
 
-The MorphoLex exclusion filter was reverted entirely — it was not needed with this approach. The entity vocabulary settled at 1,259 entries with clean composition.
+This is not a heuristic. It is a structural observation about how the annotation
+is produced, and it made the MorphoLex exclusion filter unnecessary. The entity
+vocabulary settled at **1,259 entries**.
 
-**Remaining entity gap:** `Goldman Sachs` is still not in the entity CSV at all — it simply doesn't appear enough times as a recognised entity in our 6,000 article sample. This is a genuine corpus coverage limitation, not a design flaw, and is accepted and documented as such.
+**The limitation that remained, and later mattered enormously.** `Goldman
+Sachs` never entered the vocabulary at all — it does not appear often enough as
+a recognised entity span in a 6,000-article sample. At the time this was
+accepted as a corpus-coverage limitation rather than a design flaw. It was the
+correct diagnosis, and §19 measures its cost: **77.5% of all character-fallback
+words are capitalised**, which is the single largest component of the deficit
+that eventually sank the segmentation approach.
 
 ---
 
-## 24. Compound Word Splitting
+## 7. The Segmenter, and the Bug That Cost Thousands of Prefixes
 
-**Motivation:** After the entity vocabulary work, OOV compound words (`blockchain`, `cryptocurrency`, `livestream`, `speedrun`, `homepage`) were still producing character soup. BPE handles these correctly because it has seen them in training data. We identified compound splitting as a linguistically principled alternative.
+### The tools
 
-**The safety question:** Could compound splitting introduce false positives like `therapist → the + rapist`? A quick check confirmed that all dangerous-sounding splits (`therapist`, `together`, `carpet`, `island`, `before`, `because`, `aground`, `inflate`) are in MorphoLex and therefore handled before the compound splitter is ever reached. The compound splitter only sees genuinely OOV words — words MorphoLex doesn't know — and among those, false positives are extremely rare.
+**MorphoLex** is a hand-curated Excel database of roughly 70,000 English words
+with morpheme decompositions in a custom notation: `{(beauty)}>ful>` is root
+`beauty` plus suffix `ful`; `<un<{(happy)}` is prefix `un` plus root `happy`.
 
-**The algorithm:** Try every split point in a word from longest-left to shortest-left. Accept the first split where both halves are in MorphoLex and both parts are at least 3 characters. If no valid split found, fall to characters.
+Its most useful property is that it stores **normalised roots, not surface
+forms**: `beautiful` → `beauty`, not `beauti`; `running` → `run`, not `runn`.
+This solves morphophonological normalisation for free across the whole database.
+It is also, as §17 establishes, the reason the token stream turned out not to be
+information-preserving — the same property that helps a tagger destroys
+information a language model must predict.
+
+**spaCy** provides named-entity recognition. Multi-word entities are correctly
+grouped, possessives are stripped, and leading articles are removed before the
+surface form is stored (`the united states` → `united_states`). Entity types
+kept: ORG, PERSON, GPE, LOC, FAC, NORP, PRODUCT, EVENT, WORK_OF_ART, LAW,
+LANGUAGE. Excluded: DATE, CARDINAL, ORDINAL, PERCENT, TIME, MONEY, QUANTITY —
+these are compositional and infinite in variety, so treating them as atomic
+units makes no sense.
+
+**Morfessor**, an unsupervised statistical segmenter, was intended as a fallback
+for words absent from MorphoLex. Its fate is §8.
+
+### The pipeline
 
 ```
-blockchain → try bloc|kchain — no
-           → try block|chain — both in MorphoLex ✓ → block[r] + chain[r]
+sentence → spaCy NER → entity spans
+         → for each token:
+             entity            → emit atomic unit
+             in MorphoLex      → emit its morphemes
+             Morfessor valid   → emit those
+             otherwise         → emit characters
 ```
 
-**Position in the fallback chain:**
+Each emitted token carries its id, surface string, category, morphological role,
+entity label if any, and the original word it came from.
+
+### The format-B bug
+
+Running the segmenter over a larger test set revealed that `researchers`
+produced only `er[suffix]` — the root `search` and prefix `re` were vanishing.
+
+MorphoLex stores it as `{<re<(search)}>er>`. The parser looked for prefixes in
+the string *before* the opening brace, but this entry places the prefix
+*inside* it. Two formats exist:
+
+- Format A: `<un<{(happy)}` — prefix before the opening brace
+- Format B: `{<re<(search)}>er>` — prefix inside it
+
+**4,941 of roughly 70,000 entries use format B.** Thousands of words had been
+silently losing their prefixes. The fix detects prefix position relative to the
+parenthesised root and collects both. Recovered examples: `researchers →
+re + search + er`, `prosecution → pro + secute + ion`, `universe → uni + verse`.
+
+**Side effect:** the prefix count expanded from 78 to 141, and the 63 new
+entries include single-letter Latin prefixes such as `a-`, `e-` and `o-`. Those
+single-character prefixes immediately caused a second problem, addressed in §8.
+
+This bug is worth dwelling on because **the same class of error recurred four
+more times**, always with the same signature: a regular expression matching one
+instance of something that occurs many times. §17 records its exact twin in the
+handling of compound roots.
+
+### Smaller fixes, recorded for completeness
+
+Three category-resolution bugs were found and fixed at this stage: `and`
+resolving to `suffix` rather than `function` because a flat dictionary took the
+last insertion; `london` resolving to `root` because the entity check ran after
+the MorphoLex check; and single characters in fallback contexts inheriting a
+vocabulary category rather than `character`. All three were consequences of the
+priority ordering from §5 not being enforced at lookup time, and all were fixed
+by resolving category through minimum priority rather than insertion order. The
+full bug record, including the eleven found later, is in
+`results_reference.md` §9.
+
+---
+
+## 8. Morfessor's Null Result and the Three-Pipeline Decision
+
+### The noise problem
+
+A 60-sentence test set across 11 linguistic categories was built to evaluate the
+segmenter qualitatively. It showed Morfessor's contribution was close to
+entirely negative.
+
+Every useful segmentation in the test set came from MorphoLex or from prefix
+stripping. What Morfessor added was noise: `biden → bi[prefix] + den[root]`,
+where two real English morphemes (`bi` = two, `den` = lair) were found inside a
+proper noun to produce a confident, wrong parse. The single-letter prefixes
+recovered by the format-B fix made this worse, producing output like
+`e[prefix]`, `o[prefix]` and `n[suffix]` scattered through character soup.
+
+A minimum-length filter was applied — a Morfessor segment must be at least two
+characters to be accepted as a morpheme — which removed the single-character
+noise but not the `bi+den` class.
+
+### The capitalisation guard, considered and rejected
+
+One proposal was to fall straight to characters for any capitalised word absent
+from MorphoLex and the entity vocabulary.
+
+**Rejected.** Sentence-initial words are always capitalised; stylistic
+capitalisation exists (`God`, `Internet`); lowercase proper nouns appear in
+informal text. The guard relies on a typographic convention rather than a
+linguistic category, which violates the design principle established in §5.
+
+The reasoning for accepting `bi+den` instead is worth preserving: at scale, that
+segmentation appearing consistently across thousands of Biden mentions will
+cluster with political context regardless of being wrong, because the model does
+not know morphemes are supposed to be meaningful — it sees consistent
+co-occurrence. Character soup is more honestly unknown but equally
+uninformative. The guard would have hidden a real limitation behind a brittle
+heuristic.
+
+### The fork, and the decision that set the project's method
+
+Three options for Morfessor: remove it entirely; keep it but accept only known
+affixes, since its root guesses are unreliable while its affix identification is
+more trustworthy; or revert to 78 prefixes to eliminate the noise source.
+
+The third was rejected as unprincipled — discarding half the prefixes and hoping
+the problematic ones were among them.
+
+**Decision: build both remaining options as separate pipelines and compare
+them.**
+
+| Pipeline | Description |
+|---|---|
+| `bpe` | standard GPT-2 style BPE, the baseline |
+| `morph` | morpheme-based with Morfessor fallback, affix-only rule |
+| `det` | morpheme-based, fully deterministic, no Morfessor |
+
+**This decision established the method used for every subsequent uncertainty in
+the project: where a design choice is genuinely uncertain, turn it into a
+comparison rather than a guess.** §11 applies it to the frozen embedding design,
+and §21 applies it to frozen versus learned factors.
+
+It also produced a durable result. The two morpheme pipelines gave identical
+output on roughly 55 of 60 test sentences, differing only where Morfessor might
+find a valid affix inside character soup. **Morfessor adds essentially nothing
+over the deterministic pipeline for English with MorphoLex coverage** — and
+every subsequent quantitative comparison confirmed it. In the final
+information-fair runs, `det` matched or beat `morph` in **41 of 41** tail
+evaluations.
+
+---
+
+## 9. Compound Splitting and the Particle Fix
+
+OOV compounds — `blockchain`, `cryptocurrency`, `livestream`, `speedrun`,
+`homepage` — were still producing character soup. BPE handles them because it
+has seen them in training data. Compound splitting was the linguistically
+principled alternative.
+
+**The safety question came first.** Could splitting produce `therapist → the +
+rapist`? A check confirmed that every dangerous-sounding candidate —
+`therapist`, `together`, `carpet`, `island`, `before`, `because` — is in
+MorphoLex and therefore resolved before the compound splitter is ever reached.
+The splitter only ever sees genuinely OOV words, among which such false
+positives are rare.
+
+**The algorithm.** Try every split point from longest-left to shortest-left;
+accept the first split where both halves are in MorphoLex and both are at least
+three characters. Position in the fallback chain:
+
 ```
 entity → function → MorphoLex → prefix strip → compound split → Morfessor/characters
 ```
 
-**Results — clear wins:**
-- `blockchain → block + chain`
-- `livestreamed → live + stream`
-- `speedrun → speed + run`
-- `videogame → video + game`
-- `homepage → home + page`
-- `spreadsheet → spread + sheet`
-- `hashtags → hash + tag`
-- `healthcare → health + care`
-- `counterarguments → counter + argue + ment`
+Clear wins followed: `blockchain → block + chain`, `speedrun → speed + run`,
+`videogame → video + game`, `spreadsheet → spread + sheet`,
+`counterarguments → counter + argue + ment`.
+
+### The star+tup problem
+
+Then `startup → star[root] + tup[root]`. `tup` is a genuine but obscure
+MorphoLex root — British English for a male sheep — and the algorithm found
+`star + tup` at position 4 before reaching `start + up` at position 5.
+
+The cause was structural rather than accidental. The loop guaranteed a
+right-hand part of at least three characters, which **blocked `start + up`
+entirely** because `up` is two. And `up`, `in`, `on`, `out`, `off` and `by` are
+among the most productive compound-forming elements in English: `startup`,
+`backup`, `addon`, `cutoff` and `roundup` were all failing silently.
+
+**The insight:** these are not arbitrary short strings. They are exactly the
+phrasal-verb particles that also form nominal compounds — and all of them were
+already in the `FUNCTION_WORDS` set.
+
+**The fix:** allow two-character right parts, but only when they are known
+function words. For `startup`, position 5 gives `start` + `up`, `up` is a
+function word, the split is accepted, and `star + tup` is never reached.
+
+This is the same shape of solution as §6's split threshold: rather than tuning a
+numeric threshold, use a structural property of the linguistic material to make
+the distinction.
 
 ---
 
-## 25. The startup Problem and the Particle Fix
+## 10. What the First Comparison Showed — and What It Concealed
 
-**The bug:** `startup → star[r] + tup[r]` — a false positive. `tup` is a valid but obscure MorphoLex root (British English for a male sheep). The algorithm found `star + tup` (split at position 4) before trying `start + up` (split at position 5).
+### The comparison
 
-**Root cause analysis:** The original algorithm iterated from position `n-3` downward, guaranteeing the right part has at least 3 characters. This structurally blocked `start + up` because `up` is only 2 characters. But `up`, `in`, `on`, `out`, `off`, `by` are among the most productive compound-forming elements in English — `startup`, `backup`, `addon`, `cutoff`, `roundup` all fail silently.
+A GPT-2 style BPE tokenizer was trained on the same 10,000 WikiText-103
+articles with a 10,000-token vocabulary, for direct comparability. Side by side
+on test words:
 
-**The structural insight:** These compound particles are not arbitrary short strings. They are exactly the phrasal verb particles that also form nominal compounds — and they are all already in our `FUNCTION_WORDS` set.
+| Word | Morpheme pipeline | BPE |
+|---|---|---|
+| `unbreakable` | `un + break + able` | `un \| break \| able` |
+| `beautiful` | `beauty + ful` | `beautiful` |
+| `cats` | `cat` | `c \| ats` |
+| `Microsoft` | atomic entity [ORG] | `Mic \| ros \| oft` |
+| `happiness` | `happy + ness` | `happ \| iness` |
+| `whether` | `whether` | `W \| he \| ther` |
 
-**The fix:** Extend the range to allow 2-character right parts, but only accept them if they are in `FUNCTION_WORDS`. This makes compound particles reachable while blocking other 2-character noise.
+Clear apparent wins for inflected forms, function words, morphologically complex
+words, named entities and compounds. Clear apparent losses on unknown multi-word
+entities (`Goldman Sachs`, `North Korea` → character soup) and on complex OOV
+(`cryptocurrency`, `Instagram` → characters), where BPE produces much shorter
+sequences.
 
-```python
-# 2-char right part accepted only if it's a known compound particle
-if len(right) == 2 and right not in function_words:
-    continue
-```
+### Consolidating the codebase
 
-For `startup`:
-- i=5: left=`start`, right=`up`. `up` in FUNCTION_WORDS → accepted ✓
-- `star + tup` is never reached because `start + up` is found first
+By this point the code was several large files with overlapping responsibilities
+and accumulated patches. A deep folder hierarchy was proposed and rejected in
+favour of a **flat structure of seven files**, on the explicit grounds that the
+communication overhead of a deep hierarchy outweighed its organisational benefit
+in a context where files were shared one at a time.
 
-**Result:** `startup → start[r] + up[f]` — correct. No new false positives introduced anywhere in the test set.
+That reasoning was correct for its conditions. §16 records the conditions
+changing and the decision being reversed.
 
-**The compound splitting verdict:** After the particle fix, the feature performs cleanly across all 60 test sentences. Every target compound splits correctly. The false positive risk from obscure 3-character roots is real but negligible in practice — genuinely OOV words are unlikely to accidentally split into two plausible MorphoLex roots unless those roots are actually semantically related to the word, in which case the split may be correct anyway.
+### What this comparison could not see
 
----
+Reading the table above, the morpheme pipeline looks clearly better on the cases
+that matter and worse only on genuinely unknown words. That impression survived
+into the first quantitative results, where the morpheme pipelines appeared to
+beat BPE by **6.31% bits-per-byte**.
 
-## 26. Current State and What Comes Next
+**It was an artifact, and every element of it is visible in the table above if
+one knows what to look for.**
 
-### What Is Complete
+`cats → cat` loses the plural. `running → run` loses the progressive.
+`beautiful → beauty + ful` concatenates to `beautyful`. The morpheme stream was
+not encoding the same information as the BPE stream, and bits-per-byte divides
+both by the same byte count. On top of that, the pipeline emitted nothing at all
+for punctuation, digits or case, which BPE encodes — an asymmetry worth 5.32% of
+the corpus.
 
-**Vocabulary design:** Six-layer vocabulary with 16,750 entries. Split-threshold entity filtering (multi-word: freq≥3, single-word: freq≥10) with MorphoLex-grounded morpheme layers and character fallback guaranteeing 100% coverage.
-
-**Three preprocessing pipelines:** All working and producing clean output. The compound splitter is active in all three morpheme pipelines.
-
-**Test infrastructure:** 60 structured test sentences across 11 linguistic categories, side-by-side output for all three pipelines.
-
-**BPE baseline:** Trained on the same dataset, vocabulary size 10k, identical evaluation interface.
-
-### Remaining Losses vs BPE (Accepted)
-
-**Corpus coverage gaps** — `Goldman Sachs`, `World Series`, `New York Yankees`, `South Korea` don't appear frequently enough in our 6k article sample to enter the entity vocabulary. Not a design problem — a data scale problem.
-
-**Genuinely unknown words** — `cryptocurrency`, `Instagram`, `YouTuber`, `mRNA`. Too new, too domain-specific, or abbreviations outside MorphoLex. Character fallback is honest here.
-
-**MorphoLex quirk** — `demonstrated → de + monster + ate`. One known etymology-based mismatch, consistent and documented.
-
-### Wins vs BPE (Clear)
-
-- Inflected forms: `cats → cat[r]`, `running → run[r]`, `happiest → happy[r] + est[s]`
-- Function words: `whether → whether[f]` (1 token) vs BPE's `W|he|ther` (3 tokens)
-- Morphologically complex: `unbreakable → un + break + able` vs BPE's noise
-- Named entities: `london[e]`, `north_korea[e]`, `european_union[e]`, `san_francisco_giants[e]`
-- Compounds: `blockchain → block + chain`, `speedrun → speed + run`, `startup → start + up`
-- Ambiguous words: clean single root tokens for `bank`, `light`, `left`, `bat`, `duck`
-
-### What Comes Next
-
-**`frozen_embedding.py`:** The custom PyTorch `nn.Module` implementing the hybrid frozen/trained embedding layer — the theoretical centerpiece of the thesis. Token metadata from the preprocessor (category, role, entity_label) feeds frozen dimensions; the remaining dimensions are learned normally.
-
-**Dataset module:** PyTorch `Dataset` streaming WikiText-103 through any pipeline, yielding `(input_ids, target_ids)` pairs.
-
-**Training loop:** Cross-entropy language model training for all three pipelines on identical architecture.
-
-**Evaluation:** Perplexity on held-out validation set + probing classifiers for POS and entity type.
+Part IV establishes this in detail and reverses the result. What matters here is
+that **the qualitative comparison in this section was not wrong about
+segmentation quality; it was blind to information content**, and no amount of
+inspecting example words would have revealed that. It took an explicit audit
+against a formal criterion.
 
 ---
 
-## 27. Designing the Frozen Embedding Layer
+# Part III — The Apparatus
+
+*Building the thing that measures. The transformer is deliberately small and
+standard: it is the microscope, not the object of study. This part also settles
+the metric question, which turned out to carry more weight than anything else
+in the document.*
+
+---
+
+## 11. Designing the Frozen Embedding Layer
 
 With the preprocessing pipelines complete, attention turned to the theoretical centerpiece: the hybrid frozen/trained embedding. Before writing any code, the design space was mapped through four questions. The guiding principle, borrowed from the three-pipeline decision: where a design choice is genuinely uncertain, turn it into a comparison rather than a guess.
 
@@ -916,7 +798,9 @@ BPE only gets `baseline` (no morpheme metadata to freeze) — that cell is the u
 
 ---
 
-## 28. The Dataset, Model, and the Fairness Metric
+---
+
+## 12. The Dataset, Model, and the Fairness Metric
 
 With the embedding written, three more pieces were needed to make Phase 1 runnable: the dataset, the model, and the training loop. Before writing them, we settled how they depend on each other.
 
@@ -965,7 +849,9 @@ Rather than committing to the architecture by argument, we adopted the user's pr
 
 ---
 
-## 29. Calibration and Literature Grounding
+---
+
+## 13. Calibration and Literature Grounding
 
 ### The Two-Run Calibration Story
 
@@ -994,7 +880,22 @@ Reference numbers were gathered with proper caveats, to avoid the central trap: 
 
 **Reporting rules locked in:** never compare raw perplexity to the 18.3 leaderboard (different units); headline cross-pipeline metric is BPB; the honest peer class is "small models trained from scratch on WikiText-103 with BPE," with GPT-2 Small's ~29 as a "what 35× more parameters buys" reference point.
 
-## 30. The Frozen Embedding Audit
+---
+
+# Part IV — The Audits
+
+*Where the project turns. A pre-flight review of the frozen embedding found it
+was carrying almost no information; pulling that thread led to a reframing of
+what freezing can do at all, and then to a series of audits establishing that
+the Part II comparison was invalid. The headline result reverses sign here.*
+
+*This part contains the project's most transferable contribution: a method for
+checking whether two tokenizers are being compared fairly, which the published
+literature does not do.*
+
+---
+
+## 14. The Frozen Embedding Audit
 
 Everything was built, calibrated, and ready. The five Phase-1 cells were about
 to be launched. A last pre-flight review of the code — intended to check the
@@ -1025,7 +926,7 @@ just a bias term: it consumes embedding width and carries nothing.
 
 `FrozenSchema.matrix()` built frozen vectors from static vocabulary rows, and
 those rows have no NER context, so `entity_label` was hardcoded to `None` for
-every token. This was noted in §27 as "one deferred decision" — but recorded as
+every token. This was noted in §11 as "one deferred decision" — but recorded as
 a missing *feature*, not as a bug that hollowed out half the block.
 
 The role redundancy has the same root cause. Role is context-dependent at
@@ -1035,7 +936,7 @@ category. Both dead blocks trace to building frozen vectors from static rows.
 
 ### Why validation missed it
 
-§27 validated two things, and both passed:
+§11 validated two things, and both passed:
 - the freeze is enforced (frozen slice byte-identical after an optimizer step)
 - every token category produces exactly the predicted 23-dim vector with 3
   nonzero bits
@@ -1066,7 +967,9 @@ would be wrong, but because it answers a question nobody wants the answer to.
 
 ---
 
-## 31. Parameter Tying vs Information Injection
+---
+
+## 15. Parameter Tying vs Information Injection
 
 The dead dimensions turned out to be a symptom. Digging into *why* the frozen
 block was so thin exposed something more fundamental about the whole approach.
@@ -1081,7 +984,7 @@ could not already represent.** If "being a suffix" were useful, the trained row
 for that token could encode it. Freezing does not supply a fact the model
 lacks; it *constrains* 23 dimensions to equal `f(id)`.
 
-This demotes the §4 story. "Guaranteed information channels, always present,
+This demotes the §2 story. "Guaranteed information channels, always present,
 always readable" reads as though facts arrive from outside the system. They do
 not. What is actually happening is **structured parameter tying** — a real
 inductive bias, but a different and more modest one than advertised.
@@ -1090,7 +993,7 @@ Parameter tying can buy exactly three things:
 
 1. **Sample efficiency for rare tokens.** A root seen 3 times gets almost no
    gradient signal, so its trained row is noise; its frozen flag is correct
-   from step 0 for free. (This is the §2 rare-token problem, restated.)
+   from step 0 for free. (This is the §1 rare-token problem, restated.)
 2. **Forced similarity structure.** All 15,022 roots share a pattern, so they
    are constrained to be near each other; the trained table would have to
    discover that.
@@ -1105,7 +1008,7 @@ survives an aggregate null result.
 
 ### The idea that got lost
 
-§5 contains the most valuable observation in this document: **preprocessor
+§3 contains the most valuable observation in this document: **preprocessor
 scope ≠ unit scope.** You may look at the entire sentence to decide what to
 stamp on one word. That is what would permit freezing syntactic role, or entity
 type in context, or word sense — facts a lookup table **provably cannot
@@ -1121,7 +1024,7 @@ in it anywhere.
 
 ### Why it was dropped, and why that reason was wrong
 
-§28 decided "the dataset emits integer IDs only; the model owns the embedding,"
+§12 decided "the dataset emits integer IDs only; the model owns the embedding,"
 reasoning that the embedding's trained part carries gradients and
 backpropagating into the dataloader would be wrong.
 
@@ -1129,7 +1032,7 @@ backpropagating into the dataloader would be wrong.
 gradients.** The dataset can emit small integer codes alongside the ids with no
 gradient problem at all. The principle ("dataset is a pure int-in/int-out
 machine") is fully preserved. A rule was mistaken for a constraint, and the
-cost was the §5 insight.
+cost was the §3 insight.
 
 ### The new axis
 
@@ -1173,15 +1076,17 @@ linguistic freezing help *more* when the units are already linguistic?
 ### An unresolved fork, deliberately left open
 
 A word maps to several morphemes, so a word-level fact must be distributed:
-stamp every morpheme with the word's dependency role, or only the root? §6
+stamp every morpheme with the word's dependency role, or only the root? §4
 flagged this and never resolved it. It is wired into `BasePreprocessor` as
 `stamp='all' | 'root'` and left as a genuine comparison rather than a guess.
 
 ---
 
-## 32. Restructuring — Reversing the Flat-Layout Decision
+---
 
-§20 chose a flat 7-file layout, and its stated justification was
+## 16. Restructuring — Reversing the Flat-Layout Decision
+
+§10 chose a flat 7-file layout, and its stated justification was
 **communication overhead in a collaborative development context**: deep
 hierarchies are expensive when files are pasted into a conversation one at a
 time.
@@ -1275,7 +1180,9 @@ serve as a behaviour-preserving regression test.
 
 ---
 
-## 33. The Information Channel Audit — Making the Comparison Fair
+---
+
+## 17. The Information Channel Audit — Making the Comparison Fair
 
 The first Phase-1 results arrived and looked like a clean win: morph 1.3268 BPB
 and det 1.3271 against a BPE anchor of 1.4162, a 6.3% advantage that appeared by
@@ -1300,7 +1207,7 @@ running    -> run            the progressive -ing is gone
 beautiful  -> beauty + ful   concatenates to "beautyful"
 ```
 
-§9 celebrated MorphoLex's lemma normalisation as solving morphophonology "for
+§7 celebrated MorphoLex's lemma normalisation as solving morphophonology "for
 free". For a tagger that is a feature. For a language model scored in BPB it is
 a liability: a stream that cannot reconstruct the bytes is being credited with
 bytes it never predicted.
@@ -1336,9 +1243,9 @@ The reconstruction failures included a class where whole morphemes vanished:
 while MorphoLex writes compounds with several parenthesised roots:
 `{(high)(way)}`, `{(book)(keep)}>er>`.
 
-Same family as the format-B bug of §16: a regex matching one instance of
+Same family as the format-B bug of §7: a regex matching one instance of
 something that occurs many times. **8,453 entries affected (12.3% of MorphoLex)
-— larger than §16's 4,941.** The fix recovered Greek/Latin combining forms as
+— larger than §7's 4,941.** The fix recovered Greek/Latin combining forms as
 well as compounds: `log` (267 occurrences), `graph` (158), `meter`, `amphi`,
 `alti`. So `photograph` now shares `graph` with `telegraph` — morpheme sharing
 that is exactly the mechanism the thesis argues for, and that was invisible
@@ -1460,14 +1367,16 @@ correction was estimated three times before it was measured (0.015–0.055, then
 0.0275, then "70% artifact"), and each estimate was made against a measurement
 that later proved flawed. Only the fourth figure — taken after coverage was
 closed *and* the grouping bug in the audit itself was fixed — was trustworthy.
-The lesson is the same one §30 recorded: build the check, do not reason about
+The lesson is the same one §14 recorded: build the check, do not reason about
 what the check would say.
 
 ---
 
-## 34. The Information-Fair Rerun — Q1 Falls, Q2 Holds
+---
 
-With the pipeline made information-preserving (§33), every earlier number was
+## 18. The Information-Fair Rerun — Q1 Falls, Q2 Holds
+
+With the pipeline made information-preserving (§17), every earlier number was
 void and the whole matrix was re-measured. The two legs of the thesis came apart
 cleanly, and in opposite directions.
 
@@ -1520,9 +1429,9 @@ the word out one character at a time and pays double.*
 The OOV audit then identified the population precisely: 13.07% of words fall to
 characters, and **77.5% of those are capitalised** — `Meridian`, `Tikal`,
 `Radcliffe`, `Kawaguchi`. Named entities the frequency-gated entity vocabulary
-(§23, built over 6k articles with `freq>=10` for single words) never admitted.
+(§6, built over 6k articles with `freq>=10` for single words) never admitted.
 This is a corpus-coverage limit, not a morphological one, and it is the
-weakness §19, §21 and §26 already described qualitatively — now quantified and
+weakness §8, §10 and §10 already described qualitatively — now quantified and
 priced.
 
 ### Q2 — freezing: a clean positive, with the control that proves it
@@ -1566,7 +1475,7 @@ Per-frequency-bucket comparison, scored from checkpoints:
 | 1M+ | **75.97%** | −1.95% | −1.87% |
 
 Monotonic in both pipelines: rare tokens benefit **~7.5× more** than frequent
-ones. This is exactly the sample-efficiency argument from §31 — a token seen
+ones. This is exactly the sample-efficiency argument from §15 — a token seen
 rarely gets little gradient signal, so its trained row is noise, while a frozen
 fact about it is correct from step 0. Because 76% of validation tokens sit in
 the highest-frequency bucket where the effect is smallest, the headline 4.5%
@@ -1602,9 +1511,11 @@ rare tokens exactly as predicted, at a lower parameter count.
 
 ---
 
-## 35. Localising the Q1 Deficit — Coverage, Decomposition, and the Unified Finding
+---
 
-§34 established that morpheme segmentation loses to BPE by 0.1346 BPB under an
+## 19. Localising the Q1 Deficit — Coverage, Decomposition, and the Unified Finding
+
+§18 established that morpheme segmentation loses to BPE by 0.1346 BPB under an
 information-fair comparison, and that character fallback consumed 24.8% of
 morph's bits for 14.1% of the corpus. That located the loss but did not explain
 it. Three questions remained:
@@ -1642,7 +1553,7 @@ were trusted, both of the same kind — **misattribution during alignment**:
   frequent" band and inverted Part 3 entirely.
 
 Both were caught by numbers that were impossible rather than merely surprising.
-The same lesson as §30 and §33: build the check, and treat alignment logic as
+The same lesson as §14 and §17: build the check, and treat alignment logic as
 the default suspect.
 
 ### Part 1 — tokenization economics
@@ -1728,7 +1639,7 @@ The two legs of the thesis, measured by completely different mechanisms, agree:
 This is a stronger and more useful claim than "our tokenizer wins", because it
 says *when* and *why* rather than reporting a single number. It also explains
 the whole shape of the project's results: the frozen-embedding gain concentrates
-in rare tokens (§34), the segmentation gain concentrates in rare words (here),
+in rare tokens (§18), the segmentation gain concentrates in rare words (here),
 and both dissolve where the data is plentiful.
 
 ### What the finding implies for design
@@ -1736,8 +1647,8 @@ and both dissolve where the data is plentiful.
 The deficit has **two independent causes with two independent fixes**:
 
 1. **Coverage** (47.9% of the gap) — 77.5% of fallback words are capitalised
-   named entities the frequency-gated entity vocabulary never admitted (§34).
-   Fix: rebuild entity extraction over more articles and revisit §23's
+   named entities the frequency-gated entity vocabulary never admitted (§18).
+   Fix: rebuild entity extraction over more articles and revisit §6's
    single-word threshold, which was tuned on 6k articles and never adjusted.
 2. **Unconditional decomposition** (the middle-band loss) — the pipeline
    decomposes every word, including frequent inflected forms that BPE handles
@@ -1755,11 +1666,23 @@ measurement* rather than from intuition.
 
 ---
 
-## 36. Literature Grounding — Who Has Done This Already
+---
+
+# Part V — Grounding and Controls
+
+*Having reached a negative result, two things were needed: to find out whether
+the field already knew it, and to remove the confounds that remained. Both
+changed the conclusions — the literature showed the negative result was
+expected for English, and the controls refuted the project's own headline
+mechanism while leaving its effect intact.*
+
+---
+
+## 20. Literature Grounding — Who Has Done This Already
 
 Up to this point the project had been developed almost entirely from first
 principles, with the literature consulted only for the bits-per-byte lineage
-(§28) and the calibration reference points (§29). With both experimental legs
+(§12) and the calibration reference points (§13). With both experimental legs
 now measured, it became urgent to find out whether the field had already
 answered these questions — partly to avoid claiming a known result, partly to
 learn from other people's mistakes rather than repeating them.
@@ -1791,7 +1714,7 @@ training steps.
    our MorphoLex-based design.
 2. Their tokenizer produces **17% more tokens than BPE**. They list this as a
    limitation and leave "fusing morphemes to reduce these extra tokens" to
-   derivative work. That is exactly the mid-frequency deficit §35 measured.
+   derivative work. That is exactly the mid-frequency deficit §19 measured.
 3. Their limitations note that MorphyNet does not cover all lexical families —
    our coverage problem, at five times our dictionary size.
 
@@ -1799,7 +1722,7 @@ training steps.
 token-level perplexity is not comparable across vocabularies, citing Cotterell
 et al. (2018), and then argues for using it anyway on the grounds that
 downstream gains corroborate it. That is honest, but it is precisely the hole
-our audits (§33) close.
+our audits (§17) close.
 
 ### B. Hou, Katinskaia, Vu & Yangarber (2023) — the most useful paper for us
 
@@ -1827,15 +1750,15 @@ Two further items we adopted:
 
 - **Vocabulary matching.** They deliberately tune BPE's vocabulary to match the
   morphological segmenter's, stating it is "only to make the comparison fair."
-  We had documented a +51% parameter advantage to morph since §34 and never
-  removed it. Acted on in §37.
+  We had documented a +51% parameter advantage to morph since §18 and never
+  removed it. Acted on in §21.
 - **Word-initial marking** (their Appendix A.1). BPE marks word-initial tokens;
   morphological segmenters do not, so they mark all word-initial tokens with a
   symbol, as BPE does. This is precisely the fix for our `<sp>` overhead —
   32.6% of all morph tokens.
 
 They also make convergence speed a first-class metric, which we had never
-computed despite having the data (rectified in §37).
+computed despite having the data (rectified in §21).
 
 ### C. Bostrom & Durrett (2020) — the standard citation
 
@@ -1864,7 +1787,7 @@ to neural machine translation by Sennrich & Haddow (2016).
 **Architecturally this is our Q2 exactly.** The difference is that their factor
 embeddings are **learned** and ours are **frozen**. In the sources reviewed no
 one appears to have compared the two, nor run a shuffled-feature control. That
-observation set the agenda for §37.
+observation set the agenda for §21.
 
 ### What this review established
 
@@ -1884,15 +1807,17 @@ contribution.** The instrumentation and the frozen-factor question are.
 
 ---
 
-## 37. Completing the Controls — Matched Vocabulary, Frozen vs Learned, and Signal Scale
+---
 
-The literature review (§36) produced three concrete experiments, all cheap, all
+## 21. Completing the Controls — Matched Vocabulary, Frozen vs Learned, and Signal Scale
+
+The literature review (§20) produced three concrete experiments, all cheap, all
 addressing confounds we had documented but never removed. Each changed the
 conclusion.
 
 ### 37.1 Matched vocabulary — the Q1 confound, finally removed
 
-Since §34 the morpheme pipelines had carried a **+51% parameter advantage**: a
+Since §18 the morpheme pipelines had carried a **+51% parameter advantage**: a
 17,151-entry vocabulary against BPE's 10,000, hitting both the embedding and the
 untied output head. Hou et al. match vocabularies explicitly to make the
 comparison fair; we had only documented the asymmetry.
@@ -2007,9 +1932,9 @@ the data in every training log and had never looked.
 An independent second axis on which Q2 wins, at zero cost, matching a metric the
 literature already values.
 
-### 37.6 One claim from §27 still untested
+### 37.6 One claim from §11 still untested
 
-The original argument for freezing (§4, §27) had two parts:
+The original argument for freezing (§2, §11) had two parts:
 
 1. **lower perplexity** — refuted above
 2. **guaranteed legibility** — the fact is always present and always readable,
@@ -2032,7 +1957,9 @@ and the gain must come from precision or from earlier availability.
 
 ---
 
-## 38. Why English Resists — and the Turn from Confrontation to Cooperation
+---
+
+## 22. Why English Resists — and the Turn from Confrontation to Cooperation
 
 By this point both legs had been measured under proper controls, and the picture
 was uncomfortable: Q1 negative and widening, Q2 positive but with its
@@ -2044,7 +1971,7 @@ Answering it properly turned out to change the direction of the project.
 
 ### 38.1 Why English BPE is so hard to beat
 
-**Measurement first.** From §35's tokenization economics:
+**Measurement first.** From §19's tokenization economics:
 
 | | tokens per word |
 |---|---|
@@ -2062,7 +1989,7 @@ a **word-level tokenizer with a subword escape hatch for the tail**.
 
 Morphological decomposition takes a representation that already works and
 fragments it. It can only help inside the escape hatch. Which is exactly the
-U-shape §35 measured: morph wins 12.8% where BPE must fragment, loses 10.5%
+U-shape §19 measured: morph wins 12.8% where BPE must fragment, loses 10.5%
 where BPE has the whole word.
 
 **Five structural reasons, in order of force:**
@@ -2079,7 +2006,7 @@ where BPE has the whole word.
    types into one frequent lemma plus a few frequent affixes. In English `cats`
    is common enough by itself. **There is nothing to share.**
 
-3. **English derivation is lexicalised, not compositional.** §26 already recorded
+3. **English derivation is lexicalised, not compositional.** §10 already recorded
    `demonstrated → de + monster + ate`. English derivational morphology is
    largely fossilised Latin and Greek borrowing that no longer means what it
    says, so decomposition often injects noise rather than signal. Agglutinative
@@ -2088,7 +2015,7 @@ where BPE has the whole word.
 4. **English orthography hides morphology.** `ran` ≠ `run` + past. Irregular
    verbs and suppletion mean that even where morphology exists it is not
    recoverable from the surface string — precisely the `{found, founded}`
-   collision the audit caught in §33.
+   collision the audit caught in §17.
 
 5. **BPE has already learned English morphology.** Our vocabulary contains
    **338 affixes** (127 prefixes + 211 suffixes), of which the productive
@@ -2101,7 +2028,7 @@ where BPE has the whole word.
 
 ### 38.2 How much of the deficit is ours, and how much is the language
 
-Separating implementation defects from language properties, using §35's regional
+Separating implementation defects from language properties, using §19's regional
 decomposition:
 
 | cause | share of gap | status |
@@ -2127,14 +2054,14 @@ BPE-10k, still behind the parameter-matched BPE-17k. Implementation explains
 most of the gap but not all of it. The residue is the language.
 
 A useful consistency check fell out of this: the band-weighted clean-word delta
-is **+0.0468** on word bytes alone, while §35's Part 2 measured **+0.0735**
+is **+0.0468** on word bytes alone, while §19's Part 2 measured **+0.0735**
 including leading whitespace. The 0.027 difference is exactly the `<sp>`
 overhead — two independent measurements agreeing.
 
 ### 38.3 The path considered and rejected — data starvation
 
 If the mechanism is data starvation rather than Finnish specifically, the same
-condition can be created in English by shrinking the corpus. Taking §35's
+condition can be created in English by shrinking the corpus. Taking §19's
 per-band deltas and shifting the frequency distribution (a 10× smaller corpus
 moves every word down one band) gives a quantitative forecast:
 
@@ -2160,7 +2087,7 @@ The researcher's counter-proposal: instead of competing with BPE, find where it
 struggles and help it. Both methods have strengths; the question is whether they
 can cooperate.
 
-**The decisive observation: §35's frequency table is not a comparison, it is an
+**The decisive observation: §19's frequency table is not a comparison, it is an
 assignment.**
 
 | word frequency | % of clean bytes | delta | who should handle it |
@@ -2215,7 +2142,7 @@ This also restores the thesis title. *Context-Aware **Embeddings*** was always a
 claim about the embedding layer; Q1 was the supporting comparison, and it has now
 established that segmentation is the wrong place to spend English morphology.
 
-The mechanism already exists: §33 gave the BPE pipeline character-offset
+The mechanism already exists: §17 gave the BPE pipeline character-offset
 alignment so it could carry context facts, and the same machinery carries
 morphological ones. The strongest candidate is **root identity** — BPE sees
 `running` as one token, unrelated to `runner`, `runs`, `ran`, because its merges
@@ -2257,7 +2184,17 @@ two compose.
 
 ---
 
-## 39. Level 2 — Morphology as Features on a BPE-Tokenized Model
+---
+
+# Part VI — The Synthesis
+
+*The two negative findings of Parts IV and V, taken together, point at an
+experiment neither of them tested: use the tokenizer that wins, and spend the
+morphology somewhere else.*
+
+---
+
+## 23. Level 2 — Morphology as Features on a BPE-Tokenized Model
 
 Section 38 concluded with a decision: stop competing with BPE over segmentation
 and instead use BPE tokens while injecting morphological knowledge as embedding
@@ -2268,7 +2205,7 @@ own best baseline.**
 
 ### 39.1 A bug found before anything ran
 
-The BPE + context-fact path had been written in section 33 but never executed.
+The BPE + context-fact path had been written in section 17 but never executed.
 Reviewing it before committing compute turned up a defect that would have
 silently voided the entire experiment.
 
@@ -2287,8 +2224,8 @@ received `none` for nearly every token, trained normally, and produced a
 convincing null result. The cache would then have needed rebuilding.
 
 This is the same class of error as the region-attribution bug in
-`coverage_economics` (section 35) and the grouping bug in the collision audit
-(section 33). **Alignment logic is now treated as the default suspect in this
+`coverage_economics` (section 19) and the grouping bug in the collision audit
+(section 17). **Alignment logic is now treated as the default suspect in this
 codebase**, and a regression test guards it.
 
 ### 39.2 Design decisions taken to avoid re-runs
@@ -2306,7 +2243,7 @@ experiment.
 one-hot into 16 dimensions, so blocks now declare `n_classes` and `width`
 independently. When `width < n_classes` the frozen representation becomes a
 **fixed random projection** — every class gets a distinct, unchanging vector
-with no parameters. That is **Lever 3 from section 27**, unbuilt since then.
+with no parameters. That is **Lever 3 from section 11**, unbuilt since then.
 
 **Entities carry their own root.** A preflight found 39.1% of BPE tokens sitting
 in words for which no root was returned. An entity's lexical identity is itself
@@ -2343,7 +2280,7 @@ measured alignment rate of 99.98%.
 
 ### 39.4 The results
 
-Baseline is the parameter-matched `bpe_17k` cell from section 37: 1.3477 BPB.
+Baseline is the parameter-matched `bpe_17k` cell from section 21: 1.3477 BPB.
 
 | cell | ppl | BPB | vs base | params vs base |
 |---|---|---|---|---|
@@ -2446,79 +2383,215 @@ measurement that told us where to spend the morphology.
 
 ---
 
-## Appendix: Key Decisions Summary
+---
 
-| Decision | Chosen Option | Rejected Options | Reason |
-|---|---|---|---|
-| Intervention point | Embedding layer | Tokenizer only; full architecture change | Transformer unchanged; clean separation |
-| Unit granularity | Morpheme-level | Word-level; phrase-level | Smaller vocab; closer to BPE; better OOV |
-| Named entity handling | Atomic units | Morpheme-segment them; ignore them | Proper nouns not compositionally meaningful |
-| Vocabulary threshold | Source-based (MorphoLex) | Frequency-based | Frequency conflates noise with rare-but-real |
-| Morfessor role | Affix-only fallback | Full segmentation; removal | Roots unreliable; affixes more trustworthy |
-| Capitalisation guard | Rejected | Applied temporarily | Typographic heuristic, not linguistic principle |
-| Number of pipelines | Three (BPE + morph + det) | Two (BPE + morph) | Isolates Morfessor's contribution |
-| Codebase structure | Flat (7 files) | Deep hierarchy (15+ files) | Communication overhead too high |
-| Evaluation method | Perplexity + probing | Generation-based metrics | No generation needed; probing more informative |
-| Entity threshold | Split threshold (multi-word≥3, single≥10) | Flat threshold; MorphoLex exclusion; length filter; curated list | Structure of token is a reliable signal of misclassification risk |
-| Compound splitting | Implemented with particle exception | Not implemented; minimum length only | Concrete wins; false positive risk negligible for genuine OOV |
-| Compound particle handling | FUNCTION_WORDS exception for 2-char right parts | Minimum length 4; ignore particles | Particles are linguistically productive; blocking them causes `star+tup` class errors |
-| Frozen dim content | One-hot (A) and feature vectors (B) — both built | Pretrained GloVe (C) | C muddles the thesis with externally learned signal |
-| Frozen/trained combination | Concatenation | Addition | Addition lets training cancel the frozen signal, defeating guaranteed presence |
-| Ragged structure | Fixed schema, zero-fill, explicit 'none' slots | Variable-width per token | Frozen vector must be uniform width; 'none' is meaningful, not missing |
-| Frozen signal strength | Small N default + amplification/projection/probe levers in reserve | Accept weak 4.5% signal at N=512 | Frozen block must be a meaningful fraction of the vector to matter |
-| Option B root features | B1 (one-hot) now; B3 (WordNet) later | B2 (coarse hand-annotated roots) | 15k roots can't be hand-annotated; WordNet is a discrete taxonomy, hand-features infeasible |
-| Embedding experiment design | Phased matrix (pipelines × frozen variants) | Single fixed embedding design | Turns design uncertainty into measurable comparison, like the 3 pipelines |
-| Embedding ownership | Model owns HybridEmbedding; dataset emits IDs only | Dataset emits vectors | Embedding is the thesis contribution; its trained part has gradients |
-| Cross-pipeline metric | Bits-per-byte (BPB) | Per-token perplexity; BPC | Per-token PPL not comparable across tokenizations; BPB robust to non-ASCII; Mielke→Pile→Paloma lineage |
-| Within-pipeline metric | Per-token perplexity | BPB only | Same tokenization → fair and more sensitive for detecting freezing effect |
-| Document boundaries | Ignore (concatenate-and-chop) | Respect boundaries | Standard GPT-2 practice; seam noise negligible at L=256 |
-| Corpus caching | Tokenize once, save int stream, mmap | Re-tokenize each epoch | spaCy + morpheme segmentation far too slow to repeat |
-| Model role | Fixed apparatus, small, standard | Best/largest model | Transformer measures the embedding, isn't the variable; small keeps hypothesis testable |
-| d_model | 128 (= N) | 256/512 | Pinned by frozen-fraction (Lever 1): 23-dim block must be a meaningful share |
-| Model depth | 4 layers (shallow on purpose) | 6+ layers | Shallow keeps reliance on input representation, where the hypothesis lives; calibration-confirmed |
-| Output tying | Configurable; 'none' for Phase 1 | Always tied; always untied | Untied keeps frozen role on input side; option C (tie frozen) reserved as hook |
-| Architecture selection | Calibrate against BPE-baseline curve | Choose size by argument | Measurement beats judgment; confirmed Goldilocks regime (64.9 ppl / 1.438 BPB) |
-| Reported metric point | Best-val (early-stopped) | Last-val | Overfitting after the minimum must not contaminate the comparison |
-| Frozen block content | Composed blocks, width derived | Fixed 23-dim schema | Sized by label inventory, not information; 12 of 23 columns were constant |
-| Frozen fact axis | Static vs context source | Treat all frozen facts alike | Static = parameter tying; context = information a lookup table cannot hold |
-| v1 context fact | Dependency role only, coarse | Full set at once; fine-grained | Unambiguous result, legible ladder; granularity is a one-line switch |
-| Dataset payload | ids + integer codes | ids only (§28) | Frozen metadata has no gradients, so §28's reasoning never applied |
-| BPE freezing | Enabled via char-offset alignment | Morpheme pipelines only | Decouples segmentation from injection; makes the matrix a true 2×3 |
-| Onehot cells | Not run | Run as designed | Would confound "flags don't help" with "12 dims were constant" |
-| LR schedule | `lr_horizon` separate from `max_steps` | Single field | One field doing both jobs made different-length cells incomparable |
-| Seeding | Seeded, seed in run identity | Unseeded single runs | Small expected effect cannot be told from init noise |
-| Codebase layout | Package (`morphlm/`) | Flat 7 files (§20) | §20's premise (chat-paste overhead) expired; flat was about to cause two silent bugs |
-| Frozen validation | Population-level assertions in tests | Per-token spot checks | Per-token checks passed while the population property failed |
-| Q1 restricted comparison | Report as diagnosis only | Report as headline | Restricting to covered words is selection on the outcome |
-| Region partition for restricted BPB | Whitespace attached to following word | Whitespace as its own region | ByteLevel folds space into the next token; otherwise the two models are measured on different partitions |
-| Token-to-region attribution | Proportional over the token's span | By start offset | Start offset charged every Ġ-prefixed BPE token to the whitespace region |
-| Q1 remedy | Two fixes: entity coverage AND frequency-aware decomposition | Vocabulary expansion alone | Coverage is 47.9% of the gap; the rest is unconditional decomposition of frequent words |
-| BPE vocabulary size | Matched to morph (17,151) | Left at 10,000 | Hou et al. match explicitly; the +51% parameter advantage was a real confound |
-| Frozen vs learned factors | Both built and compared | Assume freezing is better | Factored NLM (2006) is the direct ancestor and learns its factors; the comparison was untested |
-| Factor signal scale | Exposed as `frozen.scale`, tested at 0.22 | Leave one-hot at norm 1.0 | A frozen one-hot entered 4.6x louder than the trained slice, confounding trainability with magnitude |
-| Freezing claim | Refuted for perplexity; legibility still open | Claim freezing wins | Learned beats frozen by 1.7-2.3% under a controlled comparison |
-| Convergence speed | Reported as a metric | Ignore it | Hou et al. make it RQ2; frozen dep reaches target perplexity in 33-39% fewer steps |
-| Data-starvation sweep | Rejected as the main path | Run it as the headline experiment | It changes the conditions rather than the method; "morph wins when BPE is handicapped" is a weaker claim |
-| Q1 strategy | Cooperate: route by frequency, or inject morphology as features | Keep competing with BPE | The frequency table is an assignment, not a comparison; each method has a measured region of competence |
-| Next experiment | BPE segmentation + morphological features | Fix the morpheme tokenizer further | Q1 says segmentation is the wrong place for English morphology; Q2 says features work |
-| BPE context alignment | Scan the token's span | Index by start offset | ByteLevel folds the space into the token, so 78% of the stream would have received `none` |
-| BPE fact computation | Build all six context facts on one pass | Build only the requested fact | Each new fact would otherwise need its own multi-hour spaCy+MorphoLex pass |
-| High-cardinality facts | Separate `n_classes` from `width`; frozen becomes a random projection | One-hot only | 16,365 root classes cannot one-hot into 16 dims; this finally builds Lever 3 |
-| Entity lexical identity | Entities occupy their own root classes | Entities fall to the `none` sentinel | An entity's lemma is itself; 39.1% of tokens had no root without this |
-| Level-2 headline cell | `mroot` learned, T=16 | All three facts together | At T=29 frozen carries a 9.5% capacity handicap; T=16 learned is parameter-neutral at -0.24% |
-| Seed replication | Two seeds on baseline and best cell | Single runs | The effect/noise ratio (6.6x) is what converts a large effect into a demonstrated one |
+## 24. Where the Project Stands
+
+### The finding
+
+> **Morphological knowledge improves English language modeling as embedding
+> features, not as segmentation.**
+
+Injected into a parameter-matched BPE model, root identity, word structure and
+morpheme role together reduce bits-per-byte by **4.44%** — the mean of two
+seeds, against a seed noise of 0.0090 BPB, an effect-to-noise ratio of **6.6×** —
+using **4.5% fewer trainable parameters** than the baseline they beat. A
+shuffled-code control performs *worse* than baseline, so the gain is the
+linguistic content rather than the presence of extra structure. Unlike the
+dependency feature, none of these facts requires lookahead.
+
+### How each claim is supported
+
+| claim | evidence | section |
+|---|---|---|
+| morpheme segmentation loses to BPE in English | 13.5% BPB under matched parameters | §18, §21 |
+| the loss is coverage plus unconditional decomposition | regional decomposition of the gap | §19 |
+| the loss is expected for English specifically | Hou et al. find the same; English is the floor | §20, §22 |
+| linguistic features in the embedding help | 4.44% BPB, replicated across two seeds | §23 |
+| the gain is linguistic content, not structure | shuffled control is worse than baseline | §21, §23 |
+| the gain concentrates where data is scarce | rare tokens benefit ~7.5× more | §19, §23 |
+| freezing is not the mechanism | learned factors beat frozen under matched capacity | §21 |
+| cross-tokenizer BPB needs auditing | a 6.3% "win" reversed to a 9.7% loss | §17, §18 |
+
+### The unified observation
+
+Two independent experiments, using different mechanisms, produced the same
+shape:
+
+| | rare items | frequent items |
+|---|---|---|
+| injected dependency role vs none | −14.5% | −1.9% |
+| morpheme segmentation vs BPE | −12.8% | +10.5% |
+
+**Linguistic structure helps where statistical learning is data-starved and
+costs where statistics are already sufficient.** This is the claim the project
+actually supports, and it explains both the positive and the negative results
+rather than treating one as a success and the other as a failure.
+
+### What is not established
+
+Each of these is measured rather than speculated, and all are tabulated with
+magnitudes in `results_reference.md` §7.
+
+- **The dependency feature is an oracle.** It comes from a full-sentence parse,
+  so it leaks information about tokens not yet predicted. Roughly 80% of the
+  effect survives with a feature that has no lookahead (§23), but the
+  dependency number itself is an upper bound.
+- **Most cells ran at a single seed.** Only the baseline and the best Level-2
+  cell were replicated.
+- **No downstream task was evaluated.** Every comparable paper has one; this is
+  the standard rebuttal to a perplexity-only result.
+- **The probing evaluation was never run.** It was promised in §4 as the
+  mechanistic half of the story and the script exists, but no classifier was
+  trained. This is the largest piece of unfinished evaluation.
+- **No run reached convergence.** All stopped still improving at the 50,000-step
+  ceiling, so every comparison is at fixed compute rather than at convergence.
+- **English only, at 3.4–5.2M parameters.** The literature suggests both choices
+  work against the hypothesis.
+
+### What would be worth doing next
+
+In rough order of value per hour.
+
+**The legibility probe.** §14 and §11 argued that freezing buys *guaranteed
+legibility* as well as lower perplexity. The perplexity half was refuted in §21;
+the legibility half has never been tested, and it is the one place freezing can
+still win. Checkpoints exist, so this needs no training.
+
+**Entity vocabulary rebuild.** 77.5% of character fallback is capitalised words
+absent from a vocabulary built on 6,000 articles with a single-word threshold of
+10, tuned once and never revisited (§6, §19). This is the largest single
+component of the Q1 deficit and the cheapest to attack.
+
+**A causal dependency feature.** Derive the syntactic annotation from a
+prefix-only parse, removing the lookahead. This converts the §23 upper bound
+into a claim about causally available features.
+
+**A downstream task.** A linear probe for POS or topic classification on frozen
+representations would corroborate that the bits-per-byte differences mean
+something practically.
+
+**Level 1 — the routed tokenizer.** §22 laid out a design that routes words to
+BPE or to morphological decomposition by frequency, with the crossover as a
+free parameter and both baselines as its endpoints. The measurements motivating
+it exist; it was never built.
 
 ---
 
-*Document updated through the Level-2 result. Q1 (morphology as SEGMENTATION)
-loses to a parameter-matched BPE by 13.5% in English, with the loss localised to
-OOV coverage, unconditional decomposition of frequent words, and BPE having
-already absorbed English's eight productive affixes. Q2 (morphology and syntax
-as EMBEDDING FEATURES) works: on the best BPE baseline, injecting root identity,
-word structure and morpheme role reduces bits-per-byte by 4.44% (mean of two
-seeds, 6.6x the seed noise) using 4.5% fewer trainable parameters, with a
-shuffled control confirming the gain is linguistic content and with no lookahead
-in the features. The negative segmentation result is what told us where to spend
-the morphology. Remaining: the legibility probe, a causal variant of the
-dependency feature, downstream task evaluation, and the routed-hybrid tokenizer
-(Level 1) which remains unbuilt.*
+## Appendix A — Decision Record
+
+*Grouped by the part in which each decision was taken. Where a decision was
+later reversed or refuted, the section that did so is named.*
+
+### Part I — the question
+
+| Decision | Chosen | Rejected | Reason |
+|---|---|---|---|
+| Intervention point | Embedding layer | Tokenizer only; architecture change | Transformer unchanged; clean separation |
+| Unit granularity | Morpheme-level | Word-level; phrase-level | Smaller vocabulary; closer to BPE; better OOV |
+| Named entity handling | Atomic units | Morpheme-segment them | Proper nouns are not compositionally meaningful |
+| Frozen/trained combination | Concatenation | Addition | Addition lets training cancel the frozen signal |
+| Evaluation method | Perplexity + probing | Generation-based metrics | No generation needed; probing is more informative |
+
+### Part II — the tokenizer
+
+| Decision | Chosen | Rejected | Reason |
+|---|---|---|---|
+| Vocabulary validity | Source-based (MorphoLex) | Frequency threshold | Frequency conflates noise with rare-but-real |
+| Entity threshold | Split by structure (multi-word ≥3, single ≥10) | Flat threshold; MorphoLex exclusion; curated list | Token structure is a reliable signal of misclassification risk |
+| Morfessor role | Affix-only fallback | Full segmentation; removal | Roots unreliable; affixes more trustworthy — later shown to add nothing (§8) |
+| Capitalisation guard | Rejected | Applied temporarily | Typographic heuristic, not a linguistic category |
+| Number of pipelines | Three (bpe, morph, det) | Two | Isolates Morfessor's contribution; established the compare-don't-guess method |
+| Compound splitting | Implemented, with a particle exception | Not implemented; minimum length only | Concrete wins; false-positive risk negligible for genuine OOV |
+| Codebase structure | Flat, seven files | Deep hierarchy | Communication overhead — **reversed in §16** when that premise expired |
+
+### Part III — the apparatus
+
+| Decision | Chosen | Rejected | Reason |
+|---|---|---|---|
+| Model role | Fixed apparatus, small and standard | Best or largest model | The transformer measures the embedding; small keeps the hypothesis testable |
+| `d_model` | 128 | 256/512 | Pinned by the frozen-fraction argument |
+| Model depth | 4 layers | 6+ | Shallow keeps reliance on the input representation |
+| Cross-pipeline metric | Bits-per-byte | Per-token perplexity | Perplexity is not comparable across tokenizations |
+| Within-pipeline metric | Per-token perplexity | BPB only | Same tokenization, and more sensitive |
+| Embedding ownership | Model owns it; dataset emits ids | Dataset emits vectors | The embedding is the contribution and carries gradients — **narrowed in §15** |
+| Reported metric point | Best-val, early-stopped | Last-val | WikiText-103 overfits; the minimum must not be contaminated |
+| Architecture selection | Calibrate against the BPE curve | Choose by argument | Measurement beats judgement |
+
+### Part IV — the audits
+
+| Decision | Chosen | Rejected | Reason |
+|---|---|---|---|
+| Frozen block content | Composed blocks, width derived | Fixed 23-dim schema | Sized by label inventory, not information; 12 of 23 columns were constant |
+| Frozen fact axis | Static vs context source | Treat all frozen facts alike | Static is parameter tying; context is information a lookup table cannot hold |
+| Dataset payload | ids + integer codes | ids only | Frozen metadata has no gradients, so the §12 reasoning never applied |
+| Validity criterion | Injectivity (collisions) | Reconstruction fidelity | Non-colliding spelling variation loses no information |
+| Information channels | All five emitted; each a config flag | Hardcode the fixes | Flags allow per-channel ablation |
+| Unknown characters | UTF-8 byte fallback | ASCII punctuation layer | UNK is a collision sink; byte fallback makes the encoding total |
+| `max_steps` | Split into ceiling and `lr_horizon` | One field for both | One field doing both made different-length runs incomparable |
+| Seeding | Seeded; seed in the run identity | Unseeded single runs | A small expected effect cannot be told from initialisation noise |
+| Codebase structure | Package | Flat (§10) | The premise expired, and flat was about to cause two silent bugs |
+
+### Part V — grounding and controls
+
+| Decision | Chosen | Rejected | Reason |
+|---|---|---|---|
+| BPE vocabulary size | Matched to morph (17,151) | Left at 10,000 | The +51% parameter advantage was a real confound |
+| Frozen vs learned factors | Both built and compared | Assume freezing is better | Factored NLMs are the direct ancestor and learn their factors |
+| Factor signal scale | Exposed and tested at 0.22 | Leave one-hot at norm 1.0 | A frozen one-hot entered 4.6× louder, confounding trainability with magnitude |
+| Freezing claim | Refuted for perplexity; legibility still open | Claim freezing wins | Learned beats frozen by 1.7–2.3% under a controlled comparison |
+| Data-starvation sweep | Rejected as the main path | Run it as the headline | It changes the conditions rather than the method |
+
+### Part VI — the synthesis
+
+| Decision | Chosen | Rejected | Reason |
+|---|---|---|---|
+| Q1 strategy | Cooperate: BPE segments, morphology informs | Keep competing with BPE | The frequency table is an assignment, not a comparison |
+| BPE context alignment | Scan the token's span | Index by start offset | ByteLevel folds the space into the token; 78% of the stream would have received `none` |
+| BPE fact computation | Build all six facts in one pass | Build only what was requested | Each new fact would otherwise need its own multi-hour pass |
+| High-cardinality facts | Separate cardinality from width; frozen becomes a random projection | One-hot only | 16,365 root classes cannot one-hot into 16 dims |
+| Entity lexical identity | Entities occupy their own root classes | Fall to the `none` sentinel | An entity's lemma is itself |
+| Seed replication | Two seeds on baseline and best cell | Single runs | The effect-to-noise ratio is what makes a large effect a demonstrated one |
+
+---
+
+## Appendix B — Section Mapping
+
+*This document was restructured after the work was complete. Earlier drafts,
+and some docstrings in the codebase, refer to the previous numbering.*
+
+| old | new | note |
+|---|---|---|
+| 1, 2, 3 | 1 | merged: framing and intervention point |
+| 4 | 2 | |
+| 5 | 3 | |
+| 6, 7 | 4 | merged: granularity and evaluation |
+| 8, 10, 11, 12 | 5 | merged: the vocabulary thread, previously split |
+| 22, 23 | 6 | merged: entity thresholds, moved to sit beside the vocabulary |
+| 9, 14, 15, 16 | 7 | merged: tools, segmenter, format-B bug; minor bugs compressed |
+| 17, 18, 19 | 8 | merged: Morfessor's null and the three-pipeline decision |
+| 24, 25 | 9 | merged: compound splitting |
+| 13, 20, 21, 26 | 10 | merged: first comparison, consolidation; stale status removed |
+| 27 | 11 | |
+| 28 | 12 | |
+| 29 | 13 | |
+| 30 | 14 | |
+| 31 | 15 | |
+| 32 | 16 | |
+| 33 | 17 | |
+| 34 | 18 | |
+| 35 | 19 | |
+| 36 | 20 | |
+| 37 | 21 | |
+| 38 | 22 | |
+| 39 | 23 | |
+| — | 24 | new: closing status and next steps |
+
+---
+
+*The project asked whether injecting linguistic structure into a language
+model's embedding layer helps. It does — by 4.44% bits-per-byte, replicated,
+with fewer parameters, concentrated in exactly the tokens where statistical
+learning has least to work with. Getting to that answer required discovering
+that the project's first result was an artifact of its own measurement, and
+building the instruments to prove it.*

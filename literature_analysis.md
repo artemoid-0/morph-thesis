@@ -250,7 +250,7 @@ morpheme as word-initial — exactly what ByteLevel BPE does with `Ġ`. Since on
 prefixes, roots, function words, entities and characters can be word-initial
 (never suffixes), this adds roughly 16.5k vocabulary rows, not 17k.
 **Cost:** pipeline change + vocabulary rebuild + cache rebuild + 2 runs.
-**Expected:** removes ~208k tokens per validation pass; the arithmetic in §34
+**Expected:** removes ~208k tokens per validation pass; the arithmetic in §18
 put morph at ~1.394 against BPE's 1.395 — parity.
 **Caveat:** doubles the morph vocabulary, worsening the parameter asymmetry.
 Combine with Adopt 4.
@@ -264,12 +264,12 @@ segment (MorphPiece removes covered words from the BPE training corpus for
 exactly this reason), and route unsegmentable words there instead of to
 characters.
 **Cost:** new BPE training + pipeline change + vocabulary and cache rebuild.
-**Expected:** the *realistic* extrapolation in §35 (fallback words merely match
+**Expected:** the *realistic* extrapolation in §19 (fallback words merely match
 BPE's rate) gives morph 1.4529 vs BPE 1.3746 — still losing, but recovering
 about half the fallback penalty. Combined with Adopt 1, plausibly a win.
 
 ### Adopt 3 — MorphyNet instead of MorphoLex
-**Source:** MorphPiece §3.1.
+**Source:** MorphPiece §1.1.
 **Problem it fixes:** our dictionary has 68,608 words; theirs 346,340. **77.5%
 of our character fallback is capitalised named entities**, but the rest is
 dictionary coverage.
@@ -281,7 +281,7 @@ the pipeline is unchanged since both produce (word → morpheme list).
 format-B fixes are MorphoLex-specific and will not transfer. Budget debugging.
 
 ### Adopt 4 — match vocabulary size between arms
-**Source:** Hou et al. §3.1.
+**Source:** Hou et al. §1.1.
 **Problem it fixes:** the **+51% parameter advantage** to morph that we have
 documented but never controlled.
 **How:** retrain the ByteLevel BPE tokenizer at `--bpe-vocab 17151` to match the

@@ -14,7 +14,7 @@ were being computed and discarded on every run. Restoring them costs a couple
 of dict entries, not a second pass.
 
 This is what makes context-dependent freezing possible, and it closes the gap
-between journey section 5 ("preprocessor scope != unit scope": you may look at
+between journey section 3 ("preprocessor scope != unit scope": you may look at
 the whole sentence to decide what to stamp on one word) and the implementation,
 which had quietly reverted to static per-vocabulary-row facts.
 
@@ -24,7 +24,7 @@ A word maps to several morphemes, so a word-level fact must be distributed.
 `stamp` controls how:
     'all'   every morpheme of the word carries the word's dep/pos
     'root'  only root-role morphemes carry it; affixes get None -> 'none' slot
-Journey section 6 flagged this and never resolved it. It is a genuine fork and
+Journey section 4 flagged this and never resolved it. It is a genuine fork and
 a candidate for its own comparison, so it is config, not a hardcoded guess.
 """
 
@@ -125,7 +125,7 @@ class BasePreprocessor:
 
     # ── encoding ──────────────────────────────────────────────────────────────
 
-    # ── surface helpers (journey section 33) ──────────────────────────────────
+    # ── surface helpers (journey section 17) ──────────────────────────────────
 
     WS_MAP = {' ': '<sp>', '\n': '<nl>', '\t': '<tab>'}
 

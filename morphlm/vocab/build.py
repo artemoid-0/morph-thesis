@@ -8,7 +8,7 @@ Layer 4  function    hardcoded closed class
 Layer 5  entities    SPLIT threshold: multi-word (contains '_') freq>=3,
                      single-word freq>=10. Multi-word strings cannot be
                      common-word misclassifications, which is a structural
-                     observation rather than a heuristic (journey section 23).
+                     observation rather than a heuristic (journey section 6).
 Layer 6  characters  a-z, never deduplicated, guarantees 100% coverage
 
 Change from the previous version: `entity_label` is carried through to the
@@ -105,7 +105,7 @@ def build_vocabulary(morpholex_path, entity_csv_path=None,
         entries.append({'token': c, 'category': 'character', 'layer': 6,
                         'entity_label': 'none'})
 
-    # ── information-preserving layers (journey section 33) ────────────────────
+    # ── information-preserving layers (journey section 17) ────────────────────
     for p in PUNCTUATION:
         entries.append({'token': p, 'category': 'punct', 'layer': 7,
                         'entity_label': 'none'})

@@ -80,7 +80,7 @@ class FactBlock:
         `width` may be smaller than `n_classes`. When it is, the frozen
         representation becomes a FIXED RANDOM PROJECTION — every class still
         gets a distinct unchanging vector, in far fewer dimensions. That is
-        Lever 3 from journey section 27, unbuilt until now.
+        Lever 3 from journey section 11, unbuilt until now.
         """
         return self.width or len(self.classes)
 

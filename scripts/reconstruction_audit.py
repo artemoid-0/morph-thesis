@@ -15,7 +15,7 @@ The morpheme pipelines may not be. From research_journey.md's own tables:
     running    -> run            the progressive -ing is gone
     beautiful  -> beauty + ful   concatenates to "beautyful", not "beautiful"
 
-MorphoLex stores NORMALIZED roots, and section 9 celebrates this as solving
+MorphoLex stores NORMALIZED roots, and section 7 celebrates this as solving
 morphophonological normalization "for free". For a tagger that is a feature.
 For a LANGUAGE MODEL scored in bits-per-byte it is a problem: if the stream
 cannot reconstruct the bytes, the model is predicting an easier, lower-entropy

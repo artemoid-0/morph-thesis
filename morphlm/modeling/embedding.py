@@ -3,7 +3,7 @@ embedding.py — the hybrid frozen/trained embedding.
 
 Produces  [ factor dims (T) | trained dims (N - T) ]  by CONCATENATION.
 Addition was rejected because it lets the trained part learn to cancel the
-injected signal, defeating the premise of guaranteed presence (journey §27).
+injected signal, defeating the premise of guaranteed presence (journey §11).
 
 FROZEN vs LEARNED FACTORS — the comparison this module now supports
 -------------------------------------------------------------------
@@ -97,7 +97,7 @@ class HybridEmbedding(nn.Module):
         # The third exists because root identity has ~15k classes and cannot
         # one-hot into 16 dims. A fixed random matrix gives every class a
         # distinct, unchanging vector with no parameters and no sparse-gradient
-        # problem — journey section 27's Lever 3, unbuilt until now. Seeded so
+        # problem — journey section 11's Lever 3, unbuilt until now. Seeded so
         # the projection is reproducible across runs.
         self.factor_tables = nn.ModuleList()
         for i, block in enumerate(self.blocks):

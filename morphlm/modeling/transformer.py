@@ -6,7 +6,7 @@ the transformer is the microscope. So the goal is the fairest, most standard,
 most controlled model — identical across every cell, with only the embedding
 varying. Textbook GPT-2: pre-norm blocks, GELU, learned absolute positions.
 
-Small on purpose (journey section 28): a large model learns morphology for free
+Small on purpose (journey section 12): a large model learns morphology for free
 and washes the effect out, so small is the regime where the hypothesis is
 testable at all.
 """

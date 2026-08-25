@@ -4,7 +4,7 @@ morpheme.py — Pipeline 2: morpheme-based with Morfessor fallback.
 Identical to the deterministic pipeline except for the last resort: instead of
 falling straight to characters, Morfessor segments the word and ONLY known
 affixes are accepted. Root-position guesses are never trusted, which is what
-stops biden -> bi[prefix] + den[root] (journey section 18).
+stops biden -> bi[prefix] + den[root] (journey section 8).
 """
 
 from __future__ import annotations

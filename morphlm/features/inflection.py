@@ -14,7 +14,7 @@ inflectional paradigms:
     {make:49, made:123, makes:8, making:23}
 
 Emitting the inflection as its own token removes the collision. It is also
-LINGUISTICALLY MORE CORRECT, not a workaround: journey section 5 already
+LINGUISTICALLY MORE CORRECT, not a workaround: journey section 3 already
 classifies inflectional morphemes as morphemes. The pipeline never emitted them
 only because its source database is derivational.
 
@@ -27,7 +27,7 @@ the pipeline performs. Reading it costs nothing extra.
 REDUNDANCY GUARD
 ----------------
 Some MorphoLex analyses already carry the inflection as a suffix — journey
-section 19 records `happiest -> happy + est`. Emitting <SUP> on top would waste
+section 8 records `happiest -> happy + est`. Emitting <SUP> on top would waste
 a token, which unfairly inflates morph's token count. `_already_marked` skips
 the inflection token when the final morpheme is exactly the expected surface
 suffix.

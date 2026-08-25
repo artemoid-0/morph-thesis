@@ -59,7 +59,7 @@ WikiText-103-raw-v1 via HuggingFace `datasets`.
 | train | 535,800,393 | ~1,164,000 non-blank non-header lines |
 | validation | 1,136,862 | ~2,000 lines |
 
-Token counts differ per pipeline (see §3).
+Token counts differ per pipeline (see §1).
 
 ---
 
@@ -100,7 +100,7 @@ Transformer core (identical in every cell): **826,112 parameters**.
 | reported | **best-val**, never last-val |
 
 `lr_horizon` is separate from `max_steps` because a single field doing both jobs
-made runs of different lengths incomparable — see journey §32.
+made runs of different lengths incomparable — see journey §16.
 
 ### 2.3 Parameter counts
 
@@ -145,7 +145,7 @@ numbers are void** and retained only because they are what the audits refuted.
 | `7b28f2074be6` | det_baseline | 25.75 | 1.3271 | 3.2485 | 321,792 | 49,000 | 54.6 min |
 | `7b9dd0fe08ef` | morph_baseline | 25.96 | 1.3268 | 3.2565 | 320,768 | 49,999 | 54.4 min |
 
-Apparent result: morph beat BPE by **6.31% BPB**. Refuted — see §4.
+Apparent result: morph beat BPE by **6.31% BPB**. Refuted — see §2.
 
 ### 3.3 Batch 2 — information-fair rerun
 
@@ -306,7 +306,7 @@ corpus bytes, so neither BPB was a true compression rate until ByteLevel.
 Most frequently recovered morphemes: `log` 267, `man` 212, `men` 162,
 `graph` 158, `house` 96, `head` 90, `board` 84, `way` 77, `work` 75, `line` 72.
 
-For comparison, the format-B fix of journey §16 affected 4,941 entries.
+For comparison, the format-B fix of journey §7 affected 4,941 entries.
 
 ### 4.5 OOV audit (`oov_audit.py`)
 
@@ -493,7 +493,7 @@ Explained by the scale finding: a frozen one-hot enters at L2 norm 1.0 against a
 trained slice of 0.219, so even random one-hots inject a loud
 constant-magnitude signal. A learned table starts at std 0.02 and is quiet.
 
-### 5.6 Factor signal scale (journey §37.3)
+### 5.6 Factor signal scale (journey §21.3)
 
 | component | L2 norm at initialisation |
 |---|---|
@@ -568,7 +568,7 @@ freq≥5 trim; 18,304 morpheme tokens + 32,000 BPE = 50,006 vocabulary; GPT-2 Ba
 117M on OpenWebText; Penn Treebank ppl 61.859 → 38.251; **17% more tokens than
 BPE**, listed as a limitation.
 
-**Calibration reference points (journey §29)**: word-level WikiText-103 SOTA
+**Calibration reference points (journey §13)**: word-level WikiText-103 SOTA
 Transformer-XL 18.3 test ppl (Dai et al. 2019) — **not comparable to our
 numbers**, different unit. GPT-2 Small (117M, zero-shot) ≈ 29 BPE ppl; GPT-2 XL
 (1.5B) ≈ 16.
@@ -582,21 +582,21 @@ invalidated results.
 
 | # | bug | impact if unfixed | journey |
 |---|---|---|---|
-| 1 | MorphoLex format-B prefixes lost | 4,941 entries missing prefixes | §16 |
-| 2 | multi-root compounds: `re.search` not `findall` | 8,453 entries (12.32%) losing roots | §33 |
-| 3 | dead frozen dimensions | 12 of 23 columns constant; 6 distinct vectors total | §30 |
-| 4 | `max_steps` doubling as LR horizon | runs of different length incomparable | §32 |
-| 5 | no seeding anywhere | results not reproducible, no noise floor | §32 |
-| 6 | results keyed without seed | second seed silently overwrote the first | §32 |
-| 7 | O(n) per-token category scan | 2.18 ms/token → ~93 h per pipeline | §33 |
-| 8 | pandas destroying `na`/`nan`/`null` morphemes | three real morphemes → UNK | §33 |
-| 9 | five information channels dropped | 5.32% of corpus unencoded; 6.3% "win" was an artifact | §33 |
-| 10 | UNK as a collision sink | non-ASCII punctuation all collapsed together | §33 |
-| 11 | collision audit skipping digits/punct | inflated the measured correction ~70% | §33 |
-| 12 | region attribution by start offset | BPE reported at 0.1354 BPB on words | §35 |
-| 13 | frozen one-hot 4.6× louder than trained slice | confounded trainability with scale | §37 |
-| 14 | BPE context alignment by start offset | **78% of the stream would have received `none`** | §39 |
-| 15 | `freq_bucket` sending unseen words to the last bucket | would have inverted the frequency analysis | §35 |
+| 1 | MorphoLex format-B prefixes lost | 4,941 entries missing prefixes | §7 |
+| 2 | multi-root compounds: `re.search` not `findall` | 8,453 entries (12.32%) losing roots | §17 |
+| 3 | dead frozen dimensions | 12 of 23 columns constant; 6 distinct vectors total | §14 |
+| 4 | `max_steps` doubling as LR horizon | runs of different length incomparable | §16 |
+| 5 | no seeding anywhere | results not reproducible, no noise floor | §16 |
+| 6 | results keyed without seed | second seed silently overwrote the first | §16 |
+| 7 | O(n) per-token category scan | 2.18 ms/token → ~93 h per pipeline | §17 |
+| 8 | pandas destroying `na`/`nan`/`null` morphemes | three real morphemes → UNK | §17 |
+| 9 | five information channels dropped | 5.32% of corpus unencoded; 6.3% "win" was an artifact | §17 |
+| 10 | UNK as a collision sink | non-ASCII punctuation all collapsed together | §17 |
+| 11 | collision audit skipping digits/punct | inflated the measured correction ~70% | §17 |
+| 12 | region attribution by start offset | BPE reported at 0.1354 BPB on words | §19 |
+| 13 | frozen one-hot 4.6× louder than trained slice | confounded trainability with scale | §21 |
+| 14 | BPE context alignment by start offset | **78% of the stream would have received `none`** | §23 |
+| 15 | `freq_bucket` sending unseen words to the last bucket | would have inverted the frequency analysis | §19 |
 
 Bugs 12, 14 and 15 were caught by numbers that were *impossible* rather than
 merely surprising. **Alignment logic is the recurring failure mode in this

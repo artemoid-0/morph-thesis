@@ -15,13 +15,13 @@ one word whose root is `configure` — its merges are frequency-driven, not
 lexical.
 
 Nothing here changes the token stream. These are input-side codes only; the
-model still predicts BPE tokens, so the losslessness machinery of section 33 is
+model still predicts BPE tokens, so the losslessness machinery of section 17 is
 irrelevant to this path.
 
 NO LOOKAHEAD
 ------------
 Unlike `dep`, which comes from a full-sentence parse and therefore leaks
-information about tokens not yet predicted (section 37.6), the morphological
+information about tokens not yet predicted (section 21.6), the morphological
 analysis of a word depends only on that word. A root is knowable from the
 characters already emitted. So these facts are causally available in a way the
 dependency role is not — which makes them a cleaner claim, and a partial answer
@@ -64,7 +64,7 @@ class WordAnalyser:
     'what is the morphology of this word?' without adopting its tokenization.
 
     Deliberately built on DeterministicPipeline rather than MorphemePipeline:
-    section 19 found Morfessor contributes nothing beyond the deterministic
+    section 8 found Morfessor contributes nothing beyond the deterministic
     path, and every subsequent comparison has confirmed it (det matched or beat
     morph in 41 of 41 tail evaluations). Using det also avoids training a
     Morfessor model on every cache build.

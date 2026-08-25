@@ -133,7 +133,7 @@ class SurfaceConfig:
     How the pipeline encodes content that is not morphological.
 
     Every field here corresponds to a measured information channel from the
-    audits (journey section 33). They are flags rather than hardcoded fixes so
+    audits (journey section 17). They are flags rather than hardcoded fixes so
     each channel's contribution can be ABLATED and reported separately — the
     audits told us the channels exist; ablation tells us what each one costs.
 
@@ -150,7 +150,7 @@ class SurfaceConfig:
           MorphoLex stores lemmas, so `cat` and `cats` both mapped to [cat] —
           a genuine collision. Measured cost 0.0440 BPB. Emitting explicit
           inflectional morphemes removes the collision and is linguistically
-          more correct: section 5 already classifies inflection as morphology.
+          more correct: section 3 already classifies inflection as morphology.
 
       emit_case
           _make_token lowercased every morpheme, so 'The' and 'the' produced

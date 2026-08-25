@@ -47,7 +47,7 @@ FUNCTION_WORDS = {
 CATEGORY_PRIORITY = {
     'entity': 0, 'function': 1, 'prefix': 2,
     'suffix': 3, 'root': 4, 'character': 5,
-    # information-preserving layers (journey section 33). Low priority values
+    # information-preserving layers (journey section 17). Low priority values
     # so they win over a same-string morpheme: '<sp>' must never resolve to a
     # root, and 's' as an inflection token is distinct from 's' as a suffix.
     'punct': 6, 'digit': 7, 'infl': 8, 'space': 9, 'case': 10, 'byte': 11,
@@ -63,7 +63,7 @@ def parse_morpholex_segm(s):
     writes compounds with several parenthesized roots — {(high)(way)},
     {(touch)(down)}>s>, {(book)(keep)}>er> — and taking only the first
     silently discarded the rest, so `highway` parsed as `high` and
-    `touchdowns` as `touch`. Same family as the format-B bug of section 16:
+    `touchdowns` as `touch`. Same family as the format-B bug of section 7:
     a regex that matched one instance of something that occurs many times.
     Found by the reconstruction audit, which showed those words could not be
     rebuilt from their own token streams.
@@ -192,7 +192,7 @@ def build_morpholex_lookup(path):
 def extract_morpheme_sets(path):
     """
     Canonical prefix / suffix / root sets from MorphoLex.
-    Source determines validity — no frequency threshold (journey section 12).
+    Source determines validity — no frequency threshold (journey section 5).
     """
     df = _read_sheets(path)
     df = df[['MorphoLexSegm']].dropna()
@@ -218,7 +218,7 @@ def compound_split(word, morpholex_lookup, function_words=None):
 
     2-char right parts are accepted only if they are known compound particles
     (up/in/on/out/off/by). That exception is what makes 'startup' resolve as
-    start+up rather than the star+tup false positive (journey section 25).
+    start+up rather than the star+tup false positive (journey section 9).
     """
     if function_words is None:
         function_words = set()

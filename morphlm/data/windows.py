@@ -9,7 +9,7 @@ Each item is (input_ids, target_ids, codes) where codes is
 
 ARCHITECTURAL NOTE
 ------------------
-Journey section 28 decided "the dataset emits integer IDs only; the model owns
+Journey section 12 decided "the dataset emits integer IDs only; the model owns
 the embedding" — the reasoning being that the embedding's trained part carries
 gradients, and backpropagating into the dataloader would be wrong.
 

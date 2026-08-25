@@ -92,10 +92,9 @@ saving weights.
 
 | file | what it is |
 |---|---|
-| [`research_journey.md`](research_journey.md) | 39 sections: every decision, fork, dead end, and bug, in the order they happened. The primary record. |
+| [`research_journey.md`](research_journey.md) | The primary record: 24 sections in six parts, from the initial question through the audits that reversed the first result to the finding the project stands on. |
 | [`results_reference.md`](results_reference.md) | The data: 23 runs, every configuration and audit result, with run ids. |
 | [`literature_analysis.md`](literature_analysis.md) | Related work — MorphPiece, Hou et al. 2023, Bostrom & Durrett, FLOTA, factored LMs. |
-| [`MIGRATION.md`](MIGRATION.md) | Why the flat layout became a package, and the old→new command mapping. |
 
 Known limitations are measured rather than speculative and are listed in
 `results_reference.md` §7 — chiefly: `dep` is an oracle feature, most cells run
