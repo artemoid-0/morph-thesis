@@ -19,22 +19,26 @@ Two results, in the order they were measured:
 
 Headline cells, all at `d_model=128`, 4 layers, 50k steps, best-val:
 
-| cell | BPB | ppl | run id |
-|---|---|---|---|
-| `bpe_baseline_bpe_17k` (parameter-matched baseline) | 1.3477 | 67.36 | `a7175857fdf6` |
-| `det_baseline_Spdiwc` (morphological segmentation) | 1.5246 | 6.25 | `0e7cd8838192` |
-| `det_dep_Spdiwc` (frozen dependency fact) | 1.4856 | 5.97 | `11e9fa7d35b3` |
-| `bpe_mroot+mstruct+mrole-LEARN_bpe_17k` | **1.2927** | 56.72 | `1fb14ea6f45d` |
+**Compare down the BPB column only.** Per-token perplexity is *not* comparable
+across the two tokenizer families below — they expand the same text into
+different numbers of tokens, so 6.25 and 67.36 sit on different units and
+neither is "better" than the other.
 
-A shuffled-code control is *worse* than baseline in both directions, so the gain
-is linguistic content rather than the presence of extra structure. Full record in
+| cell | tokenizer | **BPB** (comparable) | ppl (within-family only) | run id |
+|---|---|---|---|---|
+| `bpe_baseline_bpe_17k` — parameter-matched baseline | BPE | 1.3477 | 67.36 | `a7175857fdf6` |
+| `bpe_mroot+mstruct+mrole-LEARN_bpe_17k` — **the finding** | BPE | **1.2927** | 56.72 | `1fb14ea6f45d` |
+| `det_baseline_Spdiwc` — morphological segmentation | morph | 1.5246 | 6.25 | `0e7cd8838192` |
+| `det_dep_Spdiwc` — frozen dependency fact | morph | 1.4856 | 5.97 | `11e9fa7d35b3` |
+
+A shuffled-code control removes the gain — for learned factors the shuffled
+version is *worse* than baseline — so what helps is the linguistic content, not
+the presence of extra structure. Full record in
 [`results_reference.md`](results_reference.md).
 
-**Reading the metrics.** Per-token perplexity is comparable *only within* a
-tokenizer — the pipelines expand text differently, so the numbers above sit on
-different units. **Bits-per-byte (BPB) is the cross-pipeline metric.** Never
-compare these to the word-level WikiText-103 leaderboard (~18.3); that is a
-different unit again.
+**One more unit warning.** Never compare any number here to the word-level
+WikiText-103 leaderboard (~18.3 perplexity); that is a third unit again, counted
+over words rather than over this project's tokens.
 
 ## Layout
 

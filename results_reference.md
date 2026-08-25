@@ -124,8 +124,14 @@ made runs of different lengths incomparable — see journey §16.
 
 ## 3. Complete run inventory
 
-23 training runs in 9 batches. Perplexity is per-token and comparable ONLY
-within a pipeline; BPB is the cross-pipeline metric.
+23 training runs in 9 batches.
+
+**Unit warning.** Perplexity is per-token and comparable ONLY within a pipeline.
+A BPE cell at 67.36 and a morpheme cell at 6.25 are not 10× apart — they count
+different things. **BPB is the only cross-pipeline metric here.** Three separate
+results also land near 4.5% (frozen `dep` on morph/det in per-token perplexity,
+the same bucketed, and Level-2 features on BPE in BPB); see journey §24 for
+which is which.
 
 ### 3.1 Calibration (pre-refactor, not saved as JSON)
 

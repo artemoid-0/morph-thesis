@@ -1431,7 +1431,7 @@ characters, and **77.5% of those are capitalised** — `Meridian`, `Tikal`,
 `Radcliffe`, `Kawaguchi`. Named entities the frequency-gated entity vocabulary
 (§6, built over 6k articles with `freq>=10` for single words) never admitted.
 This is a corpus-coverage limit, not a morphological one, and it is the
-weakness §8, §10 and §10 already described qualitatively — now quantified and
+weakness §8 and §10 already described qualitatively — now quantified and
 priced.
 
 ### Q2 — freezing: a clean positive, with the control that proves it
@@ -1815,7 +1815,7 @@ The literature review (§20) produced three concrete experiments, all cheap, all
 addressing confounds we had documented but never removed. Each changed the
 conclusion.
 
-### 37.1 Matched vocabulary — the Q1 confound, finally removed
+### 21.1 Matched vocabulary — the Q1 confound, finally removed
 
 Since §18 the morpheme pipelines had carried a **+51% parameter advantage**: a
 17,151-entry vocabulary against BPE's 10,000, hitting both the embedding and the
@@ -1842,7 +1842,7 @@ vocabulary size is a free hyperparameter that buys performance; a morpheme
 vocabulary is fixed by the linguistics.** BPE can always spend its way up. The
 morpheme pipeline cannot.
 
-### 37.2 Frozen vs learned factors — the thesis claim, tested directly
+### 21.2 Frozen vs learned factors — the thesis claim, tested directly
 
 Factored NLMs learn their factor embeddings. This project freezes them. Nobody
 had compared the two, so the comparison had to be built: `frozen.trainable`
@@ -1863,7 +1863,7 @@ controlled by construction, and `verify.py` now asserts it stays under 0.1%.
 
 **Learned factors beat frozen ones**, by 2.29% (morph) and 1.68% (det).
 
-### 37.3 The scale confound — found in our own implementation
+### 21.3 The scale confound — found in our own implementation
 
 Before accepting that result, an arithmetic check on the implementation:
 
@@ -1892,7 +1892,7 @@ remainder is genuine trainability.
 now refuted under a properly controlled comparison rather than resting on an
 initialisation accident.
 
-### 37.4 What survives, and what it means
+### 21.4 What survives, and what it means
 
 The ladder is complete, monotonic, and replicated across two pipelines:
 
@@ -1916,7 +1916,7 @@ Read carefully, this is a strong object even though the headline claim fell:
   place the eight dependency classes in a geometry reflecting their similarity,
   whereas one-hot forces them equidistant.
 
-### 37.5 Convergence speed — a free finding
+### 21.5 Convergence speed — a free finding
 
 Hou et al. treat convergence speed as a first-class metric (their RQ2). We had
 the data in every training log and had never looked.
@@ -1932,7 +1932,7 @@ the data in every training log and had never looked.
 An independent second axis on which Q2 wins, at zero cost, matching a metric the
 literature already values.
 
-### 37.6 One claim from §11 still untested
+### 21.6 One claim from §11 still untested
 
 The original argument for freezing (§2, §11) had two parts:
 
@@ -1969,7 +1969,7 @@ before deciding what to build next.
 
 Answering it properly turned out to change the direction of the project.
 
-### 38.1 Why English BPE is so hard to beat
+### 22.1 Why English BPE is so hard to beat
 
 **Measurement first.** From §19's tokenization economics:
 
@@ -2026,7 +2026,7 @@ where BPE has the whole word.
    vocabulary cannot absorb them — which is the gap explicit morphology fills,
    and which English does not have.
 
-### 38.2 How much of the deficit is ours, and how much is the language
+### 22.2 How much of the deficit is ours, and how much is the language
 
 Separating implementation defects from language properties, using §19's regional
 decomposition:
@@ -2058,7 +2058,7 @@ is **+0.0468** on word bytes alone, while §19's Part 2 measured **+0.0735**
 including leading whitespace. The 0.027 difference is exactly the `<sp>`
 overhead — two independent measurements agreeing.
 
-### 38.3 The path considered and rejected — data starvation
+### 22.3 The path considered and rejected — data starvation
 
 If the mechanism is data starvation rather than Finnish specifically, the same
 condition can be created in English by shrinking the corpus. Taking §19's
@@ -2081,7 +2081,7 @@ experiment changes *the conditions* rather than *the method*. It would report
 something BPE cannot get". Low-resource modelling is a real setting and this
 remains a legitimate future experiment, but it is not the thesis.
 
-### 38.4 The reframe — stop confronting BPE
+### 22.4 The reframe — stop confronting BPE
 
 The researcher's counter-proposal: instead of competing with BPE, find where it
 struggles and help it. Both methods have strengths; the question is whether they
@@ -2102,7 +2102,7 @@ assignment.**
 Each method has a measured region of competence. Nothing in the project's data
 says one should replace the other.
 
-### 38.5 Two levels of cooperation
+### 22.5 Two levels of cooperation
 
 **Level 1 — routing at the tokenizer.** Choose the better tokenizer per word:
 
@@ -2160,7 +2160,7 @@ Parameter accounting, taking 16 dimensions out of the 128 exactly as `dep` took
 comparison is clean by construction. Every control built for Q2 transfers:
 shuffled roots, frozen versus learned, frequency-bucket stratification.
 
-### 38.6 Where this leaves the project
+### 22.6 Where this leaves the project
 
 The arc is now coherent in a way it was not before:
 
@@ -2196,16 +2196,16 @@ morphology somewhere else.*
 
 ## 23. Level 2 — Morphology as Features on a BPE-Tokenized Model
 
-Section 38 concluded with a decision: stop competing with BPE over segmentation
+§22 concluded with a decision: stop competing with BPE over segmentation
 and instead use BPE tokens while injecting morphological knowledge as embedding
 features. This section records the build and the result.
 
 **The result is the strongest in the project, and the first cell that beats its
 own best baseline.**
 
-### 39.1 A bug found before anything ran
+### 23.1 A bug found before anything ran
 
-The BPE + context-fact path had been written in section 17 but never executed.
+The BPE + context-fact path had been written in §17 but never executed.
 Reviewing it before committing compute turned up a defect that would have
 silently voided the entire experiment.
 
@@ -2224,11 +2224,11 @@ received `none` for nearly every token, trained normally, and produced a
 convincing null result. The cache would then have needed rebuilding.
 
 This is the same class of error as the region-attribution bug in
-`coverage_economics` (section 19) and the grouping bug in the collision audit
-(section 17). **Alignment logic is now treated as the default suspect in this
+`coverage_economics` (§19) and the grouping bug in the collision audit
+(§17). **Alignment logic is now treated as the default suspect in this
 codebase**, and a regression test guards it.
 
-### 39.2 Design decisions taken to avoid re-runs
+### 23.2 Design decisions taken to avoid re-runs
 
 Three, all chosen specifically because a mistake would have cost a multi-hour
 cache pass.
@@ -2243,7 +2243,7 @@ experiment.
 one-hot into 16 dimensions, so blocks now declare `n_classes` and `width`
 independently. When `width < n_classes` the frozen representation becomes a
 **fixed random projection** — every class gets a distinct, unchanging vector
-with no parameters. That is **Lever 3 from section 11**, unbuilt since then.
+with no parameters. That is **Lever 3 from §11**, unbuilt since then.
 
 **Entities carry their own root.** A preflight found 39.1% of BPE tokens sitting
 in words for which no root was returned. An entity's lexical identity is itself
@@ -2255,7 +2255,7 @@ layer. A test now asserts the block's class count matches the analyser's
 inventory exactly, since a mismatch of one would make every cached code decode
 to the wrong root.
 
-### 39.3 The preflight, and what it predicted
+### 23.3 The preflight, and what it predicted
 
 A pre-flight script measured, on 300 validation lines and in six seconds,
 everything that could void the run:
@@ -2278,9 +2278,9 @@ running was 1–3%, not the 6.4% seen for `dep`.**
 The cache build then took **4h37m** for 120,625,719 training tokens, at a
 measured alignment rate of 99.98%.
 
-### 39.4 The results
+### 23.4 The results
 
-Baseline is the parameter-matched `bpe_17k` cell from section 21: 1.3477 BPB.
+Baseline is the parameter-matched `bpe_17k` cell from §21: 1.3477 BPB.
 
 | cell | ppl | BPB | vs base | params vs base |
 |---|---|---|---|---|
@@ -2295,7 +2295,7 @@ Baseline is the parameter-matched `bpe_17k` cell from section 21: 1.3477 BPB.
 Monotonic, nothing overfitted, every cell still descending at the step ceiling,
 and **every cell carries fewer parameters than the baseline it beats.**
 
-### 39.5 Seed replication — the last thing being asserted rather than shown
+### 23.5 Seed replication — the last thing being asserted rather than shown
 
 | cell | seed 0 | seed 1 | spread | mean |
 |---|---|---|---|---|
@@ -2311,7 +2311,7 @@ All four cross-seed pairings hold: every treatment run beats every baseline run.
 The baseline's own spread of 0.0005 is remarkably tight, which is itself
 reassuring about the apparatus.
 
-### 39.6 Three findings beyond the headline
+### 23.6 Three findings beyond the headline
 
 **The facts compose.** Root alone gives 0.0401 BPB; structure alone 0.0252;
 combined with role, 0.0550 — **84% of what pure additivity would predict**. So
@@ -2332,7 +2332,7 @@ explainable.**
 | `mroot` (learned) | **+0.31%** worse | −3.28% |
 | `mstruct` (frozen) | **−0.27%** slightly better | −1.61% |
 
-Shuffled roots hurt; shuffled structure marginally helps. This is the section-37
+Shuffled roots hurt; shuffled structure marginally helps. This is the §21
 scale finding resurfacing: a **frozen one-hot enters at L2 norm 1.0 against a
 trained slice of 0.219**, so even random one-hots inject a loud
 constant-magnitude signal that plausibly acts as regularisation. A learned table
@@ -2341,9 +2341,9 @@ dimensions. The control still does its job — real beats shuffled in both cases
 but `mstruct`'s should be reported as *"shuffling removes the gain"* rather than
 *"shuffling hurts"*.
 
-### 39.7 The oracle question, substantially answered
+### 23.7 The oracle question, substantially answered
 
-Section 37.6 flagged that `dep` comes from a full-sentence parse and therefore
+§21.6 flagged that `dep` comes from a full-sentence parse and therefore
 leaks information about tokens not yet predicted. The concern was that most of
 the Q2 gain was this oracle effect.
 
@@ -2358,7 +2358,7 @@ than proof — but the worry was that the gain was *mostly* oracle, and it plain
 is not. Morphological features are causally available during generation in a way
 the dependency parse is not.
 
-### 39.8 What the thesis now claims
+### 23.8 What the thesis now claims
 
 > **Morphological knowledge improves English language modeling — as embedding
 > features, not as segmentation.** Injected into a parameter-matched BPE model
@@ -2369,10 +2369,10 @@ the dependency parse is not.
 The project's arc is now coherent end to end:
 
 1. Morphological segmentation was tested against BPE in English and lost by
-   13.5% under a parameter-matched comparison (sections 34, 37).
+   13.5% under a parameter-matched comparison (§18, §21).
 2. The loss was localised precisely: OOV coverage, unconditional decomposition
    of frequent words, and the fact that BPE has already absorbed English's eight
-   productive affixes (sections 35, 38).
+   productive affixes (§19, §22).
 3. The same morphological knowledge, delivered as **features** on the better
    tokenizer, improves it by 4.44% (this section).
 
@@ -2396,9 +2396,25 @@ Injected into a parameter-matched BPE model, root identity, word structure and
 morpheme role together reduce bits-per-byte by **4.44%** — the mean of two
 seeds, against a seed noise of 0.0090 BPB, an effect-to-noise ratio of **6.6×** —
 using **4.5% fewer trainable parameters** than the baseline they beat. A
-shuffled-code control performs *worse* than baseline, so the gain is the
-linguistic content rather than the presence of extra structure. Unlike the
-dependency feature, none of these facts requires lookahead.
+shuffled-code control removes the gain — and for learned factors performs
+*worse* than baseline — so what helps is the linguistic content rather than the
+presence of extra structure. Unlike the dependency feature, none of these
+facts requires lookahead.
+
+> **Three results sit near 4.5%, and they are not the same result.** They come
+> from different experiments, on different metrics, with different tokenizers,
+> and conflating them in a short talk is the easiest mistake available here.
+>
+> | figure | experiment | metric | tokenizer | section |
+> |---|---|---|---|---|
+> | −4.46% / −4.58% | frozen `dep` vs baseline | per-token perplexity | morph / det | §18 |
+> | −4.47% / −4.64% | the same, bucketed overall | per-token perplexity | morph / det | §19 |
+> | **−4.44%** | Level-2 morphological facts vs baseline | **bits-per-byte** | **BPE** | §23 |
+>
+> **Only the third is the thesis result.** The first two measure a syntactic
+> feature on a tokenizer that loses to BPE; the third measures morphological
+> features on the tokenizer that wins. Quote the third, name the metric, and
+> name the baseline.
 
 ### How each claim is supported
 
@@ -2408,7 +2424,7 @@ dependency feature, none of these facts requires lookahead.
 | the loss is coverage plus unconditional decomposition | regional decomposition of the gap | §19 |
 | the loss is expected for English specifically | Hou et al. find the same; English is the floor | §20, §22 |
 | linguistic features in the embedding help | 4.44% BPB, replicated across two seeds | §23 |
-| the gain is linguistic content, not structure | shuffled control is worse than baseline | §21, §23 |
+| the gain is linguistic content, not structure | shuffling removes the gain; for learned factors it is worse than baseline | §21, §23 |
 | the gain concentrates where data is scarce | rare tokens benefit ~7.5× more | §19, §23 |
 | freezing is not the mechanism | learned factors beat frozen under matched capacity | §21 |
 | cross-tokenizer BPB needs auditing | a 6.3% "win" reversed to a 9.7% loss | §17, §18 |

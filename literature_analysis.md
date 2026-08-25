@@ -100,8 +100,14 @@ Introduced specifically to help with rare words. Extended to neural machine
 translation by Sennrich & Haddow (2016) and used widely since.
 
 Architecturally this is our Q2. **The difference: their factor embeddings are
-learned. Ours are frozen.** In the sources reviewed, no one appears to have
+learned; ours were frozen.** In the sources reviewed, no one appears to have
 tested frozen versus learned factors, nor run a shuffled-feature control.
+
+*Both have since been done. Journey §21 built the comparison and found that
+**learned factors beat frozen ones** by 1.7–2.3% under matched capacity, so the
+specific novelty claimed here is refuted; frozen factors nonetheless capture
+roughly 75% of the benefit at zero parameter cost. The shuffled control is in
+§21 and §23.*
 
 ---
 
@@ -109,12 +115,12 @@ tested frozen versus learned factors, nor run a shuffled-feature control.
 
 | dimension | MorphPiece (2023) | Hou et al. (2023) | Bostrom & Durrett (2020) | FLOTA (2022) | Factored NLM (2006) | **This project** |
 |---|---|---|---|---|---|---|
-| **Core idea** | morpheme dict + BPE fallback | compare BPE vs unsupervised morph segmenters | compare BPE vs Unigram | re-segment using existing BPE vocab | word = set of feature embeddings | morpheme pipeline + **frozen** linguistic features |
+| **Core idea** | morpheme dict + BPE fallback | compare BPE vs unsupervised morph segmenters | compare BPE vs Unigram | re-segment using existing BPE vocab | word = set of feature embeddings | **BPE segmentation + injected morphological/syntactic features** |
 | **Morpheme source** | MorphyNet, 346k words | Morfessor / StateMorph (unsupervised) | — | — | any annotation | **MorphoLex, 68.6k words** |
 | **OOV handling** | **BPE fallback** | segmenter always produces something | — | — | — | **character fallback** |
 | **Segmentation form** | canonical (lemma) | surface | surface | surface | — | **canonical (lemma)** |
 | **Whitespace** | BPE-style prefix | **word-initial marker `_`** | BPE-style | BPE-style | — | **separate `<sp>` token (32.6% of all tokens)** |
-| **Vocabulary size** | 50,006 (matched to GPT-2) | **matched across arms** (60k–516k) | matched | identical by construction | — | **17,151 vs BPE 10,000 — NOT matched** |
+| **Vocabulary size** | 50,006 (matched to GPT-2) | **matched across arms** (60k–516k) | matched | identical by construction | — | **17,151, matched against a retrained BPE-17k baseline** |
 | **Model size** | GPT-2 Base, 117M | 132M–979M | RoBERTa-scale | BERT/GPT-2/XLNet | small RNN | **3.4M–5.2M** |
 | **Languages** | English | Finnish, Russian, English, Turkish | English, Japanese | English | English, Turkish | **English** |
 | **Corpus** | OpenWebText | Wikipedia + news, 17M–66M instances | — | ArXiv titles | — | **WikiText-103, 536MB** |
@@ -124,10 +130,10 @@ tested frozen versus learned factors, nor run a shuffled-feature control.
 | **Fertility / token count** | measured: +17% | implied by vocab matching | — | measured | — | **measured: +104% (whitespace) / 1.51 vs 1.18 tok per clean word** |
 | **Information-fairness audit** | **none** (acknowledges the problem, proceeds) | **none** | **none** | n/a | **none** | **six-channel ledger; coverage + collision + restricted BPB + category bits** |
 | **Losslessness guarantee** | detokenization algorithm, heuristic | not addressed | not addressed | n/a | n/a | **injectivity-verified, byte fallback, 0.0008 BPB residual** |
-| **Frozen features** | — | — | — | — | **learned** | **frozen (never receive gradients)** |
-| **Feature control (shuffle)** | — | — | — | — | **none** | **yes — shuffled codes make it worse** |
+| **Frozen features** | — | — | — | — | **learned** | **both built and compared; learned wins on perplexity, frozen costs no parameters** |
+| **Feature control (shuffle)** | — | — | — | — | **none** | **yes — shuffling removes the gain; for learned factors it is worse than baseline** |
 | **Frequency-stratified analysis** | — | — | — | — | — | **yes — U-shape; rare words +12.8%** |
-| **Seeds / variance** | single runs | 3 runs on downstream, single pre-train | — | — | — | **single seed** |
+| **Seeds / variance** | single runs | 3 runs on downstream, single pre-train | — | — | — | **two seeds on baseline and best cell: effect 6.6× seed noise** |
 
 ---
 
@@ -188,7 +194,12 @@ method can invert a result. Nobody else has the instrument.
 
 **2. Frozen rather than learned linguistic factors.** Factored NLMs are 19 years
 old and learn their factor embeddings. Freezing them — guaranteeing the
-information is present and undistortable — appears untested.
+information is present and undistortable — appeared untested, and testing it was
+the agenda this review set. **The result was negative** (§21): learned factors
+win on perplexity. What survives is narrower and still unoccupied — frozen
+factors reach ~75% of the benefit with *no* trainable parameters, and the
+*legibility* half of the freezing argument has never been measured by anyone,
+including us.
 
 **3. The shuffled-feature control.** We showed that permuting the dependency
 codes (same distribution, same width, same parameter count) makes the model
@@ -269,7 +280,7 @@ BPE's rate) gives morph 1.4529 vs BPE 1.3746 — still losing, but recovering
 about half the fallback penalty. Combined with Adopt 1, plausibly a win.
 
 ### Adopt 3 — MorphyNet instead of MorphoLex
-**Source:** MorphPiece §1.1.
+**Source:** MorphPiece §3.1.
 **Problem it fixes:** our dictionary has 68,608 words; theirs 346,340. **77.5%
 of our character fallback is capitalised named entities**, but the rest is
 dictionary coverage.
@@ -281,7 +292,7 @@ the pipeline is unchanged since both produce (word → morpheme list).
 format-B fixes are MorphoLex-specific and will not transfer. Budget debugging.
 
 ### Adopt 4 — match vocabulary size between arms
-**Source:** Hou et al. §1.1.
+**Source:** Hou et al. §3.1.
 **Problem it fixes:** the **+51% parameter advantage** to morph that we have
 documented but never controlled.
 **How:** retrain the ByteLevel BPE tokenizer at `--bpe-vocab 17151` to match the
@@ -348,11 +359,14 @@ contribution here is not the tokenizer — it is the **audit methodology** and t
 **frequency-stratified localisation** of where morphological segmentation wins
 and loses.
 
-**Q2 (frozen linguistic features) looks genuinely open.** Factored NLMs are the
-direct ancestor and are 19 years old, but they *learn* their factors. Freezing
-them, plus the shuffled control, plus the rare-token mechanism, plus the
-convergence-speed result — that combination did not appear in any source
-reviewed.
+**Q2 (injected linguistic features) is where the contribution sits.** Factored
+NLMs are the direct ancestor and are 19 years old, but they *learn* their
+factors and run no control. Since this review was written, §21 tested freezing
+directly and **refuted it as the mechanism** — learned wins. What remains
+unoccupied, and is what the project actually demonstrates, is the combination:
+a shuffled-feature control isolating linguistic content, the rare-token
+mechanism, the convergence-speed result, and features injected on top of the
+*better* tokenizer rather than a competing one.
 
 **The obvious next experiment, and the one a reviewer will demand:** frozen
 `dep` versus **learned** `dep`. Same 8 dimensions, same information, one
