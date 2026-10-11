@@ -1,0 +1,372 @@
+{
+  "run_id": "62e8c3848bcf",
+  "label": "bpe_ucaselex-LEARN-CAUSAL_bpe_uk_4k_ukwiki0.05_st10k",
+  "pipeline": "bpe",
+  "facts": [
+    "ucaselex"
+  ],
+  "seed": 0,
+  "best_step": 9999,
+  "val_loss": 3.9755631425229443,
+  "perplexity": 53.2801127560937,
+  "bits_per_byte": 1.22192496704483,
+  "val_tokens": 423680,
+  "lr_horizon": 10000,
+  "max_steps": 10000,
+  "log": [
+    {
+      "mean_loss": 8.322040896689424,
+      "perplexity": 4113.546771091783,
+      "bits_per_byte": 2.5578538646928966,
+      "tokens": 423680,
+      "step": 0,
+      "train_loss": 8.320348739624023,
+      "lr": 0.0,
+      "elapsed": 1.0722460746765137
+    },
+    {
+      "mean_loss": 5.636771231187434,
+      "perplexity": 280.5554059673552,
+      "bits_per_byte": 1.7325121634307434,
+      "tokens": 423680,
+      "step": 500,
+      "train_loss": 5.690835475921631,
+      "lr": 0.00029891389973215736,
+      "elapsed": 21.08184289932251
+    },
+    {
+      "mean_loss": 5.048947288478609,
+      "perplexity": 155.85830426227423,
+      "bits_per_byte": 1.551839205645242,
+      "tokens": 423680,
+      "step": 1000,
+      "train_loss": 5.126961708068848,
+      "lr": 0.00029453155143795715,
+      "elapsed": 41.33786082267761
+    },
+    {
+      "mean_loss": 4.773254700801884,
+      "perplexity": 118.30365905400194,
+      "bits_per_byte": 1.4671026176363289,
+      "tokens": 423680,
+      "step": 1500,
+      "train_loss": 4.8664445877075195,
+      "lr": 0.0002868950826686939,
+      "elapsed": 61.681007623672485
+    },
+    {
+      "mean_loss": 4.600099267700288,
+      "perplexity": 99.49419171134153,
+      "bits_per_byte": 1.4138817431838033,
+      "tokens": 423680,
+      "step": 2000,
+      "train_loss": 4.627520561218262,
+      "lr": 0.0002761963384930274,
+      "elapsed": 82.05226588249207
+    },
+    {
+      "mean_loss": 4.477269409502381,
+      "perplexity": 87.99406856203383,
+      "bits_per_byte": 1.3761288852741311,
+      "tokens": 423680,
+      "step": 2500,
+      "train_loss": 4.726807594299316,
+      "lr": 0.00026270409514418447,
+      "elapsed": 102.41637253761292
+    },
+    {
+      "mean_loss": 4.38170904868319,
+      "perplexity": 79.97459715475205,
+      "bits_per_byte": 1.346757551815526,
+      "tokens": 423680,
+      "step": 3000,
+      "train_loss": 4.458597660064697,
+      "lr": 0.00024675730776358497,
+      "elapsed": 122.81813955307007
+    },
+    {
+      "mean_loss": 4.304877251224576,
+      "perplexity": 74.0601241053424,
+      "bits_per_byte": 1.323142610180356,
+      "tokens": 423680,
+      "step": 3500,
+      "train_loss": 4.186106204986572,
+      "lr": 0.00022875659509431217,
+      "elapsed": 143.23334908485413
+    },
+    {
+      "mean_loss": 4.246430311606369,
+      "perplexity": 69.85560400414252,
+      "bits_per_byte": 1.305178419396173,
+      "tokens": 423680,
+      "step": 4000,
+      "train_loss": 4.363043785095215,
+      "lr": 0.00020915417504785194,
+      "elapsed": 163.75232648849487
+    },
+    {
+      "mean_loss": 4.19441551297813,
+      "perplexity": 66.31496001417682,
+      "bits_per_byte": 1.2891912048001248,
+      "tokens": 423680,
+      "step": 4500,
+      "train_loss": 4.362656116485596,
+      "lr": 0.0001884425039850356,
+      "elapsed": 184.29262781143188
+    },
+    {
+      "mean_loss": 4.152620588688692,
+      "perplexity": 63.600452728201695,
+      "bits_per_byte": 1.2763451601885423,
+      "tokens": 423680,
+      "step": 5000,
+      "train_loss": 4.096778869628906,
+      "lr": 0.00016714190511769907,
+      "elapsed": 204.80615401268005
+    },
+    {
+      "mean_loss": 4.12052365732337,
+      "perplexity": 61.59148665423001,
+      "bits_per_byte": 1.266479880630708,
+      "tokens": 423680,
+      "step": 5500,
+      "train_loss": 4.235940456390381,
+      "lr": 0.0001457874968331065,
+      "elapsed": 225.36325430870056
+    },
+    {
+      "mean_loss": 4.084341231717804,
+      "perplexity": 59.40279218336604,
+      "bits_per_byte": 1.2553588877975703,
+      "tokens": 423680,
+      "step": 6000,
+      "train_loss": 4.1700592041015625,
+      "lr": 0.00012491574933068292,
+      "elapsed": 245.94169759750366
+    },
+    {
+      "mean_loss": 4.061428333985481,
+      "perplexity": 58.057176923721244,
+      "bits_per_byte": 1.2483164032984557,
+      "tokens": 423680,
+      "step": 6500,
+      "train_loss": 4.238964080810547,
+      "lr": 0.00010505100729822048,
+      "elapsed": 266.474472284317
+    },
+    {
+      "mean_loss": 4.041124774898287,
+      "perplexity": 56.89029560892973,
+      "bits_per_byte": 1.2420759224208793,
+      "tokens": 423680,
+      "step": 7000,
+      "train_loss": 4.140336036682129,
+      "lr": 8.669231720788825e-05,
+      "elapsed": 286.9454560279846
+    },
+    {
+      "mean_loss": 4.023666329542316,
+      "perplexity": 55.90569926092568,
+      "bits_per_byte": 1.2367099127509356,
+      "tokens": 423680,
+      "step": 7500,
+      "train_loss": 4.289965629577637,
+      "lr": 7.030089015964661e-05,
+      "elapsed": 307.3784439563751
+    },
+    {
+      "mean_loss": 4.009543634397386,
+      "perplexity": 55.12170917048068,
+      "bits_per_byte": 1.2323691758085458,
+      "tokens": 423680,
+      "step": 8000,
+      "train_loss": 4.110233306884766,
+      "lr": 5.628851523330708e-05,
+      "elapsed": 327.85869121551514
+    },
+    {
+      "mean_loss": 3.998499106640542,
+      "perplexity": 54.51626549767021,
+      "bits_per_byte": 1.228974541204216,
+      "tokens": 423680,
+      "step": 8500,
+      "train_loss": 3.9802169799804688,
+      "lr": 4.500721443158535e-05,
+      "elapsed": 348.29842233657837
+    },
+    {
+      "mean_loss": 3.9892031928923917,
+      "perplexity": 54.01183519849111,
+      "bits_per_byte": 1.2261173587892606,
+      "tokens": 423680,
+      "step": 9000,
+      "train_loss": 4.155035972595215,
+      "lr": 3.674039910497238e-05,
+      "elapsed": 368.7437193393707
+    },
+    {
+      "mean_loss": 3.981473626831147,
+      "perplexity": 53.59595650176052,
+      "bits_per_byte": 1.2237416073759242,
+      "tokens": 423680,
+      "step": 9500,
+      "train_loss": 3.8438432216644287,
+      "lr": 3.169575002868677e-05,
+      "elapsed": 389.16609597206116
+    },
+    {
+      "mean_loss": 3.9755631425229443,
+      "perplexity": 53.2801127560937,
+      "bits_per_byte": 1.22192496704483,
+      "tokens": 423680,
+      "step": 9999,
+      "train_loss": 3.9348881244659424,
+      "lr": 3.0000006797248146e-05,
+      "elapsed": 409.6209785938263
+    }
+  ],
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-10-06T21:10:51+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "spacy_model": "en_core_web_sm",
+    "spacy_model_version": "3.8.0",
+    "git_commit": "5d59c87ad50f21fa96c3e264450bdab8bf5260e2",
+    "git_dirty": true
+  },
+  "parameters": {
+    "trainable_total": 1819168,
+    "embedding_trained": 480480,
+    "embedding_factor": 64,
+    "output_head": 512512,
+    "positional": 32768,
+    "auxiliary_head": 0,
+    "transformer_core": 793344,
+    "transformer_core_with_positional": 826112,
+    "vocab_size": 4004,
+    "d_model": 128,
+    "frozen_width_T": 8,
+    "trained_width": 120,
+    "factors_trainable": true,
+    "factor_scale": 1.0
+  },
+  "frozen_blocks": [
+    {
+      "name": "ucaselex",
+      "source": "context",
+      "n_classes": 8,
+      "dim": 8,
+      "is_projection": false,
+      "causal_identity": true,
+      "causal_semantics": 3,
+      "boundary_source": "tokenizer"
+    }
+  ],
+  "data": {
+    "train": {
+      "tokens": 49433222,
+      "bytes": 235673205,
+      "chars": 133678981,
+      "windows": 193098,
+      "bytes_per_token": 4.767506455476441,
+      "codes_file": "bpe_train_None_3ad75e3a63_ucaselex.codes.npy"
+    },
+    "validation": {
+      "tokens": 423931,
+      "bytes": 1989866,
+      "chars": 1132244,
+      "windows": 1655,
+      "bytes_per_token": 4.693844045375308,
+      "codes_file": "bpe_validation_None_088537d437_ucaselex.codes.npy"
+    }
+  },
+  "convergence": {
+    "best_eval_index": 20,
+    "n_evals": 21,
+    "best_step": 9999,
+    "final_step": 9999,
+    "best_bpb": 1.22192496704483,
+    "final_bpb": 1.22192496704483,
+    "best_is_final": true,
+    "early_stopped": false,
+    "bpb_change_last_5k": -0.05442019314371227,
+    "still_improving_at_ceiling": true,
+    "steps_to": {
+      "2.0": 500,
+      "1.8": 500,
+      "1.6": 1000,
+      "1.5": 1500,
+      "1.45": 2000,
+      "1.4": 2500
+    }
+  },
+  "timing": {
+    "wall_seconds": 410.51257252693176,
+    "steps_completed": 10000,
+    "steps_per_second": 24.359789756960886,
+    "device": "cuda"
+  },
+  "bucket_edges": [
+    20.0,
+    6030.0,
+    15727.0,
+    38108.0,
+    80992.0,
+    166352.0,
+    Infinity
+  ],
+  "buckets": [
+    {
+      "bucket": 0,
+      "range": "20-6030",
+      "tokens": 70547,
+      "mean_loss": 5.4044689331115245,
+      "perplexity": 222.39808085976603
+    },
+    {
+      "bucket": 1,
+      "range": "6030-15727",
+      "tokens": 70637,
+      "mean_loss": 4.713203548877093,
+      "perplexity": 111.40849138577599
+    },
+    {
+      "bucket": 2,
+      "range": "15727-38108",
+      "tokens": 70286,
+      "mean_loss": 4.136598055205917,
+      "perplexity": 62.589532721660234
+    },
+    {
+      "bucket": 3,
+      "range": "38108-80992",
+      "tokens": 70880,
+      "mean_loss": 3.8133435492590912,
+      "perplexity": 45.301654239889224
+    },
+    {
+      "bucket": 4,
+      "range": "80992-166352",
+      "tokens": 69402,
+      "mean_loss": 3.4269034906009552,
+      "perplexity": 30.781180810864136
+    },
+    {
+      "bucket": 5,
+      "range": "166352-inf",
+      "tokens": 71928,
+      "mean_loss": 2.381580046029102,
+      "perplexity": 10.82198860236822
+    }
+  ]
+}

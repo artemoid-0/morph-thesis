@@ -1,0 +1,96 @@
+{
+  "script": "lookahead_check",
+  "args": {
+    "baseline": "a12b91da4049",
+    "treatment": [
+      "93556c318fcc",
+      "b0dc64d5199a"
+    ],
+    "results_dir": "results",
+    "batches": 0
+  },
+  "timestamp_utc": "2026-09-26T23:09:46+00:00",
+  "results": {
+    "token_shares": {
+      "word-initial": 0.704413864213198,
+      "continuation": 0.13435517131979696,
+      "other": 0.16123096446700508
+    },
+    "93556c318fcc": {
+      "label": "bpe_mstruct-LEARN-CAUSAL_bpe_17k",
+      "overall_gain": 0.034546952694654465,
+      "by_class": {
+        "word-initial": {
+          "mean_gain": 0.03466779738664627,
+          "gain_share": 0.7068779292303332,
+          "token_share": 0.704413864213198,
+          "baseline_nll": 4.764415740966797,
+          "ratio": 1.0034980359449448
+        },
+        "continuation": {
+          "mean_gain": 0.051608651876449585,
+          "gain_share": 0.20070914166488799,
+          "token_share": 0.13435517131979696,
+          "baseline_nll": 3.4011032581329346,
+          "ratio": 1.493869865173652
+        },
+        "other": {
+          "mean_gain": 0.019801318645477295,
+          "gain_share": 0.09241295012394019,
+          "token_share": 0.16123096446700508,
+          "baseline_nll": 2.4723703861236572,
+          "ratio": 0.5731712294188498
+        }
+      }
+    },
+    "b0dc64d5199a": {
+      "label": "bpe_pos-LEARN-CAUSAL_bpe_17k",
+      "overall_gain": 0.03405574709177017,
+      "by_class": {
+        "word-initial": {
+          "mean_gain": 0.05097590759396553,
+          "gain_share": 1.0543928724502611,
+          "token_share": 0.704413864213198,
+          "baseline_nll": 4.764415740966797,
+          "ratio": 1.4968371947476866
+        },
+        "continuation": {
+          "mean_gain": -0.03738251328468323,
+          "gain_share": -0.14747977988984484,
+          "token_share": 0.13435517131979696,
+          "baseline_nll": 3.4011032581329346,
+          "ratio": -1.097685920393851
+        },
+        "other": {
+          "mean_gain": 0.019662106409668922,
+          "gain_share": 0.09308679372047639,
+          "token_share": 0.16123096446700508,
+          "baseline_nll": 2.4723703861236572,
+          "ratio": 0.5773505978098024
+        }
+      }
+    }
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-09-26T23:09:46+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.5",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "spacy_model": "en_core_web_sm",
+    "spacy_model_version": "3.8.0",
+    "git_commit": "5d59c87ad50f21fa96c3e264450bdab8bf5260e2",
+    "git_dirty": true
+  },
+  "notes": [
+    "Continuation targets are intrinsically easier, so a moderate imbalance is not proof of leakage. The definitive test is a causal feature carrying only information available at generation time."
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "script": "tagger_record",
+  "args": {
+    "cache_dir": "/home/neko/PycharmProjects/Morph/data/cache"
+  },
+  "timestamp_utc": "2026-10-07T09:56:22+00:00",
+  "results": {
+    "taggers": {
+      "en_core_web_sm": {
+        "version": "3.8.0",
+        "installed_utc": "2026-04-06T08:54:47+00:00"
+      },
+      "uk_core_news_sm": {
+        "version": "3.8.0",
+        "installed_utc": "2026-09-28T22:39:27+00:00"
+      }
+    },
+    "corpora": {
+      "ukwiki:uk_core_news_sm": {
+        "tagger": "uk_core_news_sm",
+        "version": "3.8.0",
+        "installed_utc": "2026-09-28T22:39:27+00:00",
+        "earliest_cache_evidence_utc": "2026-09-28T22:47:41+00:00",
+        "earliest_from": "audit check_cache_20260928T224741+0000.json",
+        "runs": 113,
+        "every_cache": true,
+        "verdict": "uk_core_news_sm 3.8.0 tagged every ukwiki cache: installed before the earliest evidence of one, not reinstalled since"
+      },
+      "wikitext103:en_core_web_sm": {
+        "tagger": "en_core_web_sm",
+        "version": "3.8.0",
+        "installed_utc": "2026-04-06T08:54:47+00:00",
+        "earliest_cache_evidence_utc": "2026-06-28T02:43:31+00:00",
+        "earliest_from": "cache bpe_validation_None_e483bcd459.json",
+        "runs": 305,
+        "every_cache": true,
+        "verdict": "en_core_web_sm 3.8.0 tagged every wikitext103 cache: installed before the earliest evidence of one, not reinstalled since"
+      }
+    }
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-10-07T09:56:22+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "5d59c87ad50f21fa96c3e264450bdab8bf5260e2",
+    "git_dirty": true
+  }
+}

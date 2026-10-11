@@ -1,0 +1,87 @@
+{
+  "script": "dep_causality_check",
+  "args": {
+    "sentences": 3000,
+    "split": "validation",
+    "max_words": 40
+  },
+  "timestamp_utc": "2026-09-23T07:26:23+00:00",
+  "results": {
+    "summary": {
+      "words": 62919,
+      "fine_agreement": 0.5626281409431173,
+      "coarse_agreement": 0.6060808340882722,
+      "coarse_disagreement": 0.3939191659117278
+    },
+    "by_distance_from_end": {
+      "0": {
+        "n": 3000,
+        "agree": 1.0
+      },
+      "1": {
+        "n": 3000,
+        "agree": 0.947
+      },
+      "2": {
+        "n": 3000,
+        "agree": 0.4583333333333333
+      },
+      "3": {
+        "n": 2978,
+        "agree": 0.6276024177300201
+      },
+      "4": {
+        "n": 2949,
+        "agree": 0.6649711766700577
+      },
+      "5": {
+        "n": 47992,
+        "agree": 0.5644274045674279
+      }
+    },
+    "confusions": {
+      "modifier->object": 11366,
+      "modifier->root": 3482,
+      "subject->root": 2463,
+      "modifier->clausal": 1146,
+      "modifier->function": 1103,
+      "function->root": 999,
+      "subject->object": 594,
+      "function->modifier": 489,
+      "function->clausal": 486,
+      "clausal->root": 466,
+      "subject->function": 335,
+      "subject->clausal": 318,
+      "subject->modifier": 316,
+      "clausal->modifier": 256,
+      "object->modifier": 173,
+      "clausal->object": 164,
+      "function->object": 145,
+      "clausal->function": 106,
+      "object->root": 80,
+      "object->function": 59
+    }
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-09-23T07:26:23+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.5",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "spacy_model": "en_core_web_sm",
+    "spacy_model_version": "3.8.0",
+    "git_commit": "5d59c87ad50f21fa96c3e264450bdab8bf5260e2",
+    "git_dirty": true
+  },
+  "notes": [
+    "Agreement bounds the leak but does not measure its VALUE: a label that changes may or may not have been carrying useful information about the upcoming word."
+  ]
+}

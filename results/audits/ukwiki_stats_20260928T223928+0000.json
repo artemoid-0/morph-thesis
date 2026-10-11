@@ -1,0 +1,45 @@
+{
+  "script": "ukwiki_stats",
+  "args": {
+    "holdout": 2000,
+    "target_chars": 539000000.0
+  },
+  "timestamp_utc": "2026-09-28T22:39:28+00:00",
+  "results": {
+    "splits": {
+      "articles": {
+        "train": 1293477,
+        "validation": 598,
+        "test": 645
+      },
+      "chars": {
+        "train": 2688789266,
+        "validation": 1143457,
+        "test": 1385357
+      }
+    },
+    "suggested_fraction": {
+      "fraction": 0.2007,
+      "train_chars": 539249072
+    }
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-09-28T22:39:28+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.5",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "spacy_model": "en_core_web_sm",
+    "spacy_model_version": "3.8.0",
+    "git_commit": "5d59c87ad50f21fa96c3e264450bdab8bf5260e2",
+    "git_dirty": true
+  }
+}

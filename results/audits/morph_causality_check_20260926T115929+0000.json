@@ -1,0 +1,109 @@
+{
+  "script": "morph_causality_check",
+  "args": {
+    "sentences": 30,
+    "split": "validation",
+    "max_words": 40,
+    "text": null
+  },
+  "timestamp_utc": "2026-09-26T11:59:29+00:00",
+  "results": {
+    "summary": {
+      "words": 548,
+      "skipped": 0,
+      "harness": [
+        30,
+        30
+      ],
+      "agreement": {
+        "tag": 0.9233576642335767,
+        "pos": 0.9288321167883211,
+        "mfeat": 0.9470802919708029,
+        "magr": 0.9543795620437956,
+        "minfl": 0.9744525547445255
+      }
+    },
+    "by_words_after": {
+      "1": {
+        "tag": 0.896551724137931,
+        "pos": 0.896551724137931,
+        "mfeat": 0.9655172413793104,
+        "magr": 0.9655172413793104,
+        "minfl": 0.9655172413793104
+      },
+      "2": {
+        "tag": 0.7307692307692307,
+        "pos": 0.7692307692307693,
+        "mfeat": 0.7307692307692307,
+        "magr": 0.8076923076923077,
+        "minfl": 0.9230769230769231
+      },
+      "3": {
+        "tag": 0.9583333333333334,
+        "pos": 0.9583333333333334,
+        "mfeat": 0.9583333333333334,
+        "magr": 0.9583333333333334,
+        "minfl": 0.9583333333333334
+      },
+      "4": {
+        "tag": 0.8888888888888888,
+        "pos": 0.9259259259259259,
+        "mfeat": 0.9259259259259259,
+        "magr": 0.9629629629629629,
+        "minfl": 0.9629629629629629
+      },
+      "5": {
+        "tag": 0.9366515837104072,
+        "pos": 0.9389140271493213,
+        "mfeat": 0.9592760180995475,
+        "magr": 0.9615384615384616,
+        "minfl": 0.9796380090497737
+      }
+    },
+    "mfeat_changes": {
+      "bears: Number=Plur -> Number=Sing|Person=3|Tense=Pres|VerbForm=Fin": 2,
+      "cooking: Aspect=Prog|Tense=Pres|VerbForm=Part -> Number=Sing": 2,
+      "mating: Aspect=Prog|Tense=Pres|VerbForm=Part -> Number=Sing": 2,
+      "red: Number=Sing -> Degree=Pos": 2,
+      "wild: Degree=Pos -> Number=Sing": 2,
+      "clawed: Tense=Past|VerbForm=Fin -> Degree=Pos": 1,
+      "black: Degree=Pos -> Number=Sing": 1,
+      "lb: Number=Sing -> NumType=Card": 1,
+      "red: Degree=Pos -> Number=Sing": 1,
+      "planktonic: Number=Sing -> Degree=Pos": 1,
+      "british: Degree=Pos -> Number=Sing": 1,
+      "moulting: Aspect=Prog|Tense=Pres|VerbForm=Part -> Number=Sing": 1,
+      "decreases: Number=Plur -> Number=Sing|Person=3|Tense=Pres|VerbForm=Fin": 1,
+      "coalesce: Tense=Pres|VerbForm=Fin -> Number=Sing": 1,
+      "yellow: Degree=Pos -> VerbForm=Inf": 1,
+      "astaxanthin: - -> Number=Sing": 1,
+      "underside: Degree=Pos -> Number=Sing": 1,
+      "reach: Number=Sing -> VerbForm=Inf": 1,
+      "attached: Tense=Past|VerbForm=Fin -> Aspect=Perf|Tense=Past|VerbForm=Part": 1,
+      "her: Case=Acc|Gender=Fem|Number=Sing|Person=3|PronType=Prs -> Gender=Fem|Number=Sing|Person=3|Poss=Yes|PronType=Prs": 1,
+      "larvae: Degree=Pos -> Number=Sing": 1,
+      "preying: Number=Sing -> Aspect=Prog|Tense=Pres|VerbForm=Part": 1,
+      "survives: Number=Plur -> Number=Sing|Person=3|Tense=Pres|VerbForm=Fin": 1,
+      "mm: Number=Sing -> Number=Plur": 1
+    }
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-09-26T11:59:29+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.5",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "spacy_model": "en_core_web_sm",
+    "spacy_model_version": "3.8.0",
+    "git_commit": "5d59c87ad50f21fa96c3e264450bdab8bf5260e2",
+    "git_dirty": true
+  }
+}

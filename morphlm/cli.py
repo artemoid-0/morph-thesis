@@ -40,8 +40,10 @@ def cmd_run(args):
     from .training.metrics import save_result, save_checkpoint
 
     cfg = _base_config(args)
-    model, log, best = train_cell(cfg, verbose=True)
-    path = save_result(cfg, log, best)
+    out = train_cell(cfg, verbose=True)
+    model, log, best = out[0], out[1], out[2]
+    meta = out[3] if len(out) > 3 else None
+    path = save_result(cfg, log, best, meta=meta)
     if not args.no_checkpoint:
         ck = save_checkpoint(cfg, model)
         print(f'[saved] {ck}')
@@ -73,7 +75,15 @@ def cmd_cache(args):
     cfg = _base_config(args)
     print(f'building cache for {cfg.describe()}')
     pipeline = build_pipeline(cfg, verbose=True)
-    make_datasets(pipeline, cfg, verbose=True)
+    splits = list(getattr(args, 'splits', None) or ['train', 'validation'])
+    if sorted(splits) == ['train', 'validation']:
+        make_datasets(pipeline, cfg, verbose=True)          # the historical path
+    else:
+        # e.g. validation alone: a pilot build in minutes, to check a new
+        # corpus before committing hours to its train split
+        from .data.stream import build_stream
+        for split in splits:
+            build_stream(pipeline, cfg, split=split, verbose=True)
     print('cache ready.')
 
 
@@ -123,27 +133,16 @@ def cmd_build(args):
         extract_entities(max_articles=args.articles,
                          spacy_model=cfg.data.spacy_model)
     if args.what in ('bpe', 'all'):
-        from .pipelines.bpe import BPEPipeline
-        from datasets import load_dataset
+        # one training path for every tokenizer (data/tokenization.py); the
+        # legacy sidecar is exactly what this command always wrote
+        from .data.tokenization import train_tokenizer
         print(f'training BPE (vocab={args.bpe_vocab}, '
-              f'pre_tokenizer={args.pre_tokenizer})...')
-        ds = load_dataset('wikitext', 'wikitext-103-raw-v1', split='train')
-
-        def texts():
-            n = 0
-            for row in ds:
-                t = row['text'].strip()
-                if not t or t.startswith(' ='):
-                    continue
-                yield t
-                n += 1
-                if args.bpe_lines and n >= args.bpe_lines:
-                    break
-
-        bpe = BPEPipeline(tokenizer_path=None, vocab_size=args.bpe_vocab,
-                          verbose=True)
-        bpe.train(texts(), save_path=args.bpe_out,
-                  pre_tokenizer=args.pre_tokenizer)
+              f'pre_tokenizer={args.pre_tokenizer}, '
+              f'algorithm={getattr(args, "algorithm", "bpe")})...')
+        train_tokenizer(cfg, args.bpe_vocab, args.bpe_out,
+                        algorithm=getattr(args, 'algorithm', 'bpe'),
+                        pre_tokenizer=args.pre_tokenizer, max_lines=args.bpe_lines,
+                        sidecar='legacy')
         print(f'  saved -> {args.bpe_out}')
         print('  NOTE: point runs at it with -o data.bpe_path=' + args.bpe_out)
 
@@ -155,7 +154,14 @@ def cmd_build(args):
         print(f'  wrote {cfg.data.vocab_csv}')
 
 
-def main():
+def build_parser():
+    """
+    The CLI's argument parser, exposed so other tools can parse a command line
+    exactly as `morphlm.cli` would. `scripts/ops/run_batch.py` validates every job
+    in a batch this way before any GPU time is spent; a second hand-written
+    parser would drift from this one, and a batch that validates against the
+    wrong parser is worse than one that is not validated at all.
+    """
     p = argparse.ArgumentParser(prog='morphlm')
     sub = p.add_subparsers(dest='command', required=True)
 
@@ -175,11 +181,20 @@ def main():
 
     c = sub.add_parser('cache', help='build the token cache only')
     add_common(c)
+    c.add_argument('--splits', nargs='+', choices=['train', 'validation', 'test'],
+                   help='which splits (default: train and validation)')
     c.set_defaults(func=cmd_cache)
 
     i = sub.add_parser('inspect', help='show the frozen layout, train nothing')
     add_common(i)
     i.set_defaults(func=cmd_inspect)
+
+    ex = sub.add_parser('export', help='write thesis-ready tables to a folder')
+    ex.add_argument('--out', default='paper')
+    ex.add_argument('--results-dir', default='results')
+    ex.set_defaults(func=lambda a: __import__('subprocess').run(
+        [__import__('sys').executable, 'scripts/analysis/export_results.py',
+         '--out', a.out, '--results-dir', a.results_dir]))
 
     rep = sub.add_parser('report', help='comparison table from saved results')
     rep.add_argument('--regime', choices=['lossless', 'partial', 'legacy'],
@@ -194,12 +209,20 @@ def main():
     b.add_argument('--bpe-lines', type=int, default=0,
                    help='0 = full corpus')
     b.add_argument('--bpe-out', default='data/bpe_bytelevel.json')
+    b.add_argument('--algorithm', default='bpe', choices=['bpe', 'unigram'],
+                   help='unigram is the Bostrom & Durrett (2020) '
+                        'comparison arm; both are trained losslessly '
+                        'with the ByteLevel pre-tokenizer')
     b.add_argument('--pre-tokenizer', default='bytelevel',
                    choices=['bytelevel', 'whitespace'])
     add_common(b)
     b.set_defaults(func=cmd_build)
 
-    args = p.parse_args()
+    return p
+
+
+def main(argv=None):
+    args = build_parser().parse_args(argv)
     args.func(args)
 
 

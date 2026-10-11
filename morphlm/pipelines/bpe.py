@@ -28,6 +28,8 @@ is never loaded and this pipeline behaves exactly as before.
 
 from __future__ import annotations
 
+from ..features.inflection import inflection_of, agreement_of
+
 
 def _first_annotated(arr, start, end):
     """
@@ -75,7 +77,10 @@ class BPEPipeline:
         if tokenizer_path:
             if verbose:
                 print(f'  Loading BPE tokenizer from {tokenizer_path}...')
-            self.tokenizer = Tokenizer.from_file(tokenizer_path)
+            # load_tokenizer: a tokenizer trained on ending-marked text comes
+            # wrapped, so the text encoded here is marked as its training was
+            from ..data.tokenization import load_tokenizer
+            self.tokenizer = load_tokenizer(tokenizer_path)
             if verbose:
                 print(f'  Vocabulary: {self.tokenizer.get_vocab_size()} tokens')
         else:
@@ -88,9 +93,21 @@ class BPEPipeline:
 
     # ── training ──────────────────────────────────────────────────────────────
 
-    def train(self, texts, save_path=None, pre_tokenizer='bytelevel'):
+    def train(self, texts, save_path=None, pre_tokenizer='bytelevel',
+              algorithm='bpe', presplit=None):
         """
-        Train a BPE tokenizer.
+        Train a subword tokenizer.
+
+        algorithm='bpe'      greedy pairwise merges, the GPT-2 standard.
+
+        algorithm='unigram'  a probabilistic model that prunes a large seed
+            vocabulary by likelihood. Bostrom & Durrett (2020) found Unigram
+            recovers subword units aligning more closely with morphology than
+            BPE's greedy merging, and matching or beating it downstream. It is
+            the natural third arm: if the morpheme pipeline also loses to
+            Unigram, the Q1 result is not an artifact of one particular
+            statistical tokenizer, which is the obvious objection to a
+            two-arm comparison.
 
         pre_tokenizer='bytelevel'  (default, GPT-2 standard)
             LOSSLESS: whitespace is folded into the following token as a Ġ
@@ -104,8 +121,20 @@ class BPEPipeline:
         The coverage audit showed whitespace is 18.8% of corpus bytes. Both the
         old BPE and the old morpheme pipelines dropped it, so it never biased
         Q1 — but it meant neither BPB was a real compression rate.
+
+        presplit — an `endings.EndingRule`: `texts` arrive marked at every
+        stem|ending cut, and the pre-tokenizer splits on the mark and removes it
+        before ByteLevel, so no merge is learned across a cut. The round trip is
+        then checked on marked Ukrainian text as well: decoding gives back the
+        text without its marks.
         """
-        from tokenizers.trainers import BpeTrainer
+        from tokenizers.trainers import BpeTrainer, UnigramTrainer
+        if algorithm == 'unigram':
+            from tokenizers import Tokenizer
+            from tokenizers.models import Unigram
+            self.tokenizer = Tokenizer(Unigram())
+        if presplit is not None and pre_tokenizer != 'bytelevel':
+            raise ValueError('a presplit tokenizer is byte-level only')
         if pre_tokenizer == 'bytelevel':
             from tokenizers.pre_tokenizers import ByteLevel
             from tokenizers.decoders import ByteLevel as ByteLevelDecoder
@@ -115,6 +144,9 @@ class BPEPipeline:
             # information loss (a constant prefix) but it breaks the
             # losslessness check and shifts per-line byte counts.
             self.tokenizer.pre_tokenizer = ByteLevel(add_prefix_space=False)
+            if presplit is not None:
+                from ..data.endings import pre_tokenizer as marked_pre_tokenizer
+                self.tokenizer.pre_tokenizer = marked_pre_tokenizer()
             self.tokenizer.decoder = ByteLevelDecoder()
             alphabet = ByteLevel.alphabet()
         elif pre_tokenizer == 'whitespace':
@@ -124,13 +156,22 @@ class BPEPipeline:
         else:
             raise ValueError(f'unknown pre_tokenizer {pre_tokenizer!r}')
 
-        trainer = BpeTrainer(
-            vocab_size=self.vocab_size,
-            special_tokens=['[UNK]', '[PAD]', '[BOS]', '[EOS]'],
-            initial_alphabet=alphabet,
-            show_progress=True,
-        )
-        print(f'  Training BPE (vocab_size={self.vocab_size}, '
+        if algorithm == 'unigram':
+            trainer = UnigramTrainer(
+                vocab_size=self.vocab_size,
+                special_tokens=['[UNK]', '[PAD]', '[BOS]', '[EOS]'],
+                initial_alphabet=alphabet,
+                unk_token='[UNK]',
+                show_progress=True,
+            )
+        else:
+            trainer = BpeTrainer(
+                vocab_size=self.vocab_size,
+                special_tokens=['[UNK]', '[PAD]', '[BOS]', '[EOS]'],
+                initial_alphabet=alphabet,
+                show_progress=True,
+            )
+        print(f'  Training {algorithm.upper()} (vocab_size={self.vocab_size}, '
               f'pre_tokenizer={pre_tokenizer})...')
         self.tokenizer.train_from_iterator(texts, trainer=trainer)
         print(f'  Done. Actual vocab size: {self.tokenizer.get_vocab_size()}')
@@ -140,9 +181,15 @@ class BPEPipeline:
                 'Researchers found 42 yards, including 3 touchdowns.',
                 'Multi-word  spacing\tand "quotes" (parens) 1990s.',
             ]
+            pairs = [(t, t) for t in probes]
+            if presplit is not None:
+                from ..data.endings import mark_text
+                for t in ('Вона прочитала книгами, а студентам — важливих новин 2020 року.',
+                          'Об’єктами м’ясо НАТО… «Компанія» — Шевченка'):
+                    pairs.append((mark_text(t, presplit)[0], t))
             bad = []
-            for t in probes:
-                d = self.tokenizer.decode(self.tokenizer.encode(t).ids)
+            for src, t in pairs:
+                d = self.tokenizer.decode(self.tokenizer.encode(src).ids)
                 if d != t:
                     bad.append((t, d))
             if bad:
@@ -153,7 +200,7 @@ class BPEPipeline:
                 raise RuntimeError(
                     'ByteLevel BPE failed its round-trip check; refusing to '
                     'save a tokenizer that cannot reconstruct its input.')
-            print(f'  round-trip verified on {len(probes)} probes: LOSSLESS')
+            print(f'  round-trip verified on {len(pairs)} probes: LOSSLESS')
 
         if save_path:
             self.tokenizer.save(save_path)
@@ -165,7 +212,13 @@ class BPEPipeline:
     def nlp(self):
         if self._nlp is None:
             import spacy
-            self._nlp = spacy.load(self._spacy_model)
+            # English keeps every component (entity context needs the NER,
+            # lemma facts the lemmatizer). The UD facts need only the
+            # morphologizer and parser; Ukrainian's lemmatizer is a Python
+            # dictionary lookup and its NER unused, so both are skipped —
+            # the codes are identical (docs/reference/ukrainian_pipeline.md, block U1).
+            skip = [] if self._spacy_model.startswith('en_') else ['ner', 'lemmatizer']
+            self._nlp = spacy.load(self._spacy_model, disable=skip)
         return self._nlp
 
     def _char_annotation_map(self, text):
@@ -182,50 +235,88 @@ class BPEPipeline:
         poss = [None] * n
         ents = [None] * n
         mroot = [None] * n
+        mhash = [None] * n
+        mlemma = [None] * n
         mstruct = [None] * n
         mrole = [None] * n
+        minfl = [None] * n
+        magr = [None] * n
+        mfeat = [None] * n
+        udf = [None] * n
         for tok in doc:
             start, end = tok.idx, tok.idx + len(tok.text)
             label = tok.ent_type_ if tok.ent_type_ else None
+            # INFLECTION of the word (Number=Plur, Tense=Past, ...), read from
+            # spaCy's morphologizer on the parse the pipeline already runs. The
+            # classifier is the one the morpheme tokenizer uses for its own
+            # inflection tokens (features/inflection.py); here it becomes a
+            # word-level context fact for the BPE model — G-28, journey §32.
+            infl = inflection_of(tok)
+            # agreement (Number, Person) and the full UD bundle, for alphabetic
+            # words only — the same coverage as the other morphological facts
+            agr = agreement_of(tok) if tok.is_alpha else None
+            feats = (str(tok.morph) or None) if tok.is_alpha else None
+            # every UD feature by name, for the language-neutral blocks (ucase...)
+            ud = (tok.morph.to_dict() or None) if tok.is_alpha else None
             for c in range(start, min(end, n)):
                 deps[c] = tok.dep_
                 poss[c] = tok.pos_
                 ents[c] = label
+                minfl[c] = infl
+                magr[c] = agr
+                mfeat[c] = feats
+                udf[c] = ud
             if self.analyser is None or not tok.is_alpha:
                 continue
             root, struct, regions = self.analyser.analyse(tok.text)
             rcode = self.analyser.root_code(root)
+            hcode = self.analyser.hash_code(tok.text)
+            lcode = self.analyser.lemma_code(tok.lemma_)
             for c in range(start, min(end, n)):
                 mroot[c] = rcode
+                mhash[c] = hcode
+                mlemma[c] = lcode
                 mstruct[c] = struct
             for a, b, role in regions:
                 for c in range(start + a, min(start + b, n)):
                     mrole[c] = role
-        return deps, poss, ents, mroot, mstruct, mrole
+        return (deps, poss, ents, mroot, mhash, mlemma, mstruct, mrole,
+                minfl, magr, mfeat, udf)
 
     # ── encoding ──────────────────────────────────────────────────────────────
 
     def encode(self, text):
         encoding = self.tokenizer.encode(text)
 
-        deps = poss = ents = mroot = mstruct = mrole = None
+        deps = poss = ents = mroot = mhash = mlemma = mstruct = mrole = minfl = \
+            magr = mfeat = udf = None
         if self.want_context:
-            (deps, poss, ents,
-             mroot, mstruct, mrole) = self._char_annotation_map(text)
+            (deps, poss, ents, mroot, mhash, mlemma,
+             mstruct, mrole, minfl, magr, mfeat, udf) = self._char_annotation_map(text)
 
         result = []
+        # read once: a tokenizers.Encoding builds a new list on every `.offsets`,
+        # so indexing it per token made a paragraph cost the square of its length
+        # — hours on fiction's long paragraphs (journey §33.87); the outputs are the same
+        offsets = encoding.offsets
         for idx, (token, token_id) in enumerate(
                 zip(encoding.tokens, encoding.ids)):
             dep = pos = ent = None
-            mr = ms = mrl = None
+            mr = mh = ml = ms = mrl = mi = ma = mf = uf = None
             if self.want_context:
-                start, end = encoding.offsets[idx]
+                start, end = offsets[idx]
                 dep = _first_annotated(deps, start, end)
                 pos = _first_annotated(poss, start, end)
                 ent = _first_annotated(ents, start, end)
                 mr = _first_annotated(mroot, start, end)
+                mh = _first_annotated(mhash, start, end)
+                ml = _first_annotated(mlemma, start, end)
                 ms = _first_annotated(mstruct, start, end)
                 mrl = _first_annotated(mrole, start, end)
+                mi = _first_annotated(minfl, start, end)
+                ma = _first_annotated(magr, start, end)
+                mf = _first_annotated(mfeat, start, end)
+                uf = _first_annotated(udf, start, end)
                 if dep is None:
                     self.align_fail += 1
                 else:
@@ -240,8 +331,14 @@ class BPEPipeline:
                 'dep': dep,
                 'pos': pos,
                 'mroot': mr,
+                'mhash': mh,
+                'mlemma': ml,
                 'mstruct': ms,
                 'mrole': mrl,
+                'minfl': mi,
+                'magr': ma,
+                'mfeat': mf,
+                'udfeats': uf,
             })
         return result
 

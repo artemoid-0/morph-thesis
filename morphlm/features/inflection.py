@@ -197,3 +197,34 @@ def residue_marker(concat, surface):
             if tail == suf:
                 return mark
     return None
+
+
+#: Agreement classes for the `magr` context fact, from UD features Number and
+#: Person. English marks Number on nouns, determiners, pronouns and finite verbs
+#: and Person on pronouns and finite verbs; `you` carries Person=2 and no
+#: Number. Order is fixed because these become embedding rows.
+AGREEMENT_CLASSES = ('Sing', 'Plur', '1Sing', '1Plur', '2', '3Sing', '3Plur')
+
+
+def agreement_of(spacy_token):
+    """
+    The agreement features (Number, Person) of a word, or None.
+
+    This is deliberately NOT the tokenizer's inflection (`inflection_of`), which
+    marks only inflectional morphemes on nouns, verbs and adjectives. Agreement
+    is what the NEXT word must match, and English carries it on words that have
+    no inflectional morpheme at all: `these` (Number=Plur), `they` (Person=3,
+    Number=Plur), `you` (Person=2). A subword model sees those as single tokens
+    whose number it must learn; this states it. Used only as a context fact —
+    it never touches the morpheme tokenizer's stream, whose cache keys depend
+    on `inflection_of` being unchanged.
+    """
+    morph = getattr(spacy_token, 'morph', None)
+    if morph is None:
+        return None
+    num = _feat(morph, 'Number')
+    per = _feat(morph, 'Person')
+    if num is None and per is None:
+        return None
+    key = '2' if per == '2' else f"{per or ''}{num or ''}"
+    return key if key in AGREEMENT_CLASSES else None

@@ -47,6 +47,7 @@ precision matters least.
 
 from __future__ import annotations
 
+import hashlib
 from functools import lru_cache
 
 
@@ -106,6 +107,67 @@ class WordAnalyser:
 
     def root_code(self, root) -> int:
         return self._root_index.get(root, self._none_root)
+
+    def lemma_code(self, lemma) -> int:
+        """
+        LEXICAL IDENTITY AT THE INFLECTIONAL LEVEL — the linguistic middle term.
+
+        Three features now share one 16,365-class inventory and one 16-dim
+        width, differing ONLY in what they merge:
+
+            mroot   merges morphological families    running/runner/ran, and
+                                                     also beautiful -> beauty
+            mlemma  merges inflectional variants     running -> run, cats -> cat,
+                                                     but beautiful stays put
+            mhash   merges nothing (random)          running with telephone
+
+        Section 27.3 found mroot loses to mhash because it collapses
+        DISTRIBUTIONALLY SIMILAR words that context cannot separate. Lemma
+        collapses strictly less than root — it keeps derivational families
+        apart — so if that mechanism is right, lemma should sit above root.
+        Whether it also beats random grouping is the open question, and it is
+        the difference between a thesis whose best feature is linguistic and
+        one whose best feature is a hash.
+
+        Hashed into the same inventory so cardinality, width and projection
+        path are identical by construction; only the grouping differs.
+        """
+        if not lemma:
+            return self._none_root
+        h = hashlib.md5(str(lemma).lower().encode('utf-8')).hexdigest()
+        return int(h[8:16], 16) % max(self._none_root, 1)
+
+    def hash_code(self, word) -> int:
+        """
+        MATCHED-CARDINALITY RANDOM GROUPING — the control that separates
+        morphology from word identity.
+
+        `mroot` supplies two things at once: every BPE fragment of a word gets
+        the same code (WORD IDENTITY, which BPE's frequency-driven merges
+        genuinely lack), and morphologically related words share a code
+        (MORPHOLOGICAL RELATEDNESS). The thesis claims the second; without a
+        control the experiment cannot distinguish it from the first.
+
+        This assigns each surface word a code by hashing it into the SAME
+        inventory size. Per-word consistency is preserved — every fragment of a
+        word still gets one code — while morphological grouping is destroyed.
+
+            mroot ~= mhash              -> the gain is word identity, and the
+                                           morphology claim fails
+            mroot > mhash > shuffled    -> morphology contributes beyond word
+                                           identity, and the gap between them
+                                           IS the morphological effect
+
+        The shuffled control cannot do this job: it permutes codes within a
+        window, destroying word identity and morphology together.
+
+        md5 rather than Python's hash() because the latter is salted per process
+        and would change between the cache build and any later run.
+        """
+        if not word:
+            return self._none_root
+        h = hashlib.md5(str(word).lower().encode('utf-8')).hexdigest()
+        return int(h[:8], 16) % max(self._none_root, 1)
 
     # ── analysis ─────────────────────────────────────────────────────────────
 

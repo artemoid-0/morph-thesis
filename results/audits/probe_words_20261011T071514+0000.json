@@ -1,0 +1,2422 @@
+{
+ "args": {
+  "labels": [
+   "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+   "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2"
+  ],
+  "reference": null,
+  "facts": [
+   "ucase",
+   "unumber",
+   "ugender"
+  ],
+  "split_fact": "ucaselex",
+  "results_dir": "/home/neko/PycharmProjects/Morph/results",
+  "windows": 0,
+  "after": 1,
+  "epochs": 300,
+  "device": "cpu",
+  "threads": 12,
+  "audit_dir": "/home/neko/PycharmProjects/Morph/results/audits"
+ },
+ "runs": [
+  {
+   "run": "c58ba0662048",
+   "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+   "seed": 0,
+   "windows": 1272,
+   "rows": [
+    {
+     "fact": "ucase",
+     "layer": 0,
+     "accuracy": {
+      "all": 0.47907742857933044,
+      "agrees": 0.502051591873169,
+      "context": 0.3148450255393982,
+      "unseen": 0.5144850015640259
+     },
+     "n": {
+      "all": 53937,
+      "agrees": 45330,
+      "context": 6743,
+      "unseen": 1864
+     },
+     "floor": {
+      "all": 0.3345755338668823,
+      "agrees": 0.36719611287117004,
+      "context": 0.4484650790691376,
+      "unseen": 0.5005365014076233
+     },
+     "form": 0.8404249548912048,
+     "train": 54004
+    },
+    {
+     "fact": "ucase",
+     "layer": 1,
+     "accuracy": {
+      "all": 0.5832730531692505,
+      "agrees": 0.6153320074081421,
+      "context": 0.3643778860569,
+      "unseen": 0.5954935550689697
+     },
+     "n": {
+      "all": 53937,
+      "agrees": 45330,
+      "context": 6743,
+      "unseen": 1864
+     },
+     "floor": {
+      "all": 0.3345755338668823,
+      "agrees": 0.36719611287117004,
+      "context": 0.4484650790691376,
+      "unseen": 0.5005365014076233
+     },
+     "form": 0.8404249548912048,
+     "train": 54004
+    },
+    {
+     "fact": "ucase",
+     "layer": 2,
+     "accuracy": {
+      "all": 0.6263047456741333,
+      "agrees": 0.6525479555130005,
+      "context": 0.4489099681377411,
+      "unseen": 0.6298283338546753
+     },
+     "n": {
+      "all": 53937,
+      "agrees": 45330,
+      "context": 6743,
+      "unseen": 1864
+     },
+     "floor": {
+      "all": 0.3345755338668823,
+      "agrees": 0.36719611287117004,
+      "context": 0.4484650790691376,
+      "unseen": 0.5005365014076233
+     },
+     "form": 0.8404249548912048,
+     "train": 54004
+    },
+    {
+     "fact": "ucase",
+     "layer": 3,
+     "accuracy": {
+      "all": 0.6664441823959351,
+      "agrees": 0.6909331679344177,
+      "context": 0.5020020604133606,
+      "unseen": 0.665772557258606
+     },
+     "n": {
+      "all": 53937,
+      "agrees": 45330,
+      "context": 6743,
+      "unseen": 1864
+     },
+     "floor": {
+      "all": 0.3345755338668823,
+      "agrees": 0.36719611287117004,
+      "context": 0.4484650790691376,
+      "unseen": 0.5005365014076233
+     },
+     "form": 0.8404249548912048,
+     "train": 54004
+    },
+    {
+     "fact": "ucase",
+     "layer": 4,
+     "accuracy": {
+      "all": 0.645234227180481,
+      "agrees": 0.6698433756828308,
+      "context": 0.4804982841014862,
+      "unseen": 0.6427038908004761
+     },
+     "n": {
+      "all": 53937,
+      "agrees": 45330,
+      "context": 6743,
+      "unseen": 1864
+     },
+     "floor": {
+      "all": 0.3345755338668823,
+      "agrees": 0.36719611287117004,
+      "context": 0.4484650790691376,
+      "unseen": 0.5005365014076233
+     },
+     "form": 0.8404249548912048,
+     "train": 54004
+    },
+    {
+     "fact": "unumber",
+     "layer": 0,
+     "accuracy": {
+      "all": 0.7817676067352295
+     },
+     "n": {
+      "all": 49626
+     },
+     "floor": {
+      "all": 0.7690927982330322
+     },
+     "form": null,
+     "train": 49731
+    },
+    {
+     "fact": "unumber",
+     "layer": 1,
+     "accuracy": {
+      "all": 0.8055858016014099
+     },
+     "n": {
+      "all": 49626
+     },
+     "floor": {
+      "all": 0.7690927982330322
+     },
+     "form": null,
+     "train": 49731
+    },
+    {
+     "fact": "unumber",
+     "layer": 2,
+     "accuracy": {
+      "all": 0.8118123412132263
+     },
+     "n": {
+      "all": 49626
+     },
+     "floor": {
+      "all": 0.7690927982330322
+     },
+     "form": null,
+     "train": 49731
+    },
+    {
+     "fact": "unumber",
+     "layer": 3,
+     "accuracy": {
+      "all": 0.8410510420799255
+     },
+     "n": {
+      "all": 49626
+     },
+     "floor": {
+      "all": 0.7690927982330322
+     },
+     "form": null,
+     "train": 49731
+    },
+    {
+     "fact": "unumber",
+     "layer": 4,
+     "accuracy": {
+      "all": 0.8402450084686279
+     },
+     "n": {
+      "all": 49626
+     },
+     "floor": {
+      "all": 0.7690927982330322
+     },
+     "form": null,
+     "train": 49731
+    },
+    {
+     "fact": "ugender",
+     "layer": 0,
+     "accuracy": {
+      "all": 0.5516624450683594
+     },
+     "n": {
+      "all": 43610
+     },
+     "floor": {
+      "all": 0.5221050381660461
+     },
+     "form": null,
+     "train": 43741
+    },
+    {
+     "fact": "ugender",
+     "layer": 1,
+     "accuracy": {
+      "all": 0.5854849815368652
+     },
+     "n": {
+      "all": 43610
+     },
+     "floor": {
+      "all": 0.5221050381660461
+     },
+     "form": null,
+     "train": 43741
+    },
+    {
+     "fact": "ugender",
+     "layer": 2,
+     "accuracy": {
+      "all": 0.5823893547058105
+     },
+     "n": {
+      "all": 43610
+     },
+     "floor": {
+      "all": 0.5221050381660461
+     },
+     "form": null,
+     "train": 43741
+    },
+    {
+     "fact": "ugender",
+     "layer": 3,
+     "accuracy": {
+      "all": 0.6271726489067078
+     },
+     "n": {
+      "all": 43610
+     },
+     "floor": {
+      "all": 0.5221050381660461
+     },
+     "form": null,
+     "train": 43741
+    },
+    {
+     "fact": "ugender",
+     "layer": 4,
+     "accuracy": {
+      "all": 0.6250172257423401
+     },
+     "n": {
+      "all": 43610
+     },
+     "floor": {
+      "all": 0.5221050381660461
+     },
+     "form": null,
+     "train": 43741
+    }
+   ]
+  },
+  {
+   "run": "07dd78de8832",
+   "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+   "seed": 1,
+   "windows": 1272,
+   "rows": [
+    {
+     "fact": "ucase",
+     "layer": 0,
+     "accuracy": {
+      "all": 0.48117247223854065,
+      "agrees": 0.5034414529800415,
+      "context": 0.3206287920475006,
+      "unseen": 0.520386278629303
+     },
+     "n": {
+      "all": 53937,
+      "agrees": 45330,
+      "context": 6743,
+      "unseen": 1864
+     },
+     "floor": {
+      "all": 0.3345755338668823,
+      "agrees": 0.36719611287117004,
+      "context": 0.4484650790691376,
+      "unseen": 0.5005365014076233
+     },
+     "form": 0.8404249548912048,
+     "train": 54004
+    },
+    {
+     "fact": "ucase",
+     "layer": 1,
+     "accuracy": {
+      "all": 0.6145132184028625,
+      "agrees": 0.6451577544212341,
+      "context": 0.40516090393066406,
+      "unseen": 0.6266094446182251
+     },
+     "n": {
+      "all": 53937,
+      "agrees": 45330,
+      "context": 6743,
+      "unseen": 1864
+     },
+     "floor": {
+      "all": 0.3345755338668823,
+      "agrees": 0.36719611287117004,
+      "context": 0.4484650790691376,
+      "unseen": 0.5005365014076233
+     },
+     "form": 0.8404249548912048,
+     "train": 54004
+    },
+    {
+     "fact": "ucase",
+     "layer": 2,
+     "accuracy": {
+      "all": 0.6356860995292664,
+      "agrees": 0.6627840399742126,
+      "context": 0.44965147972106934,
+      "unseen": 0.649678111076355
+     },
+     "n": {
+      "all": 53937,
+      "agrees": 45330,
+      "context": 6743,
+      "unseen": 1864
+     },
+     "floor": {
+      "all": 0.3345755338668823,
+      "agrees": 0.36719611287117004,
+      "context": 0.4484650790691376,
+      "unseen": 0.5005365014076233
+     },
+     "form": 0.8404249548912048,
+     "train": 54004
+    },
+    {
+     "fact": "ucase",
+     "layer": 3,
+     "accuracy": {
+      "all": 0.652260959148407,
+      "agrees": 0.6780498623847961,
+      "context": 0.4790152609348297,
+      "unseen": 0.6518240571022034
+     },
+     "n": {
+      "all": 53937,
+      "agrees": 45330,
+      "context": 6743,
+      "unseen": 1864
+     },
+     "floor": {
+      "all": 0.3345755338668823,
+      "agrees": 0.36719611287117004,
+      "context": 0.4484650790691376,
+      "unseen": 0.5005365014076233
+     },
+     "form": 0.8404249548912048,
+     "train": 54004
+    },
+    {
+     "fact": "ucase",
+     "layer": 4,
+     "accuracy": {
+      "all": 0.6345551013946533,
+      "agrees": 0.65868079662323,
+      "context": 0.47293490171432495,
+      "unseen": 0.6325107216835022
+     },
+     "n": {
+      "all": 53937,
+      "agrees": 45330,
+      "context": 6743,
+      "unseen": 1864
+     },
+     "floor": {
+      "all": 0.3345755338668823,
+      "agrees": 0.36719611287117004,
+      "context": 0.4484650790691376,
+      "unseen": 0.5005365014076233
+     },
+     "form": 0.8404249548912048,
+     "train": 54004
+    },
+    {
+     "fact": "unumber",
+     "layer": 0,
+     "accuracy": {
+      "all": 0.783742368221283
+     },
+     "n": {
+      "all": 49626
+     },
+     "floor": {
+      "all": 0.7690927982330322
+     },
+     "form": null,
+     "train": 49731
+    },
+    {
+     "fact": "unumber",
+     "layer": 1,
+     "accuracy": {
+      "all": 0.8218474388122559
+     },
+     "n": {
+      "all": 49626
+     },
+     "floor": {
+      "all": 0.7690927982330322
+     },
+     "form": null,
+     "train": 49731
+    },
+    {
+     "fact": "unumber",
+     "layer": 2,
+     "accuracy": {
+      "all": 0.825857400894165
+     },
+     "n": {
+      "all": 49626
+     },
+     "floor": {
+      "all": 0.7690927982330322
+     },
+     "form": null,
+     "train": 49731
+    },
+    {
+     "fact": "unumber",
+     "layer": 3,
+     "accuracy": {
+      "all": 0.8452625870704651
+     },
+     "n": {
+      "all": 49626
+     },
+     "floor": {
+      "all": 0.7690927982330322
+     },
+     "form": null,
+     "train": 49731
+    },
+    {
+     "fact": "unumber",
+     "layer": 4,
+     "accuracy": {
+      "all": 0.837242603302002
+     },
+     "n": {
+      "all": 49626
+     },
+     "floor": {
+      "all": 0.7690927982330322
+     },
+     "form": null,
+     "train": 49731
+    },
+    {
+     "fact": "ugender",
+     "layer": 0,
+     "accuracy": {
+      "all": 0.5548268556594849
+     },
+     "n": {
+      "all": 43610
+     },
+     "floor": {
+      "all": 0.5221050381660461
+     },
+     "form": null,
+     "train": 43741
+    },
+    {
+     "fact": "ugender",
+     "layer": 1,
+     "accuracy": {
+      "all": 0.598257303237915
+     },
+     "n": {
+      "all": 43610
+     },
+     "floor": {
+      "all": 0.5221050381660461
+     },
+     "form": null,
+     "train": 43741
+    },
+    {
+     "fact": "ugender",
+     "layer": 2,
+     "accuracy": {
+      "all": 0.597867488861084
+     },
+     "n": {
+      "all": 43610
+     },
+     "floor": {
+      "all": 0.5221050381660461
+     },
+     "form": null,
+     "train": 43741
+    },
+    {
+     "fact": "ugender",
+     "layer": 3,
+     "accuracy": {
+      "all": 0.6324695944786072
+     },
+     "n": {
+      "all": 43610
+     },
+     "floor": {
+      "all": 0.5221050381660461
+     },
+     "form": null,
+     "train": 43741
+    },
+    {
+     "fact": "ugender",
+     "layer": 4,
+     "accuracy": {
+      "all": 0.6252694129943848
+     },
+     "n": {
+      "all": 43610
+     },
+     "floor": {
+      "all": 0.5221050381660461
+     },
+     "form": null,
+     "train": 43741
+    }
+   ]
+  },
+  {
+   "run": "fe24a14162b2",
+   "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+   "seed": 2,
+   "windows": 1272,
+   "rows": [
+    {
+     "fact": "ucase",
+     "layer": 0,
+     "accuracy": {
+      "all": 0.4847692549228668,
+      "agrees": 0.5061548352241516,
+      "context": 0.3327895700931549,
+      "unseen": 0.5144850015640259
+     },
+     "n": {
+      "all": 53937,
+      "agrees": 45330,
+      "context": 6743,
+      "unseen": 1864
+     },
+     "floor": {
+      "all": 0.3345755338668823,
+      "agrees": 0.36719611287117004,
+      "context": 0.4484650790691376,
+      "unseen": 0.5005365014076233
+     },
+     "form": 0.8404249548912048,
+     "train": 54004
+    },
+    {
+     "fact": "ucase",
+     "layer": 1,
+     "accuracy": {
+      "all": 0.612381100654602,
+      "agrees": 0.6413412690162659,
+      "context": 0.4176182746887207,
+      "unseen": 0.6126609444618225
+     },
+     "n": {
+      "all": 53937,
+      "agrees": 45330,
+      "context": 6743,
+      "unseen": 1864
+     },
+     "floor": {
+      "all": 0.3345755338668823,
+      "agrees": 0.36719611287117004,
+      "context": 0.4484650790691376,
+      "unseen": 0.5005365014076233
+     },
+     "form": 0.8404249548912048,
+     "train": 54004
+    },
+    {
+     "fact": "ucase",
+     "layer": 2,
+     "accuracy": {
+      "all": 0.6243395209312439,
+      "agrees": 0.6511361002922058,
+      "context": 0.4440160095691681,
+      "unseen": 0.625
+     },
+     "n": {
+      "all": 53937,
+      "agrees": 45330,
+      "context": 6743,
+      "unseen": 1864
+     },
+     "floor": {
+      "all": 0.3345755338668823,
+      "agrees": 0.36719611287117004,
+      "context": 0.4484650790691376,
+      "unseen": 0.5005365014076233
+     },
+     "form": 0.8404249548912048,
+     "train": 54004
+    },
+    {
+     "fact": "ucase",
+     "layer": 3,
+     "accuracy": {
+      "all": 0.6644603610038757,
+      "agrees": 0.6891462802886963,
+      "context": 0.49903604388237,
+      "unseen": 0.6625536680221558
+     },
+     "n": {
+      "all": 53937,
+      "agrees": 45330,
+      "context": 6743,
+      "unseen": 1864
+     },
+     "floor": {
+      "all": 0.3345755338668823,
+      "agrees": 0.36719611287117004,
+      "context": 0.4484650790691376,
+      "unseen": 0.5005365014076233
+     },
+     "form": 0.8404249548912048,
+     "train": 54004
+    },
+    {
+     "fact": "ucase",
+     "layer": 4,
+     "accuracy": {
+      "all": 0.6463095545768738,
+      "agrees": 0.6695345044136047,
+      "context": 0.48939642310142517,
+      "unseen": 0.6491416096687317
+     },
+     "n": {
+      "all": 53937,
+      "agrees": 45330,
+      "context": 6743,
+      "unseen": 1864
+     },
+     "floor": {
+      "all": 0.3345755338668823,
+      "agrees": 0.36719611287117004,
+      "context": 0.4484650790691376,
+      "unseen": 0.5005365014076233
+     },
+     "form": 0.8404249548912048,
+     "train": 54004
+    },
+    {
+     "fact": "unumber",
+     "layer": 0,
+     "accuracy": {
+      "all": 0.7820698618888855
+     },
+     "n": {
+      "all": 49626
+     },
+     "floor": {
+      "all": 0.7690927982330322
+     },
+     "form": null,
+     "train": 49731
+    },
+    {
+     "fact": "unumber",
+     "layer": 1,
+     "accuracy": {
+      "all": 0.8168500661849976
+     },
+     "n": {
+      "all": 49626
+     },
+     "floor": {
+      "all": 0.7690927982330322
+     },
+     "form": null,
+     "train": 49731
+    },
+    {
+     "fact": "unumber",
+     "layer": 2,
+     "accuracy": {
+      "all": 0.816970944404602
+     },
+     "n": {
+      "all": 49626
+     },
+     "floor": {
+      "all": 0.7690927982330322
+     },
+     "form": null,
+     "train": 49731
+    },
+    {
+     "fact": "unumber",
+     "layer": 3,
+     "accuracy": {
+      "all": 0.8494136333465576
+     },
+     "n": {
+      "all": 49626
+     },
+     "floor": {
+      "all": 0.7690927982330322
+     },
+     "form": null,
+     "train": 49731
+    },
+    {
+     "fact": "unumber",
+     "layer": 4,
+     "accuracy": {
+      "all": 0.8470761179924011
+     },
+     "n": {
+      "all": 49626
+     },
+     "floor": {
+      "all": 0.7690927982330322
+     },
+     "form": null,
+     "train": 49731
+    },
+    {
+     "fact": "ugender",
+     "layer": 0,
+     "accuracy": {
+      "all": 0.5541160106658936
+     },
+     "n": {
+      "all": 43610
+     },
+     "floor": {
+      "all": 0.5221050381660461
+     },
+     "form": null,
+     "train": 43741
+    },
+    {
+     "fact": "ugender",
+     "layer": 1,
+     "accuracy": {
+      "all": 0.5910800099372864
+     },
+     "n": {
+      "all": 43610
+     },
+     "floor": {
+      "all": 0.5221050381660461
+     },
+     "form": null,
+     "train": 43741
+    },
+    {
+     "fact": "ugender",
+     "layer": 2,
+     "accuracy": {
+      "all": 0.583925724029541
+     },
+     "n": {
+      "all": 43610
+     },
+     "floor": {
+      "all": 0.5221050381660461
+     },
+     "form": null,
+     "train": 43741
+    },
+    {
+     "fact": "ugender",
+     "layer": 3,
+     "accuracy": {
+      "all": 0.6306122541427612
+     },
+     "n": {
+      "all": 43610
+     },
+     "floor": {
+      "all": 0.5221050381660461
+     },
+     "form": null,
+     "train": 43741
+    },
+    {
+     "fact": "ugender",
+     "layer": 4,
+     "accuracy": {
+      "all": 0.6314377188682556
+     },
+     "n": {
+      "all": 43610
+     },
+     "floor": {
+      "all": 0.5221050381660461
+     },
+     "form": null,
+     "train": 43741
+    }
+   ]
+  },
+  {
+   "run": "b60e2ee58522",
+   "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+   "seed": 3,
+   "windows": 1272,
+   "rows": [
+    {
+     "fact": "ucase",
+     "layer": 0,
+     "accuracy": {
+      "all": 0.4836568534374237,
+      "agrees": 0.5061769485473633,
+      "context": 0.32285332679748535,
+      "unseen": 0.5177038908004761
+     },
+     "n": {
+      "all": 53937,
+      "agrees": 45330,
+      "context": 6743,
+      "unseen": 1864
+     },
+     "floor": {
+      "all": 0.3345755338668823,
+      "agrees": 0.36719611287117004,
+      "context": 0.4484650790691376,
+      "unseen": 0.5005365014076233
+     },
+     "form": 0.8404249548912048,
+     "train": 54004
+    },
+    {
+     "fact": "ucase",
+     "layer": 1,
+     "accuracy": {
+      "all": 0.6072455048561096,
+      "agrees": 0.6368850469589233,
+      "context": 0.4063473343849182,
+      "unseen": 0.6131974458694458
+     },
+     "n": {
+      "all": 53937,
+      "agrees": 45330,
+      "context": 6743,
+      "unseen": 1864
+     },
+     "floor": {
+      "all": 0.3345755338668823,
+      "agrees": 0.36719611287117004,
+      "context": 0.4484650790691376,
+      "unseen": 0.5005365014076233
+     },
+     "form": 0.8404249548912048,
+     "train": 54004
+    },
+    {
+     "fact": "ucase",
+     "layer": 2,
+     "accuracy": {
+      "all": 0.6173127889633179,
+      "agrees": 0.6441650390625,
+      "context": 0.4374907314777374,
+      "unseen": 0.6148068904876709
+     },
+     "n": {
+      "all": 53937,
+      "agrees": 45330,
+      "context": 6743,
+      "unseen": 1864
+     },
+     "floor": {
+      "all": 0.3345755338668823,
+      "agrees": 0.36719611287117004,
+      "context": 0.4484650790691376,
+      "unseen": 0.5005365014076233
+     },
+     "form": 0.8404249548912048,
+     "train": 54004
+    },
+    {
+     "fact": "ucase",
+     "layer": 3,
+     "accuracy": {
+      "all": 0.6516677141189575,
+      "agrees": 0.6766600608825684,
+      "context": 0.48465076088905334,
+      "unseen": 0.6480686664581299
+     },
+     "n": {
+      "all": 53937,
+      "agrees": 45330,
+      "context": 6743,
+      "unseen": 1864
+     },
+     "floor": {
+      "all": 0.3345755338668823,
+      "agrees": 0.36719611287117004,
+      "context": 0.4484650790691376,
+      "unseen": 0.5005365014076233
+     },
+     "form": 0.8404249548912048,
+     "train": 54004
+    },
+    {
+     "fact": "ucase",
+     "layer": 4,
+     "accuracy": {
+      "all": 0.6412110328674316,
+      "agrees": 0.6658283472061157,
+      "context": 0.4776805639266968,
+      "unseen": 0.6341201663017273
+     },
+     "n": {
+      "all": 53937,
+      "agrees": 45330,
+      "context": 6743,
+      "unseen": 1864
+     },
+     "floor": {
+      "all": 0.3345755338668823,
+      "agrees": 0.36719611287117004,
+      "context": 0.4484650790691376,
+      "unseen": 0.5005365014076233
+     },
+     "form": 0.8404249548912048,
+     "train": 54004
+    },
+    {
+     "fact": "unumber",
+     "layer": 0,
+     "accuracy": {
+      "all": 0.7849313020706177
+     },
+     "n": {
+      "all": 49626
+     },
+     "floor": {
+      "all": 0.7690927982330322
+     },
+     "form": null,
+     "train": 49731
+    },
+    {
+     "fact": "unumber",
+     "layer": 1,
+     "accuracy": {
+      "all": 0.8240237236022949
+     },
+     "n": {
+      "all": 49626
+     },
+     "floor": {
+      "all": 0.7690927982330322
+     },
+     "form": null,
+     "train": 49731
+    },
+    {
+     "fact": "unumber",
+     "layer": 2,
+     "accuracy": {
+      "all": 0.8233385682106018
+     },
+     "n": {
+      "all": 49626
+     },
+     "floor": {
+      "all": 0.7690927982330322
+     },
+     "form": null,
+     "train": 49731
+    },
+    {
+     "fact": "unumber",
+     "layer": 3,
+     "accuracy": {
+      "all": 0.8363357782363892
+     },
+     "n": {
+      "all": 49626
+     },
+     "floor": {
+      "all": 0.7690927982330322
+     },
+     "form": null,
+     "train": 49731
+    },
+    {
+     "fact": "unumber",
+     "layer": 4,
+     "accuracy": {
+      "all": 0.8404465317726135
+     },
+     "n": {
+      "all": 49626
+     },
+     "floor": {
+      "all": 0.7690927982330322
+     },
+     "form": null,
+     "train": 49731
+    },
+    {
+     "fact": "ugender",
+     "layer": 0,
+     "accuracy": {
+      "all": 0.5574180483818054
+     },
+     "n": {
+      "all": 43610
+     },
+     "floor": {
+      "all": 0.5221050381660461
+     },
+     "form": null,
+     "train": 43741
+    },
+    {
+     "fact": "ugender",
+     "layer": 1,
+     "accuracy": {
+      "all": 0.5986241698265076
+     },
+     "n": {
+      "all": 43610
+     },
+     "floor": {
+      "all": 0.5221050381660461
+     },
+     "form": null,
+     "train": 43741
+    },
+    {
+     "fact": "ugender",
+     "layer": 2,
+     "accuracy": {
+      "all": 0.5958037376403809
+     },
+     "n": {
+      "all": 43610
+     },
+     "floor": {
+      "all": 0.5221050381660461
+     },
+     "form": null,
+     "train": 43741
+    },
+    {
+     "fact": "ugender",
+     "layer": 3,
+     "accuracy": {
+      "all": 0.6066039800643921
+     },
+     "n": {
+      "all": 43610
+     },
+     "floor": {
+      "all": 0.5221050381660461
+     },
+     "form": null,
+     "train": 43741
+    },
+    {
+     "fact": "ugender",
+     "layer": 4,
+     "accuracy": {
+      "all": 0.6161431074142456
+     },
+     "n": {
+      "all": 43610
+     },
+     "floor": {
+      "all": 0.5221050381660461
+     },
+     "form": null,
+     "train": 43741
+    }
+   ]
+  },
+  {
+   "run": "57f76ed51760",
+   "label": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+   "seed": 0,
+   "windows": 1418,
+   "rows": [
+    {
+     "fact": "ucase",
+     "layer": 0,
+     "accuracy": {
+      "all": 0.4896099865436554,
+      "agrees": 0.5144085884094238,
+      "context": 0.32230445742607117,
+      "unseen": 0.5119377970695496
+     },
+     "n": {
+      "all": 53561,
+      "agrees": 44869,
+      "context": 6891,
+      "unseen": 1801
+     },
+     "floor": {
+      "all": 0.3342730700969696,
+      "agrees": 0.3684726655483246,
+      "context": 0.4468146860599518,
+      "unseen": 0.4980566203594208
+     },
+     "form": 0.8377177715301514,
+     "train": 54295
+    },
+    {
+     "fact": "ucase",
+     "layer": 1,
+     "accuracy": {
+      "all": 0.631597638130188,
+      "agrees": 0.6609240174293518,
+      "context": 0.4485560953617096,
+      "unseen": 0.6013326048851013
+     },
+     "n": {
+      "all": 53561,
+      "agrees": 44869,
+      "context": 6891,
+      "unseen": 1801
+     },
+     "floor": {
+      "all": 0.3342730700969696,
+      "agrees": 0.3684726655483246,
+      "context": 0.4468146860599518,
+      "unseen": 0.4980566203594208
+     },
+     "form": 0.8377177715301514,
+     "train": 54295
+    },
+    {
+     "fact": "ucase",
+     "layer": 2,
+     "accuracy": {
+      "all": 0.6516121625900269,
+      "agrees": 0.6789543032646179,
+      "context": 0.4788855016231537,
+      "unseen": 0.6313159465789795
+     },
+     "n": {
+      "all": 53561,
+      "agrees": 44869,
+      "context": 6891,
+      "unseen": 1801
+     },
+     "floor": {
+      "all": 0.3342730700969696,
+      "agrees": 0.3684726655483246,
+      "context": 0.4468146860599518,
+      "unseen": 0.4980566203594208
+     },
+     "form": 0.8377177715301514,
+     "train": 54295
+    },
+    {
+     "fact": "ucase",
+     "layer": 3,
+     "accuracy": {
+      "all": 0.6282556056976318,
+      "agrees": 0.653948187828064,
+      "context": 0.46422868967056274,
+      "unseen": 0.6157690286636353
+     },
+     "n": {
+      "all": 53561,
+      "agrees": 44869,
+      "context": 6891,
+      "unseen": 1801
+     },
+     "floor": {
+      "all": 0.3342730700969696,
+      "agrees": 0.3684726655483246,
+      "context": 0.4468146860599518,
+      "unseen": 0.4980566203594208
+     },
+     "form": 0.8377177715301514,
+     "train": 54295
+    },
+    {
+     "fact": "ucase",
+     "layer": 4,
+     "accuracy": {
+      "all": 0.6080917119979858,
+      "agrees": 0.6342686414718628,
+      "context": 0.4399941861629486,
+      "unseen": 0.5991116166114807
+     },
+     "n": {
+      "all": 53561,
+      "agrees": 44869,
+      "context": 6891,
+      "unseen": 1801
+     },
+     "floor": {
+      "all": 0.3342730700969696,
+      "agrees": 0.3684726655483246,
+      "context": 0.4468146860599518,
+      "unseen": 0.4980566203594208
+     },
+     "form": 0.8377177715301514,
+     "train": 54295
+    },
+    {
+     "fact": "unumber",
+     "layer": 0,
+     "accuracy": {
+      "all": 0.778229832649231
+     },
+     "n": {
+      "all": 49407
+     },
+     "floor": {
+      "all": 0.7652154564857483
+     },
+     "form": null,
+     "train": 49904
+    },
+    {
+     "fact": "unumber",
+     "layer": 1,
+     "accuracy": {
+      "all": 0.8144392371177673
+     },
+     "n": {
+      "all": 49407
+     },
+     "floor": {
+      "all": 0.7652154564857483
+     },
+     "form": null,
+     "train": 49904
+    },
+    {
+     "fact": "unumber",
+     "layer": 2,
+     "accuracy": {
+      "all": 0.8248628973960876
+     },
+     "n": {
+      "all": 49407
+     },
+     "floor": {
+      "all": 0.7652154564857483
+     },
+     "form": null,
+     "train": 49904
+    },
+    {
+     "fact": "unumber",
+     "layer": 3,
+     "accuracy": {
+      "all": 0.8245592713356018
+     },
+     "n": {
+      "all": 49407
+     },
+     "floor": {
+      "all": 0.7652154564857483
+     },
+     "form": null,
+     "train": 49904
+    },
+    {
+     "fact": "unumber",
+     "layer": 4,
+     "accuracy": {
+      "all": 0.8195801973342896
+     },
+     "n": {
+      "all": 49407
+     },
+     "floor": {
+      "all": 0.7652154564857483
+     },
+     "form": null,
+     "train": 49904
+    },
+    {
+     "fact": "ugender",
+     "layer": 0,
+     "accuracy": {
+      "all": 0.5567122101783752
+     },
+     "n": {
+      "all": 43324
+     },
+     "floor": {
+      "all": 0.5235666036605835
+     },
+     "form": null,
+     "train": 43970
+    },
+    {
+     "fact": "ugender",
+     "layer": 1,
+     "accuracy": {
+      "all": 0.613008975982666
+     },
+     "n": {
+      "all": 43324
+     },
+     "floor": {
+      "all": 0.5235666036605835
+     },
+     "form": null,
+     "train": 43970
+    },
+    {
+     "fact": "ugender",
+     "layer": 2,
+     "accuracy": {
+      "all": 0.6178330779075623
+     },
+     "n": {
+      "all": 43324
+     },
+     "floor": {
+      "all": 0.5235666036605835
+     },
+     "form": null,
+     "train": 43970
+    },
+    {
+     "fact": "ugender",
+     "layer": 3,
+     "accuracy": {
+      "all": 0.6309666633605957
+     },
+     "n": {
+      "all": 43324
+     },
+     "floor": {
+      "all": 0.5235666036605835
+     },
+     "form": null,
+     "train": 43970
+    },
+    {
+     "fact": "ugender",
+     "layer": 4,
+     "accuracy": {
+      "all": 0.6284507513046265
+     },
+     "n": {
+      "all": 43324
+     },
+     "floor": {
+      "all": 0.5235666036605835
+     },
+     "form": null,
+     "train": 43970
+    }
+   ]
+  },
+  {
+   "run": "ae75b666d616",
+   "label": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+   "seed": 1,
+   "windows": 1418,
+   "rows": [
+    {
+     "fact": "ucase",
+     "layer": 0,
+     "accuracy": {
+      "all": 0.4882470369338989,
+      "agrees": 0.5129376649856567,
+      "context": 0.32157886028289795,
+      "unseen": 0.5108273029327393
+     },
+     "n": {
+      "all": 53561,
+      "agrees": 44869,
+      "context": 6891,
+      "unseen": 1801
+     },
+     "floor": {
+      "all": 0.3342730700969696,
+      "agrees": 0.3684726655483246,
+      "context": 0.4468146860599518,
+      "unseen": 0.4980566203594208
+     },
+     "form": 0.8377177715301514,
+     "train": 54295
+    },
+    {
+     "fact": "ucase",
+     "layer": 1,
+     "accuracy": {
+      "all": 0.6361158490180969,
+      "agrees": 0.6643562316894531,
+      "context": 0.4579886794090271,
+      "unseen": 0.6141032576560974
+     },
+     "n": {
+      "all": 53561,
+      "agrees": 44869,
+      "context": 6891,
+      "unseen": 1801
+     },
+     "floor": {
+      "all": 0.3342730700969696,
+      "agrees": 0.3684726655483246,
+      "context": 0.4468146860599518,
+      "unseen": 0.4980566203594208
+     },
+     "form": 0.8377177715301514,
+     "train": 54295
+    },
+    {
+     "fact": "ucase",
+     "layer": 2,
+     "accuracy": {
+      "all": 0.6518735885620117,
+      "agrees": 0.677639365196228,
+      "context": 0.4920911192893982,
+      "unseen": 0.6213214993476868
+     },
+     "n": {
+      "all": 53561,
+      "agrees": 44869,
+      "context": 6891,
+      "unseen": 1801
+     },
+     "floor": {
+      "all": 0.3342730700969696,
+      "agrees": 0.3684726655483246,
+      "context": 0.4468146860599518,
+      "unseen": 0.4980566203594208
+     },
+     "form": 0.8377177715301514,
+     "train": 54295
+    },
+    {
+     "fact": "ucase",
+     "layer": 3,
+     "accuracy": {
+      "all": 0.6346222162246704,
+      "agrees": 0.6586507558822632,
+      "context": 0.4797562062740326,
+      "unseen": 0.6285396814346313
+     },
+     "n": {
+      "all": 53561,
+      "agrees": 44869,
+      "context": 6891,
+      "unseen": 1801
+     },
+     "floor": {
+      "all": 0.3342730700969696,
+      "agrees": 0.3684726655483246,
+      "context": 0.4468146860599518,
+      "unseen": 0.4980566203594208
+     },
+     "form": 0.8377177715301514,
+     "train": 54295
+    },
+    {
+     "fact": "ucase",
+     "layer": 4,
+     "accuracy": {
+      "all": 0.6061313152313232,
+      "agrees": 0.6294991970062256,
+      "context": 0.4516035318374634,
+      "unseen": 0.6152137517929077
+     },
+     "n": {
+      "all": 53561,
+      "agrees": 44869,
+      "context": 6891,
+      "unseen": 1801
+     },
+     "floor": {
+      "all": 0.3342730700969696,
+      "agrees": 0.3684726655483246,
+      "context": 0.4468146860599518,
+      "unseen": 0.4980566203594208
+     },
+     "form": 0.8377177715301514,
+     "train": 54295
+    },
+    {
+     "fact": "unumber",
+     "layer": 0,
+     "accuracy": {
+      "all": 0.7781488299369812
+     },
+     "n": {
+      "all": 49407
+     },
+     "floor": {
+      "all": 0.7652154564857483
+     },
+     "form": null,
+     "train": 49904
+    },
+    {
+     "fact": "unumber",
+     "layer": 1,
+     "accuracy": {
+      "all": 0.8077600598335266
+     },
+     "n": {
+      "all": 49407
+     },
+     "floor": {
+      "all": 0.7652154564857483
+     },
+     "form": null,
+     "train": 49904
+    },
+    {
+     "fact": "unumber",
+     "layer": 2,
+     "accuracy": {
+      "all": 0.8239520788192749
+     },
+     "n": {
+      "all": 49407
+     },
+     "floor": {
+      "all": 0.7652154564857483
+     },
+     "form": null,
+     "train": 49904
+    },
+    {
+     "fact": "unumber",
+     "layer": 3,
+     "accuracy": {
+      "all": 0.8263201713562012
+     },
+     "n": {
+      "all": 49407
+     },
+     "floor": {
+      "all": 0.7652154564857483
+     },
+     "form": null,
+     "train": 49904
+    },
+    {
+     "fact": "unumber",
+     "layer": 4,
+     "accuracy": {
+      "all": 0.8191956877708435
+     },
+     "n": {
+      "all": 49407
+     },
+     "floor": {
+      "all": 0.7652154564857483
+     },
+     "form": null,
+     "train": 49904
+    },
+    {
+     "fact": "ugender",
+     "layer": 0,
+     "accuracy": {
+      "all": 0.5564121603965759
+     },
+     "n": {
+      "all": 43324
+     },
+     "floor": {
+      "all": 0.5235666036605835
+     },
+     "form": null,
+     "train": 43970
+    },
+    {
+     "fact": "ugender",
+     "layer": 1,
+     "accuracy": {
+      "all": 0.6056227684020996
+     },
+     "n": {
+      "all": 43324
+     },
+     "floor": {
+      "all": 0.5235666036605835
+     },
+     "form": null,
+     "train": 43970
+    },
+    {
+     "fact": "ugender",
+     "layer": 2,
+     "accuracy": {
+      "all": 0.6017911434173584
+     },
+     "n": {
+      "all": 43324
+     },
+     "floor": {
+      "all": 0.5235666036605835
+     },
+     "form": null,
+     "train": 43970
+    },
+    {
+     "fact": "ugender",
+     "layer": 3,
+     "accuracy": {
+      "all": 0.6263502836227417
+     },
+     "n": {
+      "all": 43324
+     },
+     "floor": {
+      "all": 0.5235666036605835
+     },
+     "form": null,
+     "train": 43970
+    },
+    {
+     "fact": "ugender",
+     "layer": 4,
+     "accuracy": {
+      "all": 0.6251962184906006
+     },
+     "n": {
+      "all": 43324
+     },
+     "floor": {
+      "all": 0.5235666036605835
+     },
+     "form": null,
+     "train": 43970
+    }
+   ]
+  },
+  {
+   "run": "7e17426e0388",
+   "label": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+   "seed": 2,
+   "windows": 1418,
+   "rows": [
+    {
+     "fact": "ucase",
+     "layer": 0,
+     "accuracy": {
+      "all": 0.48906853795051575,
+      "agrees": 0.5140520334243774,
+      "context": 0.32230445742607117,
+      "unseen": 0.504719614982605
+     },
+     "n": {
+      "all": 53561,
+      "agrees": 44869,
+      "context": 6891,
+      "unseen": 1801
+     },
+     "floor": {
+      "all": 0.3342730700969696,
+      "agrees": 0.3684726655483246,
+      "context": 0.4468146860599518,
+      "unseen": 0.4980566203594208
+     },
+     "form": 0.8377177715301514,
+     "train": 54295
+    },
+    {
+     "fact": "ucase",
+     "layer": 1,
+     "accuracy": {
+      "all": 0.6323630809783936,
+      "agrees": 0.661236047744751,
+      "context": 0.451313316822052,
+      "unseen": 0.6057745814323425
+     },
+     "n": {
+      "all": 53561,
+      "agrees": 44869,
+      "context": 6891,
+      "unseen": 1801
+     },
+     "floor": {
+      "all": 0.3342730700969696,
+      "agrees": 0.3684726655483246,
+      "context": 0.4468146860599518,
+      "unseen": 0.4980566203594208
+     },
+     "form": 0.8377177715301514,
+     "train": 54295
+    },
+    {
+     "fact": "ucase",
+     "layer": 2,
+     "accuracy": {
+      "all": 0.6468139290809631,
+      "agrees": 0.6728253364562988,
+      "context": 0.4835292398929596,
+      "unseen": 0.6235424876213074
+     },
+     "n": {
+      "all": 53561,
+      "agrees": 44869,
+      "context": 6891,
+      "unseen": 1801
+     },
+     "floor": {
+      "all": 0.3342730700969696,
+      "agrees": 0.3684726655483246,
+      "context": 0.4468146860599518,
+      "unseen": 0.4980566203594208
+     },
+     "form": 0.8377177715301514,
+     "train": 54295
+    },
+    {
+     "fact": "ucase",
+     "layer": 3,
+     "accuracy": {
+      "all": 0.6420716643333435,
+      "agrees": 0.6664735078811646,
+      "context": 0.4852706491947174,
+      "unseen": 0.6340921521186829
+     },
+     "n": {
+      "all": 53561,
+      "agrees": 44869,
+      "context": 6891,
+      "unseen": 1801
+     },
+     "floor": {
+      "all": 0.3342730700969696,
+      "agrees": 0.3684726655483246,
+      "context": 0.4468146860599518,
+      "unseen": 0.4980566203594208
+     },
+     "form": 0.8377177715301514,
+     "train": 54295
+    },
+    {
+     "fact": "ucase",
+     "layer": 4,
+     "accuracy": {
+      "all": 0.6086891293525696,
+      "agrees": 0.6332211494445801,
+      "context": 0.44899144768714905,
+      "unseen": 0.6085507869720459
+     },
+     "n": {
+      "all": 53561,
+      "agrees": 44869,
+      "context": 6891,
+      "unseen": 1801
+     },
+     "floor": {
+      "all": 0.3342730700969696,
+      "agrees": 0.3684726655483246,
+      "context": 0.4468146860599518,
+      "unseen": 0.4980566203594208
+     },
+     "form": 0.8377177715301514,
+     "train": 54295
+    },
+    {
+     "fact": "unumber",
+     "layer": 0,
+     "accuracy": {
+      "all": 0.7767522931098938
+     },
+     "n": {
+      "all": 49407
+     },
+     "floor": {
+      "all": 0.7652154564857483
+     },
+     "form": null,
+     "train": 49904
+    },
+    {
+     "fact": "unumber",
+     "layer": 1,
+     "accuracy": {
+      "all": 0.80707186460495
+     },
+     "n": {
+      "all": 49407
+     },
+     "floor": {
+      "all": 0.7652154564857483
+     },
+     "form": null,
+     "train": 49904
+    },
+    {
+     "fact": "unumber",
+     "layer": 2,
+     "accuracy": {
+      "all": 0.8137511014938354
+     },
+     "n": {
+      "all": 49407
+     },
+     "floor": {
+      "all": 0.7652154564857483
+     },
+     "form": null,
+     "train": 49904
+    },
+    {
+     "fact": "unumber",
+     "layer": 3,
+     "accuracy": {
+      "all": 0.8235877752304077
+     },
+     "n": {
+      "all": 49407
+     },
+     "floor": {
+      "all": 0.7652154564857483
+     },
+     "form": null,
+     "train": 49904
+    },
+    {
+     "fact": "unumber",
+     "layer": 4,
+     "accuracy": {
+      "all": 0.8178800344467163
+     },
+     "n": {
+      "all": 49407
+     },
+     "floor": {
+      "all": 0.7652154564857483
+     },
+     "form": null,
+     "train": 49904
+    },
+    {
+     "fact": "ugender",
+     "layer": 0,
+     "accuracy": {
+      "all": 0.5563890933990479
+     },
+     "n": {
+      "all": 43324
+     },
+     "floor": {
+      "all": 0.5235666036605835
+     },
+     "form": null,
+     "train": 43970
+    },
+    {
+     "fact": "ugender",
+     "layer": 1,
+     "accuracy": {
+      "all": 0.602437436580658
+     },
+     "n": {
+      "all": 43324
+     },
+     "floor": {
+      "all": 0.5235666036605835
+     },
+     "form": null,
+     "train": 43970
+    },
+    {
+     "fact": "ugender",
+     "layer": 2,
+     "accuracy": {
+      "all": 0.6056458353996277
+     },
+     "n": {
+      "all": 43324
+     },
+     "floor": {
+      "all": 0.5235666036605835
+     },
+     "form": null,
+     "train": 43970
+    },
+    {
+     "fact": "ugender",
+     "layer": 3,
+     "accuracy": {
+      "all": 0.624342143535614
+     },
+     "n": {
+      "all": 43324
+     },
+     "floor": {
+      "all": 0.5235666036605835
+     },
+     "form": null,
+     "train": 43970
+    },
+    {
+     "fact": "ugender",
+     "layer": 4,
+     "accuracy": {
+      "all": 0.6198412179946899
+     },
+     "n": {
+      "all": 43324
+     },
+     "floor": {
+      "all": 0.5235666036605835
+     },
+     "form": null,
+     "train": 43970
+    }
+   ]
+  },
+  {
+   "run": "0d7539f05ca2",
+   "label": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+   "seed": 3,
+   "windows": 1418,
+   "rows": [
+    {
+     "fact": "ucase",
+     "layer": 0,
+     "accuracy": {
+      "all": 0.49106624722480774,
+      "agrees": 0.5159686803817749,
+      "context": 0.32607749104499817,
+      "unseen": 0.5019433498382568
+     },
+     "n": {
+      "all": 53561,
+      "agrees": 44869,
+      "context": 6891,
+      "unseen": 1801
+     },
+     "floor": {
+      "all": 0.3342730700969696,
+      "agrees": 0.3684726655483246,
+      "context": 0.4468146860599518,
+      "unseen": 0.4980566203594208
+     },
+     "form": 0.8377177715301514,
+     "train": 54295
+    },
+    {
+     "fact": "ucase",
+     "layer": 1,
+     "accuracy": {
+      "all": 0.6270047426223755,
+      "agrees": 0.6559094190597534,
+      "context": 0.4440574645996094,
+      "unseen": 0.6068850755691528
+     },
+     "n": {
+      "all": 53561,
+      "agrees": 44869,
+      "context": 6891,
+      "unseen": 1801
+     },
+     "floor": {
+      "all": 0.3342730700969696,
+      "agrees": 0.3684726655483246,
+      "context": 0.4468146860599518,
+      "unseen": 0.4980566203594208
+     },
+     "form": 0.8377177715301514,
+     "train": 54295
+    },
+    {
+     "fact": "ucase",
+     "layer": 2,
+     "accuracy": {
+      "all": 0.6353690028190613,
+      "agrees": 0.6620829701423645,
+      "context": 0.4682919681072235,
+      "unseen": 0.6091060638427734
+     },
+     "n": {
+      "all": 53561,
+      "agrees": 44869,
+      "context": 6891,
+      "unseen": 1801
+     },
+     "floor": {
+      "all": 0.3342730700969696,
+      "agrees": 0.3684726655483246,
+      "context": 0.4468146860599518,
+      "unseen": 0.4980566203594208
+     },
+     "form": 0.8377177715301514,
+     "train": 54295
+    },
+    {
+     "fact": "ucase",
+     "layer": 3,
+     "accuracy": {
+      "all": 0.6242601871490479,
+      "agrees": 0.6490226984024048,
+      "context": 0.4606007933616638,
+      "unseen": 0.6335369348526001
+     },
+     "n": {
+      "all": 53561,
+      "agrees": 44869,
+      "context": 6891,
+      "unseen": 1801
+     },
+     "floor": {
+      "all": 0.3342730700969696,
+      "agrees": 0.3684726655483246,
+      "context": 0.4468146860599518,
+      "unseen": 0.4980566203594208
+     },
+     "form": 0.8377177715301514,
+     "train": 54295
+    },
+    {
+     "fact": "ucase",
+     "layer": 4,
+     "accuracy": {
+      "all": 0.6024346351623535,
+      "agrees": 0.6280728578567505,
+      "context": 0.43085184693336487,
+      "unseen": 0.6202110052108765
+     },
+     "n": {
+      "all": 53561,
+      "agrees": 44869,
+      "context": 6891,
+      "unseen": 1801
+     },
+     "floor": {
+      "all": 0.3342730700969696,
+      "agrees": 0.3684726655483246,
+      "context": 0.4468146860599518,
+      "unseen": 0.4980566203594208
+     },
+     "form": 0.8377177715301514,
+     "train": 54295
+    },
+    {
+     "fact": "unumber",
+     "layer": 0,
+     "accuracy": {
+      "all": 0.7763474583625793
+     },
+     "n": {
+      "all": 49407
+     },
+     "floor": {
+      "all": 0.7652154564857483
+     },
+     "form": null,
+     "train": 49904
+    },
+    {
+     "fact": "unumber",
+     "layer": 1,
+     "accuracy": {
+      "all": 0.8069301843643188
+     },
+     "n": {
+      "all": 49407
+     },
+     "floor": {
+      "all": 0.7652154564857483
+     },
+     "form": null,
+     "train": 49904
+    },
+    {
+     "fact": "unumber",
+     "layer": 2,
+     "accuracy": {
+      "all": 0.814763069152832
+     },
+     "n": {
+      "all": 49407
+     },
+     "floor": {
+      "all": 0.7652154564857483
+     },
+     "form": null,
+     "train": 49904
+    },
+    {
+     "fact": "unumber",
+     "layer": 3,
+     "accuracy": {
+      "all": 0.8324528932571411
+     },
+     "n": {
+      "all": 49407
+     },
+     "floor": {
+      "all": 0.7652154564857483
+     },
+     "form": null,
+     "train": 49904
+    },
+    {
+     "fact": "unumber",
+     "layer": 4,
+     "accuracy": {
+      "all": 0.8241342306137085
+     },
+     "n": {
+      "all": 49407
+     },
+     "floor": {
+      "all": 0.7652154564857483
+     },
+     "form": null,
+     "train": 49904
+    },
+    {
+     "fact": "ugender",
+     "layer": 0,
+     "accuracy": {
+      "all": 0.554127037525177
+     },
+     "n": {
+      "all": 43324
+     },
+     "floor": {
+      "all": 0.5235666036605835
+     },
+     "form": null,
+     "train": 43970
+    },
+    {
+     "fact": "ugender",
+     "layer": 1,
+     "accuracy": {
+      "all": 0.6011679172515869
+     },
+     "n": {
+      "all": 43324
+     },
+     "floor": {
+      "all": 0.5235666036605835
+     },
+     "form": null,
+     "train": 43970
+    },
+    {
+     "fact": "ugender",
+     "layer": 2,
+     "accuracy": {
+      "all": 0.5991367101669312
+     },
+     "n": {
+      "all": 43324
+     },
+     "floor": {
+      "all": 0.5235666036605835
+     },
+     "form": null,
+     "train": 43970
+    },
+    {
+     "fact": "ugender",
+     "layer": 3,
+     "accuracy": {
+      "all": 0.6239497661590576
+     },
+     "n": {
+      "all": 43324
+     },
+     "floor": {
+      "all": 0.5235666036605835
+     },
+     "form": null,
+     "train": 43970
+    },
+    {
+     "fact": "ugender",
+     "layer": 4,
+     "accuracy": {
+      "all": 0.6206490397453308
+     },
+     "n": {
+      "all": 43324
+     },
+     "floor": {
+      "all": 0.5235666036605835
+     },
+     "form": null,
+     "train": 43970
+    }
+   ]
+  }
+ ],
+ "summary": {
+  "ucase": {
+   "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2": {
+    "all": {
+     "mean": 0.6587083041667938
+    },
+    "agrees": {
+     "mean": 0.6836973428726196
+    },
+    "context": {
+     "mean": 0.4911760315299034
+    },
+    "unseen": {
+     "mean": 0.6570547372102737
+    },
+    "form": 0.8404249548912048,
+    "context_floor": 0.4484650790691376,
+    "by_layer": {
+     "0": 0.4821690022945404,
+     "1": 0.6043532192707062,
+     "2": 0.6259107887744904,
+     "3": 0.6587083041667938,
+     "4": 0.6418274790048599
+    }
+   },
+   "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2": {
+    "all": {
+     "mean": 0.6464171707630157,
+     "paired": {
+      "mean": -1.2291133403778076,
+      "se": 0.40093180607132206,
+      "positive": 0,
+      "n": 4,
+      "values": [
+       -1.4832019805908203,
+       -0.03873705863952637,
+       -1.7646431922912598,
+       -1.629871129989624
+      ]
+     }
+    },
+    "agrees": {
+     "mean": 0.6728754937648773,
+     "paired": {
+      "mean": -1.082184910774231,
+      "se": 0.35832575531286004,
+      "positive": 0,
+      "n": 4,
+      "values": [
+       -1.1978864669799805,
+       -0.04104971885681152,
+       -1.632094383239746,
+       -1.4577090740203857
+      ]
+     }
+    },
+    "context": {
+     "mean": 0.48069945722818375,
+     "paired": {
+      "mean": -1.0476574301719666,
+      "se": 0.8033212292605727,
+      "positive": 1,
+      "n": 4,
+      "values": [
+       -2.311655879020691,
+       1.3075858354568481,
+       -1.55068039894104,
+       -1.6358792781829834
+      ]
+     }
+    },
+    "unseen": {
+     "mean": 0.6213214993476868,
+     "paired": {
+      "mean": -3.5733237862586975,
+      "se": 0.20445760633892276,
+      "positive": 0,
+      "n": 4,
+      "values": [
+       -3.4456610679626465,
+       -3.05025577545166,
+       -3.901118040084839,
+       -3.8962602615356445
+      ]
+     }
+    },
+    "form": 0.8377177715301514,
+    "context_floor": 0.4468146860599518,
+    "by_layer": {
+     "0": 0.48949795216321945,
+     "1": 0.6317703276872635,
+     "2": 0.6464171707630157,
+     "3": 0.6323024183511734,
+     "4": 0.606336697936058
+    }
+   }
+  },
+  "unumber": {
+   "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2": {
+    "all": {
+     "mean": 0.8440434485673904
+    },
+    "by_layer": {
+     "0": 0.7831277847290039,
+     "1": 0.8170767575502396,
+     "2": 0.8194948136806488,
+     "3": 0.8430157601833344,
+     "4": 0.8412525653839111
+    }
+   },
+   "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2": {
+    "all": {
+     "mean": 0.8268059343099594,
+     "paired": {
+      "mean": -1.723751425743103,
+      "se": 0.3688007077540424,
+      "positive": 0,
+      "n": 4,
+      "values": [
+       -1.618814468383789,
+       -1.8942415714263916,
+       -2.5825858116149902,
+       -0.7993638515472412
+      ]
+     }
+    },
+    "by_layer": {
+     "0": 0.7773696035146713,
+     "1": 0.8090503364801407,
+     "2": 0.8193322867155075,
+     "3": 0.826730027794838,
+     "4": 0.8201975375413895
+    }
+   }
+  },
+  "ugender": {
+   "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2": {
+    "all": {
+     "mean": 0.626805767416954
+    },
+    "by_layer": {
+     "0": 0.5545058399438858,
+     "1": 0.5933616161346436,
+     "2": 0.5899965763092041,
+     "3": 0.6242146193981171,
+     "4": 0.6244668662548065
+    }
+   },
+   "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2": {
+    "all": {
+     "mean": 0.6264022141695023,
+     "paired": {
+      "mean": -0.04035532474517822,
+      "se": 0.3679676165462232,
+      "positive": 2,
+      "n": 4,
+      "values": [
+       0.37940144538879395,
+       -0.6119310855865479,
+       -0.7095575332641602,
+       0.7806658744812012
+      ]
+     }
+    },
+    "by_layer": {
+     "0": 0.555910125374794,
+     "1": 0.6055592745542526,
+     "2": 0.6061016917228699,
+     "3": 0.6264022141695023,
+     "4": 0.623534306883812
+    }
+   }
+  }
+ }
+}

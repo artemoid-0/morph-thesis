@@ -38,6 +38,9 @@ class DataConfig:
     vocab_csv: str = 'data/our_final_vocab.csv'
     bpe_path: str = 'data/bpe_tokenizer.json'
     spacy_model: str = 'en_core_web_sm'
+    corpus: str = 'wikitext103'           # wikitext103 | ukwiki (docs/reference/ukrainian_pipeline.md)
+    corpus_fraction: float = 1.0          # share of a non-default corpus's TRAIN articles
+    corpus_holdout: int = 2000            # 1 in N articles to validation, 1 in N to test
 
 
 @dataclass(frozen=True)
@@ -101,6 +104,26 @@ class FrozenConfig:
                                         # True  = learned (2006 FNLM baseline)
     scale: float = 1.0                  # magnitude of the frozen factor
     root_width: int = 16                # dims for the ~15k-class root factor
+    root_classes: int = 0               # 0 = full inventory; else coarsen to N
+    causal_identity: bool = False       # see embedding.causal_shift
+    struct_keep: str = 'all'            # all | morphology | names (G-25)
+    inject: str = 'concat'              # concat: facts take T of d_model dims
+                                        # add: facts ADDED to a full-width token
+                                        # embedding — no carved slot (§33.13)
+    feature_off_step: Optional[int] = None  # the feature switch: from step K on
+                                        # every feature contributes zeros (the
+                                        # slot becomes a zero slot); 0 = off from
+                                        # the start. None = no switch (journey §33.33)
+    feature_on_step: Optional[int] = None   # the reverse: features contribute
+                                        # zeros until step K, then switch on
+                                        # (journey §33.34); not with feature_off_step
+    feature_dropout_until: Optional[int] = None  # weaning: each token's features
+                                        # dropped with probability rising linearly
+                                        # to 1 at step K (journey §33.47)
+    role: str = 'input'                 # input | target: the fact as an auxiliary
+                                        # TARGET, predicted from the final hidden
+                                        # state; nothing injected (journey §33.47)
+    aux_weight: float = 0.1             # the auxiliary loss's weight (role target)
 
     def spec(self) -> str:
         """
@@ -205,6 +228,10 @@ class ModelConfig:
     n_heads: int = 4
     dropout: float = 0.1
     tie_output: str = 'none'            # none | frozen (option C hook)
+    position: str = 'learned'           # learned | rope: rotary positions in
+                                        # attention, none added at the input (§33.47)
+    norm: str = 'layernorm'             # layernorm | rmsnorm (no mean subtraction) (§33.54)
+    mlp: str = 'gelu'                   # gelu | swiglu (gated, same weight count) (§33.54)
 
     @property
     def d_ff(self) -> int:
@@ -223,6 +250,7 @@ class TrainConfig:
     grad_clip: float = 1.0
     weight_decay: float = 0.01
     seed: int = 0
+    eval_buckets: bool = True           # per-frequency breakdown at the end
 
 
 @dataclass(frozen=True)
@@ -260,7 +288,17 @@ class ExperimentConfig:
         if self.data.pipeline == 'bpe':
             stem = _os.path.basename(self.data.bpe_path)
             stem = stem[:-5] if stem.endswith('.json') else stem
-            return '' if stem == 'bpe_tokenizer' else f'tok:{stem}'
+            base = '' if stem == 'bpe_tokenizer' else f'tok:{stem}'
+            # a non-default corpus is different data under the same tokenizer
+            # name; defaults add nothing, so every English key is unchanged
+            corpus = getattr(self.data, 'corpus', 'wikitext103')
+            if corpus != 'wikitext103':
+                frac = getattr(self.data, 'corpus_fraction', 1.0)
+                hold = getattr(self.data, 'corpus_holdout', 2000)
+                # ':nl' — paragraphs end in a newline (G-64); streams built
+                # before it glued them together and must not be reused
+                base = (base + '|' if base else '') + f'corpus:{corpus}:{frac:g}:{hold}:nl'
+            return base
         return self.surface.spec()
 
     def label(self) -> str:
@@ -270,6 +308,26 @@ class ExperimentConfig:
             facts += '-SHUF'
         if self.frozen.facts and self.frozen.trainable:
             facts += '-LEARN'
+        if self.frozen.facts and self.frozen.root_classes:
+            facts += f'-k{self.frozen.root_classes}'
+        if self.frozen.facts and self.frozen.causal_identity:
+            facts += '-CAUSAL'
+        if self.frozen.facts and getattr(self.frozen, 'inject', 'concat') == 'add':
+            facts += '-ADD'
+        if self.frozen.facts and getattr(self.frozen, 'feature_off_step', None) is not None:
+            facts += f'-OFF{self.frozen.feature_off_step}'
+        if self.frozen.facts and getattr(self.frozen, 'feature_on_step', None) is not None:
+            facts += f'-ON{self.frozen.feature_on_step}'
+        if self.frozen.facts and getattr(self.frozen, 'feature_dropout_until', None) is not None:
+            facts += f'-DROP{self.frozen.feature_dropout_until}'
+        if self.frozen.facts and getattr(self.frozen, 'role', 'input') == 'target':
+            facts += f'-TGT{self.frozen.aux_weight:g}'
+        # tiling widens the slot: an amplified run labelled like a plain one
+        # would join its cell as more seeds (journey §33.48)
+        if self.frozen.facts and self.frozen.amplify != 1:
+            facts += f'-x{self.frozen.amplify}'
+        if self.frozen.facts and self.frozen.struct_keep != 'all':
+            facts += f'-S{self.frozen.struct_keep}'
         elif self.frozen.facts and self.frozen.scale != 1.0:
             facts += f'-S{self.frozen.scale:g}'
         sfc = self.surface_spec()
@@ -278,6 +336,39 @@ class ExperimentConfig:
             tag = '_S' + sfc[4:]
         elif sfc.startswith('tok:'):
             tag = '_' + sfc[4:]
+
+        # NON-DEFAULT TRAINING HYPERPARAMETERS MUST APPEAR IN THE LABEL.
+        # export_results.py computes the seed-noise floor by grouping runs on
+        # their label. A learning-rate sweep leaves the label unchanged, so five
+        # different learning rates would be read as five seeds of one cell and
+        # would fabricate a noise floor several times the real one — silently
+        # weakening every effect in the project. Defaults produce no suffix, so
+        # existing labels are untouched.
+        tag = tag.split('|')[0]              # the corpus part is added cleanly below
+        corpus = getattr(self.data, 'corpus', 'wikitext103')
+        if corpus != 'wikitext103':
+            frac = getattr(self.data, 'corpus_fraction', 1.0)
+            tag += f'_{corpus}' + ('' if frac == 1.0 else f'{frac:g}')
+        d = TrainConfig()
+        if self.train.lr != d.lr:
+            tag += f'_lr{self.train.lr:g}'
+        if self.train.max_steps != d.max_steps:
+            tag += f'_st{self.train.max_steps // 1000}k'
+        # The model's size too: a wider model labelled like the base one would
+        # be read as more seeds of the base cell (journey §33.39).
+        dm = ModelConfig()
+        if self.model.d_model != dm.d_model:
+            tag += f'_w{self.model.d_model}'
+        if self.model.n_layers != dm.n_layers:
+            tag += f'_L{self.model.n_layers}'
+        if self.model.n_heads != dm.n_heads:
+            tag += f'_h{self.model.n_heads}'
+        if getattr(self.model, 'position', 'learned') != dm.position:
+            tag += f'_{self.model.position}'
+        if getattr(self.model, 'norm', 'layernorm') != dm.norm:
+            tag += f'_{self.model.norm}'
+        if getattr(self.model, 'mlp', 'gelu') != dm.mlp:
+            tag += f'_{self.model.mlp}'
         return f'{self.data.pipeline}_{facts}{tag}'
 
     def describe(self) -> str:
@@ -299,6 +390,12 @@ class ExperimentConfig:
                                  f'choose from {sorted(FACT_BLOCKS)}')
         if len(set(self.frozen.facts)) != len(self.frozen.facts):
             raise ValueError(f'duplicate facts in {self.frozen.facts}')
+        from .data.corpora import get_corpus
+        get_corpus(getattr(self.data, 'corpus', 'wikitext103'))    # unknown names fail here
+        for field, allowed in (('position', ('learned', 'rope')), ('norm', ('layernorm', 'rmsnorm')),
+                               ('mlp', ('gelu', 'swiglu'))):
+            if getattr(self.model, field) not in allowed:
+                raise ValueError(f'model.{field} must be one of {allowed}, not {getattr(self.model, field)!r}')
         if self.model.d_model % self.model.n_heads:
             raise ValueError('d_model must be divisible by n_heads')
         if self.train.lr_horizon < self.train.max_steps:

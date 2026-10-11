@@ -1022,5 +1022,48 @@
       "lr": 3.000000026754845e-05,
       "elapsed": 3264.9968869686127
     }
-  ]
+  ],
+  "frozen_blocks": [],
+  "convergence": {
+    "best_eval_index": 100,
+    "n_evals": 101,
+    "best_step": 49999,
+    "final_step": 49999,
+    "best_bpb": 1.3268107152991429,
+    "final_bpb": 1.3268107152991429,
+    "best_is_final": true,
+    "early_stopped": false,
+    "bpb_change_last_5k": -0.002958272950722707,
+    "still_improving_at_ceiling": true,
+    "steps_to": {
+      "2.0": 500,
+      "1.8": 1000,
+      "1.6": 4500,
+      "1.5": 9500,
+      "1.45": 12500,
+      "1.4": 17000
+    }
+  },
+  "parameters": {
+    "trainable_total": 5217792,
+    "embedding_trained": 2195840,
+    "embedding_factor": 0,
+    "output_head": 2195840,
+    "positional": 32768,
+    "transformer_core": 793344,
+    "vocab_size": 17155,
+    "d_model": 128,
+    "frozen_width_T": 0,
+    "trained_width": 128,
+    "factors_trainable": false,
+    "factor_scale": 1.0
+  },
+  "timing": {
+    "wall_seconds": 3264.9968869686127,
+    "steps_completed": 49999,
+    "steps_per_second": 15.313644003630762,
+    "device": null,
+    "reconstructed": true
+  },
+  "provenance_note": "environment, GPU and per-frequency buckets are not recoverable for runs predating provenance capture"
 }

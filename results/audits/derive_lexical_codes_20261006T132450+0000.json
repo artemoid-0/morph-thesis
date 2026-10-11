@@ -1,0 +1,71 @@
+{
+  "script": "derive_lexical_codes",
+  "args": {
+    "bpe_path": "data/bpe_uk_17k.json",
+    "corpus": "ukwiki",
+    "corpus_fraction": 0.05,
+    "corpus_holdout": 2000,
+    "fact": "ucase",
+    "out_fact": null,
+    "cache_dir": "data/cache",
+    "splits": [
+      "train",
+      "validation",
+      "test"
+    ],
+    "verify": true,
+    "lexicon_fraction": null,
+    "shuffle_types": null,
+    "shuffle_bin": 64,
+    "transform": null,
+    "keep": "all"
+  },
+  "timestamp_utc": "2026-10-06T13:24:50+00:00",
+  "results": {
+    "lexicon": {
+      "fact": "ucase",
+      "out_fact": "ucaselex",
+      "word_types": 1138752,
+      "occurrences": 17298338,
+      "agreement_with_context": 0.9001479795342189,
+      "source": "bpe_train_None_d8b6bfc55d.codes.npy",
+      "bpe": "bpe_uk_17k"
+    },
+    "known_words": {
+      "mismatched": [],
+      "absent": []
+    },
+    "split:train": {
+      "tokens": 37972206,
+      "words": 17298338,
+      "unseen_rate": 0.0
+    },
+    "split:validation": {
+      "tokens": 325867,
+      "words": 147696,
+      "unseen_rate": 0.055844437222402774
+    }
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-10-06T13:24:50+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "spacy_model": "en_core_web_sm",
+    "spacy_model_version": "3.8.0",
+    "git_commit": "5d59c87ad50f21fa96c3e264450bdab8bf5260e2",
+    "git_dirty": true
+  },
+  "notes": [
+    "Unseen words get the none class, never their contextual code, which would readmit the right-context information."
+  ]
+}

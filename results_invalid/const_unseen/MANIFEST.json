@@ -1,0 +1,308 @@
+[
+  {
+    "run_id": "0460a0982806",
+    "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.002_st10k",
+    "seed": 0,
+    "bits_per_byte": 1.2683624506643176,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "0ecad3b25755",
+    "label": "bpe_mzero+mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+    "seed": 1,
+    "bits_per_byte": 0.9428567147105014,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "1547aa755e68",
+    "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.002_st10k",
+    "seed": 2,
+    "bits_per_byte": 1.267747793370584,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "18d5ab19b68c",
+    "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_st20k",
+    "seed": 1,
+    "bits_per_byte": 1.013231367314215,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "261ea74b7c8b",
+    "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_st10k",
+    "seed": 2,
+    "bits_per_byte": 1.0877721410358683,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "29ebc5485c18",
+    "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_st5k",
+    "seed": 1,
+    "bits_per_byte": 1.195380737657729,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "2bac1ea5e44d",
+    "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.01_st10k",
+    "seed": 2,
+    "bits_per_byte": 1.1063496289736627,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "3428c7be3f1d",
+    "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.01_st10k",
+    "seed": 3,
+    "bits_per_byte": 1.1085053157154052,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "4472aed3f78f",
+    "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_st20k",
+    "seed": 2,
+    "bits_per_byte": 1.0089216624412145,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "5fc95be4107a",
+    "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+    "seed": 1,
+    "bits_per_byte": 0.9468151150792979,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "81d554621467",
+    "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_st20k",
+    "seed": 0,
+    "bits_per_byte": 1.009222222056122,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "82561f48b89b",
+    "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_st5k",
+    "seed": 0,
+    "bits_per_byte": 1.1980032605177606,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "894a98d84fa9",
+    "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_st10k",
+    "seed": 0,
+    "bits_per_byte": 1.0867892182197652,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "9a62a576fcd3",
+    "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_st10k",
+    "seed": 3,
+    "bits_per_byte": 1.08974384062129,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "9e630d686ea7",
+    "label": "bpe_mconst-LEARN-CAUSAL-ADD_bpe_uk_17k_ukwiki0.2",
+    "seed": 0,
+    "bits_per_byte": 0.9441681872852834,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "a1736ea31b26",
+    "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+    "seed": 3,
+    "bits_per_byte": 0.9453502536258068,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "a5bc3063b85d",
+    "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_st10k",
+    "seed": 1,
+    "bits_per_byte": 1.0894635622405695,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "a796bef834d2",
+    "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_st20k",
+    "seed": 3,
+    "bits_per_byte": 1.011812713263166,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "a7cccac36e94",
+    "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+    "seed": 2,
+    "bits_per_byte": 0.9442019031366241,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "a9877d77d9f4",
+    "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+    "seed": 2,
+    "bits_per_byte": 1.089334841163992,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "abbcd92435d7",
+    "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+    "seed": 0,
+    "bits_per_byte": 0.9423687580930069,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "be8d53d3d692",
+    "label": "bpe_mzero+mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+    "seed": 0,
+    "bits_per_byte": 0.9467704955138394,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "c62fbb6796c8",
+    "label": "bpe_mzero+mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+    "seed": 2,
+    "bits_per_byte": 0.9447884342470053,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "c9174ba30a01",
+    "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_st5k",
+    "seed": 3,
+    "bits_per_byte": 1.1964357118539488,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "c94803a6769d",
+    "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_st5k",
+    "seed": 2,
+    "bits_per_byte": 1.1959563367124135,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "cbabf4bf8725",
+    "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+    "seed": 1,
+    "bits_per_byte": 1.0930747839305766,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "cc42fc34e372",
+    "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+    "seed": 3,
+    "bits_per_byte": 1.0931155802169799,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "cc9249c7c4c3",
+    "label": "bpe_mzero+mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+    "seed": 3,
+    "bits_per_byte": 0.9452499106183684,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "d3856a8fd692",
+    "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.01_st10k",
+    "seed": 1,
+    "bits_per_byte": 1.1086421545288496,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "e35ee3e99406",
+    "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.002_st10k",
+    "seed": 3,
+    "bits_per_byte": 1.2628990437034124,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "ee2850b59b7d",
+    "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+    "seed": 0,
+    "bits_per_byte": 1.0909667719765468,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "f36bc537955a",
+    "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.01_st10k",
+    "seed": 0,
+    "bits_per_byte": 1.1054957290719574,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "f861b4d074f0",
+    "label": "bpe_mconst-LEARN-CAUSAL-ADD_bpe_uk_17k_ukwiki0.2",
+    "seed": 1,
+    "bits_per_byte": 0.9451075554707722,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  },
+  {
+    "run_id": "fb6ac113262b",
+    "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.002_st10k",
+    "seed": 1,
+    "bits_per_byte": 1.2653990501671268,
+    "rule": "const_unseen",
+    "reason": "Ukrainian runs with a constant null, scored on validation codes that gave every word unseen in train the class `none` \u2014 a mark the null met only on non-words in training (G-73), and, for 20 of them, on another corpus size's lexicon (G-72). Their saved models re-scored on the constant: better by 0.0005 (151M tokens) to 0.0039 (1.5M); English nulls by at most 0.0002, so English runs are kept; a zero slot never reads its codes, so a zero slot beside case is kept. Requires validation codes that declare the constant (journey \u00a733.55-\u00a733.56).",
+    "quarantined_utc": "2026-10-06T16:04:11+00:00"
+  }
+]

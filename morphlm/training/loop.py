@@ -135,6 +135,12 @@ def train_cell(cfg, verbose=True):
     best_state = None
     since_improve = 0
     step = 0
+    off_step = getattr(cfg.frozen, 'feature_off_step', None)
+    on_step = getattr(cfg.frozen, 'feature_on_step', None)
+    drop_until = getattr(cfg.frozen, 'feature_dropout_until', None)
+    import os as _os
+    ckpt_every = int(_os.environ.get('MORPHLM_CHECKPOINT_EVERY', '0') or 0)   # D2 (§33.48)
+    aux_w = cfg.frozen.aux_weight if getattr(cfg.frozen, 'role', 'input') == 'target' else 0.0
     # ETA is to max_steps, so it is an UPPER BOUND: early stopping can end the
     # run sooner, and the printed estimate does not try to predict that.
     prog = Progress(total=cfg.train.max_steps)
@@ -150,12 +156,42 @@ def train_cell(cfg, verbose=True):
             for g in opt.param_groups:
                 g['lr'] = lr_at(step)
 
+            if off_step is not None and off_step > 0 and step == off_step:
+                # the feature switch: close the gate, and let only evaluations
+                # from here on count — the result describes the model WITHOUT
+                # the feature, and the jump after the switch cannot exhaust
+                # the patience counter (journey §33.33)
+                model.embed.switch_features_off()
+                best, best_state, since_improve = None, None, 0
+                if verbose:
+                    print(f'  features switched off at step {step}: best and patience reset')
+            if on_step is not None and on_step > 0 and step == on_step:
+                # the reverse switch: the feature arrives mid-training; only
+                # evaluations with it count toward the result (journey §33.34)
+                model.embed.switch_features_on()
+                best, best_state, since_improve = None, None, 0
+                if verbose:
+                    print(f'  features switched on at step {step}: best and patience reset')
+
+            if drop_until:
+                # weaning: the keep rate falls linearly to 0 at drop_until;
+                # from there only feature-free evaluations count (§33.47)
+                model.embed.set_feature_keep(max(0.0, 1.0 - step / drop_until))
+                if step == drop_until:
+                    best, best_state, since_improve = None, None, 0
+                    if verbose:
+                        print(f'  features fully dropped at step {step}: best and patience reset')
+
             _, loss = model(x, y, codes=c)
+            total = loss + aux_w * model.last_aux_loss if aux_w and model.last_aux_loss is not None else loss
             opt.zero_grad()
-            loss.backward()
+            total.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(),
                                            cfg.train.grad_clip)
             opt.step()
+            if ckpt_every and (step % ckpt_every == 0 or step == cfg.train.max_steps - 1):
+                from .metrics import save_step_checkpoint
+                save_step_checkpoint(cfg, model, step)
 
             if step % cfg.train.eval_every == 0 or step == cfg.train.max_steps - 1:
                 ev = evaluate(model, val_loader, val_ds, device)
@@ -204,4 +240,57 @@ def train_cell(cfg, verbose=True):
         print(f'  finished {step:,} steps in {fmt_duration(prog.elapsed)} '
               f'({prog.rate(step):.1f} steps/s)')
 
-    return model, log, best
+    # ── provenance: everything a thesis table will need, captured NOW ─────────
+    #
+    # Wrapped defensively AS A WHOLE. Provenance is valuable but it is not the
+    # result: a metadata bug must never cost an hour of GPU time. An earlier
+    # version had an ImportError in frozen_detail that would have crashed here,
+    # after 50,000 steps, at save time. Each field is captured independently so
+    # one failure does not take the others with it, and failures are RECORDED
+    # in the output rather than swallowed.
+    meta = {}
+    from ..provenance import (environment, parameter_breakdown, frozen_detail,
+                              data_stats, convergence, tokenizer_record)
+    for key, fn in (
+            ('environment', lambda: environment(getattr(cfg.data, 'spacy_model', None))),
+            ('parameters', lambda: parameter_breakdown(model, cfg)),
+            ('frozen_blocks', lambda: frozen_detail(cfg)),
+            ('data', lambda: data_stats(train_ds, val_ds)),
+            ('tokenizer', lambda: tokenizer_record(cfg)),
+            ('convergence', lambda: convergence(log, cfg.train.max_steps)),
+            ('timing', lambda: {'wall_seconds': prog.elapsed,
+                                'steps_completed': step,
+                                'steps_per_second': prog.rate(step),
+                                'device': device}),
+    ):
+        try:
+            meta[key] = fn()
+        except Exception as e:
+            meta.setdefault('provenance_errors', {})[key] = \
+                f'{type(e).__name__}: {e}'
+            if verbose:
+                print(f'  (provenance: {key} failed — {type(e).__name__}: {e})')
+
+    # per-frequency-bucket perplexity on the BEST model, computed here so the
+    # breakdown never depends on a checkpoint surviving
+    if getattr(cfg.train, 'eval_buckets', True):
+        try:
+            from ..eval.buckets import (token_frequencies, bucketed_perplexity,
+                                        adaptive_edges)
+            import numpy as _np
+            freqs = token_frequencies(train_ds)
+            # equal-mass edges: fixed thresholds put 64-70% of BPE tokens in a
+            # single bucket, which made the rare-token question unanswerable
+            edges = adaptive_edges(freqs, _np.asarray(val_ds.ids))
+            meta['bucket_edges'] = [float(e) for e in edges]
+            meta['buckets'] = bucketed_perplexity(model, val_loader, freqs,
+                                                  device, edges=edges)
+            if verbose:
+                print('  per-frequency buckets computed')
+        except Exception as e:
+            meta.setdefault('provenance_errors', {})['buckets'] = \
+                f'{type(e).__name__}: {e}'
+            if verbose:
+                print(f'  (bucket eval skipped: {e})')
+
+    return model, log, best, meta

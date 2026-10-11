@@ -1,0 +1,134 @@
+{
+  "script": "blimp_eval",
+  "args": {
+    "runs": [
+      "a7175857fdf6",
+      "648675b80ba0",
+      "a0abed930f58"
+    ],
+    "results_dir": "results",
+    "all": false,
+    "paradigms": null,
+    "local": null,
+    "limit": 0
+  },
+  "timestamp_utc": "2026-09-26T09:36:39+00:00",
+  "results": {
+    "results": {
+      "a7175857fdf6": {
+        "label": "bpe_baseline_bpe_17k",
+        "seed": 0,
+        "accuracy": {
+          "anaphor_gender_agreement": 0.515,
+          "anaphor_number_agreement": 0.804,
+          "determiner_noun_agreement_1": 0.781,
+          "determiner_noun_agreement_2": 0.758,
+          "determiner_noun_agreement_irregular_1": 0.675,
+          "determiner_noun_agreement_irregular_2": 0.745,
+          "determiner_noun_agreement_with_adjective_1": 0.669,
+          "determiner_noun_agreement_with_adj_2": 0.701,
+          "determiner_noun_agreement_with_adj_irregular_1": 0.614,
+          "determiner_noun_agreement_with_adj_irregular_2": 0.665,
+          "irregular_past_participle_adjectives": 0.991,
+          "irregular_past_participle_verbs": 0.766,
+          "distractor_agreement_relational_noun": 0.416,
+          "distractor_agreement_relative_clause": 0.304,
+          "irregular_plural_subject_verb_agreement_1": 0.632,
+          "irregular_plural_subject_verb_agreement_2": 0.728,
+          "regular_plural_subject_verb_agreement_1": 0.802,
+          "regular_plural_subject_verb_agreement_2": 0.691
+        },
+        "skipped": 0
+      },
+      "648675b80ba0": {
+        "label": "bpe_mstruct-LEARN-CAUSAL_bpe_17k",
+        "seed": 0,
+        "accuracy": {
+          "anaphor_gender_agreement": 0.639,
+          "anaphor_number_agreement": 0.786,
+          "determiner_noun_agreement_1": 0.759,
+          "determiner_noun_agreement_2": 0.758,
+          "determiner_noun_agreement_irregular_1": 0.664,
+          "determiner_noun_agreement_irregular_2": 0.708,
+          "determiner_noun_agreement_with_adjective_1": 0.656,
+          "determiner_noun_agreement_with_adj_2": 0.635,
+          "determiner_noun_agreement_with_adj_irregular_1": 0.545,
+          "determiner_noun_agreement_with_adj_irregular_2": 0.609,
+          "irregular_past_participle_adjectives": 0.998,
+          "irregular_past_participle_verbs": 0.707,
+          "distractor_agreement_relational_noun": 0.393,
+          "distractor_agreement_relative_clause": 0.29,
+          "irregular_plural_subject_verb_agreement_1": 0.653,
+          "irregular_plural_subject_verb_agreement_2": 0.75,
+          "regular_plural_subject_verb_agreement_1": 0.79,
+          "regular_plural_subject_verb_agreement_2": 0.704
+        },
+        "skipped": 0
+      },
+      "a0abed930f58": {
+        "label": "bpe_mlemma+mstruct-LEARN-CAUSAL_bpe_17k",
+        "seed": 0,
+        "accuracy": {
+          "anaphor_gender_agreement": 0.538,
+          "anaphor_number_agreement": 0.852,
+          "determiner_noun_agreement_1": 0.73,
+          "determiner_noun_agreement_2": 0.807,
+          "determiner_noun_agreement_irregular_1": 0.668,
+          "determiner_noun_agreement_irregular_2": 0.777,
+          "determiner_noun_agreement_with_adjective_1": 0.653,
+          "determiner_noun_agreement_with_adj_2": 0.682,
+          "determiner_noun_agreement_with_adj_irregular_1": 0.604,
+          "determiner_noun_agreement_with_adj_irregular_2": 0.677,
+          "irregular_past_participle_adjectives": 0.97,
+          "irregular_past_participle_verbs": 0.759,
+          "distractor_agreement_relational_noun": 0.375,
+          "distractor_agreement_relative_clause": 0.292,
+          "irregular_plural_subject_verb_agreement_1": 0.646,
+          "irregular_plural_subject_verb_agreement_2": 0.776,
+          "regular_plural_subject_verb_agreement_1": 0.783,
+          "regular_plural_subject_verb_agreement_2": 0.717
+        },
+        "skipped": 0
+      }
+    },
+    "paradigms": [
+      "anaphor_gender_agreement",
+      "anaphor_number_agreement",
+      "determiner_noun_agreement_1",
+      "determiner_noun_agreement_2",
+      "determiner_noun_agreement_irregular_1",
+      "determiner_noun_agreement_irregular_2",
+      "determiner_noun_agreement_with_adjective_1",
+      "determiner_noun_agreement_with_adj_2",
+      "determiner_noun_agreement_with_adj_irregular_1",
+      "determiner_noun_agreement_with_adj_irregular_2",
+      "irregular_past_participle_adjectives",
+      "irregular_past_participle_verbs",
+      "distractor_agreement_relational_noun",
+      "distractor_agreement_relative_clause",
+      "irregular_plural_subject_verb_agreement_1",
+      "irregular_plural_subject_verb_agreement_2",
+      "regular_plural_subject_verb_agreement_1",
+      "regular_plural_subject_verb_agreement_2"
+    ]
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-09-26T09:36:39+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.5",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "spacy_model": "en_core_web_sm",
+    "spacy_model_version": "3.8.0",
+    "git_commit": "5d59c87ad50f21fa96c3e264450bdab8bf5260e2",
+    "git_dirty": true
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "script": "probe_dep",
+  "args": {
+    "runs": [
+      "a7175857fdf6",
+      "979a7d1f5878",
+      "d2af7d9ffe75",
+      "67346ed11499"
+    ],
+    "fact": "pos",
+    "results_dir": "results",
+    "batches": 12,
+    "sample": 40000
+  },
+  "timestamp_utc": "2026-09-22T12:09:28+00:00",
+  "results": {
+    "fact": "pos",
+    "probes": [
+      {
+        "label": "bpe_baseline_bpe_17k",
+        "chance_majority": 0.20585,
+        "accuracy_by_layer": [
+          0.8478749990463257,
+          0.8758749961853027,
+          0.8838750123977661,
+          0.8896250128746033,
+          0.8834999799728394
+        ]
+      },
+      {
+        "label": "bpe_mlemma+mstruct-LEARN_bpe_17k",
+        "chance_majority": 0.20585,
+        "accuracy_by_layer": [
+          0.8537499904632568,
+          0.8872500061988831,
+          0.8916249871253967,
+          0.8945000171661377,
+          0.8872500061988831
+        ]
+      },
+      {
+        "label": "bpe_mhash+mstruct-LEARN_bpe_17k",
+        "chance_majority": 0.20585,
+        "accuracy_by_layer": [
+          0.8544999957084656,
+          0.8815000057220459,
+          0.8857499957084656,
+          0.8857499957084656,
+          0.8784999847412109
+        ]
+      },
+      {
+        "label": "bpe_mlemma-LEARN_bpe_17k",
+        "chance_majority": 0.20585,
+        "accuracy_by_layer": [
+          0.8586249947547913,
+          0.8863750100135803,
+          0.8882499933242798,
+          0.8922500014305115,
+          0.8842499852180481
+        ]
+      }
+    ]
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-09-22T12:09:28+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.5",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "spacy_model": "en_core_web_sm",
+    "spacy_model_version": "3.8.0",
+    "git_commit": "5d59c87ad50f21fa96c3e264450bdab8bf5260e2",
+    "git_dirty": true
+  },
+  "notes": [
+    "chance is the MAJORITY-CLASS rate, not 1/n: the label distribution is skewed."
+  ]
+}

@@ -1,0 +1,111 @@
+{
+  "script": "check_cache",
+  "args": {
+    "bpe_path": "data/bpe_uk_17k.json",
+    "cache_dir": "data/cache",
+    "corpus": "ukwiki",
+    "corpus_fraction": 0.2,
+    "corpus_holdout": 2000,
+    "split": "train",
+    "require_facts": [
+      "ucase",
+      "mconst",
+      "ucaselex"
+    ],
+    "require_constant": 99.9
+  },
+  "timestamp_utc": "2026-09-29T07:33:28+00:00",
+  "results": {
+    "split": {
+      "tokens": 151133566,
+      "words": 68931004,
+      "rule": "decoded"
+    },
+    "facts": {
+      "dep": {
+        "fires": 1.0,
+        "word_constant": 0.9988847079997529,
+        "classes_used": 7
+      },
+      "pos": {
+        "fires": 0.9981322732428259,
+        "word_constant": 0.9988837066487174,
+        "classes_used": 18
+      },
+      "ucase": {
+        "fires": 0.7461681411845353,
+        "word_constant": 0.9999944606112924,
+        "classes_used": 8
+      },
+      "ugender": {
+        "fires": 0.6471027864901412,
+        "word_constant": 0.9999946736647043,
+        "classes_used": 4
+      },
+      "unumber": {
+        "fires": 0.7334461626979023,
+        "word_constant": 0.9999943753899276,
+        "classes_used": 3
+      },
+      "uperson": {
+        "fires": 0.033846858868412995,
+        "word_constant": 0.9999997443359058,
+        "classes_used": 5
+      },
+      "utense": {
+        "fires": 0.06647549097659242,
+        "word_constant": 0.9999996378091999,
+        "classes_used": 4
+      },
+      "uaspect": {
+        "fires": 0.09795689115518075,
+        "word_constant": 0.9999995525878351,
+        "classes_used": 3
+      },
+      "uanimacy": {
+        "fires": 0.49132587040667824,
+        "word_constant": 0.9999950145501632,
+        "classes_used": 3
+      },
+      "ucaselex": {
+        "fires": 0.7476382071324845,
+        "word_constant": 1.0,
+        "classes_used": 8
+      },
+      "mconst": {
+        "fires": 1.0,
+        "word_constant": 1.0,
+        "classes_used": 1
+      }
+    },
+    "gate": {
+      "required": [
+        "ucase",
+        "mconst",
+        "ucaselex"
+      ],
+      "missing": [],
+      "below": [],
+      "threshold": 99.9
+    }
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-09-29T07:33:28+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.5",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "spacy_model": "en_core_web_sm",
+    "spacy_model_version": "3.8.0",
+    "git_commit": "5d59c87ad50f21fa96c3e264450bdab8bf5260e2",
+    "git_dirty": true
+  }
+}

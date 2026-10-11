@@ -1,70 +1,47 @@
-# Context-Aware Embeddings for Tokenizer-Free Language Models
+# Context-Aware Morphological Embeddings for Language Models
 
-Master's thesis project. It asks whether injecting linguistic structure into a
-language model's **embedding layer** helps, and answers it with a matrix of
-controlled comparisons on WikiText-103 — a fixed transformer throughout, with
-only the tokenizer and the embedding varying.
+Master's thesis project: does injecting linguistic structure into a language
+model's embedding layer help? A fixed small transformer is trained on English
+(WikiText-103) and Ukrainian (Wikipedia); only the tokenizer or the embedding
+varies, and every feature is compared with a **null of identical shape** that
+carries no information.
 
-## Finding
+> **The finding.** Linguistic features help a small language model exactly
+> while it has not yet learned what they encode — early in training, on a
+> short budget, or with too little data to learn it — and add nothing once it
+> has. At full scale, the gains that look like feature gains are architecture.
+> In Ukrainian, morphology placed in the tokenizer — BPE that keeps inflectional
+> endings apart — helps by itself (1.6% in bits per byte at the size tested), and
+> unlike a feature's gain it lasts: it holds at twice the training budget and is
+> larger in a 4× wider model (2.6%). Case in the embedding adds on top of it.
 
-> **Morphological knowledge improves English language modeling as embedding
-> features, not as segmentation.**
+**Start here: [`docs/README.md`](docs/README.md)** — what to read and in what
+order. The claims, each with its evidence: [`docs/FINDINGS.md`](docs/FINDINGS.md).
 
-Two results, in the order they were measured:
-
-| question | result |
-|---|---|
-| **Q1 — is morpheme segmentation better than BPE?** | No. Under a parameter-matched comparison, morphological segmentation loses to BPE by **13.5% BPB** in English. |
-| **Q2 — do injected linguistic facts help?** | Yes. The same knowledge, delivered as embedding factors on a BPE-tokenized model, improves it by **4.44% BPB** (mean of two seeds, 6.6× seed noise) using **4.5% fewer trainable parameters**. |
-
-Headline cells, all at `d_model=128`, 4 layers, 50k steps, best-val:
-
-**Compare down the BPB column only.** Per-token perplexity is *not* comparable
-across the two tokenizer families below — they expand the same text into
-different numbers of tokens, so 6.25 and 67.36 sit on different units and
-neither is "better" than the other.
-
-| cell | tokenizer | **BPB** (comparable) | ppl (within-family only) | run id |
-|---|---|---|---|---|
-| `bpe_baseline_bpe_17k` — parameter-matched baseline | BPE | 1.3477 | 67.36 | `a7175857fdf6` |
-| `bpe_mroot+mstruct+mrole-LEARN_bpe_17k` — **the finding** | BPE | **1.2927** | 56.72 | `1fb14ea6f45d` |
-| `det_baseline_Spdiwc` — morphological segmentation | morph | 1.5246 | 6.25 | `0e7cd8838192` |
-| `det_dep_Spdiwc` — frozen dependency fact | morph | 1.4856 | 5.97 | `11e9fa7d35b3` |
-
-A shuffled-code control removes the gain — for learned factors the shuffled
-version is *worse* than baseline — so what helps is the linguistic content, not
-the presence of extra structure. Full record in
-[`results_reference.md`](results_reference.md).
-
-**One more unit warning.** Never compare any number here to the word-level
-WikiText-103 leaderboard (~18.3 perplexity); that is a third unit again, counted
-over words rather than over this project's tokens.
-
-## Layout
+## Repository layout
 
 ```
-morphlm/            the package
-  pipelines/        bpe · morpheme (+Morfessor) · deterministic
-  vocab/            MorphoLex parser, NER entity extraction, vocab builder
-  features/         frozen/learned factor blocks, morphological analysis
-  modeling/         hybrid embedding, fixed transformer
-  data/             corpus streaming, caching, byte tracking for BPB
-  training/         loop, metrics, best-val + early stop
-  cli.py            entry point
-scripts/            audits — each answers one question that arose in the project
-tests/              includes a regression test for the dead-frozen-dims bug
-data/               lexicon, vocabularies, tokenizers
-results/<hash>/     config.json + result.json per run
+morphlm/            the package: pipelines, features, model, data, training, CLI
+scripts/            data/ · eval/ · analysis/ · audits/ · ops/ · chains/ · rehearsal/
+                    — every script, one line each: scripts/README.md
+tests/              unit and regression tests: python tests/<file>.py — each file runs every test_ function it defines
+docs/               the documentation — start at docs/README.md
+data/               lexicon, vocabularies, tokenizers; caches in data/cache/ (not in the repository)
+results/<run id>/   config.json + result.json per run (+ model.pt, never packed)
+results_invalid/    runs quarantined as invalid, with the reason (scripts/ops/quarantine.py)
+exports/            generated from results/: every table and figure — scripts/ops/refresh_exports.sh
+manuscript/ · logs/ the thesis manuscript; block and chain logs (neither in the repository)
 ```
 
 ## Setup
 
 ```bash
 conda create -n morph python=3.10 && conda activate morph
-pip install torch datasets tokenizers spacy morfessor pandas numpy openpyxl
+pip install torch datasets tokenizers spacy morfessor pandas numpy openpyxl matplotlib
 python -m spacy download en_core_web_sm
+pip install pymorphy3 pymorphy3-dicts-uk && python -m spacy download uk_core_news_sm   # Ukrainian
 
-python scripts/verify.py --spacy     # 7 checks, incl. the freeze guarantee
+python scripts/ops/verify.py --spacy     # 7 checks, incl. the freeze guarantee
 ```
 
 `data/MorphoLEX_en.xlsx` is hand-curated, external, and **not regenerable** —
@@ -77,30 +54,41 @@ python -m morphlm.cli build all      # entities → vocabulary (17,151 entries) 
 ## Running
 
 ```bash
-python -m morphlm.cli run --pipeline bpe                          # a baseline cell
-python -m morphlm.cli run --pipeline bpe --facts mroot,mstruct,mrole
-python -m morphlm.cli run --pipeline det --facts dep -o train.seed=1
-python -m morphlm.cli report                                      # comparison table
+BPE='-o data.bpe_path=data/bpe_17k.json'
+C='-o frozen.trainable=true -o frozen.causal_identity=true'
+
+python -m morphlm.cli run --pipeline bpe $BPE                       # the plain baseline
+python -m morphlm.cli run --pipeline bpe --facts mconst $BPE $C     # the null: the same slot, no information
+python -m morphlm.cli run --pipeline bpe --facts pos $BPE $C        # a feature — compare it with the null
+python -m morphlm.cli run --pipeline det -o train.seed=1            # morpheme segmentation (Q1)
+python scripts/analysis/export_results.py --out exports/              # tables
+python scripts/analysis/demo_figures.py --out exports/figures         # figures
 ```
+
+The Ukrainian data and its features are built as described in
+[`docs/reference/ukrainian_pipeline.md`](docs/reference/ukrainian_pipeline.md).
+
+**Always pass `frozen.causal_identity=true` when injecting word-level features.**
+Without it every BPE fragment receives the code of its *whole* word, naming
+fragments not yet written; that once inflated an apparent gain
+nearly sixfold (journey §30). `scripts/eval/lookahead_check.py` measures how much of any feature's
+gain sits on the positions such a leak could reach. Shifting does not make a
+*tagger*-derived feature causal (`pos`, `mfeat`, `magr`): the tagger reads a few
+words to the right, which `scripts/audits/morph_causality_check.py` measures; lexical
+features (`mstruct`, and `mfeatlex` from `scripts/data/derive_lexical_codes.py`) are
+looked up from the word alone and are strictly causal (journey §33.3).
+
+Before a chain that introduces new code, it is rehearsed on toy data from a
+copy of the code (`scripts/rehearsal/`).
+
+BLiMP minimal pairs, paired by seed against the baseline, on any checkpoints:
+`python scripts/eval/blimp_eval.py --all --labels bpe_baseline_bpe_17k 'bpe_mstruct-LEARN-CAUSAL_bpe_17k'`.
 
 Any config field is reachable with `-o section.field=value`. Other subcommands:
 `cache` (build the token cache alone), `inspect` (show the frozen layout without
 training), `build`.
 
 Budget roughly **55–60 min per cell** on one CUDA GPU, plus a one-off ~4.5 h to
-build the annotated corpus cache. `data/cache/` reaches ~12 GB and checkpoints
+build the annotated corpus cache (gate a rebuild with `scripts/data/preflight_rebuild.py`). `data/cache/` reaches ~24 GB and checkpoints
 are ~14 MB each; neither is in the repository. Pass `--no-checkpoint` to skip
 saving weights.
-
-## Documents
-
-| file | what it is |
-|---|---|
-| [`research_journey.md`](research_journey.md) | The primary record: 24 sections in six parts, from the initial question through the audits that reversed the first result to the finding the project stands on. |
-| [`results_reference.md`](results_reference.md) | The data: 23 runs, every configuration and audit result, with run ids. |
-| [`literature_analysis.md`](literature_analysis.md) | Related work — MorphPiece, Hou et al. 2023, Bostrom & Durrett, FLOTA, factored LMs. |
-
-Known limitations are measured rather than speculative and are listed in
-`results_reference.md` §7 — chiefly: `dep` is an oracle feature, most cells run
-at a single seed, no downstream task evaluation, English only, and no run reached
-convergence at the 50k-step ceiling.

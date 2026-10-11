@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Stand-in for `python` when testing a chain's BRANCHES (scripts/chains/README.md): put this
+# directory first on PATH; every call is recorded in $STUB_LOG (default
+# scratch/stub_calls.txt), and any call whose arguments contain one of the
+# patterns in $FAIL_ON (separated by `|`) exits 1. What a chain reads from a
+# call's output can be given two ways: $STUB_MAP names a file of lines
+# `pattern<TAB>output`, and the first pattern found in the call's arguments has
+# its output printed (a guard that compares two runs' numbers needs two); and a
+# call whose arguments contain $STUB_STDOUT_ON prints $STUB_STDOUT. Nothing is
+# actually run. A call that fails prints nothing, as a real one finding nothing would.
+echo "$*" >> "${STUB_LOG:-$(cd "$(dirname "$0")/../../.." && pwd)/scratch/stub_calls.txt}"
+if [ -n "${FAIL_ON:-}" ]; then
+    IFS='|' read -ra _pats <<< "$FAIL_ON"
+    for _p in "${_pats[@]}"; do
+        [ -n "$_p" ] && case "$*" in *"$_p"*) exit 1 ;; esac
+    done
+fi
+if [ -n "${STUB_MAP:-}" ] && [ -f "$STUB_MAP" ]; then
+    while IFS=$'\t' read -r _pat _out; do
+        [ -n "$_pat" ] || continue
+        case "$*" in *"$_pat"*) printf '%s\n' "$_out"; break ;; esac
+    done < "$STUB_MAP"
+fi
+if [ -n "${STUB_STDOUT_ON:-}" ]; then
+    case "$*" in *"$STUB_STDOUT_ON"*) printf '%s\n' "${STUB_STDOUT:-}" ;; esac
+fi
+exit 0

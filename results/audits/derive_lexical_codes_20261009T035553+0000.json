@@ -1,0 +1,96 @@
+{
+  "script": "derive_lexical_codes",
+  "args": {
+    "bpe_path": "data/bpeend_uk_17k.json",
+    "corpus": "ukwiki",
+    "corpus_fraction": 0.05,
+    "corpus_holdout": 2000,
+    "fact": "ucase",
+    "out_fact": "ucaseprep",
+    "cache_dir": "data/cache",
+    "splits": [
+      "train",
+      "validation",
+      "test"
+    ],
+    "verify": true,
+    "lexicon_fraction": null,
+    "shuffle_types": null,
+    "shuffle_bin": 64,
+    "transform": null,
+    "recode_pos": "ADP",
+    "keep": "ucase"
+  },
+  "timestamp_utc": "2026-10-09T03:55:53+00:00",
+  "results": {
+    "recode": {
+      "tags": [
+        "ADP"
+      ],
+      "types_recoded": 414,
+      "occurrences_recoded": 0.11404496554752562,
+      "recoded_tagged_so_in_context": 0.9758446245634311,
+      "tagged_so_and_recoded": 0.9969435826369394,
+      "occurrences_changed": 0.026548924779761476,
+      "recoded_occurrences_changed": 0.23279348327478622
+    },
+    "lexicon": {
+      "fact": "ucase",
+      "out_fact": "ucaseprep",
+      "word_types": 1138979,
+      "occurrences": 17298177,
+      "agreement_with_context": 0.9001808109606001,
+      "source": "bpe_train_None_455fe69a59_ucaselex.codes.npy",
+      "bpe": "bpeend_uk_17k"
+    },
+    "known_words": {
+      "mismatched": [],
+      "absent": []
+    },
+    "recode_known_words": {
+      "wrong": []
+    },
+    "recoded:train": {
+      "tokens_recoded": 1982426,
+      "tokens_changed": 460374
+    },
+    "split:train": {
+      "tokens": 42600731,
+      "words": 17298177,
+      "unseen_rate": 0.0,
+      "replaced_changed": null
+    },
+    "recoded:validation": {
+      "tokens_recoded": 16930,
+      "tokens_changed": 3944
+    },
+    "split:validation": {
+      "tokens": 363158,
+      "words": 147694,
+      "unseen_rate": 0.05585196419624359,
+      "replaced_changed": null
+    }
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-10-09T03:55:53+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "5d59c87ad50f21fa96c3e264450bdab8bf5260e2",
+    "git_dirty": true
+  },
+  "notes": [
+    "Unseen words get the none class, never their contextual code, which would readmit the right-context information \u2014 except under --transform const, where every word gets the one class (G-73)."
+  ]
+}

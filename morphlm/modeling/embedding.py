@@ -49,8 +49,129 @@ that check, and it raises rather than warns.
 from __future__ import annotations
 
 import numpy as np
+import os
 import torch
 import torch.nn as nn
+
+
+def word_runs(is_start):
+    """
+    Given a word-start mask, the source index each position should read from.
+
+    `src[i]` is the last position of the previous run; `start[i] == 0` marks
+    positions with no previous run inside the window.
+
+    BOUNDARIES ARE SUPPLIED, NOT INFERRED. Earlier versions derived them from
+    "where the code changes", which silently required the reference fact to be
+    constant across a word. That held for `mlemma` and broke for `mprefix`,
+    which varies fragment by fragment on purpose: every position became its own
+    run, the shift moved back one TOKEN rather than one word, and inside a word
+    it handed back the current word's own structure — the exact leak it exists
+    to remove. Third bug of this family; boundaries now come from the
+    tokenizer, which knows them.
+    """
+    B, L = is_start.shape
+    idx = torch.arange(L, device=is_start.device).unsqueeze(0).expand(B, L)
+    start = torch.cummax(idx * is_start.long(), dim=1).values
+    src = (start - 1).clamp(min=0)
+    if not bool(((src < idx) | (start == 0)).all()):
+        bad = ((src >= idx) & (start > 0)).nonzero()
+        raise RuntimeError(f'word_runs read a non-past position: {bad[:3]}')
+    return src, start
+
+
+def causal_shift(code, src, start, sentinel):
+    """
+    Replace each position's code with the PREVIOUS word's code.
+
+    WHY. A cached code names the WHOLE word containing its position. For
+    `reconfiguring` split recon/fig/uring, the input at `recon` already names
+    the whole word and so reveals the fragments still to come — 86-97% of the
+    gain from word-form features sat on exactly those positions (journey §30).
+    That information does not exist during generation.
+
+    WHAT IS AVAILABLE. At any position the current word is unfinished, and we
+    cannot even tell whether the next token continues it. The most recent word
+    known to be complete is the one BEFORE it, whose end was observed when the
+    current word began.
+
+    APPLIED TO EVERY PER-WORD FACT, not just identity. An earlier version gated
+    on an attribute only the root-family blocks carried, so `mstruct` — equally
+    a per-word form feature, and 92% leak on its own — was left untouched. The
+    run it produced was reported as a causal measurement and was not one.
+    """
+    out = torch.gather(code, 1, src)
+    return torch.where(start == 0, torch.full_like(out, sentinel), out)
+
+
+def keep_struct(code, mode):
+    """
+    Collapse part of `mstruct` into its `simple` class, at model time.
+
+    G-25. `mstruct` carries the whole causal effect (journey §31), but its eight
+    classes describe two different things:
+
+        morphology    simple, prefixed, suffixed, both, compound
+        name status   entity, unanalysed    (unanalysed is 77.5% capitalised)
+        other         none
+
+    "Morphological structure helps" is the right claim only if the gain
+    survives without the name classes. So:
+
+        mode='morphology'  entity, unanalysed          -> simple
+        mode='names'       prefixed, suffixed, both, compound -> simple
+
+    Each cell removes one kind of information and keeps the other; together they
+    say which one carries the 0.0092. Done at model time, like coarsening, so no
+    cache rebuild — and applied AFTER the causal shift, so it acts on the
+    previous word's class, which is what the model actually receives.
+
+    Indices follow STRUCT_CLASSES:
+        0 simple  1 prefixed  2 suffixed  3 both  4 compound
+        5 entity  6 unanalysed  7 none
+    """
+    if mode == 'all':
+        return code
+    if mode == 'morphology':
+        drop = (code == 5) | (code == 6)
+    elif mode == 'names':
+        drop = (code >= 1) & (code <= 4)
+    else:
+        raise ValueError(f'struct_keep must be all|morphology|names, not {mode!r}')
+    return torch.where(drop, torch.zeros_like(code), code)
+
+
+def fold_codes(code, block):
+    """
+    Map CACHED codes onto this block's class inventory.
+
+    THE BUG THIS REPLACES. Coarsening was implemented inside `FactBlock.index()`,
+    which runs when the cache is BUILT. But the cache is built once, at the full
+    inventory, and the model reads the stored codes directly — it never calls
+    `index()`. The model applied `.clamp(0, n_classes - 1)` instead, which does
+    not fold: it maps every code at or above the ceiling onto ONE class.
+
+    At k=512 that put 96.9% of all words into a single class. The whole
+    cardinality sweep therefore measured "what fraction of words keep any
+    identity at all", not "how precisely is a word identified". Its plateau and
+    its sharp rise were artifacts of that, not properties of the language.
+
+    A test verified that coarsening did not change the cache spec — which was
+    true — and never checked what codes reached the model. The claim felt
+    closed because a check passed; the check tested the wrong property.
+
+    Folding is now applied here, at model time, from the range the cache was
+    actually built with, and the `none` sentinel is preserved rather than folded
+    into class 0.
+    """
+    coarsen = getattr(block, 'coarsen', 0)
+    if not coarsen:
+        return code.clamp(0, block.n_classes - 1)
+    n_full = getattr(block, 'n_full', block.n_classes)
+    sentinel = block.n_classes - 1
+    is_none = code >= (n_full - 1)
+    folded = torch.remainder(code, max(sentinel, 1))
+    return torch.where(is_none, torch.full_like(code, sentinel), folded)
 
 
 class HybridEmbedding(nn.Module):
@@ -61,9 +182,60 @@ class HybridEmbedding(nn.Module):
 
         self.embedding_dim = cfg.model.d_model
         self.amplify = max(1, cfg.frozen.amplify)
+        self.causal_identity = bool(getattr(
+            getattr(cfg, 'frozen', None), 'causal_identity', False))
+        self.struct_keep = str(getattr(
+            getattr(cfg, 'frozen', None), 'struct_keep', 'all'))
+
         self.trainable_factors = bool(getattr(cfg.frozen, 'trainable', False))
         self.factor_scale = float(getattr(cfg.frozen, 'scale', 1.0))
         self.blocks = build_blocks(cfg)
+        # HOW facts enter (journey §33.13). 'concat' — every cell before this —
+        # gives the facts T of the d_model dims, so the token embedding is T
+        # narrower than the residual stream, and that narrowing alone improves
+        # the model (§33.11–§33.12). 'add' gives each fact a full-width table
+        # ADDED to a full-width token embedding: no carved slot, so a feature's
+        # effect over the baseline is its information and nothing else.
+        self.inject = str(getattr(getattr(cfg, 'frozen', None), 'inject', 'concat'))
+        if self.inject not in ('concat', 'add'):
+            raise ValueError(f'frozen.inject must be concat or add, not {self.inject!r}')
+        if self.inject == 'add' and self.blocks:
+            if not self.trainable_factors:
+                raise ValueError('additive injection needs learned factors (frozen.trainable=true)')
+            # a zero slot IS allowed here: added as zeros it leaves the
+            # baseline's exact function, plus an unused table — the control for
+            # everything a feature cell changes besides architecture (§33.14).
+            # Positional masks need a carved slot and are refused.
+            if any(getattr(b, 'slot_position', None) for b in self.blocks):
+                raise ValueError('positional slot controls need a carved slot (concat)')
+
+        # WORD BOUNDARIES for causal mode, taken from the tokenizer.
+        # A token opens a word when it is alphabetic AND either carries the
+        # ByteLevel space marker or follows a non-alphabetic token; a run of
+        # non-alphabetic tokens opens its own unit. Same rule as
+        # derive_prefix_codes and lookahead_check, so all three agree about
+        # where words begin.
+        if self.causal_identity:
+            path = getattr(getattr(cfg, 'data', None), 'bpe_path', None)
+            if not path or not os.path.exists(path):
+                raise ValueError(
+                    'causal_identity needs the tokenizer to locate word '
+                    f'boundaries; data.bpe_path is {path!r}. Inferring them '
+                    'from codes is what broke mprefix.')
+            # the tokenizer's own word rule (lexical.word_rule_for) — one
+            # definition shared with the lexicon, so the two cannot drift
+            from ..features.lexical import tokenizer_tables
+            _tb = tokenizer_tables(path)
+            _al, _op = _tb
+            al = torch.from_numpy(_al)
+            op = torch.from_numpy(_op)
+            self.register_buffer('tok_alpha', al, persistent=False)
+            self.register_buffer('tok_opens', op, persistent=False)
+            # fragments of split characters (G-63); none under the symbol rule
+            _fr = getattr(_tb, 'frag', None)
+            self.register_buffer(
+                'tok_frag', torch.from_numpy(_fr) if _fr is not None and _fr.any() else None,
+                persistent=False)
         self.static_blocks = [b for b in self.blocks if b.source == 'vocab']
         self.context_blocks = [b for b in self.blocks if b.source == 'context']
         self.vocab_size = vocab_size
@@ -102,7 +274,8 @@ class HybridEmbedding(nn.Module):
         self.factor_tables = nn.ModuleList()
         for i, block in enumerate(self.blocks):
             if self.trainable_factors:
-                emb = nn.Embedding(block.n_classes, block.dim)
+                emb = nn.Embedding(block.n_classes,
+                                   self.embedding_dim if self.inject == 'add' else block.dim)
                 nn.init.normal_(emb.weight, mean=0.0, std=0.02)
                 self.factor_tables.append(emb)
             else:
@@ -132,7 +305,32 @@ class HybridEmbedding(nn.Module):
                 f'{self.embedding_dim}. Reduce facts, lower amplify, or raise '
                 f'd_model.')
 
-        self.trained = nn.Embedding(vocab_size, self.embedding_dim - self.T)
+        if self.inject == 'add' and self.amplify != 1:
+            raise ValueError('additive injection does not tile (amplify must be 1)')
+        # the width the token embedding gives up: T in concat mode, none in add
+        self.carved = self.T if self.inject == 'concat' else 0
+        # The feature switch (frozen.feature_off_step, journey §33.33): a gate on
+        # every feature's output, open until the training loop closes it at
+        # step K. Registered only when set, so no other model or checkpoint
+        # changes; persistent, so a checkpoint saved after K stays switched off.
+        off = getattr(getattr(cfg, 'frozen', None), 'feature_off_step', None)
+        on = getattr(getattr(cfg, 'frozen', None), 'feature_on_step', None)
+        if off is not None and on is not None:
+            raise ValueError('frozen.feature_off_step and frozen.feature_on_step are separate experiments; set one')
+        if off is not None and self.T:
+            self.register_buffer('feature_gate', torch.tensor(0.0 if off <= 0 else 1.0))
+        if on is not None and self.T:
+            self.register_buffer('feature_gate', torch.tensor(0.0 if on > 0 else 1.0))
+        # Weaning (frozen.feature_dropout_until): the gate holds the KEEP rate;
+        # in training each token's features survive with that probability, at
+        # evaluation they are scaled by it (journey §33.47).
+        drop = getattr(getattr(cfg, 'frozen', None), 'feature_dropout_until', None)
+        if drop is not None and (off is not None or on is not None):
+            raise ValueError('feature dropout and the switches are separate experiments; set one')
+        self.feature_dropout = drop is not None and bool(self.T)
+        if self.feature_dropout:
+            self.register_buffer('feature_gate', torch.tensor(1.0))
+        self.trained = nn.Embedding(vocab_size, self.embedding_dim - self.carved)
 
         if verbose:
             print(f'  embedding: {self.extra_repr()}')
@@ -146,7 +344,7 @@ class HybridEmbedding(nn.Module):
         reachable. A constant factor column is a bias term, not information.
 
         Context blocks depend on the corpus and are checked in tests/ and by
-        scripts/collision_audit.py against real code streams.
+        scripts/audits/collision_audit.py against real code streams.
         """
         dead = []
         for i, block in enumerate(self.static_blocks):
@@ -175,6 +373,14 @@ class HybridEmbedding(nn.Module):
 
     def _factor(self, i, code):
         """code -> factor vector, via the frozen identity or the learned table."""
+        if getattr(self.blocks[i], 'zero_slot', False):
+            # ZERO-SLOT control (`mzero`, journey §33.11): the slot's dims are
+            # exactly zero — no learned vector, no information, no gradient.
+            # What remains is a token embedding narrower than the residual
+            # stream, the only difference from the baseline.
+            width = self.embedding_dim if self.inject == 'add' else self.blocks[i].dim
+            return torch.zeros(*code.shape, width, device=code.device,
+                               dtype=self.trained.weight.dtype)
         if self.trainable_factors:
             # a learned table sets its own magnitude, so scale is not applied
             return self.factor_tables[i](code)
@@ -183,6 +389,41 @@ class HybridEmbedding(nn.Module):
         if self.factor_scale != 1.0:
             out = out * self.factor_scale
         return out
+
+    def _word_starts(self, ids):
+        """Word-start mask from the tokenizer, for causal boundary detection."""
+        alpha = self.tok_alpha[ids]
+        opens = self.tok_opens[ids]
+        frag_tab = getattr(self, 'tok_frag', None)
+        if frag_tab is not None:
+            # lexical.resolve_fragments, on the batch: a fragment takes the
+            # class of the position before it; position 0 keeps its own
+            frag = frag_tab[ids]
+            for _ in range(3):
+                prev = torch.cat([alpha[:, :1], alpha[:, :-1]], dim=1)
+                alpha = torch.where(frag, prev, alpha)
+        prev_alpha = torch.cat(
+            [torch.zeros_like(alpha[:, :1]), alpha[:, :-1]], dim=1)
+        new_word = alpha & (opens | ~prev_alpha)
+        new_punct = (~alpha) & prev_alpha      # a punctuation run opens a unit
+        st = new_word | new_punct
+        st[:, 0] = True
+        return st
+
+    def switch_features_off(self):
+        """Close the feature gate: from now on every feature contributes zeros."""
+        if hasattr(self, 'feature_gate'):
+            self.feature_gate.fill_(0.0)
+
+    def switch_features_on(self):
+        """Open the feature gate: from now on every feature contributes its embedding."""
+        if hasattr(self, 'feature_gate'):
+            self.feature_gate.fill_(1.0)
+
+    def set_feature_keep(self, q):
+        """Weaning: the probability that a token keeps its features."""
+        if hasattr(self, 'feature_gate'):
+            self.feature_gate.fill_(float(q))
 
     def forward(self, ids, codes=None):
         """
@@ -197,6 +438,7 @@ class HybridEmbedding(nn.Module):
         parts = []
         si = 0
         ci = 0
+        _runs = None
         for i, block in enumerate(self.blocks):
             if block.source == 'vocab':
                 code = getattr(self, f'static_codes_{si}')[ids]
@@ -207,10 +449,25 @@ class HybridEmbedding(nn.Module):
                         'context facts were configured but the batch carried '
                         'no codes. The dataset and the model disagree — check '
                         'that the cache was built with the same frozen.facts.')
-                code = codes[:, ci, :].clamp(0, block.n_classes - 1)
+                code = codes[:, ci, :]
+                if getattr(self, 'causal_identity', False):
+                    if _runs is None:
+                        _runs = word_runs(self._word_starts(ids))
+                    code = causal_shift(code, _runs[0], _runs[1],
+                                        block.n_classes - 1)
+                if block.name == 'mstruct' and self.struct_keep != 'all':
+                    code = keep_struct(code, self.struct_keep)
+                code = fold_codes(code, block)
                 ci += 1
             parts.append(self._factor(i, code))
 
+        if hasattr(self, 'feature_gate'):
+            g = self.feature_gate
+            if self.feature_dropout and self.training:
+                g = (torch.rand(ids.shape[0], ids.shape[1], 1, device=ids.device) < g).to(parts[0].dtype)
+            parts = [p * g for p in parts]
+        if self.inject == 'add':
+            return trained + torch.stack(parts, dim=0).sum(dim=0)
         factor = torch.cat(parts, dim=-1)
         if self.amplify > 1:
             factor = factor.repeat(1, 1, self.amplify)
@@ -228,7 +485,8 @@ class HybridEmbedding(nn.Module):
         names = ', '.join(f'{b.name}[{b.source}]:{b.dim}' for b in self.blocks)
         mode = ('LEARNED' if self.trainable_factors
                 else f'FROZEN@{self.factor_scale:g}')
-        return (f'N={self.embedding_dim}, T={self.T} {mode} '
+        inj = ' ADDED to the token embedding' if self.inject == 'add' else ''
+        return (f'N={self.embedding_dim}, T={self.T} {mode}{inj} '
                 f'(static {self.static_dim}, context {self.context_dim}, '
-                f'x{self.amplify}), trained={self.embedding_dim - self.T}'
+                f'x{self.amplify}), trained={self.embedding_dim - self.carved}'
                 + (f' | {names}' if names else ' | baseline'))

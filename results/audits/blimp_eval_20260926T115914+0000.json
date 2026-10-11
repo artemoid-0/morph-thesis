@@ -1,0 +1,177 @@
+{
+  "script": "blimp_eval",
+  "args": {
+    "runs": [
+      "a7175857fdf6",
+      "648675b80ba0"
+    ],
+    "labels": [],
+    "reference": null,
+    "results_dir": "results",
+    "all": false,
+    "paradigms": [
+      "determiner_noun_agreement_1",
+      "anaphor_gender_agreement"
+    ],
+    "local": null,
+    "limit": 40,
+    "batch": 256,
+    "skip_missing": false
+  },
+  "timestamp_utc": "2026-09-26T11:59:14+00:00",
+  "results": {
+    "skipped": [],
+    "runs": {
+      "a7175857fdf6": {
+        "label": "bpe_baseline_bpe_17k",
+        "seed": 0,
+        "accuracy": {
+          "determiner_noun_agreement_1": 0.725,
+          "anaphor_gender_agreement": 0.475
+        },
+        "margin": {
+          "determiner_noun_agreement_1": 1.729036235809326,
+          "anaphor_gender_agreement": -0.09163398742675781
+        },
+        "batch_check_max_diff": 7.62939453125e-06
+      },
+      "648675b80ba0": {
+        "label": "bpe_mstruct-LEARN-CAUSAL_bpe_17k",
+        "seed": 0,
+        "accuracy": {
+          "determiner_noun_agreement_1": 0.75,
+          "anaphor_gender_agreement": 0.525
+        },
+        "margin": {
+          "determiner_noun_agreement_1": 1.749244785308838,
+          "anaphor_gender_agreement": 0.43415088653564454
+        },
+        "batch_check_max_diff": 1.52587890625e-05
+      }
+    },
+    "reference": "bpe_baseline_bpe_17k",
+    "summary": {
+      "ALL": {
+        "bpe_baseline_bpe_17k": {
+          "accuracy": 0.6,
+          "seeds": [
+            0
+          ]
+        },
+        "bpe_mstruct-LEARN-CAUSAL_bpe_17k": {
+          "accuracy": 0.6375,
+          "seeds": [
+            0
+          ],
+          "paired_seeds": [
+            0
+          ],
+          "paired_acc_diff": [
+            3.749999999999998
+          ],
+          "paired_margin_diff": [
+            0.2729967117309572
+          ]
+        }
+      },
+      "field: morphology": {
+        "bpe_baseline_bpe_17k": {
+          "accuracy": 0.6,
+          "seeds": [
+            0
+          ]
+        },
+        "bpe_mstruct-LEARN-CAUSAL_bpe_17k": {
+          "accuracy": 0.6375,
+          "seeds": [
+            0
+          ],
+          "paired_seeds": [
+            0
+          ],
+          "paired_acc_diff": [
+            3.749999999999998
+          ],
+          "paired_margin_diff": [
+            0.2729967117309572
+          ]
+        }
+      },
+      "  anaphor_agreement": {
+        "bpe_baseline_bpe_17k": {
+          "accuracy": 0.475,
+          "seeds": [
+            0
+          ]
+        },
+        "bpe_mstruct-LEARN-CAUSAL_bpe_17k": {
+          "accuracy": 0.525,
+          "seeds": [
+            0
+          ],
+          "paired_seeds": [
+            0
+          ],
+          "paired_acc_diff": [
+            5.000000000000004
+          ],
+          "paired_margin_diff": [
+            0.5257848739624024
+          ]
+        }
+      },
+      "  determiner_noun_agreement": {
+        "bpe_baseline_bpe_17k": {
+          "accuracy": 0.725,
+          "seeds": [
+            0
+          ]
+        },
+        "bpe_mstruct-LEARN-CAUSAL_bpe_17k": {
+          "accuracy": 0.75,
+          "seeds": [
+            0
+          ],
+          "paired_seeds": [
+            0
+          ],
+          "paired_acc_diff": [
+            2.500000000000002
+          ],
+          "paired_margin_diff": [
+            0.020208549499511896
+          ]
+        }
+      }
+    },
+    "annotation": {
+      "determiner_noun_agreement_1": {
+        "field": "morphology",
+        "term": "determiner_noun_agreement"
+      },
+      "anaphor_gender_agreement": {
+        "field": "morphology",
+        "term": "anaphor_agreement"
+      }
+    }
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-09-26T11:59:14+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.5",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "spacy_model": "en_core_web_sm",
+    "spacy_model_version": "3.8.0",
+    "git_commit": "5d59c87ad50f21fa96c3e264450bdab8bf5260e2",
+    "git_dirty": true
+  }
+}

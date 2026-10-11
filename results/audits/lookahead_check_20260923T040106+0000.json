@@ -1,0 +1,65 @@
+{
+  "script": "lookahead_check",
+  "args": {
+    "baseline": "a7175857fdf6",
+    "treatment": [
+      "a0abed930f58"
+    ],
+    "results_dir": "results",
+    "batches": 0
+  },
+  "timestamp_utc": "2026-09-23T04:01:06+00:00",
+  "results": {
+    "token_shares": {
+      "word-initial": 0.704413864213198,
+      "continuation": 0.13435517131979696,
+      "other": 0.16123096446700508
+    },
+    "a0abed930f58": {
+      "label": "bpe_mlemma+mstruct-LEARN-CAUSAL_bpe_17k",
+      "overall_gain": 0.08017878979444504,
+      "by_class": {
+        "word-initial": {
+          "mean_gain": 0.046276915818452835,
+          "gain_share": 0.4065676696334348,
+          "token_share": 0.704413864213198,
+          "ratio": 0.5771715894427413
+        },
+        "continuation": {
+          "mean_gain": 0.2937426269054413,
+          "gain_share": 0.49222295662603766,
+          "token_share": 0.13435517131979696,
+          "ratio": 3.6635951693621904
+        },
+        "other": {
+          "mean_gain": 0.050330597907304764,
+          "gain_share": 0.10120945223114283,
+          "token_share": 0.16123096446700508,
+          "ratio": 0.6277296210794219
+        }
+      }
+    }
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-09-23T04:01:06+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.5",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "spacy_model": "en_core_web_sm",
+    "spacy_model_version": "3.8.0",
+    "git_commit": "5d59c87ad50f21fa96c3e264450bdab8bf5260e2",
+    "git_dirty": true
+  },
+  "notes": [
+    "Continuation targets are intrinsically easier, so a moderate imbalance is not proof of leakage. The definitive test is a causal feature carrying only information available at generation time."
+  ]
+}

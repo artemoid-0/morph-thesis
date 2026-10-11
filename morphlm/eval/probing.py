@@ -51,5 +51,5 @@ def probe(X, labels, test_frac=0.2, seed=0):
     which property) should follow from Phase 1 results rather than precede them.
     """
     raise NotImplementedError(
-        'probing classifier not written yet — see research_journey.md. '
+        'probing classifier not written yet — see docs/record/journey/README.md. '
         'extract_embeddings() is implemented and ready to feed it.')

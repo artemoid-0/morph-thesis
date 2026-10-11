@@ -1,0 +1,68 @@
+{
+  "script": "lookahead_check",
+  "args": {
+    "baseline": "a7175857fdf6",
+    "treatment": [
+      "a0abed930f58"
+    ],
+    "results_dir": "results",
+    "batches": 0
+  },
+  "timestamp_utc": "2026-09-23T07:19:36+00:00",
+  "results": {
+    "token_shares": {
+      "word-initial": 0.704413864213198,
+      "continuation": 0.13435517131979696,
+      "other": 0.16123096446700508
+    },
+    "a0abed930f58": {
+      "label": "bpe_mlemma+mstruct-LEARN-CAUSAL_bpe_17k",
+      "overall_gain": 0.02660353109240532,
+      "by_class": {
+        "word-initial": {
+          "mean_gain": 0.04833492636680603,
+          "gain_share": 1.279822323710123,
+          "token_share": 0.704413864213198,
+          "baseline_nll": 4.766172885894775,
+          "ratio": 1.8168613491723835
+        },
+        "continuation": {
+          "mean_gain": -0.06978645920753479,
+          "gain_share": -0.3524408762900518,
+          "token_share": 0.13435517131979696,
+          "baseline_nll": 3.404873847961426,
+          "ratio": -2.623202909333199
+        },
+        "other": {
+          "mean_gain": 0.011982248164713383,
+          "gain_share": 0.0726185389323424,
+          "token_share": 0.16123096446700508,
+          "baseline_nll": 2.4514129161834717,
+          "ratio": 0.45040069798257226
+        }
+      }
+    }
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-09-23T07:19:36+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.5",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "spacy_model": "en_core_web_sm",
+    "spacy_model_version": "3.8.0",
+    "git_commit": "5d59c87ad50f21fa96c3e264450bdab8bf5260e2",
+    "git_dirty": true
+  },
+  "notes": [
+    "Continuation targets are intrinsically easier, so a moderate imbalance is not proof of leakage. The definitive test is a causal feature carrying only information available at generation time."
+  ]
+}

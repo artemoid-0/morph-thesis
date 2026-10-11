@@ -1024,5 +1024,56 @@
       "lr": 3.000000026754845e-05,
       "elapsed": 3554.2158057689667
     }
-  ]
+  ],
+  "frozen_blocks": [
+    {
+      "name": "mstruct",
+      "source": "context",
+      "n_classes": 8,
+      "dim": 8,
+      "is_projection": false
+    }
+  ],
+  "convergence": {
+    "best_eval_index": 99,
+    "n_evals": 101,
+    "best_step": 49500,
+    "final_step": 49999,
+    "best_bpb": 1.344048923109085,
+    "final_bpb": 1.3441051412637646,
+    "best_is_final": false,
+    "early_stopped": false,
+    "bpb_change_last_5k": -0.002283179011248304,
+    "still_improving_at_ceiling": true,
+    "steps_to": {
+      "2.0": 1000,
+      "1.8": 2000,
+      "1.6": 5000,
+      "1.5": 9000,
+      "1.45": 14000,
+      "1.4": 21000
+    }
+  },
+  "parameters": {
+    "trainable_total": 5080552,
+    "embedding_trained": 2058600,
+    "embedding_factor": 0,
+    "output_head": 2195840,
+    "positional": 32768,
+    "transformer_core": 793344,
+    "vocab_size": 17155,
+    "d_model": 128,
+    "frozen_width_T": 8,
+    "trained_width": 120,
+    "factors_trainable": false,
+    "factor_scale": 1.0
+  },
+  "timing": {
+    "wall_seconds": 3554.2158057689667,
+    "steps_completed": 49999,
+    "steps_per_second": 14.06751945642832,
+    "device": null,
+    "reconstructed": true
+  },
+  "provenance_note": "environment, GPU and per-frequency buckets are not recoverable for runs predating provenance capture"
 }

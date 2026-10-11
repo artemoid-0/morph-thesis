@@ -1,0 +1,132 @@
+{
+  "script": "morph_causality_check",
+  "args": {
+    "sentences": 3000,
+    "split": "validation",
+    "max_words": 40,
+    "text": null
+  },
+  "timestamp_utc": "2026-09-26T12:04:01+00:00",
+  "results": {
+    "summary": {
+      "words": 55282,
+      "skipped": 0,
+      "harness": [
+        3000,
+        3000
+      ],
+      "agreement": {
+        "tag": 0.9177851741977497,
+        "pos": 0.9263413045837705,
+        "mfeat": 0.9545059874823631,
+        "magr": 0.9669512680438479,
+        "minfl": 0.9837017474042183
+      }
+    },
+    "by_words_after": {
+      "0": {
+        "tag": 1.0,
+        "pos": 1.0,
+        "mfeat": 1.0,
+        "magr": 1.0,
+        "minfl": 1.0
+      },
+      "1": {
+        "tag": 0.9509403107113655,
+        "pos": 0.9578904333605888,
+        "mfeat": 0.9795584627964022,
+        "magr": 0.9836467702371219,
+        "minfl": 0.9881439084219134
+      },
+      "2": {
+        "tag": 0.8834264432029795,
+        "pos": 0.8908752327746741,
+        "mfeat": 0.9344506517690875,
+        "magr": 0.9463687150837988,
+        "minfl": 0.9802607076350093
+      },
+      "3": {
+        "tag": 0.9232238349885409,
+        "pos": 0.9323911382734912,
+        "mfeat": 0.9602750190985485,
+        "magr": 0.9686783804430863,
+        "minfl": 0.9866310160427807
+      },
+      "4": {
+        "tag": 0.9226371951219512,
+        "pos": 0.9333079268292683,
+        "mfeat": 0.9573170731707317,
+        "magr": 0.9676067073170732,
+        "minfl": 0.9809451219512195
+      },
+      "5": {
+        "tag": 0.9173870421531057,
+        "pos": 0.9259424293734961,
+        "mfeat": 0.953814276802424,
+        "magr": 0.9671152303716246,
+        "minfl": 0.9836467338026914
+      }
+    },
+    "mfeat_changes": {
+      "there: PronType=Dem -> -": 71,
+      "trout: Number=Plur -> Number=Sing": 31,
+      "km: Number=Plur -> Number=Sing": 26,
+      "due: Degree=Pos -> -": 23,
+      "big: Degree=Pos -> Number=Sing": 23,
+      "japanese: Number=Plur -> Degree=Pos": 22,
+      "her: Case=Acc|Gender=Fem|Number=Sing|Person=3|PronType=Prs -> Gender=Fem|Number=Sing|Person=3|Poss=Yes|PronType=Prs": 21,
+      "that: - -> Number=Sing|PronType=Dem": 20,
+      "rhodesian: Number=Sing -> Degree=Pos": 20,
+      "military: Number=Sing -> Degree=Pos": 18,
+      "burmese: Number=Sing -> Degree=Pos": 18,
+      "top: Number=Sing -> Degree=Pos": 16,
+      "great: Degree=Pos -> Number=Sing": 16,
+      "square: Number=Sing -> Degree=Pos": 16,
+      "ft: Number=Sing -> Foreign=Yes": 15,
+      "south: Number=Sing -> Degree=Pos": 15,
+      "that: PronType=Rel -> -": 14,
+      "public: Number=Sing -> Degree=Pos": 14,
+      "high: Degree=Pos -> Number=Sing": 13,
+      "riparian: Number=Sing -> Degree=Pos": 13,
+      "west: Number=Sing -> Degree=Pos": 12,
+      "that: Number=Sing|PronType=Dem -> -": 12,
+      "american: Number=Sing -> Degree=Pos": 11,
+      "both: - -> ConjType=Cmp": 11,
+      "ten: NumType=Card -> Number=Sing": 11,
+      "later: - -> Degree=Cmp": 10,
+      "that: - -> PronType=Rel": 10,
+      "average: Number=Sing -> Degree=Pos": 10,
+      "much: - -> Degree=Pos": 10,
+      "home: Number=Sing -> -": 10,
+      "north: Number=Sing -> -": 10,
+      "black: Degree=Pos -> Number=Sing": 9,
+      "bears: Number=Plur -> Number=Sing|Person=3|Tense=Pres|VerbForm=Fin": 9,
+      "led: Tense=Past|VerbForm=Fin -> Aspect=Perf|Tense=Past|VerbForm=Part": 9,
+      "central: Degree=Pos -> Number=Sing": 9,
+      "british: Degree=Pos -> Number=Sing": 8,
+      "lower: Degree=Cmp -> Number=Sing": 8,
+      "american: Degree=Pos -> Number=Sing": 8,
+      "mid: Number=Sing -> Degree=Pos": 8,
+      "further: - -> Degree=Pos": 8
+    }
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-09-26T12:04:01+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.5",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "spacy_model": "en_core_web_sm",
+    "spacy_model_version": "3.8.0",
+    "git_commit": "5d59c87ad50f21fa96c3e264450bdab8bf5260e2",
+    "git_dirty": true
+  }
+}

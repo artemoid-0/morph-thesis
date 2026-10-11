@@ -1,0 +1,59 @@
+{
+  "data": {
+    "pipeline": "bpe",
+    "seq_len": 256,
+    "max_articles_train": null,
+    "max_articles_val": null,
+    "cache_dir": "data/cache",
+    "morpholex_path": "data/MorphoLEX_en.xlsx",
+    "vocab_csv": "data/our_final_vocab.csv",
+    "bpe_path": "data/bpe_uk_17k.json",
+    "spacy_model": "uk_core_news_sm",
+    "corpus": "ukwiki",
+    "corpus_fraction": 0.2,
+    "corpus_holdout": 2000
+  },
+  "surface": {
+    "emit_punctuation": true,
+    "emit_digits": true,
+    "emit_inflection": true,
+    "emit_whitespace": true,
+    "emit_case": true
+  },
+  "frozen": {
+    "facts": [
+      "mzero",
+      "mconst"
+    ],
+    "dep_granularity": "coarse",
+    "amplify": 1,
+    "shuffle_codes": false,
+    "trainable": true,
+    "scale": 1.0,
+    "root_width": 16,
+    "root_classes": 0,
+    "causal_identity": true,
+    "struct_keep": "all",
+    "inject": "concat"
+  },
+  "model": {
+    "d_model": 128,
+    "n_layers": 4,
+    "n_heads": 4,
+    "dropout": 0.1,
+    "tie_output": "none"
+  },
+  "train": {
+    "batch_size": 32,
+    "lr": 0.0003,
+    "warmup": 100,
+    "max_steps": 50000,
+    "lr_horizon": 50000,
+    "eval_every": 500,
+    "patience": 6,
+    "grad_clip": 1.0,
+    "weight_decay": 0.01,
+    "seed": 0,
+    "eval_buckets": true
+  }
+}

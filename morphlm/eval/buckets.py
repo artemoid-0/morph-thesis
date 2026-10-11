@@ -29,6 +29,49 @@ import torch
 DEFAULT_EDGES = (1, 10, 100, 1000, 10000, float('inf'))
 
 
+def adaptive_edges(freqs, val_ids, n_buckets=6):
+    """
+    Frequency edges chosen so each bucket holds roughly EQUAL VALIDATION MASS.
+
+    Fixed thresholds cannot work across pipelines. The morpheme pipelines emit
+    2.4x more tokens than BPE over the same corpus, so a threshold set that
+    spreads morph tokens evenly piles BPE tokens into the top bucket: measured
+    on BPE-17k, the `10000-inf` bucket held 177,796 of 252,160 validation
+    tokens (70.5%) while the two rarest held 1 and 16. The rare-token question
+    — the one that decides whether morphological sharing helps where word
+    identity cannot be learned — was simply unanswerable.
+
+    Equal-mass buckets give equal statistical power at every frequency, which
+    is what the question needs.
+
+    IMPORTANT: the caller must compute edges ONCE and apply the same set to
+    every model being compared. Edges derived per-model would silently compare
+    different partitions.
+    """
+    f = np.asarray([freqs.get(int(t), 0) for t in np.asarray(val_ids)],
+                   dtype=np.int64)
+    if f.size == 0:
+        return DEFAULT_EDGES
+    order = np.sort(f)
+    target = f.size / max(n_buckets, 1)
+
+    edges = [int(order[0])]
+    acc = 0
+    for i in range(f.size):
+        acc += 1
+        if acc >= target and i + 1 < f.size:
+            nxt = int(order[i + 1])
+            if nxt > edges[-1]:          # strictly increasing edges only
+                edges.append(nxt)
+                acc = 0
+    edges.append(float('inf'))
+    # a heavily skewed distribution can collapse edges; fall back rather than
+    # report a table with empty or duplicated bands
+    if len(edges) < 3:
+        return DEFAULT_EDGES
+    return tuple(edges)
+
+
 def token_frequencies(train_ds):
     """Count how often each token id appears in the training stream."""
     ids = np.asarray(train_ds.ids)

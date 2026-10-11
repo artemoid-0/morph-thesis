@@ -1,0 +1,29 @@
+[
+  {
+    "run_id": "a0abed930f58",
+    "label": "bpe_mlemma+mstruct-LEARN-CAUSAL_bpe_17k",
+    "seed": 0,
+    "bits_per_byte": 1.3220400142373652,
+    "rule": "causal_partial",
+    "reason": "The causal shift was applied only to root-family blocks, so mstruct \u2014 equally a per-word form feature, and 92% within-word leak on its own \u2014 was left unshifted. The run was reported as a causal measurement and was not one. Fixed by shifting every per-word fact with shared word boundaries (CAUSAL_SEMANTICS = 2).",
+    "quarantined_utc": "2026-09-23T04:45:10+00:00"
+  },
+  {
+    "run_id": "122cf133747d",
+    "label": "bpe_mprefix+mstruct-LEARN-CAUSAL_bpe_17k",
+    "seed": 0,
+    "bits_per_byte": 1.3417494402843952,
+    "rule": "causal_partial",
+    "reason": "Causal runs whose word boundaries were INFERRED from the codes rather than read from the tokenizer. Two defects: v1 shifted only root-family blocks, leaving mstruct leaking; v2 shifted everything but inferred boundaries, which collapse when the reference fact varies within a word (mprefix). A v2 checkpoint is also unreproducible \u2014 the boundary rule lives in the forward pass, so re-scoring it under v3 code evaluates it under boundaries it never trained with. Requires CAUSAL_SEMANTICS >= 3.",
+    "quarantined_utc": "2026-09-23T10:58:20+00:00"
+  },
+  {
+    "run_id": "a0abed930f58",
+    "label": "bpe_mlemma+mstruct-LEARN-CAUSAL_bpe_17k",
+    "seed": 0,
+    "bits_per_byte": 1.3391902617997167,
+    "rule": "causal_partial",
+    "reason": "Causal runs whose word boundaries were INFERRED from the codes rather than read from the tokenizer. Two defects: v1 shifted only root-family blocks, leaving mstruct leaking; v2 shifted everything but inferred boundaries, which collapse when the reference fact varies within a word (mprefix). A v2 checkpoint is also unreproducible \u2014 the boundary rule lives in the forward pass, so re-scoring it under v3 code evaluates it under boundaries it never trained with. Requires CAUSAL_SEMANTICS >= 3.",
+    "quarantined_utc": "2026-09-23T10:58:20+00:00"
+  }
+]

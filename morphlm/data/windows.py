@@ -34,6 +34,9 @@ class LMWindowDataset(Dataset):
         self.ids = stream_meta['ids']
         self.codes = stream_meta.get('codes')
         self.fact_names = stream_meta.get('fact_names', [])
+        # provenance: the codes file this stream was read from, and its rules
+        self.codes_file = stream_meta.get('codes_file')
+        self.codes_rules = stream_meta.get('codes_rules')
         self.shuffle_codes = shuffle_codes
         self.shuffle_seed = seed
         self.seq_len = seq_len
@@ -42,6 +45,11 @@ class LMWindowDataset(Dataset):
         self.num_chars = stream_meta['num_chars']
         self.pipeline = stream_meta.get('pipeline')
         self.num_windows = (self.num_tokens - 1) // seq_len
+        if self.num_windows < 1:
+            raise ValueError(
+                f'a stream of {len(self.ids):,} tokens holds no window of '
+                f'{seq_len + 1} — the split is (nearly) empty; for a small '
+                f'corpus lower data.corpus_holdout')
 
     def __len__(self):
         return self.num_windows
@@ -85,6 +93,28 @@ class LMWindowDataset(Dataset):
     def perplexity(self, mean_loss_nats):
         """Per-token perplexity — only comparable WITHIN a pipeline."""
         return float(np.exp(mean_loss_nats))
+
+
+def make_val_dataset(pipeline, cfg, verbose=True):
+    """
+    Validation window dataset only.
+
+    Post-hoc analysis (probing, bucketed comparison) needs validation data and
+    nothing else. `make_datasets` also builds the TRAIN stream, which is a
+    120M-token no-op on a cache hit and a four-hour spaCy rebuild on a miss —
+    the exact failure that silently hung the first probe run.
+    """
+    from .stream import build_stream
+    meta = build_stream(pipeline, cfg, split='validation',
+                        max_articles=cfg.data.max_articles_val,
+                        verbose=verbose)
+    shuf = getattr(cfg.frozen, 'shuffle_codes', False)
+    ds = LMWindowDataset(meta, seq_len=cfg.data.seq_len,
+                         shuffle_codes=shuf, seed=cfg.train.seed)
+    if verbose:
+        print(f'  val: {len(ds):,} windows ({ds.num_tokens:,} tokens, '
+              f'{ds.num_bytes:,} bytes)')
+    return ds
 
 
 def make_datasets(pipeline, cfg, verbose=True):

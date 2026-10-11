@@ -1,0 +1,84 @@
+{
+  "script": "stream_roundtrip",
+  "args": {
+    "corpus": "ukwiki",
+    "corpus_fraction": 0.05,
+    "corpus_holdout": 2000,
+    "tokenizers": [
+      "bpe_uk_4k",
+      "bpe_uk_8k",
+      "bpe_uk_17k",
+      "bpe_uk_32k",
+      "unigram_uk_17k",
+      "bpeend_uk_17k"
+    ],
+    "splits": [
+      "validation"
+    ],
+    "cache_dir": "/home/neko/PycharmProjects/Morph/data/cache",
+    "audit_dir": "/home/neko/PycharmProjects/Morph/results/audits"
+  },
+  "timestamp_utc": "2026-10-07T21:17:36+00:00",
+  "results": {
+    "validation": {
+      "tokenizers": {
+        "bpe_uk_4k": {
+          "tokens": 423931,
+          "recorded_bytes": 1989866,
+          "decoded_bytes": 1989866,
+          "sha256": "65e6a2ef60535aad41f7dbb23d73d7324ff2c4a9f04e4d8fb22e802b67162380"
+        },
+        "bpe_uk_8k": {
+          "tokens": 371617,
+          "recorded_bytes": 1989866,
+          "decoded_bytes": 1989866,
+          "sha256": "65e6a2ef60535aad41f7dbb23d73d7324ff2c4a9f04e4d8fb22e802b67162380"
+        },
+        "bpe_uk_17k": {
+          "tokens": 325867,
+          "recorded_bytes": 1989866,
+          "decoded_bytes": 1989866,
+          "sha256": "65e6a2ef60535aad41f7dbb23d73d7324ff2c4a9f04e4d8fb22e802b67162380"
+        },
+        "bpe_uk_32k": {
+          "tokens": 296325,
+          "recorded_bytes": 1989866,
+          "decoded_bytes": 1989866,
+          "sha256": "65e6a2ef60535aad41f7dbb23d73d7324ff2c4a9f04e4d8fb22e802b67162380"
+        },
+        "unigram_uk_17k": {
+          "tokens": 378426,
+          "recorded_bytes": 1989866,
+          "decoded_bytes": 1989866,
+          "sha256": "65e6a2ef60535aad41f7dbb23d73d7324ff2c4a9f04e4d8fb22e802b67162380"
+        },
+        "bpeend_uk_17k": {
+          "tokens": 363158,
+          "recorded_bytes": 1989866,
+          "decoded_bytes": 1989866,
+          "sha256": "65e6a2ef60535aad41f7dbb23d73d7324ff2c4a9f04e4d8fb22e802b67162380"
+        }
+      },
+      "same_text": true
+    }
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-10-07T21:17:36+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "5d59c87ad50f21fa96c3e264450bdab8bf5260e2",
+    "git_dirty": true
+  }
+}

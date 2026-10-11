@@ -1,0 +1,81 @@
+{
+  "script": "derive_lexical_codes",
+  "args": {
+    "bpe_path": "data/bpe_17k.json",
+    "fact": "mstruct",
+    "out_fact": "mfreq",
+    "cache_dir": "data/cache",
+    "splits": [
+      "train",
+      "validation",
+      "test"
+    ],
+    "verify": true,
+    "shuffle_types": null,
+    "shuffle_bin": 64,
+    "transform": "freq",
+    "keep": "mstruct"
+  },
+  "timestamp_utc": "2026-09-27T04:45:21+00:00",
+  "results": {
+    "transform": {
+      "kind": "freq",
+      "shares": {
+        "f0": 0.15251141988839922,
+        "f1": 0.1365666716215958,
+        "f2": 0.13990373060410943,
+        "f3": 0.142523726826671,
+        "f4": 0.14282613398334887,
+        "f5": 0.1428152916007565,
+        "f6": 0.14285302547511916,
+        "none": 0.0
+      }
+    },
+    "lexicon": {
+      "fact": "mstruct",
+      "out_fact": "mfreq",
+      "word_types": 642581,
+      "occurrences": 83929892,
+      "agreement_with_context": 0.9973348708705595,
+      "source": "bpe_train_None_562b1cc17e_mfeatlex.codes.npy",
+      "bpe": "bpe_17k"
+    },
+    "split:train": {
+      "tokens": 120625719,
+      "words": 83929892,
+      "unseen_rate": 0.0
+    },
+    "split:validation": {
+      "tokens": 252255,
+      "words": 177685,
+      "unseen_rate": 0.005892450122407631
+    },
+    "split:test": {
+      "tokens": 288465,
+      "words": 199478,
+      "unseen_rate": 0.00964016081973952
+    }
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-09-27T04:45:21+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.5",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "spacy_model": "en_core_web_sm",
+    "spacy_model_version": "3.8.0",
+    "git_commit": "5d59c87ad50f21fa96c3e264450bdab8bf5260e2",
+    "git_dirty": true
+  },
+  "notes": [
+    "Unseen words get the none class, never their contextual code, which would readmit the right-context information."
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "script": "probe_dep",
+  "args": {
+    "runs": [
+      "a7175857fdf6",
+      "c564d066df6b"
+    ],
+    "fact": "dep",
+    "results_dir": "results",
+    "batches": 12,
+    "sample": 40000
+  },
+  "timestamp_utc": "2026-09-23T07:35:24+00:00",
+  "results": {
+    "fact": "dep",
+    "probes": [
+      {
+        "label": "bpe_baseline_bpe_17k",
+        "chance_majority": 0.455,
+        "accuracy_by_layer": [
+          0.7011250257492065,
+          0.7360000014305115,
+          0.7540000081062317,
+          0.7853749990463257,
+          0.7777500152587891
+        ]
+      },
+      {
+        "label": "bpe_dep-LEARN_bpe_17k",
+        "chance_majority": 0.455,
+        "accuracy_by_layer": [
+          0.999750018119812,
+          0.9991250038146973,
+          0.9982500076293945,
+          0.9946249723434448,
+          0.9747499823570251
+        ]
+      }
+    ]
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-09-23T07:35:24+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.5",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "spacy_model": "en_core_web_sm",
+    "spacy_model_version": "3.8.0",
+    "git_commit": "5d59c87ad50f21fa96c3e264450bdab8bf5260e2",
+    "git_dirty": true
+  },
+  "notes": [
+    "chance is the MAJORITY-CLASS rate, not 1/n: the label distribution is skewed."
+  ]
+}

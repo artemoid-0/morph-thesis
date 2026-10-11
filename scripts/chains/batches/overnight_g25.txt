@@ -1,0 +1,28 @@
+# overnight_g25 — bring G-25 and the headline to three seeds, paired
+#
+# Every job here is INDEPENDENT: none depends on another's result, so they can
+# run unattended in any order. That is also the point — seeing seed 0 alone has
+# repeatedly produced a claim that seed 1 then overturned. With all replicates
+# landing together, the claim can only be formed once they exist.
+#
+# Pairing: every cell needs a baseline at the SAME seed, so baseline seed 2 is
+# included. Without it, seed-2 cells have nothing to be paired against.
+#
+# ~6 runs x ~1h. All caches exist; pre-flight will confirm.
+
+# baseline, seed 2 (seeds 0 and 1 exist)
+run --pipeline bpe -o data.bpe_path=data/bpe_17k.json -o train.seed=2
+
+# full mstruct, the headline — seed 2 (seeds 0 and 1 exist)
+run --pipeline bpe --facts mstruct -o data.bpe_path=data/bpe_17k.json -o frozen.trainable=true -o frozen.causal_identity=true -o train.seed=2
+
+# G-25 morphology half — seeds 1 and 2 (seed 0 exists)
+run --pipeline bpe --facts mstruct -o data.bpe_path=data/bpe_17k.json -o frozen.trainable=true -o frozen.causal_identity=true -o frozen.struct_keep=morphology -o train.seed=1
+run --pipeline bpe --facts mstruct -o data.bpe_path=data/bpe_17k.json -o frozen.trainable=true -o frozen.causal_identity=true -o frozen.struct_keep=morphology -o train.seed=2
+
+# G-25 names half — seeds 1 and 2 (seed 0 exists)
+run --pipeline bpe --facts mstruct -o data.bpe_path=data/bpe_17k.json -o frozen.trainable=true -o frozen.causal_identity=true -o frozen.struct_keep=names -o train.seed=1
+run --pipeline bpe --facts mstruct -o data.bpe_path=data/bpe_17k.json -o frozen.trainable=true -o frozen.causal_identity=true -o frozen.struct_keep=names -o train.seed=2
+
+# tables, once everything above has landed
+! python scripts/analysis/export_results.py --out paper/
