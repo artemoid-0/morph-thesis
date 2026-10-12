@@ -12,6 +12,8 @@
 #      seeds 0–3 — a seed's pair at a time                              ~2.0 h  P192–P194
 #   3  English with endings apart at 20k, seeds 0–3, paired with BPE 17k's
 #      plain baselines at 20k (3 October) — a follow-up, run only when named   ~1.6 h
+#   4  English with endings apart at full training (added 12 October, §33.90): 50k,
+#      seeds 0–3, paired with BPE 17k's plain baselines at 50k (seeds 0–3) ~3.8 h  P198–P200
 #   then the tables and figures (seconds).
 #
 # Guards, recorded before the chain runs; each skips only what depends on it:
@@ -20,7 +22,8 @@
 #   sanity        after seed 0 of piece 1, the endings-apart baseline must end within
 #                 0.05 of BPE 17k's at seed 0 (1.5266) — a broken stream would not;
 #                 otherwise the rest of piece 1 is skipped. Piece 2's seed 0 pair
-#                 likewise within 0.05 of each other
+#                 likewise within 0.05 of each other; piece 4's seed 0 within 0.05 of
+#                 BPE 17k's at 50k (1.3477), or seeds 1–3 are skipped
 #   disk          no run starts with less than MIN_FREE_GB free
 #   END_BY        a set starts only if all of it would end by then, by recorded minutes
 # None branches on an effect's size.
@@ -67,6 +70,7 @@ minutes() {     # recorded minutes, one or two to spare
     case "$1" in
         en10k) echo 13 ;;    # 10.9–12.1 (BPE 17k's plain baselines, 10k)
         en20k) echo 24 ;;    # 21.7–21.8 (20k)
+        en50k) echo 58 ;;    # 55.0–59.6, median 57.0 (BPE 17k's plain baselines, 50k)
         fic)   echo 15 ;;    # 10.8–11.8 at ~38M on ukwiki; fiction's validation split is 2.4× larger
     esac
 }
@@ -196,6 +200,18 @@ fi
 if on 3; then
     stamp "3  English with endings apart at 20k, seeds 0–3"
     for s in 0 1 2 3; do en_run 20000 "$s" en20k; done
+fi
+if on 4; then
+    stamp "4  English with endings apart at full training (50k), seed 0"
+    en_run 50000 0 en50k
+    if [ -n "${PLAN:-}" ] || near "English seed 0, $ENEND against $EN17 (50k)" \
+            "$(python scripts/ops/run_ids.py --bpb $(en_args "$ENEND" 50000 0) 2>/dev/null)" \
+            "$(python scripts/ops/run_ids.py --bpb $(en_args "$EN17" 50000 0) 2>/dev/null)"; then
+        stamp "4  sanity passed — seeds 1–3"
+        for s in 1 2 3; do en_run 50000 "$s" en50k; done
+    else
+        stamp "4  SANITY FAILED — the rest of piece 4 is skipped"
+    fi
 fi
 
 if [ -n "${PLAN:-}" ]; then

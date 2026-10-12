@@ -3597,3 +3597,54 @@ P195 are wrong; each missed by its size, not its sign. The tally is 108 right, 8
 3. larger models.
 
 Dropped by the sentence test: why fiction's share is half, and case on fiction.
+
+### 33.90 English at full training (prepared), 12 October
+
+Four hours of GPU were available from 03:15 on 12 October. The queue (§33.89) was reviewed first.
+The two requests that had come from the thesis since then concern figures and wording and ask for
+no run, so the queue stands. Of its three candidates, only English at full training fits four
+hours as a whole cell.
+
+**The larger models' sizes, measured while the piece was prepared** (`scripts/ops/fit_check.py`,
+the Ukrainian null at ~38M, 20k steps, batch 32 × 256; D8's first step). The projections for the
+two measured widths match their runs: 21.4 against 22.3 minutes at width 128, 36.9 against 37.5
+at 256.
+
+| width × layers | parameters | of them the core | peak GPU memory | a 20k run |
+|---|---|---|---|---|
+| 128 × 4 | 5.04M | 0.79M | 2.70 GB | 21.4 min |
+| 128 × 8 | 5.84M | 1.59M | 3.25 GB | 32.4 min |
+| 256 × 4 | 11.80M | 3.16M | 3.04 GB | 36.9 min |
+| 256 × 8 | 14.95M | 6.32M | 4.33 GB | 56.0 min |
+| 384 × 4 | 20.12M | 7.10M | 3.68 GB | 56.1 min |
+| 384 × 8 | 27.22M | 14.20M | 5.54 GB | 88.4 min |
+| 512 × 4 | 30.02M | 12.61M | 4.34 GB | 80.3 min |
+| 512 × 8 | 42.63M | 25.22M | 6.79 GB | 127.5 min |
+
+Every size fits the card at the batch the runs use. Width 512, four times width 128 and 16 times
+its core, would cost ~10.7 h for both nulls at four seeds and 20k; width 384, ~7.5 h.
+
+**The piece** (piece 4 of `scripts/chains/long_2026-10-11.sh`). The endings-apart plain
+baselines run at 50k on WikiText-103, seeds 0–3. They are paired by seed with BPE 17k's plain
+baselines at 50k: 1.3477, 1.3482, 1.3573 and 1.3478. BPE 17k's seed 2 sits 0.009 above its other
+three, which would inflate a mean lead by about 0.002, so the size is judged by the median of the
+four paired leads. Guards:
+- seed 0 must end within 0.05 of BPE 17k's (1.3477), or seeds 1–3 are skipped;
+- disk;
+- the time box.
+
+Rehearsed with the stub, 17 scenarios: the twelve earlier ones and five for this piece (all
+pass; a seed-0 failure; the deadline; a resume after seed 0; a finished chain).
+
+**The sentence test.** If the lead holds, the thesis says the gain lasts at full training in
+English too. If it fades, it says the English gain belongs to short training, and the gain
+lasts only where words inflect richly.
+
+Predictions, before any run:
+
+- **P198** (~70%). At 50k the English endings-apart baselines end below BPE 17k's at four seeds
+  of four.
+- **P199** (~50%). The median of the four paired leads lies within 0.002 of the 20k lead
+  (+0.0035 to +0.0075).
+- **P200** (~65%). On BLiMP's determiner–noun agreement, the 50k endings-apart baselines beat
+  BPE 17k's at four seeds of four (at 10k: +4.4 ± 0.9, 4/4).
