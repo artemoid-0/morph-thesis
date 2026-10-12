@@ -1,0 +1,816 @@
+{
+ "script": "scripts/analysis/learning_law.py",
+ "timestamp_utc": "20261012T003054+0000",
+ "roots": [
+  "results"
+ ],
+ "refs": [
+  1.3,
+  1.25,
+  1.2,
+  1.15,
+  1.1
+ ],
+ "curves": [
+  {
+   "panel": "Ukrainian case",
+   "condition": "151M, 50k steps",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+   "feature": "bpe_ucase-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.0056150505297304365,
+    "null_bpb": 1.2809965402474552
+   },
+   "reference": 1.1,
+   "gain_at_reference": 0.0029458886403654514,
+   "zero_at": 1.023173049111453,
+   "end": {
+    "gain": -0.001259973533772163,
+    "null_bpb": 0.9443649690704693
+   },
+   "gain_at": {
+    "1.3": 0.005456155205435338,
+    "1.25": 0.00553105795488971,
+    "1.2": 0.005136826529609643,
+    "1.15": 0.004577367367190987,
+    "1.1": 0.0029458886403654514
+   }
+  },
+  {
+   "panel": "Ukrainian case",
+   "condition": "151M, 5k",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_st5k",
+   "feature": "bpe_ucase-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_st5k",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.00596391836664939,
+    "null_bpb": 1.217333890499954
+   },
+   "reference": 1.1,
+   "gain_at_reference": null,
+   "zero_at": null,
+   "end": {
+    "gain": 0.005537989244058239,
+    "null_bpb": 1.194537517925934
+   },
+   "gain_at": {
+    "1.3": 0.0056109998163037375,
+    "1.25": 0.005760560371166622,
+    "1.2": 0.005638008369587018,
+    "1.15": null,
+    "1.1": null
+   }
+  },
+  {
+   "panel": "Ukrainian case",
+   "condition": "38M, 10k",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+   "feature": "bpe_ucase-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.005175742233199887,
+    "null_bpb": 1.2109493735303856
+   },
+   "reference": 1.1,
+   "gain_at_reference": 0.003725503027499789,
+   "zero_at": null,
+   "end": {
+    "gain": 0.003230483392833272,
+    "null_bpb": 1.0896473814730325
+   },
+   "gain_at": {
+    "1.3": 0.004997355039478829,
+    "1.25": 0.004909139261820615,
+    "1.2": 0.00501840297881489,
+    "1.15": 0.004538359267043419,
+    "1.1": 0.003725503027499789
+   }
+  },
+  {
+   "panel": "Ukrainian case",
+   "condition": "7.6M, 10k",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.01_st10k",
+   "feature": "bpe_ucase-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.01_st10k",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.006194138787103176,
+    "null_bpb": 1.2841836271911142
+   },
+   "reference": 1.1,
+   "gain_at_reference": null,
+   "zero_at": null,
+   "end": {
+    "gain": 0.003142535220856113,
+    "null_bpb": 1.1052281634837915
+   },
+   "gain_at": {
+    "1.3": 0.0060382748253225696,
+    "1.25": 0.006177791550527461,
+    "1.2": 0.005577702046442544,
+    "1.15": 0.004487171256991245,
+    "1.1": null
+   }
+  },
+  {
+   "panel": "Ukrainian case",
+   "condition": "1.5M, 10k",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.002_st10k",
+   "feature": "bpe_ucase-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.002_st10k",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.007683286671348488,
+    "null_bpb": 1.266041168857042
+   },
+   "reference": 1.1,
+   "gain_at_reference": null,
+   "zero_at": null,
+   "end": {
+    "gain": 0.007554768237063414,
+    "null_bpb": 1.2641103367662416
+   },
+   "gain_at": {
+    "1.3": 0.006501864729835222,
+    "1.25": null,
+    "1.2": null,
+    "1.15": null,
+    "1.1": null
+   }
+  },
+  {
+   "panel": "English part of speech",
+   "condition": "50k steps",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_17k",
+   "feature": "bpe_pos-LEARN-CAUSAL_bpe_17k",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.015017019802228693,
+    "null_bpb": 1.9077089877736424
+   },
+   "reference": 1.55,
+   "gain_at_reference": 0.013425826056346157,
+   "zero_at": null,
+   "end": {
+    "gain": 0.0013212685851279327,
+    "null_bpb": 1.3394799620211726
+   },
+   "gain_at": {
+    "1.3": null,
+    "1.25": null,
+    "1.2": null,
+    "1.15": null,
+    "1.1": null
+   }
+  },
+  {
+   "panel": "English part of speech",
+   "condition": "20k",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_17k_st20k",
+   "feature": "bpe_pos-LEARN-CAUSAL_bpe_17k_st20k",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.015030550667208487,
+    "null_bpb": 1.9078913690977177
+   },
+   "reference": 1.55,
+   "gain_at_reference": 0.013439776625912456,
+   "zero_at": null,
+   "end": {
+    "gain": 0.00749566304300231,
+    "null_bpb": 1.4260508937423217
+   },
+   "gain_at": {
+    "1.3": null,
+    "1.25": null,
+    "1.2": null,
+    "1.15": null,
+    "1.1": null
+   }
+  },
+  {
+   "panel": "English part of speech",
+   "condition": "10k",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_17k_st10k",
+   "feature": "bpe_pos-LEARN-CAUSAL_bpe_17k_st10k",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.015080323726447853,
+    "null_bpb": 1.90855049823037
+   },
+   "reference": 1.55,
+   "gain_at_reference": 0.013430033576952192,
+   "zero_at": null,
+   "end": {
+    "gain": 0.01302277702300314,
+    "null_bpb": 1.5248137924920897
+   },
+   "gain_at": {
+    "1.3": null,
+    "1.25": null,
+    "1.2": null,
+    "1.15": null,
+    "1.1": null
+   }
+  },
+  {
+   "panel": "English part of speech",
+   "condition": "5k",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_17k_st5k",
+   "feature": "bpe_pos-LEARN-CAUSAL_bpe_17k_st5k",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.015286833828148827,
+    "null_bpb": 1.9112388349012346
+   },
+   "reference": 1.55,
+   "gain_at_reference": null,
+   "zero_at": null,
+   "end": {
+    "gain": 0.012904288344415982,
+    "null_bpb": 1.6551731236008358
+   },
+   "gain_at": {
+    "1.3": null,
+    "1.25": null,
+    "1.2": null,
+    "1.15": null,
+    "1.1": null
+   }
+  },
+  {
+   "panel": "English part of speech, by model width",
+   "condition": "128 wide, 50k steps",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_17k",
+   "feature": "bpe_pos-LEARN-CAUSAL_bpe_17k",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.015017019802228693,
+    "null_bpb": 1.9077089877736424
+   },
+   "reference": 1.55,
+   "gain_at_reference": 0.013425826056346157,
+   "zero_at": null,
+   "end": {
+    "gain": 0.0013212685851279327,
+    "null_bpb": 1.3394799620211726
+   },
+   "gain_at": {
+    "1.3": null,
+    "1.25": null,
+    "1.2": null,
+    "1.15": null,
+    "1.1": null
+   }
+  },
+  {
+   "panel": "English part of speech, by model width",
+   "condition": "128 wide, 10k",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_17k_st10k",
+   "feature": "bpe_pos-LEARN-CAUSAL_bpe_17k_st10k",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.015080323726447853,
+    "null_bpb": 1.90855049823037
+   },
+   "reference": 1.55,
+   "gain_at_reference": 0.013430033576952192,
+   "zero_at": null,
+   "end": {
+    "gain": 0.01302277702300314,
+    "null_bpb": 1.5248137924920897
+   },
+   "gain_at": {
+    "1.3": null,
+    "1.25": null,
+    "1.2": null,
+    "1.15": null,
+    "1.1": null
+   }
+  },
+  {
+   "panel": "English part of speech, by model width",
+   "condition": "256 wide, 10k",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_17k_st10k_w256",
+   "feature": "bpe_pos-LEARN-CAUSAL_bpe_17k_st10k_w256",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.013448214069268327,
+    "null_bpb": 1.937464875755735
+   },
+   "reference": 1.55,
+   "gain_at_reference": 0.0035942448000546535,
+   "zero_at": null,
+   "end": {
+    "gain": 0.0030178501173095396,
+    "null_bpb": 1.3846601399423824
+   },
+   "gain_at": {
+    "1.3": null,
+    "1.25": null,
+    "1.2": null,
+    "1.15": null,
+    "1.1": null
+   }
+  },
+  {
+   "panel": "English part of speech, by model width",
+   "condition": "256 wide, 20k",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_17k_st20k_w256",
+   "feature": "bpe_pos-LEARN-CAUSAL_bpe_17k_st20k_w256",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.013457193734519812,
+    "null_bpb": 1.9373840172759416
+   },
+   "reference": 1.55,
+   "gain_at_reference": 0.003582074696723612,
+   "zero_at": 1.3676463663799185,
+   "end": {
+    "gain": -0.0008290848194629219,
+    "null_bpb": 1.2768980285430782
+   },
+   "gain_at": {
+    "1.3": -0.0016749713531850085,
+    "1.25": null,
+    "1.2": null,
+    "1.15": null,
+    "1.1": null
+   }
+  },
+  {
+   "panel": "English part of speech, by model width",
+   "condition": "64 wide, 10k",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_17k_st10k_w64",
+   "feature": "bpe_pos-LEARN-CAUSAL_bpe_17k_st10k_w64",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.014165103786178468,
+    "null_bpb": 1.9402688190983957
+   },
+   "reference": 1.55,
+   "gain_at_reference": null,
+   "zero_at": null,
+   "end": {
+    "gain": 0.0100170916940307,
+    "null_bpb": 1.6601686707410281
+   },
+   "gain_at": {
+    "1.3": null,
+    "1.25": null,
+    "1.2": null,
+    "1.15": null,
+    "1.1": null
+   }
+  },
+  {
+   "panel": "English, other features (solid 50k, dashed 10k, dotted 20k)",
+   "condition": "inflection",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_17k",
+   "feature": "bpe_mfeatlex-LEARN-CAUSAL_bpe_17k",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.009257326634444063,
+    "null_bpb": 1.9077089877736424
+   },
+   "reference": 1.55,
+   "gain_at_reference": 0.006876435617805628,
+   "zero_at": 1.403779476030198,
+   "end": {
+    "gain": -0.004636630212201676,
+    "null_bpb": 1.339177937937312
+   },
+   "gain_at": {
+    "1.3": null,
+    "1.25": null,
+    "1.2": null,
+    "1.15": null,
+    "1.1": null
+   }
+  },
+  {
+   "panel": "English, other features (solid 50k, dashed 10k, dotted 20k)",
+   "condition": "inflection, 10k",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_17k_st10k",
+   "feature": "bpe_mfeatlex-LEARN-CAUSAL_bpe_17k_st10k",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.009288093674411968,
+    "null_bpb": 1.90855049823037
+   },
+   "reference": 1.55,
+   "gain_at_reference": 0.007317558529796504,
+   "zero_at": null,
+   "end": {
+    "gain": 0.006707523563092954,
+    "null_bpb": 1.5248137924920897
+   },
+   "gain_at": {
+    "1.3": null,
+    "1.25": null,
+    "1.2": null,
+    "1.15": null,
+    "1.1": null
+   }
+  },
+  {
+   "panel": "English, other features (solid 50k, dashed 10k, dotted 20k)",
+   "condition": "inflection, 20k",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_17k_st20k",
+   "feature": "bpe_mfeatlex-LEARN-CAUSAL_bpe_17k_st20k",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.009264023745667871,
+    "null_bpb": 1.9078913690977177
+   },
+   "reference": 1.55,
+   "gain_at_reference": 0.006997341927521319,
+   "zero_at": null,
+   "end": {
+    "gain": 0.0022021284493246585,
+    "null_bpb": 1.4260508937423217
+   },
+   "gain_at": {
+    "1.3": null,
+    "1.25": null,
+    "1.2": null,
+    "1.15": null,
+    "1.1": null
+   }
+  },
+  {
+   "panel": "English, other features (solid 50k, dashed 10k, dotted 20k)",
+   "condition": "part of speech, word form only",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_17k",
+   "feature": "bpe_poslex-LEARN-CAUSAL_bpe_17k",
+   "seeds": 2,
+   "peak": {
+    "gain": 0.012985464003798186,
+    "null_bpb": 1.9075150717200613
+   },
+   "reference": 1.55,
+   "gain_at_reference": 0.010106967361389971,
+   "zero_at": 1.361048723092287,
+   "end": {
+    "gain": -0.0007389562267111627,
+    "null_bpb": 1.3391416982612734
+   },
+   "gain_at": {
+    "1.3": null,
+    "1.25": null,
+    "1.2": null,
+    "1.15": null,
+    "1.1": null
+   }
+  },
+  {
+   "panel": "English, other features (solid 50k, dashed 10k, dotted 20k)",
+   "condition": "word form only, 10k",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_17k_st10k",
+   "feature": "bpe_poslex-LEARN-CAUSAL_bpe_17k_st10k",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.01276562906631612,
+    "null_bpb": 1.90855049823037
+   },
+   "reference": 1.55,
+   "gain_at_reference": 0.010461368971790973,
+   "zero_at": null,
+   "end": {
+    "gain": 0.0098853294351402,
+    "null_bpb": 1.5248137924920897
+   },
+   "gain_at": {
+    "1.3": null,
+    "1.25": null,
+    "1.2": null,
+    "1.15": null,
+    "1.1": null
+   }
+  },
+  {
+   "panel": "English, other features (solid 50k, dashed 10k, dotted 20k)",
+   "condition": "word form only, 20k",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_17k_st20k",
+   "feature": "bpe_poslex-LEARN-CAUSAL_bpe_17k_st20k",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.01270946708733045,
+    "null_bpb": 1.9078913690977177
+   },
+   "reference": 1.55,
+   "gain_at_reference": 0.010020739757200216,
+   "zero_at": null,
+   "end": {
+    "gain": 0.004973353634582012,
+    "null_bpb": 1.4260508937423217
+   },
+   "gain_at": {
+    "1.3": null,
+    "1.25": null,
+    "1.2": null,
+    "1.15": null,
+    "1.1": null
+   }
+  },
+  {
+   "panel": "English, other features (solid 50k, dashed 10k, dotted 20k)",
+   "condition": "frequency band",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_17k",
+   "feature": "bpe_mfreq-LEARN-CAUSAL_bpe_17k",
+   "seeds": 2,
+   "peak": {
+    "gain": 0.005291963185189319,
+    "null_bpb": 1.5437085107842916
+   },
+   "reference": 1.55,
+   "gain_at_reference": 0.005150924679258328,
+   "zero_at": 1.4122152519196316,
+   "end": {
+    "gain": 0.0006517158394473421,
+    "null_bpb": 1.3391416982612734
+   },
+   "gain_at": {
+    "1.3": null,
+    "1.25": null,
+    "1.2": null,
+    "1.15": null,
+    "1.1": null
+   }
+  },
+  {
+   "panel": "English, other features (solid 50k, dashed 10k, dotted 20k)",
+   "condition": "frequency band, 10k",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_17k_st10k",
+   "feature": "bpe_mfreq-LEARN-CAUSAL_bpe_17k_st10k",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.0053570519855326015,
+    "null_bpb": 1.5650356374618337
+   },
+   "reference": 1.55,
+   "gain_at_reference": 0.004989611230433832,
+   "zero_at": null,
+   "end": {
+    "gain": 0.004631253500970323,
+    "null_bpb": 1.5248137924920897
+   },
+   "gain_at": {
+    "1.3": null,
+    "1.25": null,
+    "1.2": null,
+    "1.15": null,
+    "1.1": null
+   }
+  },
+  {
+   "panel": "English, other features (solid 50k, dashed 10k, dotted 20k)",
+   "condition": "frequency band, 20k",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_17k_st20k",
+   "feature": "bpe_mfreq-LEARN-CAUSAL_bpe_17k_st20k",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.0055692032891273,
+    "null_bpb": 1.5468110456822244
+   },
+   "reference": 1.55,
+   "gain_at_reference": 0.005548310835715188,
+   "zero_at": null,
+   "end": {
+    "gain": 0.0014002691216536967,
+    "null_bpb": 1.4260508937423217
+   },
+   "gain_at": {
+    "1.3": null,
+    "1.25": null,
+    "1.2": null,
+    "1.15": null,
+    "1.1": null
+   }
+  },
+  {
+   "panel": "English, other features (solid 50k, dashed 10k, dotted 20k)",
+   "condition": "structure",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_17k",
+   "feature": "bpe_mstruct-LEARN-CAUSAL_bpe_17k",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.0011912120140046278,
+    "null_bpb": 1.5568267050122937
+   },
+   "reference": 1.55,
+   "gain_at_reference": 0.0011060763215813276,
+   "zero_at": 1.484441963629138,
+   "end": {
+    "gain": 0.00043266213152531874,
+    "null_bpb": 1.3394799620211726
+   },
+   "gain_at": {
+    "1.3": null,
+    "1.25": null,
+    "1.2": null,
+    "1.15": null,
+    "1.1": null
+   }
+  },
+  {
+   "panel": "English, other features (solid 50k, dashed 10k, dotted 20k)",
+   "condition": "structure, 10k",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_17k_st10k",
+   "feature": "bpe_mstruct-LEARN-CAUSAL_bpe_17k_st10k",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.0008551664579075635,
+    "null_bpb": 1.5650356374618337
+   },
+   "reference": 1.55,
+   "gain_at_reference": 0.000664488924389301,
+   "zero_at": null,
+   "end": {
+    "gain": 0.0007517905130901559,
+    "null_bpb": 1.5248137924920897
+   },
+   "gain_at": {
+    "1.3": null,
+    "1.25": null,
+    "1.2": null,
+    "1.15": null,
+    "1.1": null
+   }
+  },
+  {
+   "panel": "English, other features (solid 50k, dashed 10k, dotted 20k)",
+   "condition": "structure, 20k",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_17k_st20k",
+   "feature": "bpe_mstruct-LEARN-CAUSAL_bpe_17k_st20k",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.0011875223169651172,
+    "null_bpb": 1.5241040251170332
+   },
+   "reference": 1.55,
+   "gain_at_reference": 0.0010172227055556715,
+   "zero_at": 1.4721364193941768,
+   "end": {
+    "gain": -0.0007878105227960841,
+    "null_bpb": 1.4260508937423217
+   },
+   "gain_at": {
+    "1.3": null,
+    "1.25": null,
+    "1.2": null,
+    "1.15": null,
+    "1.1": null
+   }
+  },
+  {
+   "panel": "Ukrainian case by tokenizer (38M, 10k)",
+   "condition": "BPE 4k",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_uk_4k_ukwiki0.05_st10k",
+   "feature": "bpe_ucase-LEARN-CAUSAL_bpe_uk_4k_ukwiki0.05_st10k",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.009136941640749685,
+    "null_bpb": 1.5577156455498307
+   },
+   "reference": 1.25,
+   "gain_at_reference": 0.005366153556368166,
+   "zero_at": null,
+   "end": {
+    "gain": 0.004382196269836325,
+    "null_bpb": 1.2233040619478834
+   },
+   "gain_at": {
+    "1.3": 0.006924678896395828,
+    "1.25": 0.005366153556368166,
+    "1.2": null,
+    "1.15": null,
+    "1.1": null
+   }
+  },
+  {
+   "panel": "Ukrainian case by tokenizer (38M, 10k)",
+   "condition": "BPE 8k",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_uk_8k_ukwiki0.05_st10k",
+   "feature": "bpe_ucase-LEARN-CAUSAL_bpe_uk_8k_ukwiki0.05_st10k",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.007463639674830991,
+    "null_bpb": 1.499056000946758
+   },
+   "reference": 1.25,
+   "gain_at_reference": 0.00576241468972377,
+   "zero_at": null,
+   "end": {
+    "gain": 0.0039710221892488295,
+    "null_bpb": 1.1551352594764537
+   },
+   "gain_at": {
+    "1.3": 0.007002203829145455,
+    "1.25": 0.00576241468972377,
+    "1.2": 0.00527281240497087,
+    "1.15": null,
+    "1.1": null
+   }
+  },
+  {
+   "panel": "Ukrainian case by tokenizer (38M, 10k)",
+   "condition": "BPE 17k",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+   "feature": "bpe_ucase-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.005175742233199887,
+    "null_bpb": 1.2109493735303856
+   },
+   "reference": 1.25,
+   "gain_at_reference": 0.004909139261820615,
+   "zero_at": null,
+   "end": {
+    "gain": 0.003230483392833272,
+    "null_bpb": 1.0896473814730325
+   },
+   "gain_at": {
+    "1.3": 0.004997355039478829,
+    "1.25": 0.004909139261820615,
+    "1.2": 0.00501840297881489,
+    "1.15": 0.004538359267043419,
+    "1.1": 0.003725503027499789
+   }
+  },
+  {
+   "panel": "Ukrainian case by tokenizer (38M, 10k)",
+   "condition": "BPE 32k",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpe_uk_32k_ukwiki0.05_st10k",
+   "feature": "bpe_ucase-LEARN-CAUSAL_bpe_uk_32k_ukwiki0.05_st10k",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.0054558103956217074,
+    "null_bpb": 1.169225915086318
+   },
+   "reference": 1.25,
+   "gain_at_reference": 0.004738818005063388,
+   "zero_at": null,
+   "end": {
+    "gain": 0.00293854304843133,
+    "null_bpb": 1.044696838478739
+   },
+   "gain_at": {
+    "1.3": 0.003991518905625563,
+    "1.25": 0.004738818005063388,
+    "1.2": 0.00529705155558247,
+    "1.15": 0.004963645484520533,
+    "1.1": 0.004397543581648727
+   }
+  },
+  {
+   "panel": "Ukrainian case by tokenizer (38M, 10k)",
+   "condition": "Unigram 17k",
+   "null": "bpe_mconst-LEARN-CAUSAL_unigram_uk_17k_ukwiki0.05_st10k",
+   "feature": "bpe_ucase-LEARN-CAUSAL_unigram_uk_17k_ukwiki0.05_st10k",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.009761411899240069,
+    "null_bpb": 1.4179768611541614
+   },
+   "reference": 1.25,
+   "gain_at_reference": 0.0051226414814234044,
+   "zero_at": null,
+   "end": {
+    "gain": 0.005363285992884159,
+    "null_bpb": 1.0901662338887705
+   },
+   "gain_at": {
+    "1.3": 0.0063434247654838094,
+    "1.25": 0.0051226414814234044,
+    "1.2": 0.0069803548281073685,
+    "1.15": 0.00766490836638351,
+    "1.1": 0.005896698277570943
+   }
+  },
+  {
+   "panel": "Ukrainian case by tokenizer (38M, 10k)",
+   "condition": "BPE 17k, endings apart",
+   "null": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+   "feature": "bpe_ucase-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+   "seeds": 4,
+   "peak": {
+    "gain": 0.010421577230250667,
+    "null_bpb": 1.5457843882278863
+   },
+   "reference": 1.25,
+   "gain_at_reference": 0.005062052995162361,
+   "zero_at": null,
+   "end": {
+    "gain": 0.0048326663446416895,
+    "null_bpb": 1.0722640137086368
+   },
+   "gain_at": {
+    "1.3": 0.0038412405821858005,
+    "1.25": 0.005062052995162361,
+    "1.2": 0.007792342277716812,
+    "1.15": 0.008848558231442734,
+    "1.1": 0.00658681720183335
+   }
+  }
+ ]
+}

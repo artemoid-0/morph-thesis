@@ -28,7 +28,7 @@ the tokenizer was built as it was.
 | Part 6 | [Level 2: Features on a BPE Model](6_level2_features_on_bpe.md) | §23–§29 | Morphology as features on BPE; held-out evaluation; the word-identity control. |
 | Part 7 | [The Causal Reckoning](7_the_causal_reckoning.md) | §30–§32 | The within-word lookahead; "it was the structure"; a fresh look at the records. |
 | Part 8 | [The Controlled Programme](8_the_controlled_programme.md) | §33.1–§33.19 | BLiMP and the agreement test; the same-shape null; the additive design; position. |
-| Part 9 | [Ukrainian, and Before the Model Has Learned It](9_ukrainian_and_learning.md) | §33.20–§33.90 | The Ukrainian pipeline; Q2 in Ukrainian; early help; little data and the training budget; morphology in the tokenizer. |
+| Part 9 | [Ukrainian, and Before the Model Has Learned It](9_ukrainian_and_learning.md) | §33.20–§33.91 | The Ukrainian pipeline; Q2 in Ukrainian; early help; little data and the training budget; morphology in the tokenizer. |
 | — | [Appendices](appendices.md) | A, B | The decision record; the mapping from an earlier section numbering. |
 
 ## Every section
@@ -157,5 +157,6 @@ the tokenizer was built as it was.
   - [33.88 A second Ukrainian corpus: fiction keeps the gain, at half the size in bits per byte and in full in grammar](9_ukrainian_and_learning.md#3388-a-second-ukrainian-corpus-fiction-keeps-the-gain-at-half-the-size-in-bits-per-byte-and-in-full-in-grammar)
   - [33.89 Ten hours in batches, 11 October: what ran, and the queue after](9_ukrainian_and_learning.md#3389-ten-hours-in-batches-11-october-what-ran-and-the-queue-after)
   - [33.90 English at full training (prepared), 12 October](9_ukrainian_and_learning.md#3390-english-at-full-training-prepared-12-october)
+  - [33.91 FINDINGS checked against its record, 12 October](9_ukrainian_and_learning.md#3391-findings-checked-against-its-record-12-october)
 - [Appendix A — Decision Record](appendices.md#appendix-a--decision-record)
 - [Appendix B — Section Mapping](appendices.md#appendix-b--section-mapping)

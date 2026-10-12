@@ -15,11 +15,16 @@ that says whether the curves collapse. Draws one panel per feature.
 
     python scripts/analysis/learning_law.py --out exports/figures
     python scripts/analysis/learning_law.py --roots results unpacked_packs --out exports/figures
+    python scripts/analysis/learning_law.py --refs 1.30 1.25 1.20 1.15 1.10 --record
+
+--refs prints each condition's gain at more points of learning than the panel's own;
+--record writes every curve's numbers to results/audits/learning_law_<UTC timestamp>.json.
 """
 import os
 import glob
 import json
 import argparse
+import datetime
 import statistics as st
 
 import matplotlib
@@ -102,7 +107,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--roots', nargs='+', default=['results'])
     ap.add_argument('--out', default='exports/figures')
+    ap.add_argument('--refs', nargs='*', type=float, default=[], help='more null BPB points to read each gain at')
+    ap.add_argument('--record', action='store_true', help='write the numbers to results/audits/')
     args = ap.parse_args()
+    record = []
     R = load(args.roots)
     os.makedirs(args.out, exist_ok=True)
     fig, axes = plt.subplots(1, len(PANELS), figsize=(5.2 * len(PANELS), 4.2))
@@ -118,6 +126,13 @@ def main():
             peak = max(pts, key=lambda p: p[1]); g = at(pts, ref); z = zero(pts)
             print(f'    {name:32} {ns:>2} {peak[1]:+10.4f} {peak[0]:8.3f} '
                   f'{(f"{g:+.4f}" if g is not None else "—"):>12} {(f"{z:.3f}" if z else "—"):>8} {pts[-1][1]:+9.4f}')
+            more = {r: at(pts, r) for r in args.refs}
+            if more:
+                print(f'    {"":32}    at ' + '  '.join(f'{r:.2f} {v:+.4f}' if v is not None else f'{r:.2f} —' for r, v in more.items()))
+            record.append({'panel': title, 'condition': name, 'null': n, 'feature': f, 'seeds': ns,
+                           'peak': {'gain': peak[1], 'null_bpb': peak[0]}, 'reference': ref, 'gain_at_reference': g,
+                           'zero_at': z, 'end': {'gain': pts[-1][1], 'null_bpb': pts[-1][0]},
+                           'gain_at': {str(r): v for r, v in more.items()}})
             ax.plot([a for a, _ in pts], [b for _, b in pts], ('-o', '--o', ':o')[k % 3] if paired else '-o', ms=2.2, lw=1.2, color=c, label=f'{name} (n={ns})')
         ax.axhline(0, color='black', lw=0.7)
         ax.axvline(ref, color='grey', lw=0.6, ls=':')
@@ -131,6 +146,13 @@ def main():
     path = os.path.join(args.out, 'law_gain_vs_learned.png')
     fig.savefig(path, dpi=170)
     print(f'\n  figure -> {path}')
+    if args.record:
+        ts = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S') + '+0000'
+        rec = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+                           'results', 'audits', f'learning_law_{ts}.json')
+        json.dump({'script': 'scripts/analysis/learning_law.py', 'timestamp_utc': ts, 'roots': args.roots,
+                   'refs': args.refs, 'curves': record}, open(rec, 'w'), indent=1)
+        print(f'  [record] {rec}')
 
 
 if __name__ == '__main__':

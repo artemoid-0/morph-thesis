@@ -12,8 +12,8 @@ carries no information.
 > has. At full scale, the gains that look like feature gains are architecture.
 > In Ukrainian, morphology placed in the tokenizer — BPE that keeps inflectional
 > endings apart — helps by itself (1.6% in bits per byte at the size tested), and
-> unlike a feature's gain it lasts: it holds at twice the training budget and is
-> larger in a 4× wider model (2.6%). Case in the embedding adds on top of it.
+> unlike a feature's gain it lasts: it holds at twice the training budget and at
+> full training, and is larger in a model twice as wide (2.4%). Case in the embedding adds on top of it.
 
 **Start here: [`docs/README.md`](docs/README.md)** — what to read and in what
 order. The claims, each with its evidence: [`docs/FINDINGS.md`](docs/FINDINGS.md).

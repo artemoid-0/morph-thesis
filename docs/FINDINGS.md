@@ -1,4 +1,4 @@
-# What We Know — 10 October 2026
+# What We Know — 12 October 2026
 
 > **Kind:** claims — what the thesis claims now, each with its numbers, firmness and the journey
 > sections behind it. **Authoritative for:** the claims. Rewritten in place when a result changes one.
@@ -37,9 +37,10 @@ feature does.** At twice the budget the lead is +0.0169 ± 0.0007 (4/4), and **a
 training on four times the text — 151M tokens, 50k steps — +0.0165 ± 0.0008 (1.75%,
 4/4)**, flat from step 5,000 to the end while the null falls from 1.13 to 0.944: at two
 corpus sizes and three budgets it holds at about 0.017 wherever the null stands between
-1.21 and 0.944 BPB, the axis along which a feature's gain falls to nothing. In a 4× wider model it is larger: **+0.0254 ± 0.0012 (2.6%, 4/4)** at the 10k budget, and
+1.21 and 0.944 BPB, the axis along which a feature's gain falls to nothing. In a model twice as wide —
+width 256, four times the core's parameters — it is larger: **+0.0254 ± 0.0012 (2.6%, 4/4)** at the 10k budget, and
 at twice the budget, where it settles, **+0.0218 ± 0.0029 (2.4%, 4/4)**, flat from step
-7,500 to the end (width 128 at 20k: +0.0169, 1.6%). It is larger at every matched null
+7,500 to the end (width 128 at 20k: +0.0169, 1.7%). It is larger at every matched null
 BPB. Unigram, which cuts
 words differently and into even more tokens, leads early, loses the lead by step 3,000
 and gains nothing by the end (−0.0005 ± 0.0004): where the cuts fall matters, not how
@@ -49,7 +50,7 @@ in grammar, not only in bits per byte.** On MultiBLiMP's 2,744 Ukrainian subject
 agreement pairs the endings-apart models prefer the grammatical sentence more often: at
 full training 76.3% against 71.4% (**+4.9 ± 0.4 points**, 4/4; in number, gender and
 person; +5.0 on the pairs whose two sentences have the same token length), at ~38M and 10k
-69.0% against 64.8% (+4.3 ± 0.3, 4/4); +4.5 ± 0.5 at twice the budget and +5.3 ± 0.3 in the 4×
+69.0% against 64.8% (+4.3 ± 0.3, 4/4); +4.5 ± 0.5 at twice the budget and +5.3 ± 0.3 in the
 wider model — moving with the lead in bits per byte. Exposing more endings elsewhere does not
 do it: BPE 4k is 1.2 points below BPE 17k, Unigram level with it. **And on a second corpus.**
 On UberText 2.0's fiction subcorpus — novels and prose, both tokenizers trained on it — keeping
@@ -59,8 +60,10 @@ as on Wikipedia or more. *Two corpora (fiction at one size and budget), two corp
 three budgets on Wikipedia, two widths.* (§33.61–§33.68, §33.76, §33.79, §33.86, §33.88)
 
 **Q2 — Do injected linguistic facts help? No — in either way of injecting
-them, and in either language.** Against a **null of the same shape** — which in this codebase shares
-the feature cell's data, dropout *and* initial weights:
+them, and in either language.** Against a **null of the same shape** — which in this codebase sees
+the feature cell's data and dropout at the same seed, and starts from its initial weights when
+the feature has the null's eight classes; part of speech (19 classes) and inflection (72) share
+data and dropout only (§33.15):
 
 | feature | against its null | seeds |
 |---|---|---|
@@ -90,8 +93,8 @@ it (+0.0050 at ~1.5M, +0.0014 at ~7.6M) and about a third at ~38M under six
 tokenizers, so it is case, not only the tagger's right context — shares that are lower
 bounds, since the word form marks words unseen in train `none` and its model falls below
 the null on them (G-76, §33.74). **English agrees**: part of speech at the same
-10k-step budget beats its null by **+0.0136 ± 0.0004** (2 seeds) — three times
-Ukrainian case. (§33.31–§33.33) **What reading the sentence adds over reading the word form is mostly not context —
+10k-step budget beats its null by **+0.0130 ± 0.0004** (4 seeds) — five times
+Ukrainian case on 151M tokens (+0.0026). (§33.31–§33.33, §33.38) **What reading the sentence adds over reading the word form is mostly not context —
 and at full training none of it is.** At
 ~38M tokens and 10k steps Ukrainian case from the full sentence leads case from the word
 form alone by +0.0021 to +0.0033 under all six tokenizers (4 seeds;
@@ -133,8 +136,9 @@ none. The model uses the information, then learns it itself. *Firm as a
 pattern (2–4 seeds per feature, 21 feature-null pairs, none an exception).* And where the
 model has not yet learned the information — little training, or data too
 scarce to learn it — the advantage survives to the end (§33.31–§33.33). In
-training steps the early help is worth **2–9%**: part of speech ~8%,
-inflection 3–5%, Ukrainian case 2–4% (§33.33). **It is a crutch, not a
+training steps the early help is worth **1–9%**: part of speech 7–9%,
+inflection 3–5%, Ukrainian case 1–3% against the constant null (as first recorded 2–4%;
+§33.33, §33.91). **It is a crutch, not a
 teacher**: switched off after the first quarter of a 10k budget, English part
 of speech drops the model from 0.016 ahead to 0.029 behind one that never had
 it, and the model ends below that one (−0.0023 ± 0.0006, 4 seeds; "Removing a
@@ -160,9 +164,13 @@ word form and frequency band). The curve predicts each feature's gain at a short
 budget — at 10k steps part of speech +0.0130, part of speech from the word form
 +0.0099, inflection +0.0067, frequency band +0.0046, structure ≈ 0; at 20k
 +0.0075, +0.0050, +0.0022, +0.0014 and −0.0008 — and each feature has its own
-point where the gain reaches zero. *Firm in English; approximate in Ukrainian,
-where five conditions agree and the 50k run sits 0.0015 below them.* (§33.35,
-§33.38, §33.49, §33.52) Across six Ukrainian tokenizers case's gain agrees at
+point where the gain reaches zero. *Firm in English; approximate in Ukrainian.*
+Against the constant null, five Ukrainian conditions — 5k and 50k steps on 151M tokens, 10k on
+~38M, ~7.6M and ~1.5M — agree within 0.0015 at null BPB 1.30, and closer as the null learns:
+within 0.0006 at 1.20, and the three that reach 1.15 within 0.0001 (+0.0045 to +0.0046). At
+1.10 the 50k run is 0.0008 below the ~38M run (+0.0029 against +0.0037), then in its last
+steps; against the first null, which was not constant, it had sat 0.0015 below (G-73).
+(§33.35, §33.38, §33.49, §33.52, §33.58, §33.91) Across six Ukrainian tokenizers case's gain agrees at
 null BPB 1.25 — all within 0.0006 of +0.0052 (4 seeds) — and parts later, where
 endings are exposed (next section). (§33.58, §33.65)
 
@@ -242,10 +250,10 @@ over that subset's floor, and endings apart is 2.5 points lower (0/4). Read one 
 models hold less, not more: a model this size states a word's grammar at the word and does
 not revise it. *Four seeds each, one corpus, linear probes, the tagger's labels.* (§33.84)
 
-**Within one model size only.** At null BPB 1.55 a 4× wider model gains +0.0036
+**Within one model size only.** At null BPB 1.55 a model twice as wide gains +0.0036
 where the base model gains +0.0134 — its curve collapses abruptly between 1.70
 and 1.60 — and at a 20k budget its part of speech ends at its null (−0.0008 ±
-0.0005, 4 seeds); a model half as wide gains less throughout. The collapse is not
+0.0005, 4 seeds); a model half as wide (64) gains less throughout. The collapse is not
 the slot's share (tiled to the base share: +0.0024 and +0.0037 at 1.55, 2 seeds),
 nor the model's linear knowledge of the current word's part of speech: a probe
 finds the wider model's deeper layers ahead at every matched null BPB (+0.8 to
@@ -318,13 +326,13 @@ otherwise see, but without the shift — a pure constant, the same initial weigh
 (+0.0059) at seed 0 (G-71; §33.51–§33.52, §33.58).
 
 **With learned positions the same effect looked like a position channel.** There
-8 dims kept from token identity — even held at zero — improve on eight random
-starts of the plain baseline by **+0.0097 ± 0.0015 BPB (0.72%)**: every slotted
+8 dims kept from token identity, holding the null's constant, improve on eight random
+starts of the plain baseline by **+0.0097 ± 0.0015 BPB (0.72%)**: every null
 run beats every baseline start, and training becomes four times less sensitive to
-its random start. Such dims are never empty, for learned position fills them — a
-token-independent signal: over four seeds the zero slot's +0.0105 ± 0.0035 over the
-baseline loses −0.0082 ± 0.0012 when position is taken out of the slot and −0.0062
-± 0.0022 when position is taken out of the token dims instead. One vector added to
+its random start. Held at zero they gain about as much, +0.0105 ± 0.0035 over the baseline
+(4 seeds), for such dims are never empty: learned position fills them — a
+token-independent signal. Taking position out of the slot costs the zero slot −0.0082 ±
+0.0012, and taking it out of the token dims instead −0.0062 ± 0.0022. One vector added to
 every input gains about as much (+0.0085 to +0.0090 over its initialization-matched
 control, 4 of 4) — and there the window start is visible to the model anyway. The
 slot's width barely matters (8 to 64 dims). *Firm.* (§33.10–§33.16, §33.19, §33.24)
@@ -332,7 +340,7 @@ slot's width barely matters (8 to 64 dims). *Firm.* (§33.10–§33.16, §33.19,
 **It builds with training, steadies training, and survives width and language.**
 With learned positions the null over the plain baseline is +0.0035 ± 0.0011 at a
 10k budget, +0.0078 ± 0.0009 at 20k and +0.0112 at 50k (4 seeds each). In a model
-four times wider it is +0.0055 ± 0.0039 at 20k (5 seeds, 4 positive), and there the
+twice as wide it is +0.0055 ± 0.0039 at 20k (5 seeds, 4 positive), and there the
 plain baseline's final BPB varies 5.7 times more across seeds than the null's
 (spread 0.0237 against 0.0041, no run unstable): at width its clearest effect is
 consistency. In Ukrainian it replicates at every seed, smaller (+0.0028 ± 0.0010
@@ -410,5 +418,5 @@ The research programme, [`DIRECTIONS.md`](DIRECTIONS.md), pursues:
 - whether the tokenizer's gain holds in larger models, and on fiction beyond a 10k budget;
 
 It leaves open, as limitations: whether reliance's deficit is permanent beyond a 20k
-budget; why the Ukrainian 50k run sits below its curve; and, across model sizes, the half of
+budget; and, across model sizes, the half of
 the width difference that the previous word's tag does not account for (§33.83).

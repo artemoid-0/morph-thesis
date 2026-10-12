@@ -478,7 +478,8 @@ training the feature saves:
 | English inflection | 53 (5.3%) | 78 (3.9%) | 239 (4.8%) | 326 (3.3%) |
 | Ukrainian case | 23 (2.3%) | 69 (3.5%) | 181 (3.6%) | 163 (1.6%) |
 
-The early help is worth **2–9% of training steps** — consistent, and modest.
+The early help is worth **2–9% of training steps** — consistent, and modest. *(Ukrainian case,
+restated against the constant null: 22, 64, 162 and 118 steps, 1.2–3.2% — 1–9% in all; §33.91.)*
 (The first measurement, read off the 500-step evaluation grid, gave identical
 ratios for every feature; it could only resolve "within one interval".)
 
@@ -646,7 +647,8 @@ of speech from the word form **+0.0099 ± 0.0005**, inflection **+0.0067 ±
 **P70, P75, P78 right**; **P77 wrong** by one seed (structure +0.0028 at seed
 2; its mean is at the null). In Ukrainian, case at 5k, 10k and 20k budgets and
 on a 38M corpus cluster on one curve (at null BPB 1.10: +0.0051, +0.0049,
-+0.0056); the 50k run sits 0.0015 below them, the one outlier. **P73, P76
++0.0056); the 50k run sits 0.0015 below them, the one outlier. *(Against the first null.
+Against the constant null it is 0.0008 below the ~38M run at 1.10 and level at 1.15; §33.91.)* **P73, P76
 right** (20k: +0.0015 ± 0.0004; 5k: +0.0074 ± 0.0007).
 
 **The switch family, four seeds**, English part of speech at a 10k budget,
@@ -675,7 +677,8 @@ Two day tests. **G-68**: English part of speech switched on at step 5,000 of a
 **20k** budget — the learning rate still near its peak, 15,000 steps left —
 with off-from-start for comparison; the feature kept throughout at 20k is
 already run. **The width pilot** (D1): null and part of speech at a 10k budget
-in a model four times wider (d_model 256; the feature keeps its 8 dims), seed 0.
+in a model four times wider *(twice as wide, with four times the core's parameters; §33.91)*
+(d_model 256; the feature keeps its 8 dims), seed 0.
 
 Preparing the pilot found that a run's label ignored the model's size: a
 256-wide run would have been labelled like a base run, and every analysis
@@ -2323,7 +2326,7 @@ end of a 20k budget the endings-apart null ends **+0.0169 ± 0.0007** below BPE 
 axis the two schedules draw one flat line: about 0.017 wherever the null stands
 between 1.21 and 1.015. **P132 right; P133 right.**
 
-**A 4× wider model** (`tokenizer_table_20261008T211300`). At width 256 and 10k steps the
+**A 4× wider model** *(twice as wide; §33.91)* (`tokenizer_table_20261008T211300`). At width 256 and 10k steps the
 lead is **+0.0254 ± 0.0012** (4/4) — 2.6% of BPE 17k's 0.9849, where width 128 gives
 1.6%. **P134 right; P135 wrong**: larger, not smaller. At matched null BPB the wider
 model's lead is larger everywhere — +0.0383 at 1.18, +0.0336 at 1.11, +0.0296 at 1.04,
@@ -3423,8 +3426,8 @@ this longer schedule the lead is +0.0234, and it settles near +0.022. **P158 rig
 
 **What it changes.** The sentence test named two outcomes (§33.83). The first came: the lead
 stays above the width-128 lead at the same budget (+0.0169, 1.6%). "Larger in a wider model"
-no longer rests on a lead that was still falling. The tokenizer's gain is 1.6% of the null at
-width 128 and 2.4% at width 256 at a 20k budget, and flat in both over the second half of
+no longer rests on a lead that was still falling. The tokenizer's gain is 1.6% *(1.7%: +0.0169
+of 1.0145; §33.91)* of the null at width 128 and 2.4% at width 256 at a 20k budget, and flat in both over the second half of
 training.
 
 ### 33.87 English with endings apart: it helps, a fifth as much
@@ -3648,3 +3651,65 @@ Predictions, before any run:
   (+0.0035 to +0.0075).
 - **P200** (~65%). On BLiMP's determiner–noun agreement, the 50k endings-apart baselines beat
   BPE 17k's at four seeds of four (at 10k: +4.4 ± 0.9, 4/4).
+
+### 33.91 FINDINGS checked against its record, 12 October
+
+A check of the thesis text against FINDINGS, the results record and the journey found seven
+places where FINDINGS and its own record disagreed. Each was settled from the run records, and
+corrected in FINDINGS, the summaries and the results record; the journey is annotated where it
+first stated them. None changes a claim's direction.
+
+**1. The Ukrainian law's outlier.** FINDINGS still quoted §33.38: the 50k run 0.0015 below the
+other conditions. That was measured against the first null, which was not constant (G-73).
+§33.58 restated the comparison, but FINDINGS kept the old figure. Recomputed from the records
+(`learning_law_20261012T003054`; `learning_law.py` now takes `--refs` and `--record`), case
+over the constant null at five points of learning:
+
+| condition | 1.30 | 1.25 | 1.20 | 1.15 | 1.10 |
+|---|---|---|---|---|---|
+| 151M, 50k | +0.0055 | +0.0055 | +0.0051 | +0.0046 | +0.0029 |
+| 151M, 5k | +0.0056 | +0.0058 | +0.0056 | — | — |
+| ~38M, 10k | +0.0050 | +0.0049 | +0.0050 | +0.0045 | +0.0037 |
+| ~7.6M, 10k | +0.0060 | +0.0062 | +0.0056 | +0.0045 | — |
+| ~1.5M, 10k | +0.0065 | — | — | — | — |
+| spread | 0.0015 | 0.0013 | 0.0006 | 0.0001 | 0.0008 |
+
+The curves draw together as the null learns, and are level at 1.15. At 1.10 the 50k run is
+0.0008 below the ~38M run, which is in its last steps there (§33.58 gave +0.0030 and +0.0036).
+That is within the English law's worst deviation across schedules (0.0010, §33.38). The law in
+Ukrainian stays "approximate"; the limitation "why the 50k run sits below its curve" is closed.
+The 151M runs at 10k and 20k have no curve on the constant: their best steps were re-scored
+(§33.56), and their nulls were not re-run.
+
+**2. "4× wider."** Width 256 is twice width 128. It has four times the core's parameters
+(3.16M against 0.79M), and 2.3 times all parameters with the embeddings (11.80M against 5.04M;
+the fit check, §33.90). The phrase also stands in §33.67, §33.80 and §33.83, and in P80 and
+P134; read each as twice as wide. Width 64 is half as wide, as stated.
+
+**3. Width 128 at 20k is 1.7%, not 1.6%.** +0.0169 of BPE 17k's mean null of 1.0145 is 1.67%.
+The 1.6% is the 10k figure: +0.0174 of 1.0896.
+
+**4. English part of speech at 10k is +0.0130 ± 0.0004, at four seeds** (§33.38), not §33.33's
+two-seed +0.0136. Against the restated Ukrainian case on 151M at the same budget (+0.0026,
+§33.56) it is five times as large, not three.
+
+**5. The steps the early help saves.** §33.56 listed them among the curve numbers the constant
+null moves, and they had not been restated. `scripts/analysis/steps_saved.py`
+(`steps_saved_20261012T003033`) reproduces §33.33's English numbers to the step:
+- part of speech 86, 141, 434 and 790 steps;
+- inflection 53, 78, 239 and 326 steps.
+
+Against the constant null, Ukrainian case saves 22, 64, 162 and 118 steps at steps 1k, 2k, 5k
+and 10k (2.2%, 3.2%, 3.2%, 1.2%). It was first recorded as 23, 69, 181 and 163. The range over
+the three features is 1–9%.
+
+**6. What the null shares with a feature.** At one seed every cell sees the same windows and
+the same dropout masks. Initial weights match only where the parameter shapes match (§33.15).
+The null's slot has 8 classes, like structure, frequency band, and the Ukrainian features (case,
+its controls, number, gender). Part of speech has 19 classes and inflection 72, so those pairs
+share data and dropout, not initial weights. FINDINGS had claimed all three for every feature;
+it now says which features share what.
+
+**7. The slot's +0.0097 ± 0.0015.** It is the null's: the constant code, against eight starts of
+the baseline (§33.16). The slot held at zero gains +0.0105 ± 0.0035 over the baseline (§33.24).
+FINDINGS had attached "even held at zero" to the first number; each now stands on its own.
