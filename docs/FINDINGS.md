@@ -25,8 +25,14 @@ ending, by a rule that reads the word alone, the Ukrainian result's tokenizer be
 morphology helps: **+0.0046 ± 0.0010 BPB (0.30%, 4/4)** at a 10k budget, every run below
 every BPE 17k run. That is a fifth of the Ukrainian gain, as English inflects far less: the
 rule cuts 10.2% of words and reaches half of the inflected ones. It does not fade: at twice
-the budget **+0.0055 ± 0.0008 (0.38%, 4/4)**. *Plain baselines, four seeds, two budgets.*
-(§33.85, §33.87)
+the budget **+0.0055 ± 0.0008 (0.38%, 4/4)**, and at full training — 50k steps — **+0.0053 on
+the median seed (0.39%)**, at three seeds of four. There, in each tokenizer one run in four
+drifts after 20k steps, by 0.005 to 0.009, which leaves one pair level and inflates the mean
+(+0.0069 ± 0.0037). The grammar test agrees at every seed: on BLiMP the full-training models
+are **+1.0 ± 0.2 points** better over all 67 paradigms (4/4; +0.3 at 10k), +2.1 ± 0.8 in
+morphology (4/4), and better on average in each agreement phenomenon (3/4 each). *Plain
+baselines, four seeds, three budgets; at full training three seeds of four.* (§33.85, §33.87,
+§33.92)
 
 **Q1 in Ukrainian, with morphology inside BPE: yes — and the gain lasts, to full
 training.** BPE that never joins a stem to its inflectional ending — the cut read from
@@ -414,7 +420,6 @@ Each withdrawal was decided by a rule recorded before its result.
 ## Open
 
 The research programme, [`DIRECTIONS.md`](DIRECTIONS.md), pursues:
-- whether keeping endings apart helps English at full training;
 - whether the tokenizer's gain holds in larger models, and on fiction beyond a 10k budget;
 
 It leaves open, as limitations: whether reliance's deficit is permanent beyond a 20k

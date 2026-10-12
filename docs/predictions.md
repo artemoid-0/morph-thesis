@@ -6,7 +6,7 @@ Each prediction was recorded in `docs/record/journey/README.md` **before** its r
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 108 right, 8 half right, 72 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 3 pending — of 200. The wrong ones carried
+**Tally:** 109 right, 8 half right, 74 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 0 pending — of 200. The wrong ones carried
 the information: the null's gain (P18), the shuffled control (P15), the
 leak's absence (P11), the training-budget reframing (P61), the tokenizer
 hypothesis (P119, P120), Unigram's early lead (P130), the wider model's larger
@@ -212,6 +212,6 @@ over the word form's (P148–P150), and how much of it the tagger's leak is (P16
 | P195 | On English BLiMP the endings-apart baselines beat BPE 17k's by more than 0.5 points on average | wrong — +0.3 ± 0.3 (determiner–noun agreement +4.4, 4/4) | §33.85, §33.87 |
 | P196 | At 20k the English endings-apart baselines end below BPE 17k's at four seeds of four | right — +0.0055 ± 0.0008 (4/4) | §33.87 |
 | P197 | Their lead at 20k lies within 0.002 of the 10k lead (+0.0026 to +0.0066) | right — +0.0055 | §33.87 |
-| P198 | At 50k the English endings-apart baselines end below BPE 17k's at four seeds of four | pending | §33.90 |
-| P199 | The median of their four paired leads at 50k lies within 0.002 of the 20k lead (+0.0035 to +0.0075) | pending | §33.90 |
-| P200 | On BLiMP's determiner–noun agreement the 50k endings-apart baselines beat BPE 17k's at four seeds of four | pending | §33.90 |
+| P198 | At 50k the English endings-apart baselines end below BPE 17k's at four seeds of four | wrong — three of four (seed 3 −0.0003) | §33.90, §33.92 |
+| P199 | The median of their four paired leads at 50k lies within 0.002 of the 20k lead (+0.0035 to +0.0075) | right — +0.0053 | §33.90, §33.92 |
+| P200 | On BLiMP's determiner–noun agreement the 50k endings-apart baselines beat BPE 17k's at four seeds of four | wrong — +3.0 ± 1.3, three of four (seed 0 −0.3) | §33.90, §33.92 |

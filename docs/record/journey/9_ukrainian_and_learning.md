@@ -3713,3 +3713,59 @@ it now says which features share what.
 **7. The slot's +0.0097 ± 0.0015.** It is the null's: the constant code, against eight starts of
 the baseline (§33.16). The slot held at zero gains +0.0105 ± 0.0035 over the baseline (§33.24).
 FINDINGS had attached "even held at zero" to the first number; each now stands on its own.
+
+### 33.92 English at full training: the gain holds on the median, at three seeds of four
+
+**The runs** (piece 4 of `long_2026-10-11.sh`, 03:26–07:22 on 12 October; 4 runs of 57.4–59.6
+minutes). The seed-0 guard passed: 1.3426 against BPE 17k's 1.3477.
+
+**The result** (WikiText-103, plain baselines, 50k steps; paired by seed, without shared initial
+weights):
+
+| seed | 0 | 1 | 2 | 3 | mean |
+|---|---|---|---|---|---|
+| BPE 17k | 1.3477 | 1.3482 | 1.3573 | 1.3478 | 1.3503 |
+| endings apart | 1.3426 | 1.3428 | 1.3400 | 1.3481 | 1.3434 |
+| lead | +0.0051 | +0.0055 | +0.0173 | −0.0003 | +0.0069 ± 0.0037 |
+
+The median lead is **+0.0053 (0.39%)**. The mean, +0.0069 ± 0.0037 (0.51%, 3/4), is inflated by
+BPE 17k's seed 2. **P198 wrong** (three seeds of four). **P199 right**: the median lies within
+0.002 of the 20k lead. Along training the median lead is flat from step 10,000 to the end:
++0.0051 at 10k, +0.0048 at 20k, +0.0055 at 30k, +0.0050 at 40k, +0.0053 at the end.
+
+**One run in four drifts.** No run has a spike: no evaluation after step 10,000 rises more than
+0.0007 above the one before. But in each tokenizer one run falls behind its siblings from about
+step 20,000:
+- BPE 17k's seed 2 ends 0.009 above its other three;
+- endings apart's seed 3 ends 0.005 above its other three, which leaves that pair level: +0.0046
+  at 20k, +0.0003 at 30k, −0.0003 at the end.
+
+At 50k the spread between a tokenizer's runs (0.008–0.010) is larger than the gain. At 10k and
+20k it was not: every endings-apart run was below every BPE 17k run. Here fourteen of the
+sixteen cross pairs favour endings apart, and the three typical runs of each differ by 0.0061.
+
+**BLiMP** (`blimp_eval_20261012T043938`; 67 paradigms, paired by seed). At full training the
+endings-apart models judge better overall at every seed: 59.0% → 60.0%, **+1.0 ± 0.2 points
+(4/4)**, against +0.3 ± 0.3 (3/4) at 10k. Morphology +2.1 ± 0.8 (4/4). The agreement
+phenomena:
+- determiner–noun +3.0 ± 1.3 (3/4; seed 0 −0.3) — **P200 wrong** (three of four);
+- subject–verb +1.3 ± 0.7 (3/4), negative at 10k (−1.6, 4/4);
+- anaphor +4.4 ± 2.9 (3/4), negative at 10k (−2.0, 4/4).
+
+Seed 3, level in bits per byte, judges better too: +0.4 overall, +6.0 on determiner–noun
+agreement. The mean margin by which a model prefers the good sentence is smaller under endings
+apart at every seed, by 0.02 to 0.11 nats. The models prefer the good sentence more often, not
+by more.
+
+**What it changes.** The sentence test named two outcomes (§33.87, §33.90): the gain holds, or
+it belongs to short training. The first came, less firmly than in Ukrainian. In English the gain
+lasts to full training on the median seed, at three seeds of four. The grammar test favours
+keeping endings apart at every seed, by more than at 10k. In Ukrainian at full training it was
+four of four, with every endings-apart run below every BPE 17k run (§33.76).
+
+**Predictions.** P199 is right; P198 and P200 are wrong, each by one seed. The tally is 109 right,
+8 half right, 74 wrong, 8 never tested, 1 withdrawn, of 200.
+
+**What remains.** Four more seeds per tokenizer (~7.6 h) would say whether one drifting run in four
+is the English full-training spread. It is a follow-up, run only if the thesis asks (DIRECTIONS,
+"The queue").
