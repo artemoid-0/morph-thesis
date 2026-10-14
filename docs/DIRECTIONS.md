@@ -2,7 +2,7 @@
 
 > **Kind:** claims — the current plan and queue; rewritten as they change.
 > **Authoritative for:** what is investigated next, why, and in what order.
-> Updated 12 October 2026: the queue reviewed before a four-hour window, and after it (journey §33.90–§33.92).
+> Updated 14 October 2026: the queue reviewed before a six-hour window (journey §33.93).
 
 The thesis stands on what is established ([`FINDINGS.md`](FINDINGS.md)). The
 programme began on 2 October from its one positive regularity — *a feature helps
@@ -149,7 +149,8 @@ Reviewed 11 October, evening (journey §33.89), after a ten-hour run of experime
 candidate is ranked by what its result could change in the thesis and costed from the recorded
 timings, and must pass the sentence test: for each likely outcome, the sentence the thesis
 would state; a candidate whose outcomes all give the same sentence, or none, is dropped.
-Rewritten at every review. **Running:** nothing.
+Rewritten at every review. **Running:** candidate 3 at width 512 (`scale_2026-10-14.sh`, from
+14 October, time-boxed to 11:50; seven of its eight runs fit; P201–P204).
 
 **Answered on 12 October:** English at full training (§33.92). The gain holds on the median seed,
 +0.0053 (0.39%), at three seeds of four: in each tokenizer one run in four drifts after 20k. On
@@ -169,7 +170,7 @@ BLiMP the models are +1.0 point better at every seed.
 |---|---|---|---|---|---|
 | 1 | **Fiction at full training**: both fiction nulls at fraction 0.4 (~133M tokens), 50k, seeds 0–3 | whether the gain lasts on a second corpus, as it does on Wikipedia | **It holds near +0.010:** it lasts on both corpora. **It fades:** on fiction it is a short-training gain | ~7.6 h | not prepared: the two conditions at 0.4 (CPU, ~3–4 h each; one at a time, §33.87) |
 | 2 | **English at full training, seeds 4–7** of both tokenizers — a follow-up, run only if the thesis asks | whether one drifting run in four is the English full-training spread | **7/8 or more:** the gain lasts in English firmly. **Fewer:** at full training the English gain is within seed variation | ~7.6 h | quiet · piece 4 with seeds 4–7 (minutes) |
-| 3 | **Larger models (D8)**: both Ukrainian nulls at a larger width, ~38M, 20k, seeds 0–3 | how the tokenizer's gain moves with model size beyond width 256 | **It grows:** larger models gain more. **It shrinks:** it peaks at moderate size | width 512: ~10.7 h; width 384: ~7.5 h (fit check, §33.90) | not prepared: a piece, its predictions |
+| 3 | **Larger models (D8)**: both Ukrainian nulls at width 512, ~38M, 10k, seeds 0–3 — beside the 10k rows at widths 128 and 256 | how the tokenizer's gain moves with model size beyond width 256 | **It grows:** larger models gain more. **It holds:** it grows to 12M parameters, then holds. **It shrinks:** it peaks at moderate size | ~5.9 h (fit check, §33.93) | **running** · `scale_2026-10-14.sh`, rehearsed |
 
 **Dropped by the sentence test:**
 - **Why fiction's share of bits per byte is half Wikipedia's** (§33.88). The thesis states the

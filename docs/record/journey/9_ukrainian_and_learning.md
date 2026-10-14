@@ -3769,3 +3769,51 @@ four of four, with every endings-apart run below every BPE 17k run (§33.76).
 **What remains.** Four more seeds per tokenizer (~7.6 h) would say whether one drifting run in four
 is the English full-training spread. It is a follow-up, run only if the thesis asks (DIRECTIONS,
 "The queue").
+
+### 33.93 Does the tokenizer's gain keep growing with model size? Width 512 (prepared), 14 October
+
+Six hours of GPU were available from 05:53 on 14 October. The queue was reviewed against the
+thesis text's own list of limits. Its first limit is the one the main positive result rests on:
+one model of about 5M parameters and its variants half and twice as wide, so how the tokenizer's
+gain changes at larger scale was not tested. No request from the thesis was open.
+
+The three candidates:
+- **Fiction at full training** (queue 1) needs ~7 h of CPU to build its conditions, then 7.6 h of
+  GPU. It does not fit.
+- **English seeds 4–7** (queue 2) is a follow-up the thesis has not asked for.
+- **Larger models** (queue 3) answer that first limit. This is the one chosen.
+
+**The design.** Both nulls at width 512 — twice width 256, four times width 128 — on ~38M tokens,
+10k steps, seeds 0–3, paired by seed from identical initial weights (the two tokenizers' models
+have the same shapes). Width 512 has 30.0M parameters, 12.6M of them in the core (fit check,
+§33.90): six times the base model, sixteen times its core. At 10k steps the comparison has rows
+at both smaller widths, with all four seeds: +0.0174 (1.6%) at width 128, +0.0254 (2.6%) at width
+256. A 20k budget, where width 256's lead settled (+0.0218, §33.86), would cost 10.7 h. Along the
+law's axis the widths are compared at the same null BPB, which no schedule decides.
+
+**The chain** (`scripts/chains/scale_2026-10-14.sh`). A seed's two runs go together, ~44 minutes
+each; fit check 39.8, and runs have taken 1.07 times the projection at widths 128 and 256.
+Guards:
+- each condition's caches must exist, and its smoke test must pass at width 512;
+- after seed 0, each 512-wide null must end below its own 256-wide 10k null, since a wider model
+  that ends worse has diverged; and the pair must end within 0.05 of each other;
+- disk, and the time box: END_BY 11:50.
+
+Seven runs fit: the pairs of seeds 0–2, then, with `FILL=1`, seed 3's BPE 17k null alone. Seed
+3's endings-apart null runs at the next start (~44 min). The chain was rehearsed with the stub in
+twelve scenarios, all passing; they cover each guard, the fill used once, and the resume after it.
+
+**The sentence test.** If the lead is larger than at width 256, the thesis says the tokenizer's
+gain grows with model size across a sixfold range of parameters. If it is about the same, the gain
+grows from 5M to 12M parameters and then holds. If it is smaller, the gain peaks at a moderate
+size, where a larger model has learned more of the endings for itself.
+
+Predictions, before any run:
+
+- **P201** (~80%). At width 512 the endings-apart null ends below BPE 17k's at every seed that
+  runs.
+- **P202** (~55%). Its mean lead is larger than width 256's at the same budget (+0.0254).
+- **P203** (~50%). Where the BPE 17k null passes BPB 1.18, 1.11 and 1.04, width 512's lead is
+  larger than width 256's at each (+0.0383, +0.0336, +0.0296; §33.68).
+- **P204** (~50%). On MultiBLiMP, width 512's endings-apart advantage is at least width 256's at
+  10k (+5.3 points) on average.

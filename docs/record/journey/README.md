@@ -28,7 +28,7 @@ the tokenizer was built as it was.
 | Part 6 | [Level 2: Features on a BPE Model](6_level2_features_on_bpe.md) | §23–§29 | Morphology as features on BPE; held-out evaluation; the word-identity control. |
 | Part 7 | [The Causal Reckoning](7_the_causal_reckoning.md) | §30–§32 | The within-word lookahead; "it was the structure"; a fresh look at the records. |
 | Part 8 | [The Controlled Programme](8_the_controlled_programme.md) | §33.1–§33.19 | BLiMP and the agreement test; the same-shape null; the additive design; position. |
-| Part 9 | [Ukrainian, and Before the Model Has Learned It](9_ukrainian_and_learning.md) | §33.20–§33.92 | The Ukrainian pipeline; Q2 in Ukrainian; early help; little data and the training budget; morphology in the tokenizer. |
+| Part 9 | [Ukrainian, and Before the Model Has Learned It](9_ukrainian_and_learning.md) | §33.20–§33.93 | The Ukrainian pipeline; Q2 in Ukrainian; early help; little data and the training budget; morphology in the tokenizer. |
 | — | [Appendices](appendices.md) | A, B | The decision record; the mapping from an earlier section numbering. |
 
 ## Every section
@@ -159,5 +159,6 @@ the tokenizer was built as it was.
   - [33.90 English at full training (prepared), 12 October](9_ukrainian_and_learning.md#3390-english-at-full-training-prepared-12-october)
   - [33.91 FINDINGS checked against its record, 12 October](9_ukrainian_and_learning.md#3391-findings-checked-against-its-record-12-october)
   - [33.92 English at full training: the gain holds on the median, at three seeds of four](9_ukrainian_and_learning.md#3392-english-at-full-training-the-gain-holds-on-the-median-at-three-seeds-of-four)
+  - [33.93 Does the tokenizer's gain keep growing with model size? Width 512 (prepared), 14 October](9_ukrainian_and_learning.md#3393-does-the-tokenizers-gain-keep-growing-with-model-size-width-512-prepared-14-october)
 - [Appendix A — Decision Record](appendices.md#appendix-a--decision-record)
 - [Appendix B — Section Mapping](appendices.md#appendix-b--section-mapping)
