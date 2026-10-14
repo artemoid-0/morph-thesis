@@ -3890,3 +3890,31 @@ seeds, ~10.7 h (DIRECTIONS, "The queue").
 
 **Predictions.** P201 and P204 are right; P202 and P203 are wrong. The tally is 111 right, 8 half
 right, 76 wrong, 8 never tested, 1 withdrawn, of 204.
+
+### 33.95 Does the width-512 lead settle? Seed 0 at 20k (prepared), 14 October
+
+About three hours of GPU were available from 19:30 on 14 October. They run one seed of the
+queue's first candidate (§33.94): both width-512 nulls at 20k, seed 0. The other seeds follow when
+there are hours for them. One seed cannot give a lead with its spread. It can show whether the
+lead levels off between step 10,000 and 20,000, the question §33.94 left. At the end of the 10k
+schedule seed 0's lead was +0.0139, after +0.0133 and +0.0138 at steps 8,000 and 9,000, while the
+four seeds' mean was still falling.
+
+**The chain** is `scale_2026-10-14.sh` with two new knobs:
+- `STEPS=20000` (88 minutes a run, twice the 10k runs' 40.8–44.6);
+- `SEEDS=0`.
+
+The width guard compares each 512-wide null with its 256-wide null at the same budget. Width 256 at
+20k: 0.9000 and 0.8812 at seed 0. It was rehearsed with the stub: sixteen scenarios, the twelve of
+§33.93 and four for the new knobs, all passing.
+
+**The sentence test** is §33.94's. If the lead settles at +0.010 or more, the gain at 30M parameters
+is smaller but lasting. If it keeps falling, at 30M parameters the tokenizer's gain fades with
+learning, as a feature's does. One seed gives the direction, and the other seeds give the size.
+
+Predictions, before any run, for seed 0:
+
+- **P205** (~55%). At 20k, width 512's seed-0 lead ends at +0.010 or more.
+- **P206** (~50%). Over its last 5,000 steps it changes by less than 0.002: it has levelled off.
+- **P207** (~60%). At null BPB 0.92 and 0.89 it lies within 0.003 of the 10k schedule's seed-0 lead
+  there (+0.0151, +0.0134): the point of learning sets it, not the schedule.

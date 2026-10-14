@@ -149,7 +149,8 @@ Reviewed 11 October, evening (journey §33.89), after a ten-hour run of experime
 candidate is ranked by what its result could change in the thesis and costed from the recorded
 timings, and must pass the sentence test: for each likely outcome, the sentence the thesis
 would state; a candidate whose outcomes all give the same sentence, or none, is dropped.
-Rewritten at every review. **Running:** nothing.
+Rewritten at every review. **Running:** candidate 1's seed 0 (`scale_2026-10-14.sh`, `STEPS=20000`
+`SEEDS=0`, from 14 October, 19:30; P205–P207). Seeds 1–3 when there are hours for them.
 
 **Answered on 14 October:** larger models, width 512 at 10k (§33.94). In bits per byte the
 tokenizer's gain peaks at width 256: at width 512 it is +0.0125 (1.4%, 4/4), and it falls along
@@ -171,7 +172,7 @@ BLiMP the models are +1.0 point better at every seed.
 
 | # | candidate | what it settles for the thesis | the sentence test: each outcome's sentence | GPU | kind · ready |
 |---|---|---|---|---|---|
-| 1 | **Width 512 at 20k**: both Ukrainian nulls, ~38M, seeds 0–3 (or seeds 0–1 first) | whether the widest model's falling lead settles: whether at 30M parameters the tokenizer's gain outlasts learning | **It settles at +0.010 or more:** at 30M the gain is smaller but lasting. **It keeps falling:** at 30M parameters the tokenizer's gain fades with learning, as a feature's does | ~11.3 h (~85 min a run); seeds 0–1 ~5.7 h | not prepared: a 20k knob in `scale_2026-10-14.sh` (minutes), its predictions |
+| 1 | **Width 512 at 20k**: both Ukrainian nulls, ~38M, seeds 0–3 (or seeds 0–1 first) | whether the widest model's falling lead settles: whether at 30M parameters the tokenizer's gain outlasts learning | **It settles at +0.010 or more:** at 30M the gain is smaller but lasting. **It keeps falling:** at 30M parameters the tokenizer's gain fades with learning, as a feature's does | ~11.3 h (~85 min a run); seeds 0–1 ~5.7 h | **seed 0 running** · `STEPS=20000`, `SEEDS=…`, rehearsed (§33.95) |
 | 2 | **Fiction at full training**: both fiction nulls at fraction 0.4 (~133M tokens), 50k, seeds 0–3 | whether the gain lasts on a second corpus, as it does on Wikipedia | **It holds near +0.010:** it lasts on both corpora. **It fades:** on fiction it is a short-training gain | ~7.6 h | not prepared: the two conditions at 0.4 (CPU, ~3–4 h each; one at a time, §33.87) |
 | 3 | **English at full training, seeds 4–7** of both tokenizers — a follow-up, run only if the thesis asks | whether one drifting run in four is the English full-training spread | **7/8 or more:** the gain lasts in English firmly. **Fewer:** at full training the English gain is within seed variation | ~7.6 h | quiet · piece 4 with seeds 4–7 (minutes) |
 
