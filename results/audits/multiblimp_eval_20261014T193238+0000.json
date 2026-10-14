@@ -1,0 +1,172 @@
+{
+  "script": "multiblimp_eval",
+  "args": {
+    "labels": [
+      "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w512",
+      "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w512"
+    ],
+    "reference": null,
+    "results_dir": "/home/neko/PycharmProjects/Morph/results",
+    "data": "/home/neko/PycharmProjects/Morph/external/multiblimp/ukr/data.tsv",
+    "check": 40,
+    "device": "cuda",
+    "threads": 0,
+    "batch": 128,
+    "limit": 0,
+    "by_length": false,
+    "check_only": false
+  },
+  "timestamp_utc": "2026-10-14T19:32:38+00:00",
+  "results": {
+    "runs": {
+      "111cea3bd51d": {
+        "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w512",
+        "seed": 0,
+        "accuracy": {
+          "number": 0.7452107279693486,
+          "gender": 0.8011527377521613,
+          "person": 0.7603725656223539,
+          "all": 0.7729591836734694
+        },
+        "margin": {
+          "number": 2.103750835433317,
+          "gender": 2.456233813371026,
+          "person": 5.176206579054947,
+          "all": 3.5598386682504817
+        },
+        "batch_check_max_diff": 3.0517578125e-05
+      },
+      "46e78eb45605": {
+        "label": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w512",
+        "seed": 0,
+        "accuracy": {
+          "number": 0.8237547892720306,
+          "gender": 0.866474543707973,
+          "person": 0.7993226079593565,
+          "all": 0.8294460641399417
+        },
+        "margin": {
+          "number": 2.6129794504450654,
+          "gender": 2.7390276939106264,
+          "person": 5.056622838691369,
+          "all": 3.712527213916834
+        },
+        "batch_check_max_diff": 3.0517578125e-05
+      }
+    },
+    "reference": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w512",
+    "summary": {
+      "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w512": {
+        "all": {
+          "accuracy": 0.7729591836734694,
+          "seeds": [
+            0
+          ]
+        },
+        "number": {
+          "accuracy": 0.7452107279693486,
+          "seeds": [
+            0
+          ]
+        },
+        "gender": {
+          "accuracy": 0.8011527377521613,
+          "seeds": [
+            0
+          ]
+        },
+        "person": {
+          "accuracy": 0.7603725656223539,
+          "seeds": [
+            0
+          ]
+        }
+      },
+      "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w512": {
+        "all": {
+          "accuracy": 0.8294460641399417,
+          "seeds": [
+            0
+          ],
+          "paired_seeds": [
+            0
+          ],
+          "paired_acc_diff": [
+            5.648688046647232
+          ],
+          "paired_margin_diff": [
+            0.15268854566635248
+          ]
+        },
+        "number": {
+          "accuracy": 0.8237547892720306,
+          "seeds": [
+            0
+          ],
+          "paired_seeds": [
+            0
+          ],
+          "paired_acc_diff": [
+            7.854406130268199
+          ],
+          "paired_margin_diff": [
+            0.5092286150117484
+          ]
+        },
+        "gender": {
+          "accuracy": 0.866474543707973,
+          "seeds": [
+            0
+          ],
+          "paired_seeds": [
+            0
+          ],
+          "paired_acc_diff": [
+            6.532180595581172
+          ],
+          "paired_margin_diff": [
+            0.2827938805396002
+          ]
+        },
+        "person": {
+          "accuracy": 0.7993226079593565,
+          "seeds": [
+            0
+          ],
+          "paired_seeds": [
+            0
+          ],
+          "paired_acc_diff": [
+            3.895004233700261
+          ],
+          "paired_margin_diff": [
+            -0.119583740363578
+          ]
+        }
+      }
+    },
+    "checked_paragraphs": {
+      "bpe_uk_17k.json ['mconst'] ukwiki0.05": 40,
+      "bpeend_uk_17k.json ['mconst'] ukwiki0.05": 40
+    }
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-10-14T19:32:38+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "bd2a2944d73a3b1e05b6f05a2bde952f6a93ff74",
+    "git_dirty": true
+  }
+}

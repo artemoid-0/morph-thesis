@@ -3918,3 +3918,42 @@ Predictions, before any run, for seed 0:
 - **P206** (~50%). Over its last 5,000 steps it changes by less than 0.002: it has levelled off.
 - **P207** (~60%). At null BPB 0.92 and 0.89 it lies within 0.003 of the 10k schedule's seed-0 lead
   there (+0.0151, +0.0134): the point of learning sets it, not the schedule.
+
+### 33.96 Width 512 at 20k, seed 0: the lead levels off near +0.011
+
+**The runs** (`scale_2026-10-14.sh`, `STEPS=20000 SEEDS=0`, 19:33–22:31 on 14 October; 87.9 and
+89.2 minutes). The width guard passed: 0.8149 and 0.8035 against width 256's 0.9000 and 0.8812 at
+20k, and the pair within 0.05. No defect:
+- the same shapes (30,017,760 parameters each);
+- validation BPB falls at every evaluation;
+- both best steps are the last.
+
+**The lead** at seed 0 is **+0.0115** at the end (1.4% of BPE 17k's 0.8149). Along training:
+
+| step | 1,000 | 2,000 | 5,000 | 7,500 | 10,000 | 12,500 | 15,000 | 17,500 | 20,000 |
+|---|---|---|---|---|---|---|---|---|---|
+| lead | +0.0467 | +0.0249 | +0.0172 | +0.0117 | +0.0132 | +0.0094 | +0.0119 | +0.0107 | +0.0115 |
+| BPE 17k's null | 1.233 | 1.088 | 0.948 | 0.892 | 0.862 | 0.840 | 0.828 | 0.819 | 0.815 |
+
+The lead falls to about +0.011 by step 7,500, while the null passes 0.89. From there to the end
+it moves between +0.009 and +0.013 with no trend, though the null learns another 0.08 BPB. Over
+the last 5,000 steps it lies between +0.0101 and +0.0119 and ends 0.0004 below where it stood.
+**P205 right** (+0.0115). **P206 right** (−0.0004).
+
+**The point of learning sets it, not the schedule** (`tokenizer_widths_20261014T193329`). At the
+same null BPB the 20k run's lead lies within 0.0006 of the 10k run's down to 0.95, and 0.0021 to
+0.0025 below it at 0.92, 0.90 and 0.89, where the 10k run was in its last steps. **P207 right**
+(within 0.003).
+
+**MultiBLiMP** (`multiblimp_eval_20261014T193238`; seed 0). BPE 17k 77.3%, endings apart 82.9%:
++5.6 points. By phenomenon: number +7.9, gender +6.5, person +3.9. At 10k, seed 0 gave +6.5.
+
+**What it changes.** The sentence test's first outcome came, at one seed. At width 512 the
+tokenizer's gain in bits per byte falls further than at the smaller widths before it levels off,
+and it levels off at about +0.011 (1.4%), not at zero. Smaller than at widths 128 and 256 at 20k
+(1.7%, 2.4%), but lasting, where a feature's gain falls to nothing. With §33.94, the thesis can say
+the gain peaks at width 256 and holds, smaller, at 30M parameters. Seeds 1–3 (~8.8 h) give its
+size and spread.
+
+**Predictions.** P205, P206 and P207 are right. The tally is 114 right, 8 half right, 76 wrong,
+8 never tested, 1 withdrawn, of 207.

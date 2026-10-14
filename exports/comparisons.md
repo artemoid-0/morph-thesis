@@ -152,6 +152,8 @@ baseline `bpe_baseline_bpe_uk_17k_ukwiki0.2`, seeds [0, 1, 2, 3]: 0.9475, 0.9483
 
 *No run of `bpe_baseline_bpe_uk_17k_ukwiki0.05_st20k_w256` exists, so these are not comparable:* `bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w256`
 
+*No run of `bpe_baseline_bpe_uk_17k_ukwiki0.05_st20k_w512` exists, so these are not comparable:* `bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w512`
+
 *No run of `bpe_baseline_bpe_uk_17k_ukwiki0.2_st10k` exists, so these are not comparable:* `bpe_ucase-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_st10k`
 
 *No run of `bpe_baseline_bpe_uk_17k_ukwiki0.2_st20k` exists, so these are not comparable:* `bpe_ucase-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_st20k`
@@ -185,6 +187,8 @@ baseline `bpe_baseline_bpe_uk_17k_ukwiki0.2`, seeds [0, 1, 2, 3]: 0.9475, 0.9483
 *No run of `bpe_baseline_bpeend_uk_17k_ukwiki0.05_st20k` exists, so these are not comparable:* `bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k`, `bpe_ucase-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k`
 
 *No run of `bpe_baseline_bpeend_uk_17k_ukwiki0.05_st20k_w256` exists, so these are not comparable:* `bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w256`
+
+*No run of `bpe_baseline_bpeend_uk_17k_ukwiki0.05_st20k_w512` exists, so these are not comparable:* `bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w512`
 
 *No run of `bpe_baseline_bpeend_uk_17k_ukwiki0.2` exists, so these are not comparable:* `bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2`, `bpe_ucase-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2`, `bpe_ucaselex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2`, `bpe_ucaseprep-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2`
 

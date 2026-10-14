@@ -21,7 +21,7 @@ import datetime
 import statistics as st
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-LEVELS = [1.30, 1.18, 1.11, 1.04, 1.006, 0.98, 0.95, 0.92, 0.905, 0.89, 0.88]
+LEVELS = [1.30, 1.18, 1.11, 1.04, 1.006, 0.98, 0.95, 0.92, 0.905, 0.89, 0.88, 0.86, 0.84, 0.82]
 NULL = lambda t, fr, x: f'bpe_mconst-LEARN-CAUSAL_{t}_ukwiki{fr}{x}'
 CONDITIONS = [  # name, corpus fraction, label suffix
     ('width 128, ~38M, 10k', '0.05', '_st10k'),
@@ -30,6 +30,7 @@ CONDITIONS = [  # name, corpus fraction, label suffix
     ('width 256, ~38M, 10k', '0.05', '_st10k_w256'),
     ('width 256, ~38M, 20k', '0.05', '_st20k_w256'),
     ('width 512, ~38M, 10k', '0.05', '_st10k_w512'),
+    ('width 512, ~38M, 20k', '0.05', '_st20k_w512'),
 ]
 
 
