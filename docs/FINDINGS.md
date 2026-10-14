@@ -1,4 +1,4 @@
-# What We Know — 12 October 2026
+# What We Know — 14 October 2026
 
 > **Kind:** claims — what the thesis claims now, each with its numbers, firmness and the journey
 > sections behind it. **Authoritative for:** the claims. Rewritten in place when a result changes one.
@@ -38,8 +38,8 @@ baselines, four seeds, three budgets; at full training three seeds of four.* (§
 training.** BPE that never joins a stem to its inflectional ending — the cut read from
 the word form alone by a dictionary rule — beats plain BPE of the same vocabulary size by
 **+0.0174 ± 0.0014 BPB (1.6%)** at a 10k budget, 4 of 4 seeds, from identical initial
-weights, although it reads 11% less text in the same steps. **It does not fade as a
-feature does.** At twice the budget the lead is +0.0169 ± 0.0007 (4/4), and **at full
+weights, although it reads 11% less text in the same steps. **At widths 128 and 256 it does not
+fade as a feature does.** At twice the budget the lead is +0.0169 ± 0.0007 (4/4), and **at full
 training on four times the text — 151M tokens, 50k steps — +0.0165 ± 0.0008 (1.75%,
 4/4)**, flat from step 5,000 to the end while the null falls from 1.13 to 0.944: at two
 corpus sizes and three budgets it holds at about 0.017 wherever the null stands between
@@ -47,7 +47,12 @@ corpus sizes and three budgets it holds at about 0.017 wherever the null stands 
 width 256, four times the core's parameters — it is larger: **+0.0254 ± 0.0012 (2.6%, 4/4)** at the 10k budget, and
 at twice the budget, where it settles, **+0.0218 ± 0.0029 (2.4%, 4/4)**, flat from step
 7,500 to the end (width 128 at 20k: +0.0169, 1.7%). It is larger at every matched null
-BPB. Unigram, which cuts
+BPB. **It peaks there.** At width 512 — 30M parameters, four times width 128 — it is
+**+0.0125 ± 0.0009 (1.4%, 4/4)** at the 10k budget, below both smaller widths. At the same point
+of learning it starts above width 256's (+0.041 against +0.038 at null BPB 1.18), then keeps
+falling as the model learns, as a feature's gain does: below width 256's from 1.11 on, and at
+width 128's level near 0.98 (+0.018), +0.014 at 0.92, while the smaller widths' leads hold
+flat. Whether it settles is not yet known (§33.94). Unigram, which cuts
 words differently and into even more tokens, leads early, loses the lead by step 3,000
 and gains nothing by the end (−0.0005 ± 0.0004): where the cuts fall matters, not how
 many there are. Every tokenizer's validation stream decodes to the same text, byte for
@@ -56,14 +61,16 @@ in grammar, not only in bits per byte.** On MultiBLiMP's 2,744 Ukrainian subject
 agreement pairs the endings-apart models prefer the grammatical sentence more often: at
 full training 76.3% against 71.4% (**+4.9 ± 0.4 points**, 4/4; in number, gender and
 person; +5.0 on the pairs whose two sentences have the same token length), at ~38M and 10k
-69.0% against 64.8% (+4.3 ± 0.3, 4/4); +4.5 ± 0.5 at twice the budget and +5.3 ± 0.3 in the
-wider model — moving with the lead in bits per byte. Exposing more endings elsewhere does not
+69.0% against 64.8% (+4.3 ± 0.3, 4/4); +4.5 ± 0.5 at twice the budget, +5.3 ± 0.3 at width 256 and
+**+6.8 ± 0.2 at width 512** (4/4), where the lead in bits per byte is half width 256's: the
+grammatical gain grows with the model, and is not the code length's. Exposing more endings elsewhere does not
 do it: BPE 4k is 1.2 points below BPE 17k, Unigram level with it. **And on a second corpus.**
 On UberText 2.0's fiction subcorpus — novels and prose, both tokenizers trained on it — keeping
 endings apart beats BPE 17k at every seed, **+0.0097 ± 0.0010 BPB (0.8%, 4/4)** at a 10k
 budget, half its share on Wikipedia, and on MultiBLiMP by **+5.3 ± 0.6 points (4/4)**, as much
 as on Wikipedia or more. *Two corpora (fiction at one size and budget), two corpus sizes and
-three budgets on Wikipedia, two widths.* (§33.61–§33.68, §33.76, §33.79, §33.86, §33.88)
+three budgets on Wikipedia, three widths (512 at one budget).* (§33.61–§33.68, §33.76, §33.79,
+§33.86, §33.88, §33.94)
 
 **Q2 — Do injected linguistic facts help? No — in either way of injecting
 them, and in either language.** Against a **null of the same shape** — which in this codebase sees
@@ -420,7 +427,8 @@ Each withdrawal was decided by a rule recorded before its result.
 ## Open
 
 The research programme, [`DIRECTIONS.md`](DIRECTIONS.md), pursues:
-- whether the tokenizer's gain holds in larger models, and on fiction beyond a 10k budget;
+- whether the tokenizer's lead at width 512 settles or keeps falling, at a 20k budget;
+- whether the tokenizer's gain holds on fiction beyond a 10k budget;
 
 It leaves open, as limitations: whether reliance's deficit is permanent beyond a 20k
 budget; and, across model sizes, the half of

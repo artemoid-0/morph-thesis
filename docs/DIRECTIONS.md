@@ -2,7 +2,7 @@
 
 > **Kind:** claims — the current plan and queue; rewritten as they change.
 > **Authoritative for:** what is investigated next, why, and in what order.
-> Updated 14 October 2026: the queue reviewed before a six-hour window (journey §33.93).
+> Updated 14 October 2026: the queue reviewed before a six-hour window, and after it (journey §33.93–§33.94).
 
 The thesis stands on what is established ([`FINDINGS.md`](FINDINGS.md)). The
 programme began on 2 October from its one positive regularity — *a feature helps
@@ -25,7 +25,7 @@ Questions about small transformers in general are parked, however interesting.
 | D5 | the rare and novel tail | **screened; parked** | no hidden benefit in rare tokens at full training (§33.47) |
 | D6 | the token-independent input | **parked — outside the thesis** | the confound behind "structure helps": one learned vector shared by every input helps by itself — the vector, not a mark of the window's start (G-71 closed) — hence the same-shape null (§33.49–§33.52, §33.58, §33.59) |
 | D7 | tokenization | **answered at four seeds**; holds on a second corpus and in English, there to full training on the median seed, 3/4 (§33.87, §33.88, §33.92); the gain lasts at twice the budget, at full training on 4× the text, and is larger at twice the width; case on top still helps at full training under endings apart — half of it the word's own case, half the tagger's leak (G-77, closed) | BPE that keeps endings apart beats BPE 17k by 1.6% by itself — +0.0169 at twice the budget, +0.0254 at twice the width, where a feature's gain fades — and case adds on top, more under it the longer the training; case beats its null under all six tokenizers at every seed; the law holds across them to null BPB 1.25, after which case gains more where endings are exposed — the hypothesis reversed; Unigram's early lead is real, and fades; at 151M tokens and 50k steps the lead is +0.0165 (4/4) and case still adds +0.0030 under endings apart, half of it without the leak (the word form +0.0016, 3/4; +0.0036 over its gain under BPE 17k, 4/4); of the sentence's lead over the word form the tagger's leak is 29–43% at ~38M and all of it at full training, where context without the leak adds nothing (§33.58, §33.61–§33.81) |
-| D8 | scale and architecture | **tools ready** | a fit check over widths and depths; RMSNorm and SwiGLU blocks (§33.54) |
+| D8 | scale and architecture | **width 512 answered at 10k** (§33.94); whether its lead settles is open | the tokenizer's gain in bits per byte peaks at width 256 — 1.6%, 2.6% and 1.4% at widths 128, 256 and 512 (10k), the widest one's falling along the law's axis where the others hold flat — while its grammatical gain grows, +4.3, +5.3 and +6.8 points; a fit check over widths and depths (§33.54, §33.90) |
 | D9 | a second corpus per language | **tools ready; corpora to choose** | `corpus_info.py`, then a spec (§33.53) |
 
 ## D3 — Is the reliance deficit permanent?
@@ -144,13 +144,16 @@ naming (G-66).
 
 ## The queue
 
-Reviewed 11 October, evening (journey §33.89), after a ten-hour run of experiments, and again
-12 October (§33.90), unchanged. Each
+Reviewed 11 October, evening (journey §33.89), after a ten-hour run of experiments; again
+12 October (§33.90), unchanged; and 14 October, before and after width 512 (§33.93, §33.94). Each
 candidate is ranked by what its result could change in the thesis and costed from the recorded
 timings, and must pass the sentence test: for each likely outcome, the sentence the thesis
 would state; a candidate whose outcomes all give the same sentence, or none, is dropped.
-Rewritten at every review. **Running:** candidate 3 at width 512 (`scale_2026-10-14.sh`, from
-14 October, time-boxed to 11:50; seven of its eight runs fit; P201–P204).
+Rewritten at every review. **Running:** nothing.
+
+**Answered on 14 October:** larger models, width 512 at 10k (§33.94). In bits per byte the
+tokenizer's gain peaks at width 256: at width 512 it is +0.0125 (1.4%, 4/4), and it falls along
+the law's axis where the smaller widths' leads hold flat. On MultiBLiMP it grows: +6.8 points.
 
 **Answered on 12 October:** English at full training (§33.92). The gain holds on the median seed,
 +0.0053 (0.39%), at three seeds of four: in each tokenizer one run in four drifts after 20k. On
@@ -168,18 +171,18 @@ BLiMP the models are +1.0 point better at every seed.
 
 | # | candidate | what it settles for the thesis | the sentence test: each outcome's sentence | GPU | kind · ready |
 |---|---|---|---|---|---|
-| 1 | **Fiction at full training**: both fiction nulls at fraction 0.4 (~133M tokens), 50k, seeds 0–3 | whether the gain lasts on a second corpus, as it does on Wikipedia | **It holds near +0.010:** it lasts on both corpora. **It fades:** on fiction it is a short-training gain | ~7.6 h | not prepared: the two conditions at 0.4 (CPU, ~3–4 h each; one at a time, §33.87) |
-| 2 | **English at full training, seeds 4–7** of both tokenizers — a follow-up, run only if the thesis asks | whether one drifting run in four is the English full-training spread | **7/8 or more:** the gain lasts in English firmly. **Fewer:** at full training the English gain is within seed variation | ~7.6 h | quiet · piece 4 with seeds 4–7 (minutes) |
-| 3 | **Larger models (D8)**: both Ukrainian nulls at width 512, ~38M, 10k, seeds 0–3 — beside the 10k rows at widths 128 and 256 | how the tokenizer's gain moves with model size beyond width 256 | **It grows:** larger models gain more. **It holds:** it grows to 12M parameters, then holds. **It shrinks:** it peaks at moderate size | ~5.9 h (fit check, §33.93) | **running** · `scale_2026-10-14.sh`, rehearsed |
+| 1 | **Width 512 at 20k**: both Ukrainian nulls, ~38M, seeds 0–3 (or seeds 0–1 first) | whether the widest model's falling lead settles: whether at 30M parameters the tokenizer's gain outlasts learning | **It settles at +0.010 or more:** at 30M the gain is smaller but lasting. **It keeps falling:** at 30M parameters the tokenizer's gain fades with learning, as a feature's does | ~11.3 h (~85 min a run); seeds 0–1 ~5.7 h | not prepared: a 20k knob in `scale_2026-10-14.sh` (minutes), its predictions |
+| 2 | **Fiction at full training**: both fiction nulls at fraction 0.4 (~133M tokens), 50k, seeds 0–3 | whether the gain lasts on a second corpus, as it does on Wikipedia | **It holds near +0.010:** it lasts on both corpora. **It fades:** on fiction it is a short-training gain | ~7.6 h | not prepared: the two conditions at 0.4 (CPU, ~3–4 h each; one at a time, §33.87) |
+| 3 | **English at full training, seeds 4–7** of both tokenizers — a follow-up, run only if the thesis asks | whether one drifting run in four is the English full-training spread | **7/8 or more:** the gain lasts in English firmly. **Fewer:** at full training the English gain is within seed variation | ~7.6 h | quiet · piece 4 with seeds 4–7 (minutes) |
 
 **Dropped by the sentence test:**
 - **Why fiction's share of bits per byte is half Wikipedia's** (§33.88). The thesis states the
   size on each corpus, and no outcome changes a claim.
 - **Case and its controls on fiction.** Morphology in the embedding is answered (§33.83).
 
-**Dependencies.** None between the three. 1 needs its conditions built first, one at a time on
-the CPU (§33.87). 2 waits for the thesis to ask.
+**Dependencies.** None between the three. 2 needs its conditions built first, one at a time on
+the CPU (§33.87). 3 waits for the thesis to ask.
 
-**What GPU hours buy:** 2 only if the thesis asks. 3 needs no condition: a piece and its predictions,
-then 7.5 h (width 384) or 10.7 h (width 512). 1 needs its two conditions first, ~7 h of CPU one
-at a time, then 7.6 h.
+**What GPU hours buy:** 1 needs a 20k knob and its predictions (minutes), then ~11.3 h for four
+seeds, or ~5.7 h for seeds 0–1 first. 2 needs its two conditions first, ~7 h of CPU one at a
+time, then 7.6 h. 3 only if the thesis asks.

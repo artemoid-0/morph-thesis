@@ -3817,3 +3817,76 @@ Predictions, before any run:
   larger than width 256's at each (+0.0383, +0.0336, +0.0296; §33.68).
 - **P204** (~50%). On MultiBLiMP, width 512's endings-apart advantage is at least width 256's at
   10k (+5.3 points) on average.
+
+### 33.94 Width 512: the gain in bits per byte peaks at width 256; the grammatical gain keeps growing
+
+**The runs** (`scale_2026-10-14.sh`, 06:01–11:41 on 14 October; 8 runs of 40.8–44.6 minutes). All
+eight fit: the runs were quicker than the 44 minutes allowed, so the fill was not needed. The
+width guard passed at seed 0: 0.8803 and 0.8664 against 0.9826 and 0.9594 at width 256, and the
+pair within 0.05.
+
+**The result** (~38M tokens, 10k steps, nulls paired by seed from identical initial weights;
+`tokenizer_table_20261014T094052`):
+
+| seed | 0 | 1 | 2 | 3 | mean |
+|---|---|---|---|---|---|
+| BPE 17k | 0.8803 | 0.8790 | 0.8770 | 0.8777 | 0.8785 |
+| endings apart | 0.8664 | 0.8655 | 0.8672 | 0.8649 | 0.8660 |
+| lead | +0.0139 | +0.0136 | +0.0099 | +0.0128 | **+0.0125 ± 0.0009** |
+
+The lead is **1.4%** of BPE 17k's null, against 1.6% at width 128 (+0.0174) and 2.6% at width 256
+(+0.0254) at the same budget. **P201 right** (4/4). **P202 wrong**: smaller than width 256's, and
+smaller than width 128's.
+
+**First, a defect?** The result went against the prediction, so it was checked as width 256's was
+(§33.68):
+- the paired cells have the same parameter shapes (30,017,760), so the same initial weights at a
+  seed (§33.15);
+- every run's validation BPB falls at every evaluation, and every best step is the last, so the
+  30M model does not over-fit in its 2.2 passes over the text.
+
+**Along training** the lead starts as the smaller widths' does, then keeps falling: +0.0452 at step
+500, +0.0491 at 1,000, +0.0273 at 2,000, +0.0203 at 3,000, +0.0164 at 5,000, +0.0138 at 6,000,
++0.0120 at 8,000 and 9,000, +0.0125 at the end. Its fall slows: 0.004 from step 5,000 to 7,000,
+0.001 from 7,000 to 9,000.
+
+**At matched null BPB** (`tokenizer_widths_20261014T094349`, the new
+`scripts/analysis/tokenizer_widths.py`), the lead at the same point of learning:
+
+| BPE 17k's null BPB | 1.30 | 1.18 | 1.11 | 1.04 | 0.98 | 0.95 | 0.92 | 0.89 |
+|---|---|---|---|---|---|---|---|---|
+| width 128 (151M, 50k) | +0.0263 | +0.0178 | +0.0162 | +0.0159 | +0.0174 | +0.0168 | — | — |
+| width 256 (20k) | +0.0320 | +0.0381 | +0.0333 | +0.0279 | +0.0223 | +0.0233 | +0.0228 | — |
+| width 512 (10k) | +0.0475 | +0.0408 | +0.0303 | +0.0218 | +0.0180 | +0.0163 | +0.0137 | +0.0121 |
+
+Early in learning the widest model gains most. From null BPB 1.11 on, its lead falls below width
+256's, and from about 0.98 to width 128's level and under. Width 128's lead is flat along the axis
+(0.016–0.018 below 1.18), and so is width 256's at 20k (0.022–0.023 from 0.98 to 0.905).
+Width 512's keeps falling to the end of its budget. **P203 wrong**: larger at 1.18 (+0.0408
+against +0.0381), smaller at 1.11 and 1.04.
+
+**MultiBLiMP** (`multiblimp_eval_20261014T094155`; 2,744 pairs, paired by seed). BPE 17k 73.5%,
+endings apart 80.3%: **+6.8 ± 0.2 points (4/4)**. By phenomenon: number +8.0, gender +7.9,
+person +5.3, each 4/4. That is the largest advantage of any condition, against +4.3 at width 128
+and +5.3 at width 256 at the same budget. **P204 right.** The grammatical gain grows with the
+model while the gain in bits per byte shrinks. As on fiction (§33.88), the two are not one
+quantity.
+
+**What it changes.** The sentence test named three outcomes (§33.93); the third came. In bits
+per byte the tokenizer's gain peaks at a moderate size, width 256. At width 512 it is smaller at
+the end of the budget, and it falls along the law's axis as a feature's gain does, where at widths
+128 and 256 it held flat. The thesis's statement that the tokenizer's gain fades on neither axis
+on which a feature's gain fades — the model's learning and its size — holds to width 256, not
+beyond. In grammatical judgement the gain grows with size through 30M parameters.
+
+Two readings are possible; neither is tested:
+- **The larger model learns the ending structure from BPE 17k's tokens itself.** This is the
+  law's reading: help lasts until the model has learned what it carries.
+- **The 30M model is the first that is limited by the text it reads.** At a fixed number of
+  steps endings apart reads 11% less text (1.9 passes over the text against 2.2).
+
+Whether the lead settles, and where, a 20k budget at width 512 would show: both nulls, four
+seeds, ~10.7 h (DIRECTIONS, "The queue").
+
+**Predictions.** P201 and P204 are right; P202 and P203 are wrong. The tally is 111 right, 8 half
+right, 76 wrong, 8 never tested, 1 withdrawn, of 204.
