@@ -380,9 +380,12 @@ def write_audits(out, audit_dir=os.path.join('results', 'audits')):
             continue
         a = ' '.join(f'{k}={v}' for k, v in (d.get('args') or {}).items()
                      if v not in (None, '', False, []))
+        res = d.get('results') or {}
+        # a record's results are a dict of sections, or a list of rows (tokenizer_widths)
+        what = ', '.join(sorted(res.keys())) if isinstance(res, dict) else f'{len(res)} rows'
         lines.append(f"| `{d.get('script','?')}` | "
                      f"{d.get('timestamp_utc','?')} | {a or '-'} | "
-                     f"{', '.join(sorted((d.get('results') or {}).keys())) or '-'} |")
+                     f"{what or '-'} |")
     notes = []
     for r in recs:
         try:
