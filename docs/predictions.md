@@ -6,7 +6,7 @@ Each prediction was recorded in `docs/record/journey/README.md` **before** its r
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 114 right, 8 half right, 76 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 3 pending — of 210. The wrong ones carried
+**Tally:** 116 right, 8 half right, 77 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 0 pending — of 210. The wrong ones carried
 the information: the null's gain (P18), the shuffled control (P15), the
 leak's absence (P11), the training-budget reframing (P61), the tokenizer
 hypothesis (P119, P120), Unigram's early lead (P130), the wider model's larger
@@ -222,6 +222,6 @@ over the word form's (P148–P150), and how much of it the tagger's leak is (P16
 | P205 | At 20k, width 512's seed-0 lead ends at +0.010 or more | right — +0.0115 | §33.95, §33.96 |
 | P206 | Over its last 5,000 steps it changes by less than 0.002 | right — −0.0004 (+0.0101 to +0.0119) | §33.95, §33.96 |
 | P207 | At null BPB 0.92 and 0.89 it lies within 0.003 of the 10k schedule's seed-0 lead there (+0.0151, +0.0134) | right — +0.0127 and +0.0114 | §33.95, §33.96 |
-| P208 | At 20k, width 512's seed-1 lead ends at +0.010 or more | pending | §33.97 |
-| P209 | Over its last 5,000 steps it changes by less than 0.002 | pending | §33.97 |
-| P210 | Seeds 0 and 1 end within 0.003 of each other at 20k (seed 0: +0.0115) | pending | §33.97 |
+| P208 | At 20k, width 512's seed-1 lead ends at +0.010 or more | wrong — +0.0097 | §33.97, §33.100 |
+| P209 | Over its last 5,000 steps it changes by less than 0.002 | right — +0.0003 (+0.0080 to +0.0103) | §33.97, §33.100 |
+| P210 | Seeds 0 and 1 end within 0.003 of each other at 20k (seed 0: +0.0115) | right — 0.0018 apart | §33.97, §33.100 |

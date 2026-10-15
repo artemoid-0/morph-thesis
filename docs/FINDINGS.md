@@ -52,9 +52,9 @@ BPB. **It peaks there.** At width 512 — 30M parameters, four times width 128 �
 of learning it starts above width 256's (+0.041 against +0.038 at null BPB 1.18), then keeps
 falling as the model learns, as a feature's gain does: below width 256's from 1.11 on, and at
 width 128's level near 0.98 (+0.018), +0.014 at 0.92, while the smaller widths' leads hold
-flat. At 20k, at one seed, it levels off: about +0.011 from step 7,500 to 20,000 (+0.0115, 1.4%,
-at the end), smaller than at widths 128 and 256 but lasting, where a feature's gain falls to
-nothing (§33.94, §33.96). Unigram, which cuts
+flat. At 20k it levels off from about step 7,500 at two seeds of two: +0.0115 and +0.0097
+(+0.0106, 1.3%), smaller than at widths 128 and 256 but lasting, where a feature's gain falls to
+nothing (§33.94, §33.96, §33.100). Unigram, which cuts
 words differently and into even more tokens, leads early, loses the lead by step 3,000
 and gains nothing by the end (−0.0005 ± 0.0004): where the cuts fall matters, not how
 many there are. Every tokenizer's validation stream decodes to the same text, byte for
@@ -64,15 +64,15 @@ agreement pairs the endings-apart models prefer the grammatical sentence more of
 full training 76.3% against 71.4% (**+4.9 ± 0.4 points**, 4/4; in number, gender and
 person; +5.0 on the pairs whose two sentences have the same token length), at ~38M and 10k
 69.0% against 64.8% (+4.3 ± 0.3, 4/4); +4.5 ± 0.5 at twice the budget, +5.3 ± 0.3 at width 256 and
-**+6.8 ± 0.2 at width 512** (4/4; +5.6 at 20k, seed 0), where the lead in bits per byte is half width 256's: the
+**+6.8 ± 0.2 at width 512** (4/4; +5.6 and +6.4 at 20k, seeds 0–1), where the lead in bits per byte is half width 256's: the
 grammatical gain grows with the model, and is not the code length's. Exposing more endings elsewhere does not
 do it: BPE 4k is 1.2 points below BPE 17k, Unigram level with it. **And on a second corpus.**
 On UberText 2.0's fiction subcorpus — novels and prose, both tokenizers trained on it — keeping
 endings apart beats BPE 17k at every seed, **+0.0097 ± 0.0010 BPB (0.8%, 4/4)** at a 10k
 budget, half its share on Wikipedia, and on MultiBLiMP by **+5.3 ± 0.6 points (4/4)**, as much
 as on Wikipedia or more. *Two corpora (fiction at one size and budget), two corpus sizes and
-three budgets on Wikipedia, three widths (512 at 20k at one seed).* (§33.61–§33.68, §33.76,
-§33.79, §33.86, §33.88, §33.94, §33.96)
+three budgets on Wikipedia, three widths (512 at 20k at two seeds).* (§33.61–§33.68, §33.76,
+§33.79, §33.86, §33.88, §33.94, §33.96, §33.100)
 
 **Q2 — Do injected linguistic facts help? No — in either way of injecting
 them, and in either language.** Against a **null of the same shape** — which in this codebase sees
@@ -431,7 +431,7 @@ Each withdrawal was decided by a rule recorded before its result.
 ## Open
 
 The research programme, [`DIRECTIONS.md`](DIRECTIONS.md), pursues:
-- the width-512 lead at 20k at seeds 1–3 — its size and spread (seed 0 levels off at +0.011);
+- the width-512 lead at 20k at seeds 2–3 — its size and spread (seeds 0–1 level off at +0.0106);
 - whether the tokenizer's gain holds on fiction beyond a 10k budget;
 
 It leaves open, as limitations: whether reliance's deficit is permanent beyond a 20k

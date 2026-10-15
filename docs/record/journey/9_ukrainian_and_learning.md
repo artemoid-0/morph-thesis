@@ -4057,3 +4057,31 @@ reads the tagger's tags through the tag map alone.
 On 300 validation paragraphs (26,315 tokens) both hold, and the causal codes equal `pos` at 91.66%
 of tokens. The training split needs about 4–5 hours of CPU on eight processes; the GPU part, the
 causal control at 10k and 20k at four seeds, is about 2.3 hours.
+
+### 33.100 Width 512 at 20k, seed 1: levelled off too, at +0.0097
+
+**The runs** (`STEPS=20000 SEEDS=1`, 18:42–21:41 on 15 October). The width guard read seed 0's pair.
+No defect: validation BPB falls at every evaluation, and both best steps are the last. An
+unrelated GPU job was started and crashed during the second run; the run was unaffected.
+
+**The lead** at seed 1 is **+0.0097** (BPE 17k 0.8135, endings apart 0.8038). Along training:
++0.0266 at step 2,000, +0.0163 at 5,000, +0.0100 at 7,500, +0.0110 at 10,000, +0.0084 at 12,500,
++0.0094 at 15,000, +0.0083 at 17,500. Over the last 5,000 steps it lies between +0.0080 and
++0.0103 and ends 0.0003 above where it stood. Like seed 0, it falls until about step 7,500 and
+then holds.
+- **P208 wrong:** +0.0097, just under +0.010.
+- **P209 right:** +0.0003.
+- **P210 right:** the two seeds end 0.0018 apart.
+
+**Two seeds** (`tokenizer_widths_20261015T184449`): the lead is +0.0106 (+0.0115, +0.0097), 1.3% of
+BPE 17k's null. At matched null BPB: +0.0402 at 1.18, +0.0206 at 1.04, +0.0168 at 0.95, +0.0121 at
+0.92, +0.0099 at 0.88, +0.0097 at 0.82.
+
+**MultiBLiMP** (`multiblimp_eval_20261015T184315`). Seed 1: BPE 17k 76.9%, endings apart 83.3%,
++6.4 points; seed 0, +5.6.
+
+**What it changes.** Two seeds of four both level off, at about +0.010 (1.3%): smaller than at
+widths 128 and 256, but lasting. Seeds 2–3 (~5.9 h) give the size with its spread.
+
+**Predictions.** P209 and P210 are right; P208 is wrong. The tally is 116 right, 8 half right,
+77 wrong, 8 never tested, 1 withdrawn, of 210.

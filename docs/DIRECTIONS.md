@@ -147,8 +147,8 @@ naming (G-66).
 Rewritten 15 October (journey §33.98) in the order of the thesis's list of that day: nine
 experiments ranked by what each result changes in the text, each with the sentence it states for
 every outcome. Results committed by about 31 October reach the text; the work is admitted on
-4 November. Each item's preparation runs on the CPU while the item before it trains. **Running:**
-item 1, seed 1 (`scale_2026-10-14.sh`, `STEPS=20000 SEEDS=1`, from 15 October, 18:42; P208–P210).
+4 November. Each item's preparation runs on the CPU while the item before it trains. **Running:** nothing. Item 1 has seeds 0–1
+(§33.100: +0.0115, +0.0097, both levelled off).
 
 **Answered on 15 October:** item 9, the law in Ukrainian (§33.98). At every point of learning its
 conditions differ no more than their seeds do: "within the seed spread".
@@ -162,7 +162,7 @@ off at about +0.011 (1.4%). On MultiBLiMP it grows: +6.8 points.
 
 | # | candidate | each outcome's sentence | GPU | ready |
 |---|---|---|---|---|
-| 1 | **Width 512 at 20k, seeds 1–3** (§3.3.2; conclusion 2) | *Settles near +0.011 at four seeds:* the gain does not fade with learning at any of the three widths. *Keeps falling:* at 30M parameters the tokenizer's gain fades with learning, as a feature's does | 2 × 88 min a seed; seed 1 running, seeds 2–3 ~5.9 h | yes (`STEPS=20000 SEEDS=…`) |
+| 1 | **Width 512 at 20k, seeds 1–3** (§3.3.2; conclusion 2) | *Settles near +0.011 at four seeds:* the gain does not fade with learning at any of the three widths. *Keeps falling:* at 30M parameters the tokenizer's gain fades with learning, as a feature's does | seeds 2–3 ~5.9 h (2 × 88 min a seed) | yes (`STEPS=20000 SEEDS=…`) |
 | 2 | **English part of speech without the right-context leak**, over the null, 10k and 20k, four seeds — every word tagged from its left context alone, since in English the leak is spread over thousands of words (§33.99; the thesis's §3.10, conclusion 7) | *Leak-free ≈ word form:* in both languages what a context-aware feature adds over the lexical one is mostly not context. *Leak-free clearly above the word form:* for English part of speech the sentence's context adds information of its own; for Ukrainian case it does not | ~2.3 h | designed (§33.99): a causal tagger, `poscausal` (`derive_causal_pos.py`, checked on 300 paragraphs); its derivation over the training split, ~4–5 h of CPU, then a piece |
 | 3 | **Fiction at full training**: both fiction nulls at fraction 0.4 (~133M tokens), 50k, seeds 0–3 (§3.3.3; conclusion 2) | *Holds:* on both corpora the gain does not fade with training. *Fades:* on fiction the tokenizer's gain belongs to short training | ~7.6 h | no: two conditions at 0.4, ~3.5 h of CPU each, one at a time (§33.87) |
 | 4a | **Part of speech switched off early at 50k**, four seeds (§3.8; conclusion 5) | *The deficit persists:* the model relies on the feature at full training too. *It closes:* at full training the model makes up the removed feature; the reliance is temporary | ~7.6 h | a piece (the cells exist at 10k and 20k) |

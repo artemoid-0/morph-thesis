@@ -132,6 +132,7 @@
 | bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w256 | 2 | 0.9069 | 46.4621 | 11,795,168 | 8 | 325,632 | 19,999 |
 | bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w256 | 3 | 0.8987 | 44.8739 | 11,795,168 | 8 | 325,632 | 19,999 |
 | bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w512 | 0 | 0.8149 | 31.4780 | 30,017,760 | 8 | 325,632 | 19,999 |
+| bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w512 | 1 | 0.8135 | 31.2868 | 30,017,760 | 8 | 325,632 | 19,999 |
 | bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2 | 0 | 0.9419 | 53.8696 | 5,043,168 | 8 | 325,632 | 49,999 |
 | bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2 | 1 | 0.9464 | 54.9090 | 5,043,168 | 8 | 325,632 | 49,500 |
 | bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2 | 2 | 0.9437 | 54.2961 | 5,043,168 | 8 | 325,632 | 49,999 |
@@ -177,6 +178,7 @@
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w256 | 2 | 0.8864 | 28.9804 | 11,795,168 | 8 | 363,008 | 19,999 |
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w256 | 3 | 0.8811 | 28.4029 | 11,795,168 | 8 | 363,008 | 19,999 |
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w512 | 0 | 0.8035 | 21.1476 | 30,017,760 | 8 | 363,008 | 19,999 |
+| bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w512 | 1 | 0.8038 | 21.1728 | 30,017,760 | 8 | 363,008 | 19,999 |
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2 | 0 | 0.9266 | 33.7533 | 5,043,168 | 8 | 363,008 | 49,999 |
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2 | 1 | 0.9286 | 34.0141 | 5,043,168 | 8 | 363,008 | 49,999 |
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2 | 2 | 0.9286 | 34.0175 | 5,043,168 | 8 | 363,008 | 49,500 |
