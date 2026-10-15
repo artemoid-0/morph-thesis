@@ -4085,3 +4085,72 @@ widths 128 and 256, but lasting. Seeds 2–3 (~5.9 h) give the size with its spr
 
 **Predictions.** P209 and P210 are right; P208 is wrong. The tally is 116 right, 8 half right,
 77 wrong, 8 never tested, 1 withdrawn, of 210.
+
+### 33.101 A second machine, and the night of 16 October (prepared)
+
+**The machine:** an RTX 5090 Laptop GPU (24 GB), 24 CPU cores, 93 GB of memory. Everything for this
+work lives in one folder on it:
+- the Python environment, with the thesis machine's versions (torch 2.11 with its own CUDA 13.0
+  runtime);
+- the code, as a `git archive` of a named commit;
+- the caches it needs, sent with SHA-256 checks or built there from public sources.
+
+**Calibration** (`device_calibration_20261015T232350`; the four runs in
+`results/audits/device_calibration_20261016/`). The null at width 128, ~38M tokens, 10k steps,
+seeds 0–2, was rerun there and compared with the thesis machine's runs:
+- **Agreement:** the 5090 ends −0.00017, +0.00015 and −0.00053 away, with no consistent sign.
+  That is well within a cell's seed spread (0.0037 here), but not zero. A seed's two tokenizers
+  therefore always train on the same machine, and every run's record names its GPU
+  (`environment.gpu`).
+- **Repeatability:** seed 0 run twice there differs by at most 2.3e-8 at any evaluation. The
+  thesis machine repeats bit for bit (G-69).
+- **Speed:** a run alone takes 245 seconds, 2.8 times faster. Three at once take 787 seconds
+  each, so there is no gain from running in parallel; runs go one at a time.
+
+**The night** (`scripts/chains/night_2026-10-16.sh`, eleven hours) takes the items of the list
+(§33.98) whose comparisons are all new runs, in the list's order as far as the data allows:
+- **width 512 at 20k, seeds 2–3** (item 1);
+- **English part of speech switched off** from the start and at step 5,000, at 50k, seeds 0–3
+  (item 4a; §33.42's 20k design, at full training);
+- **fiction at full training**, both nulls at fraction 0.4, 50k, seeds 0–3 (item 3);
+- **Ukrainian case switched off** the same two ways under endings apart, ~38M tokens, 20k,
+  seeds 0–3 (item 4b);
+- **English plain baselines at 50k, seeds 4–7** (item 6), last, and likely cut short by the time
+  box.
+
+Guards:
+- each cell's caches must be present (`scripts/ops/cells_ready.py`);
+- a piece's first pair must end within 0.05 of each other;
+- a run starts only when 6 GB of the GPU are free, waiting while anyone else holds it;
+- disk, and the time box.
+
+It was rehearsed with the stub in eight scenarios, all passing.
+
+**On the CPU beside it:**
+- **The fiction data:** `scripts/data/fiction_full.sh` downloads the fiction export, converts it,
+  and builds both conditions at 0.4. Three checks against the thesis machine's hashes come first:
+  the download, the converted corpus, and the validation streams, which are the same text at
+  every fraction. Only when all three hold may the fiction piece run.
+- **Item 2's causal tagger** (`derive_causal_pos.py`) over WikiText-103's training split.
+
+The width 512 and fiction pairs, and both pairs of each switch, are compared within the machine.
+English seeds 4–7 join seeds 0–3 from the thesis machine.
+
+Predictions, before any run:
+
+- **P211** (~75%). At width 512 and 20k, seeds 2 and 3 each end with the endings-apart null below
+  BPE 17k's by +0.006 to +0.015.
+- **P212** (~60%). Each levels off: over its last 5,000 steps the lead changes by less than 0.002.
+- **P213** (~65%). The four seeds' mean lead lies between +0.008 and +0.013.
+- **P214** (~55%). At 50k, English part of speech switched off at 5,000 ends below the model never
+  fed it at three seeds of four or more.
+- **P215** (~55%). Its deficit at 50k is smaller than at 20k (under 0.0039).
+- **P216** (~65%). On fiction at full training, the endings-apart null ends below BPE 17k's at four
+  seeds of four.
+- **P217** (~55%). Its lead lies within 0.003 of fiction's 10k lead (+0.0067 to +0.0127).
+- **P218** (~50%). Ukrainian case switched off at 5,000 of 20k under endings apart ends below the
+  model never fed it at three seeds of four or more.
+- **P219** (~55%). Its deficit is smaller than English part of speech's at 20k (under 0.0039).
+- **P220** (~65%). At 50k, English endings apart ends below BPE 17k at three or more of seeds 4–7.
+- **P221** (~55%). Over eight seeds, the median lead lies within 0.002 of the 20k lead (+0.0035 to
+  +0.0075).

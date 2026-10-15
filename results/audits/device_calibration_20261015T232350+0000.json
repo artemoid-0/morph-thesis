@@ -1,0 +1,54 @@
+{
+ "script": "device calibration (remote ~/morph/code/scripts/calibrate_remote.sh)",
+ "timestamp_utc": "2026-10-15T23:23:50+00:00",
+ "cell": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+ "runs": {
+  "A": {
+   "seed": 0,
+   "gpu": "NVIDIA GeForce RTX 5090 Laptop GPU",
+   "bpb": 1.088885747582919,
+   "laptop_bpb": 1.0890597329958853,
+   "laptop_gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+   "diff": -0.00017398541296631542,
+   "wall_seconds": 245.17963767051697,
+   "run_id": "e9f3f153ec20"
+  },
+  "B": {
+   "seed": 0,
+   "gpu": "NVIDIA GeForce RTX 5090 Laptop GPU",
+   "bpb": 1.088885757502472,
+   "laptop_bpb": 1.0890597329958853,
+   "laptop_gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+   "diff": -0.0001739754934133586,
+   "wall_seconds": 782.6701853275299,
+   "run_id": "e9f3f153ec20"
+  },
+  "C": {
+   "seed": 1,
+   "gpu": "NVIDIA GeForce RTX 5090 Laptop GPU",
+   "bpb": 1.0911743024828384,
+   "laptop_bpb": 1.0910292587821706,
+   "laptop_gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+   "diff": 0.00014504370066781291,
+   "wall_seconds": 787.0520009994507,
+   "run_id": "6f214dfa186f"
+  },
+  "D": {
+   "seed": 2,
+   "gpu": "NVIDIA GeForce RTX 5090 Laptop GPU",
+   "bpb": 1.0869074918816528,
+   "laptop_bpb": 1.0874361034319235,
+   "laptop_gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+   "diff": -0.00052861155027073,
+   "wall_seconds": 787.0530769824982,
+   "run_id": "fe50426ea6ef"
+  }
+ },
+ "A_alone_seconds": 253,
+ "BCD_together_seconds": 793,
+ "B_vs_A": {
+  "final_diff": 9.919552956816347e-09,
+  "max_abs_diff_any_evaluation": 2.2673263488925954e-08,
+  "identical": false
+ }
+}

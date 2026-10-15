@@ -147,8 +147,9 @@ naming (G-66).
 Rewritten 15 October (journey §33.98) in the order of the thesis's list of that day: nine
 experiments ranked by what each result changes in the text, each with the sentence it states for
 every outcome. Results committed by about 31 October reach the text; the work is admitted on
-4 November. Each item's preparation runs on the CPU while the item before it trains. **Running:** nothing. Item 1 has seeds 0–1
-(§33.100: +0.0115, +0.0097, both levelled off).
+4 November. Each item's preparation runs on the CPU while the item before it trains. **Running** (from 16 October, ~03:30, on a second machine; §33.101): the night chain — item 1's
+seeds 2–3, item 4a, item 3, item 4b, item 6 — and, on its CPU, fiction's conditions at 0.4 and item 2's
+causal tagger. Item 1 has seeds 0–1 (§33.100: +0.0115, +0.0097, both levelled off).
 
 **Answered on 15 October:** item 9, the law in Ukrainian (§33.98). At every point of learning its
 conditions differ no more than their seeds do: "within the seed spread".
