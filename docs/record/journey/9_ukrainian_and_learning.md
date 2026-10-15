@@ -3957,3 +3957,18 @@ size and spread.
 
 **Predictions.** P205, P206 and P207 are right. The tally is 114 right, 8 half right, 76 wrong,
 8 never tested, 1 withdrawn, of 207.
+
+### 33.97 Width 512 at 20k, seed 1 (prepared), 15 October
+
+On 15 October the thesis's list of the experiments it needs arrived, in order. It was ranked by
+what each result changes in the text, with the sentence for every outcome. Its first item is the
+rest of §33.96: width 512 at 20k, seeds 1–3. About three hours were available from 18:40, enough
+for seed 1's pair (`STEPS=20000 SEEDS=1`; 2 × 88 minutes). The width guard reads seed 0's pair, now
+on record. At 10k seed 1 ended where seed 0 did: +0.0136 against +0.0139, with +0.0133 and +0.0129
+at steps 8,000 and 9,000.
+
+Predictions, before the runs:
+
+- **P208** (~65%). At 20k, width 512's seed-1 lead ends at +0.010 or more.
+- **P209** (~55%). Over its last 5,000 steps it changes by less than 0.002.
+- **P210** (~65%). Seeds 0 and 1 end within 0.003 of each other (seed 0: +0.0115).

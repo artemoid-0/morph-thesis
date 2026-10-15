@@ -149,7 +149,8 @@ Reviewed 11 October, evening (journey §33.89), after a ten-hour run of experime
 candidate is ranked by what its result could change in the thesis and costed from the recorded
 timings, and must pass the sentence test: for each likely outcome, the sentence the thesis
 would state; a candidate whose outcomes all give the same sentence, or none, is dropped.
-Rewritten at every review. **Running:** nothing.
+Rewritten at every review. **Running:** candidate 1's seed 1 (`STEPS=20000 SEEDS=1`, from
+15 October, 18:45; P208–P210).
 
 **Answered on 14 October, evening:** width 512 at 20k, seed 0 (§33.96). The lead levels off at
 about +0.011 (1.4%) from step 7,500 to 20,000: smaller than at widths 128 and 256, but lasting.
