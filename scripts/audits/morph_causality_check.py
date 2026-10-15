@@ -23,6 +23,11 @@ exactly, or the run stops.
 
     python scripts/audits/morph_causality_check.py --sentences 3000
     python scripts/audits/morph_causality_check.py --text some_file.txt      # local text
+    python scripts/audits/morph_causality_check.py --split train --sentences 10000 --by-type
+
+--by-type also counts, for part of speech, where its right-context dependence sits: per word
+type, and per class of the type's majority part of speech in the sample — which words a control
+must read from their form to remove it (journey §33.98; DIRECTIONS, the queue's item 2).
 """
 
 import os
@@ -62,6 +67,10 @@ def main():
     ap.add_argument('--spacy-model', default='en_core_web_sm')
     ap.add_argument('--corpus', default='wikitext103', help='wikitext103 | ukwiki')
     ap.add_argument('--corpus-holdout', type=int, default=2000)
+    ap.add_argument('--full-pipeline', action='store_true',
+                    help='keep the parser: the pipeline sets part of speech with rules that read the parse')
+    ap.add_argument('--by-type', action='store_true',
+                    help='record part of speech changes per word type and per majority class')
     ap.add_argument('--ud', action='store_true',
                     help='compare Universal Dependencies features by name '
                          '(default for any non-English model)')
@@ -76,8 +85,13 @@ def main():
     global ATTRS
     if ud:
         ATTRS = UD_ATTRS
-    nlp = spacy.load(args.spacy_model, disable=['parser', 'ner', 'lemmatizer'])
-    nlp.add_pipe('sentencizer')
+    # without --full-pipeline only the tagger: the parser and NER cost time, and the tagger's
+    # tags never depend on them — but the PIPELINE's part of speech does: rules after the parser
+    # set "which" as DET or PRON, "have" as AUX or VERB, from the parse (§33.98)
+    nlp = spacy.load(args.spacy_model, disable=(['ner', 'lemmatizer'] if args.full_pipeline
+                                                else ['parser', 'ner', 'lemmatizer']))
+    if not args.full_pipeline:
+        nlp.add_pipe('sentencizer')
 
     if args.text:
         lines = [l.strip() for l in open(args.text) if l.strip()]
@@ -107,6 +121,7 @@ def main():
     by_dist = defaultdict(Counter)
     n_dist = Counter()
     changes = Counter()
+    pos_n, pos_changed, pos_pairs, pos_seen = Counter(), Counter(), defaultdict(Counter), defaultdict(Counter)
     skipped = 0
     harness_ok = harness_n = 0
     for s in sents:
@@ -139,6 +154,13 @@ def main():
                 by_dist[d][a] += same
             if f_full['mfeat'] != f_left['mfeat']:
                 changes[(t.lower_, f_left['mfeat'] or '-', f_full['mfeat'] or '-')] += 1
+            if args.by_type:
+                w = t.lower_
+                pos_n[w] += 1
+                pos_seen[w][f_full['pos']] += 1
+                if f_full['pos'] != f_left['pos']:
+                    pos_changed[w] += 1
+                    pos_pairs[w][f"{f_left['pos']}->{f_full['pos']}"] += 1
 
     print()
     print('=' * 84)
@@ -177,6 +199,32 @@ def main():
     rec.add('by_words_after', {str(d): {a: by_dist[d][a] / n_dist[d] for a in ATTRS}
                                for d in sorted(n_dist)})
     rec.add('mfeat_changes', {f'{w}: {a} -> {b}': n for (w, a, b), n in changes.most_common(40)})
+    if args.by_type:
+        total_changed = sum(pos_changed.values())
+        major = {w: c.most_common(1)[0][0] for w, c in pos_seen.items()}
+        by_class_n, by_class_changed = Counter(), Counter()
+        for w in pos_n:
+            by_class_n[major[w]] += pos_n[w]
+            by_class_changed[major[w]] += pos_changed[w]
+        print()
+        print(f'  PART OF SPEECH, by where it changes: {total_changed:,} changed of {total:,} words '
+              f'({100 * total_changed / max(total, 1):.2f}%)')
+        print(f'  {"majority class":14} {"words":>9} {"changed":>8} {"rate":>7} {"share of all changes":>21}')
+        for c, n in by_class_changed.most_common():
+            print(f'  {c:14} {by_class_n[c]:9,} {n:8,} {100 * n / by_class_n[c]:6.1f}% '
+                  f'{100 * n / max(total_changed, 1):20.1f}%')
+        top = sorted(pos_changed, key=lambda w: -pos_changed[w])
+        cum = 0
+        print(f'  {"word type":14} {"seen":>7} {"changed":>8} {"rate":>7} {"cumulative":>11}   most common changes')
+        for w in top[:40]:
+            cum += pos_changed[w]
+            print(f'  {w:14} {pos_n[w]:7,} {pos_changed[w]:8,} {100 * pos_changed[w] / pos_n[w]:6.1f}% '
+                  f'{100 * cum / max(total_changed, 1):10.1f}%   ' + ', '.join(f'{k} {v}' for k, v in pos_pairs[w].most_common(3)))
+        rec.add('pos_by_class', {c: {'words': by_class_n[c], 'changed': by_class_changed[c]} for c in by_class_n})
+        rec.add('pos_by_type', {w: {'seen': pos_n[w], 'changed': pos_changed[w], 'majority': major[w],
+                                    'changes': dict(pos_pairs[w].most_common(5))}
+                                for w in top})
+        rec.add('pos_changed_total', total_changed)
     rec.write()
 
 

@@ -4009,3 +4009,51 @@ recorded in `docs/reference/literature_audit.md` and `related_work.md`:
 - KinyaBERT's ablation changes architecture and information together.
 
 No audited work ran a random-feature control.
+
+### 33.99 A causal tagger for English part of speech (the list's item 2, prepared)
+
+Item 2 asks whether, for English part of speech too, what the sentence adds over the word form is
+mostly the tagger's right-context leak, as it was for Ukrainian case (§33.81). It needs a control:
+part of speech with the leak removed, over the same-shape null.
+
+**Where the leak sits.** `morph_causality_check.py --by-type`
+(`morph_causality_check_20261015T154900`) tags 10,000 training sentences in full and each word from
+its prefix:
+- 7.27% of words change part of speech without their right context, as §33.3 found on validation
+  text;
+- "to" alone is 8.3% of the changes (preposition before a noun, particle before a verb);
+- the rest is spread over thousands of word types, by majority class: proper nouns 27%, adjectives
+  26%, nouns 17%, particles 8%, verbs 7%, prepositions 5%. The next word decides whether a word
+  modifies it or heads its phrase.
+- Words whose tag changes at least 20% of the time, seen five times or more, number 813 types and
+  hold only 60% of the changes.
+
+In Ukrainian the leak sat at prepositions, where a word list could remove it (`ucaseprep`). In
+English no word list does.
+
+**So the control is a causal tagger:** every word tagged from its left context alone (`poscausal`,
+`scripts/data/derive_causal_pos.py`). spaCy's tagger sees four tokens on each side. Tagged from the
+window of its last five tokens, a word gets the tag its whole prefix gives: 100.000% of 9,992
+training words (2 tokens 99.5%, 3 tokens 99.9%). So the derivation tags every word in its own
+five-token window.
+
+**The parse, and why the control goes without it.** `pos` as the pipeline builds it passes the tags
+through rules that read the dependency parse: "which" as a determiner or a pronoun, "have" as an
+auxiliary or a verb. Without the parser, 0.68% of the cached codes come out otherwise. With the
+parser, a prefix test is not a measure of the right context. A parser given a prefix that ends in
+"the" has nothing to attach it to, and calls it a pronoun 4,498 times in 4,499; "a", "an", "this"
+and "these" likewise. With it, 19.42% of words "change"
+(`morph_causality_check_20261015T160946`, `--full-pipeline`, 3,000 sentences), most of them that
+artifact, as §30.6b found for the parser itself. A parse needs the whole sentence, so a causal
+tagger cannot make those refinements. They are information from the right, and `poscausal`
+reads the tagger's tags through the tag map alone.
+
+**Two checks that can fail**, run before anything is written:
+- the paragraphs re-encoded as the stream builder encodes them must give the cached ids, token for
+  token;
+- the full pipeline must reproduce the cached `pos` codes exactly on them, which proves the
+  alignment and the class order.
+
+On 300 validation paragraphs (26,315 tokens) both hold, and the causal codes equal `pos` at 91.66%
+of tokens. The training split needs about 4–5 hours of CPU on eight processes; the GPU part, the
+causal control at 10k and 20k at four seeds, is about 2.3 hours.

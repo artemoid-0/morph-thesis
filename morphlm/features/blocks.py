@@ -851,6 +851,25 @@ class UCasePrepositionFormBlock(UCaseBlock):
             '--recode-pos ADP --keep ucase --corpus ukwiki')
 
 
+@register_fact('poscausal')
+class PosCausalBlock(PosBlock):
+    """
+    CONTROL for the tagger's right-context leak in `pos` (journey §33.98): part of speech from a
+    strictly causal tagger — each word tagged from its left context only, the tag it would get
+    if the text ended at that word. `pos` reads the whole paragraph, so a word's tag can depend
+    on the next word ("to" before a verb or a noun), which the shifted feature is read before.
+    In English the dependence is spread over thousands of words, so no word list removes it, as
+    the prepositions did for Ukrainian case (`ucaseprep`). Same 19 classes and width as `pos`,
+    so the two share initial weights at the same seed.
+    Derived: scripts/data/derive_causal_pos.py
+    """
+
+    def code(self, token: dict) -> int:
+        raise RuntimeError(
+            'poscausal is derived from the text by a causal tagger, not per token: run '
+            'scripts/data/derive_causal_pos.py first')
+
+
 @register_fact('mrole')
 class MorphRoleBlock(FactBlock):
     """
