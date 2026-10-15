@@ -3972,3 +3972,40 @@ Predictions, before the runs:
 - **P208** (~65%). At 20k, width 512's seed-1 lead ends at +0.010 or more.
 - **P209** (~55%). Over its last 5,000 steps it changes by less than 0.002.
 - **P210** (~65%). Seeds 0 and 1 end within 0.003 of each other (seed 0: +0.0115).
+
+### 33.98 The thesis's list, and its ninth item: the law in Ukrainian is within its seed spread
+
+The list of 15 October (§33.97) asks for nine experiments in order. Each would let the text drop a
+qualifier it now carries, and each comes with the sentence it states for every outcome.
+DIRECTIONS, "The queue", now follows it. About 50 hours of GPU; results committed by about 31
+October reach the text.
+
+**The ninth item needs no GPU.** In Ukrainian the law was "approximate": the conditions' curves
+differ by 0.0015 at null BPB 1.30 and by 0.0007 at 1.10 (§33.91). Are those gaps larger than
+the seeds make them? `learning_law.py --spread` (`learning_law_20261015T154512`) reads each seed's
+own curve at each point. It then deals the per-seed values to the conditions at random, 20,000
+times, and counts how often the gap between the conditions' means is as large as observed:
+
+| null BPB | gap between conditions | as large in random deals | each condition's seeds, sd |
+|---|---|---|---|
+| 1.30 | 0.0015 | 24% | 0.0006–0.0014 |
+| 1.25 | 0.0013 | 50% | 0.0010–0.0015 |
+| 1.20 | 0.0006 | 88% | 0.0009–0.0015 |
+| 1.15 | 0.0001 | 100% | 0.0004–0.0015 |
+| 1.10 | 0.0007 | 57% | 0.0011–0.0014 |
+
+At every point the conditions differ no more than their seeds do. FINDINGS now says "in Ukrainian
+within the seed spread". Averaging each seed's own reading gives +0.0030 and +0.0036 at 1.10,
+§33.58's figures. Interpolating the mean curve gives §33.91's +0.0029 and +0.0037. The two
+methods differ by that 0.0001.
+
+**The literature, read.** The full texts of four audited works settled the audit's open cells,
+recorded in `docs/reference/literature_audit.md` and `related_work.md`:
+- Alexandrescu & Kirchhoff do not fix the input width, and their Turkish factors come from text
+  disambiguated over the sentence;
+- Sennrich & Haddow's width is fixed at 500, with contrastive runs and no null;
+- Vania & Lopez predict whole words from 200-dimensional inputs, with gold analyses annotated in
+  sentence context;
+- KinyaBERT's ablation changes architecture and information together.
+
+No audited work ran a random-feature control.

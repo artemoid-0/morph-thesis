@@ -1,4 +1,4 @@
-# What We Know — 14 October 2026
+# What We Know — 15 October 2026
 
 > **Kind:** claims — what the thesis claims now, each with its numbers, firmness and the journey
 > sections behind it. **Authoritative for:** the claims. Rewritten in place when a result changes one.
@@ -179,13 +179,15 @@ word form and frequency band). The curve predicts each feature's gain at a short
 budget — at 10k steps part of speech +0.0130, part of speech from the word form
 +0.0099, inflection +0.0067, frequency band +0.0046, structure ≈ 0; at 20k
 +0.0075, +0.0050, +0.0022, +0.0014 and −0.0008 — and each feature has its own
-point where the gain reaches zero. *Firm in English; approximate in Ukrainian.*
+point where the gain reaches zero. *Firm in English; in Ukrainian within the seed spread.*
 Against the constant null, five Ukrainian conditions — 5k and 50k steps on 151M tokens, 10k on
 ~38M, ~7.6M and ~1.5M — agree within 0.0015 at null BPB 1.30, and closer as the null learns:
 within 0.0006 at 1.20, and the three that reach 1.15 within 0.0001 (+0.0045 to +0.0046). At
 1.10 the 50k run is 0.0008 below the ~38M run (+0.0029 against +0.0037), then in its last
-steps; against the first null, which was not constant, it had sat 0.0015 below (G-73).
-(§33.35, §33.38, §33.49, §33.52, §33.58, §33.91) Across six Ukrainian tokenizers case's gain agrees at
+steps. At every point the conditions differ no more than their seeds do: dealing the seeds'
+values to the conditions at random gives as large a gap 24–100% of the time, each condition's
+seeds spreading by 0.0004–0.0015 (sd). Against the first null, which was not constant, the 50k
+run had sat 0.0015 below (G-73). (§33.35, §33.38, §33.49, §33.52, §33.58, §33.91, §33.98) Across six Ukrainian tokenizers case's gain agrees at
 null BPB 1.25 — all within 0.0006 of +0.0052 (4 seeds) — and parts later, where
 endings are exposed (next section). (§33.58, §33.65)
 

@@ -28,7 +28,7 @@ the tokenizer was built as it was.
 | Part 6 | [Level 2: Features on a BPE Model](6_level2_features_on_bpe.md) | §23–§29 | Morphology as features on BPE; held-out evaluation; the word-identity control. |
 | Part 7 | [The Causal Reckoning](7_the_causal_reckoning.md) | §30–§32 | The within-word lookahead; "it was the structure"; a fresh look at the records. |
 | Part 8 | [The Controlled Programme](8_the_controlled_programme.md) | §33.1–§33.19 | BLiMP and the agreement test; the same-shape null; the additive design; position. |
-| Part 9 | [Ukrainian, and Before the Model Has Learned It](9_ukrainian_and_learning.md) | §33.20–§33.97 | The Ukrainian pipeline; Q2 in Ukrainian; early help; little data and the training budget; morphology in the tokenizer. |
+| Part 9 | [Ukrainian, and Before the Model Has Learned It](9_ukrainian_and_learning.md) | §33.20–§33.98 | The Ukrainian pipeline; Q2 in Ukrainian; early help; little data and the training budget; morphology in the tokenizer. |
 | — | [Appendices](appendices.md) | A, B | The decision record; the mapping from an earlier section numbering. |
 
 ## Every section
@@ -164,5 +164,6 @@ the tokenizer was built as it was.
   - [33.95 Does the width-512 lead settle? Seed 0 at 20k (prepared), 14 October](9_ukrainian_and_learning.md#3395-does-the-width-512-lead-settle-seed-0-at-20k-prepared-14-october)
   - [33.96 Width 512 at 20k, seed 0: the lead levels off near +0.011](9_ukrainian_and_learning.md#3396-width-512-at-20k-seed-0-the-lead-levels-off-near-0011)
   - [33.97 Width 512 at 20k, seed 1 (prepared), 15 October](9_ukrainian_and_learning.md#3397-width-512-at-20k-seed-1-prepared-15-october)
+  - [33.98 The thesis's list, and its ninth item: the law in Ukrainian is within its seed spread](9_ukrainian_and_learning.md#3398-the-thesiss-list-and-its-ninth-item-the-law-in-ukrainian-is-within-its-seed-spread)
 - [Appendix A — Decision Record](appendices.md#appendix-a--decision-record)
 - [Appendix B — Section Mapping](appendices.md#appendix-b--section-mapping)

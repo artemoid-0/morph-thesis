@@ -138,6 +138,12 @@ arXiv:1704.08352. **F.**
 - "None of the character-level models match the predictive accuracy of a model
   with access to true morphological analyses, even when learned from an order of
   magnitude more data" (gold UD analyses, Czech and Russian).
+- The LM predicts whole words (the 5,000 most frequent and UNK; §3.3, §4.1). Its
+  segment arms change how context words are represented, not what is predicted.
+  Word, character and morph vectors are all 200-dimensional (§4.1).
+- The gold analyses are UD v1.3's human annotations for Czech and Russian, the lemma
+  and each feature a unit (§4, §5.1), made in sentence context; the Arabic MADAMIRA
+  analyses are disambiguated in context too (§5.2, footnote 4). No null.
 - *Used:* `literature_audit.md` (oracle features read the right context: exposed
   to the leak of journey §33.3); the background to Q2.
 
@@ -200,9 +206,17 @@ Ukrainian language*, Frontiers in Artificial Intelligence 8:1538165. **F.**
 
 **Alexandrescu & Kirchhoff (2006)** — Andrei Alexandrescu and Katrin Kirchhoff,
 *Factored Neural Language Models*, HLT-NAACL 2006, Short Papers, pp. 1–4 (N06-2001).
-**F** (`literature_analysis.md`); the audit's design questions **V**.
+**F** (`literature_analysis.md`; the audit's design questions read in the full text, 15 October
+2026).
 - A word as a set of factors (stem, affixes, POS, …), each embedded and
-  concatenated; aimed at rare words. *Used:* the ancestor of Q2.
+  concatenated; aimed at rare words. Egyptian Colloquial Arabic and Turkish.
+- The network reads the factors of the previous n−1 words and predicts plain words
+  (§4–§5). Each factor selects its own row of size d (32–64), and the rows are
+  concatenated (§2, §4), so the input widens with every factor.
+- The Turkish factors come from text disambiguated with Hakkani-Tür et al. (2002), over
+  the sentence; the Arabic ones from the LDC ECA lexicon (§6). Their "NULL" is an OOV
+  strategy, zero vectors for unknown factors (§5); there is no null control.
+  *Used:* the ancestor of Q2; `literature_audit.md`.
 
 **Botha & Blunsom (2014)** — Jan A. Botha and Phil Blunsom, *Compositional
 Morphology for Word Representations and Language Modelling*, ICML 2014, PMLR
@@ -213,16 +227,21 @@ Morphology for Word Representations and Language Modelling*, ICML 2014, PMLR
 
 **Sennrich & Haddow (2016)** — Rico Sennrich and Barry Haddow, *Linguistic Input
 Features Improve Neural Machine Translation*, WMT 2016, pp. 83–91,
-doi:10.18653/v1/W16-2209. **P.**
-- Linguistic features concatenated into a fixed 500-dim input (words 350):
-  perplexity, BLEU and chrF3 improve. *Used:* `literature_audit.md` — the
+doi:10.18653/v1/W16-2209. **F** (15 October 2026).
+- Linguistic features concatenated into a fixed 500-dim input (words 350); the word
+  embedding shrinks to make room (§4, Table 1). Perplexity, BLEU and chrF3 improve:
+  BLEU +1.5 German→English, +0.6 English→German, +1.0 English→Romanian (Tables 2,
+  4). The controls are contrastive runs, each adding one feature (Table 3); no null. *Used:* `literature_audit.md` — the
   carved-slot form whose architecture effect §33.11 measured.
 
 **Nzeyimana & Niyongabo Rubungo (2022)** — Antoine Nzeyimana and Andre Niyongabo
 Rubungo, *KinyaBERT: a Morphology-aware Kinyarwanda Language Model*, ACL 2022,
-pp. 5347–5363, doi:10.18653/v1/2022.acl-long.367. **P.**
+pp. 5347–5363, doi:10.18653/v1/2022.acl-long.367. **F** (15 October 2026).
 - A two-tier encoder over morphological analyses: +2% NER F1, +4.3% on
-  translated GLUE. *Used:* `literature_audit.md`.
+  translated GLUE. The baselines are a BPE BERT on the same corpus (same position
+  encoding, batch size and steps), a morpheme-sequence BERT and XLM-R; no null. The
+  STEM→STEM ablation drops the morphology encoder (§3.4, Table 6); affixes help QNLI
+  and SST-2, not NER or NEWS. *Used:* `literature_audit.md`.
 
 **Ismayilzada et al. (2025)** — Mete Ismayilzada, Defne Circi, Jonne Sälevä, et
 al., *Evaluating Morphological Compositional Generalization in Large Language

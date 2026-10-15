@@ -18,11 +18,17 @@ that says whether the curves collapse. Draws one panel per feature.
     python scripts/analysis/learning_law.py --refs 1.30 1.25 1.20 1.15 1.10 --record
 
 --refs prints each condition's gain at more points of learning than the panel's own;
+--spread adds, at each of those points, each condition's gain per seed and a permutation
+test: how often the gap between the conditions' means is as large when the seeds' values are
+dealt to the conditions at random — whether the conditions differ by more than their seeds do;
 --record writes every curve's numbers to results/audits/learning_law_<UTC timestamp>.json.
+
+    python scripts/analysis/learning_law.py --refs 1.30 1.25 1.20 1.15 1.10 --spread --record
 """
 import os
 import glob
 import json
+import random
 import argparse
 import datetime
 import statistics as st
@@ -88,6 +94,35 @@ def curve(R, null, feat):
     return out, len(seeds)
 
 
+def per_seed(R, null, feat, ref):
+    """{seed: gain at `ref`} from each seed's own curve, to its best step."""
+    out = {}
+    for s in sorted(s for (l, s) in R if l == feat and (null, s) in R):
+        pts, _ = curve({k: v for k, v in R.items() if k in ((null, s), (feat, s))}, null, feat)
+        g = at(pts, ref)
+        if g is not None:
+            out[s] = g
+    return out
+
+
+def spread_test(groups, draws=20000, seed=0):
+    """The gap between the groups' means, and the share of random deals of the pooled values
+    to groups of the same sizes whose gap is as large or larger."""
+    gap = lambda gs: max(st.mean(g) for g in gs) - min(st.mean(g) for g in gs)
+    observed = gap(groups)
+    pool = [x for g in groups for x in g]
+    sizes = [len(g) for g in groups]
+    rng = random.Random(seed)
+    hits = 0
+    for _ in range(draws):
+        rng.shuffle(pool)
+        dealt, i = [], 0
+        for n in sizes:
+            dealt.append(pool[i:i + n]); i += n
+        hits += gap(dealt) >= observed - 1e-12
+    return observed, hits / draws
+
+
 def at(points, ref):
     """The gain where the null passes `ref`, interpolated; None if never reached."""
     for (a0, g0), (a1, g1) in zip(points, points[1:]):
@@ -109,8 +144,10 @@ def main():
     ap.add_argument('--out', default='exports/figures')
     ap.add_argument('--refs', nargs='*', type=float, default=[], help='more null BPB points to read each gain at')
     ap.add_argument('--record', action='store_true', help='write the numbers to results/audits/')
+    ap.add_argument('--spread', action='store_true', help='per-seed gains at --refs, and the permutation test')
     args = ap.parse_args()
     record = []
+    spread = []
     R = load(args.roots)
     os.makedirs(args.out, exist_ok=True)
     fig, axes = plt.subplots(1, len(PANELS), figsize=(5.2 * len(PANELS), 4.2))
@@ -142,6 +179,23 @@ def main():
         ax.set_title(title, fontsize=10, loc='left')
         ax.legend(fontsize=7, frameon=False)
         ax.spines[['top', 'right']].set_visible(False)
+    if args.spread:
+        for title, ref, conds in PANELS:
+            for r in args.refs:
+                rows = [(name, per_seed(R, n, f, r)) for name, n, f in conds]
+                rows = [(name, ps) for name, ps in rows if len(ps) >= 2]
+                if len(rows) < 2:
+                    continue
+                gap, p = spread_test([list(ps.values()) for _, ps in rows])
+                print(f'\n  {title} at null BPB {r:.2f}: gap between conditions {gap:.4f}; '
+                      f'as large or larger in {100 * p:.0f}% of random deals of the seeds')
+                for name, ps in rows:
+                    v = list(ps.values())
+                    print(f'    {name:32} {st.mean(v):+.4f}  sd {st.stdev(v):.4f}  n={len(v)}  '
+                          + ' '.join(f'{x:+.4f}' for x in v))
+                spread.append({'panel': title, 'null_bpb': r, 'gap': gap, 'p_random_deal': p,
+                               'conditions': [{'condition': name, 'per_seed': {str(k): x for k, x in ps.items()}}
+                                              for name, ps in rows]})
     fig.tight_layout()
     path = os.path.join(args.out, 'law_gain_vs_learned.png')
     fig.savefig(path, dpi=170)
@@ -151,7 +205,7 @@ def main():
         rec = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
                            'results', 'audits', f'learning_law_{ts}.json')
         json.dump({'script': 'scripts/analysis/learning_law.py', 'timestamp_utc': ts, 'roots': args.roots,
-                   'refs': args.refs, 'curves': record}, open(rec, 'w'), indent=1)
+                   'refs': args.refs, 'curves': record, 'spread': spread}, open(rec, 'w'), indent=1)
         print(f'  [record] {rec}')
 
 

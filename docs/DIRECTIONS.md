@@ -144,50 +144,46 @@ naming (G-66).
 
 ## The queue
 
-Reviewed 11 October, evening (journey §33.89), after a ten-hour run of experiments; again
-12 October (§33.90), unchanged; and 14 October, before and after width 512 (§33.93, §33.94). Each
-candidate is ranked by what its result could change in the thesis and costed from the recorded
-timings, and must pass the sentence test: for each likely outcome, the sentence the thesis
-would state; a candidate whose outcomes all give the same sentence, or none, is dropped.
-Rewritten at every review. **Running:** candidate 1's seed 1 (`STEPS=20000 SEEDS=1`, from
-15 October, 18:45; P208–P210).
+Rewritten 15 October (journey §33.98) in the order of the thesis's list of that day: nine
+experiments ranked by what each result changes in the text, each with the sentence it states for
+every outcome. Results committed by about 31 October reach the text; the work is admitted on
+4 November. Each item's preparation runs on the CPU while the item before it trains. **Running:**
+item 1, seed 1 (`scale_2026-10-14.sh`, `STEPS=20000 SEEDS=1`, from 15 October, 18:42; P208–P210).
 
-**Answered on 14 October, evening:** width 512 at 20k, seed 0 (§33.96). The lead levels off at
-about +0.011 (1.4%) from step 7,500 to 20,000: smaller than at widths 128 and 256, but lasting.
-Seeds 1–3 give its size and spread.
+**Answered on 15 October:** item 9, the law in Ukrainian (§33.98). At every point of learning its
+conditions differ no more than their seeds do: "within the seed spread".
 
-**Answered on 14 October:** larger models, width 512 at 10k (§33.94). In bits per byte the
-tokenizer's gain peaks at width 256: at width 512 it is +0.0125 (1.4%, 4/4), and it falls along
-the law's axis where the smaller widths' leads hold flat. On MultiBLiMP it grows: +6.8 points.
+**Answered on 14 October:** width 512 at 10k (§33.94), and at 20k at seed 0 (§33.96). In bits per
+byte the tokenizer's gain peaks at width 256. At width 512 it falls along the law's axis, then levels
+off at about +0.011 (1.4%). On MultiBLiMP it grows: +6.8 points.
 
 **Answered on 12 October:** English at full training (§33.92). The gain holds on the median seed,
-+0.0053 (0.39%), at three seeds of four: in each tokenizer one run in four drifts after 20k. On
-BLiMP the models are +1.0 point better at every seed.
++0.0053 (0.39%), at three seeds of four.
 
-**Answered on 11 October:**
-- **Context-aware morphology inside the models** (§33.84). Keeping endings apart makes a
-  word's own grammar more accurate in the models' states. It does not help reading case from
-  context.
-- **Width 256 at 20k** (§33.86): the lead settles at +0.022 (2.4%).
-- **English with endings apart** (§33.87): +0.0046 (0.30%, 4/4) at 10k, +0.0055 (0.38%, 4/4) at
-  20k. It does not fade.
-- **A second Ukrainian corpus** (§33.88): fiction keeps the gain, +0.0097 (0.8%, 4/4) at 10k,
-  and +5.3 points on MultiBLiMP.
+| # | candidate | each outcome's sentence | GPU | ready |
+|---|---|---|---|---|
+| 1 | **Width 512 at 20k, seeds 1–3** (§3.3.2; conclusion 2) | *Settles near +0.011 at four seeds:* the gain does not fade with learning at any of the three widths. *Keeps falling:* at 30M parameters the tokenizer's gain fades with learning, as a feature's does | 2 × 88 min a seed; seed 1 running, seeds 2–3 ~5.9 h | yes (`STEPS=20000 SEEDS=…`) |
+| 2 | **English part of speech without the right-context leak**, over the null, 10k and 20k, four seeds — the words where the tagger reads the next word read their tag from their form, as prepositions did for Ukrainian case (§3.10; conclusion 7) | *Leak-free ≈ word form:* in both languages what a context-aware feature adds over the lexical one is mostly not context. *Leak-free clearly above the word form:* for English part of speech the sentence's context adds information of its own; for Ukrainian case it does not | ~2.3 h | no: the leak audit (`morph_causality_check.py`) on a sample to find those words, then their codes (CPU, 1–2 h) |
+| 3 | **Fiction at full training**: both fiction nulls at fraction 0.4 (~133M tokens), 50k, seeds 0–3 (§3.3.3; conclusion 2) | *Holds:* on both corpora the gain does not fade with training. *Fades:* on fiction the tokenizer's gain belongs to short training | ~7.6 h | no: two conditions at 0.4, ~3.5 h of CPU each, one at a time (§33.87) |
+| 4a | **Part of speech switched off early at 50k**, four seeds (§3.8; conclusion 5) | *The deficit persists:* the model relies on the feature at full training too. *It closes:* at full training the model makes up the removed feature; the reliance is temporary | ~7.6 h | a piece (the cells exist at 10k and 20k) |
+| 4b | **Ukrainian case switched off mid-training**, under endings apart at 20k (+0.0038) or on a small corpus | *A deficit:* in both languages. *None:* the deficit belongs to a strong feature, not to features in general | ~3 h | no: a design and a smoke test |
+| 5 | **The one-seed probes at more seeds**: after removal, with the auxiliary target, across widths (§3.7, §3.8) | *They agree:* the qualifiers go, and §3.7's share is stated with its spread. *They disagree:* the sentence says how far the seeds differ | ~6–9 h, and probing on the CPU | no: re-runs with checkpoints along training |
+| 6 | **English at full training, seeds 4–7** of both tokenizers (§3.3.6; conclusion 1) | *7/8 or more:* at full training, at 7 of 8 seeds. *Fewer:* at full training the English gain is within the seed spread, and conclusion 1 loses its full-training clause | ~7.6 h | a seed knob for piece 4 of `long_2026-10-11.sh` (minutes) |
+| 7 | **The leak at full training under BPE 17k**: `ucaseprep` at 151M, 50k, four seeds (§3.10; conclusion 7) | *All of the lead (+0.0006 ± 0.0004) is leak:* under both tokenizers. *Some is not:* under BPE 17k part of the lead is context | ~3.7 h | no: its codes at 0.2 under BPE 17k (CPU, under an hour) |
+| 8 | **The two-seed rows at 50k**: frequency band and part of speech from the word form, seeds 2–3 (§3.5; conclusion 4) | *Still within 0.002:* the sentence stands on four seeds for every row. *Either exceeds it:* the claim names the exception | ~3.7 h | a piece |
 
-| # | candidate | what it settles for the thesis | the sentence test: each outcome's sentence | GPU | kind · ready |
-|---|---|---|---|---|---|
-| 1 | **Width 512 at 20k**: both Ukrainian nulls, ~38M, seeds 0–3 (or seeds 0–1 first) | whether the widest model's falling lead settles: whether at 30M parameters the tokenizer's gain outlasts learning | **It settles at +0.010 or more:** at 30M the gain is smaller but lasting. **It keeps falling:** at 30M parameters the tokenizer's gain fades with learning, as a feature's does | ~11.3 h (~85 min a run); seeds 0–1 ~5.7 h | seed 0 done (§33.96: +0.0115, levelled off); seeds 1–3 ~8.8 h, or one a window (~2.9 h) · `STEPS=20000 SEEDS="1 2 3"`, rehearsed |
-| 2 | **Fiction at full training**: both fiction nulls at fraction 0.4 (~133M tokens), 50k, seeds 0–3 | whether the gain lasts on a second corpus, as it does on Wikipedia | **It holds near +0.010:** it lasts on both corpora. **It fades:** on fiction it is a short-training gain | ~7.6 h | not prepared: the two conditions at 0.4 (CPU, ~3–4 h each; one at a time, §33.87) |
-| 3 | **English at full training, seeds 4–7** of both tokenizers — a follow-up, run only if the thesis asks | whether one drifting run in four is the English full-training spread | **7/8 or more:** the gain lasts in English firmly. **Fewer:** at full training the English gain is within seed variation | ~7.6 h | quiet · piece 4 with seeds 4–7 (minutes) |
+About 50 hours of GPU in all: five or six long chains. The section numbers are the thesis's.
+
+**Not requested by the thesis** (every outcome gives the same sentence, or none): more seeds for
+English morpheme segmentation (the 12–13% gap is about nineteen times the widest seed spread); the
+shape effect by language; the law across model sizes, until there is a hypothesis for the half the
+previous word's tag leaves open.
 
 **Dropped by the sentence test:**
 - **Why fiction's share of bits per byte is half Wikipedia's** (§33.88). The thesis states the
   size on each corpus, and no outcome changes a claim.
 - **Case and its controls on fiction.** Morphology in the embedding is answered (§33.83).
 
-**Dependencies.** None between the three. 2 needs its conditions built first, one at a time on
-the CPU (§33.87). 3 waits for the thesis to ask.
-
-**What GPU hours buy:** 1's seeds 1–3, ~8.8 h, or one seed a window (~2.9 h); ready
-(`STEPS=20000 SEEDS=…`), predictions to record. 2 needs its two conditions first, ~7 h of CPU one at a
-time, then 7.6 h. 3 only if the thesis asks.
+**Dependencies.** None between the items. 2, 3, 4b, 5 and 7 need preparation first — a design,
+or a build on the CPU — which can overlap the item before. Each item's predictions are recorded when it is
+launched.
