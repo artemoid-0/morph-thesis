@@ -1,0 +1,21 @@
+{
+ "script": "scripts/data/prepare_ubertext_fiction.py",
+ "source": "external/ubertext/ubertext.fiction.filter_rus_gcld+short.text_only.txt.bz2",
+ "source_bytes": 433084760,
+ "output": "external/ubertext/fiction.jsonl",
+ "timestamp_utc": "20261016T000257+0000",
+ "results": {
+  "documents": 25565,
+  "titled": 23536,
+  "wrapped": 9669,
+  "paragraphs": 2759229,
+  "characters": 1252927812,
+  "keys_repeated": 132,
+  "bytes_written": 2264291319,
+  "document_characters": {
+   "median": 903,
+   "max": 3601037,
+   "min": 1
+  }
+ }
+}

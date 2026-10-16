@@ -7,13 +7,13 @@
 | datasets | 4.8.4 |
 | git_commit | 0a20b03c54a2816b49be425a9098c2a97d6d5a41, 2923462481888e07a79bd705228ce5830ce3ab0e, 5d59c87ad50f21fa96c3e264450bdab8bf5260e2, ac35186656872c109abd7b7cbf1c0a3783651021 ... |
 | git_dirty | False, True |
-| gpu | NVIDIA GeForce RTX 4060 Laptop GPU |
+| gpu | NVIDIA GeForce RTX 4060 Laptop GPU, NVIDIA GeForce RTX 5090 Laptop GPU |
 | gpu_count | 1 |
 | numpy | 2.2.5, 2.2.6 |
 | pandas | 2.3.3 |
-| platform | Linux-6.8.0-106-generic-x86_64-with-glibc2.39 |
+| platform | Linux-6.8.0-106-generic-x86_64-with-glibc2.39, Linux-6.8.0-138-generic-x86_64-with-glibc2.35 |
 | pymorphy3 | 2.0.6 |
-| python | 3.10.20 |
+| python | 3.10.12, 3.10.20 |
 | spacy | 3.8.14 |
 | spacy_model | en_core_web_sm, uk_core_news_sm |
 | spacy_model_version | 3.8.0, not recorded (G-74) |
@@ -22,4 +22,4 @@
 | tokenizers | 0.22.2 |
 | torch | 2.11.0+cu130 |
 
-*Captured from 525 of 550 runs.*
+*Captured from 553 of 578 runs.*

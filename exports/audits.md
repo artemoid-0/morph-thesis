@@ -76,10 +76,13 @@
 | `check_cache` | 2026-10-11T13:36:24+00:00 | bpe_path=data/bpe_ukf_17k.json cache_dir=data/cache corpus=ukfiction corpus_fraction=0.1 corpus_holdout=500 split=validation require_facts=['ucase'] | facts, gate, split |
 | `check_cache` | 2026-10-11T14:27:01+00:00 | bpe_path=data/bpe_ukf_17k.json cache_dir=data/cache corpus=ukfiction corpus_fraction=0.1 corpus_holdout=500 split=validation require_facts=['ucase', 'mconst', 'mzero'] | facts, gate, split |
 | `check_cache` | 2026-10-11T14:27:04+00:00 | bpe_path=data/bpe_ukf_17k.json cache_dir=data/cache corpus=ukfiction corpus_fraction=0.1 corpus_holdout=500 split=train require_facts=['ucase', 'mconst', 'mzero'] | facts, gate, split |
+| `check_cache` | 2026-10-16T00:03:49+00:00 | bpe_path=data/bpe_ukf_17k.json cache_dir=data/cache corpus=ukfiction corpus_fraction=0.4 corpus_holdout=500 split=validation require_facts=['ucase'] | facts, gate, split |
+| `check_cache` | 2026-10-16T00:06:01+00:00 | bpe_path=data/bpeend_ukf_17k.json cache_dir=data/cache corpus=ukfiction corpus_fraction=0.4 corpus_holdout=500 split=validation require_facts=['ucase'] | facts, gate, split |
 | `codes_audit` | 2026-10-06T15:10:45+00:00 | results_dir=/home/neko/PycharmProjects/Morph/results cache_dir=/home/neko/PycharmProjects/Morph/data/cache | files, runs |
 | `codes_audit` | 2026-10-06T15:11:53+00:00 | results_dir=/home/neko/PycharmProjects/Morph/results cache_dir=/home/neko/PycharmProjects/Morph/data/cache score=True nulls=True | files, runs, scores |
 | `codes_audit` | 2026-10-06T16:00:52+00:00 | results_dir=/home/neko/PycharmProjects/Morph/results cache_dir=/home/neko/PycharmProjects/Morph/data/cache | constants, files, runs |
 | `dep_causality_check` | 2026-09-23T07:26:23+00:00 | sentences=3000 split=validation max_words=40 | by_distance_from_end, confusions, summary |
+| `derive_causal_pos` | 2026-10-16T00:14:13+00:00 | bpe_path=data/bpe_17k.json splits=['validation', 'train'] window=4 check_rows=20000 workers=12 rows_per_task=400 cache_dir=data/cache | train, validation |
 | `derive_lexical_codes` | 2026-09-26T17:58:58+00:00 | bpe_path=data/bpe_17k.json fact=mfeat cache_dir=data/cache splits=['train', 'validation', 'test'] verify=True | known_words, lexicon, split:train, split:validation |
 | `derive_lexical_codes` | 2026-09-26T23:10:39+00:00 | bpe_path=data/bpe_17k.json fact=mstruct out_fact=mstructshuf cache_dir=data/cache splits=['train', 'validation', 'test'] verify=True shuffle_bin=64 keep=mstruct | lexicon, shuffle, split:test, split:train, split:validation |
 | `derive_lexical_codes` | 2026-09-27T02:32:15+00:00 | bpe_path=data/bpe_17k.json fact=pos cache_dir=data/cache splits=['train', 'validation', 'test'] verify=True shuffle_bin=64 keep=pos,mstruct | known_words, lexicon, split:test, split:train, split:validation |
@@ -145,6 +148,7 @@
 | `derive_lexical_codes` | 2026-10-11T08:51:29+00:00 | bpe_path=data/bpeend_ukf_17k.json corpus=ukfiction corpus_fraction=0.1 corpus_holdout=500 fact=mconst out_fact=mzero cache_dir=data/cache splits=['train', 'validation', 'test'] verify=True shuffle_bin=64 transform=const keep=all | lexicon, split:train, split:validation, transform |
 | `derive_lexical_codes` | 2026-10-11T14:26:24+00:00 | bpe_path=data/bpe_ukf_17k.json corpus=ukfiction corpus_fraction=0.1 corpus_holdout=500 fact=ucase out_fact=mconst cache_dir=data/cache splits=['train', 'validation', 'test'] verify=True shuffle_bin=64 transform=const keep=ucase | lexicon, split:train, split:validation, transform |
 | `derive_lexical_codes` | 2026-10-11T14:26:43+00:00 | bpe_path=data/bpe_ukf_17k.json corpus=ukfiction corpus_fraction=0.1 corpus_holdout=500 fact=mconst out_fact=mzero cache_dir=data/cache splits=['train', 'validation', 'test'] verify=True shuffle_bin=64 transform=const keep=all | lexicon, split:train, split:validation, transform |
+| `device calibration (remote ~/morph/code/scripts/calibrate_remote.sh)` | 2026-10-15T23:23:50+00:00 | - | - |
 | `?` | ? | - | - |
 | `scripts/analysis/learning_law.py` | 20261012T003054+0000 | - | - |
 | `scripts/analysis/learning_law.py` | 20261015T154512+0000 | - | - |
@@ -256,6 +260,7 @@
 | `scripts/analysis/tokenizer_widths.py` | 20261014T193329+0000 | - | 7 rows |
 | `scripts/analysis/tokenizer_widths.py` | 20261015T184449+0000 | - | 7 rows |
 | `scripts/data/prepare_ubertext_fiction.py` | 20261011T074342+0000 | - | bytes_written, characters, document_characters, documents, keys_repeated, paragraphs, titled, wrapped |
+| `scripts/data/prepare_ubertext_fiction.py` | 20261016T000257+0000 | - | bytes_written, characters, document_characters, documents, keys_repeated, paragraphs, titled, wrapped |
 | `ukwiki_stats` | 2026-09-28T22:39:28+00:00 | holdout=2000 target_chars=539000000.0 | splits, suggested_fraction |
 
 ## Caveats recorded with the numbers

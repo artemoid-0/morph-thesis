@@ -6,7 +6,7 @@ Within-pipeline comparisons (Q2) and cross-pipeline ones (Q1) are never mixed in
 
 ## bpe/bpe_17k
 
-baseline `bpe_baseline_bpe_17k`, seeds [0, 1, 2, 3]: 1.3477, 1.3482, 1.3573, 1.3478
+baseline `bpe_baseline_bpe_17k`, seeds [0, 1, 2, 3, 4, 5, 6, 7]: 1.3477, 1.3482, 1.3573, 1.3478, 1.3575, 1.3473, 1.3494, 1.3483
 
 | cell | paired seeds | gain per seed | mean gain +/- se | % | agree |
 |---|---|---|---|---|---|
@@ -54,6 +54,8 @@ baseline `bpe_baseline_bpe_17k`, seeds [0, 1, 2, 3]: 1.3477, 1.3482, 1.3573, 1.3
 | bpe_mzero-LEARN-CAUSAL_bpe_17k | 0,1,2,3 | +0.0083 +0.0071 +0.0210 +0.0058 | +0.0105 +/- 0.0035 | +0.78% | 4/4 |
 | bpe_mzeronopos-LEARN-CAUSAL_bpe_17k | 0,1,2,3 | +0.0002 +0.0020 +0.0124 -0.0054 | +0.0023 +/- 0.0037 | +0.17% | 3/4 |
 | bpe_mzeroposonly-LEARN-CAUSAL_bpe_17k | 0,1,2,3 | +0.0044 +0.0043 +0.0083 +0.0004 | +0.0043 +/- 0.0016 | +0.32% | 4/4 |
+| bpe_pos-LEARN-CAUSAL-OFF0_bpe_17k | 0,1,2,3 | +0.0097 +0.0106 +0.0203 +0.0116 | +0.0130 +/- 0.0025 | +0.97% | 4/4 |
+| bpe_pos-LEARN-CAUSAL-OFF5000_bpe_17k | 0,1,2,3 | +0.0108 +0.0084 +0.0167 +0.0085 | +0.0111 +/- 0.0019 | +0.82% | 4/4 |
 | bpe_pos-LEARN-CAUSAL_bpe_17k | 0,1,2,3 | +0.0072 +0.0109 +0.0198 +0.0113 | +0.0123 +/- 0.0027 | +0.91% | 4/4 |
 | bpe_poslex-LEARN-CAUSAL_bpe_17k | 0,1 | +0.0098 +0.0064 | +0.0081 +/- 0.0017 | +0.60% | 2/2 |
 
@@ -184,7 +186,7 @@ baseline `bpe_baseline_bpe_uk_17k_ukwiki0.2`, seeds [0, 1, 2, 3]: 0.9475, 0.9483
 
 *No run of `bpe_baseline_bpeend_uk_17k_ukwiki0.05_st10k_w512` exists, so these are not comparable:* `bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k_w512`
 
-*No run of `bpe_baseline_bpeend_uk_17k_ukwiki0.05_st20k` exists, so these are not comparable:* `bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k`, `bpe_ucase-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k`
+*No run of `bpe_baseline_bpeend_uk_17k_ukwiki0.05_st20k` exists, so these are not comparable:* `bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k`, `bpe_ucase-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.05_st20k`, `bpe_ucase-LEARN-CAUSAL-OFF5000_bpeend_uk_17k_ukwiki0.05_st20k`, `bpe_ucase-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k`
 
 *No run of `bpe_baseline_bpeend_uk_17k_ukwiki0.05_st20k_w256` exists, so these are not comparable:* `bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w256`
 

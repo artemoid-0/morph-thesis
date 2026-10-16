@@ -13,8 +13,9 @@ The register is empty when no open gap could change a claim stated in FINDINGS.
 
 ## Open — could change a claim
 
-None. The last, G-77, closed on 10 October (journey §33.81): no open gap could change a
-claim stated in FINDINGS.
+| # | gap | status | cost |
+|---|---|---|---|
+| G-78 | Does an empty slot beat the same-shape null in Ukrainian? Case switched off from the start holds its slot at exactly zero. Under endings apart at ~38M and 20k its four seeds end 0.0036 better than the null's, and level with case (0.0002 behind). Those runs were on two machines (journey §33.102). In English the two are level on one machine. If it holds on one machine, an empty slot matches what case gains over the null there. The gains stated against the null would stand as what the feature carries against the slot's constant, but not as a gain over the best model without the feature. | open: the empty slot and twins of the null and case, on one machine | ~3 h on the second machine |
 
 The research programme's open questions are in [`DIRECTIONS.md`](DIRECTIONS.md).
 

@@ -168,5 +168,6 @@ the tokenizer was built as it was.
   - [33.99 A causal tagger for English part of speech (the list's item 2, prepared)](9_ukrainian_and_learning.md#3399-a-causal-tagger-for-english-part-of-speech-the-lists-item-2-prepared)
   - [33.100 Width 512 at 20k, seed 1: levelled off too, at +0.0097](9_ukrainian_and_learning.md#33100-width-512-at-20k-seed-1-levelled-off-too-at-00097)
   - [33.101 A second machine, and the night of 16 October (prepared)](9_ukrainian_and_learning.md#33101-a-second-machine-and-the-night-of-16-october-prepared)
+  - [33.102 The night of 16 October: width 512 settles, a removed feature's deficit halves by 50k, and case leaves none](9_ukrainian_and_learning.md#33102-the-night-of-16-october-width-512-settles-a-removed-features-deficit-halves-by-50k-and-case-leaves-none)
 - [Appendix A — Decision Record](appendices.md#appendix-a--decision-record)
 - [Appendix B — Section Mapping](appendices.md#appendix-b--section-mapping)

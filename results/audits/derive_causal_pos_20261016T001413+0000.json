@@ -1,0 +1,68 @@
+{
+  "script": "derive_causal_pos",
+  "args": {
+    "bpe_path": "data/bpe_17k.json",
+    "splits": [
+      "validation",
+      "train"
+    ],
+    "window": 4,
+    "check_rows": 20000,
+    "workers": 12,
+    "rows_per_task": 400,
+    "limit_rows": 0,
+    "cache_dir": "data/cache"
+  },
+  "timestamp_utc": "2026-10-16T00:14:13+00:00",
+  "results": {
+    "validation": {
+      "paragraphs": 2461,
+      "tokens": 252255,
+      "cached_tokens": 252255,
+      "window_vs_prefix": [
+        2000,
+        2000
+      ],
+      "ids_identical": true,
+      "pos_identical": true,
+      "pos_checked_tokens": 252255,
+      "causal_equals_pos": 0.9222413827277953,
+      "source": "bpe_validation_None_17198cc78f_pos.codes.npy",
+      "seconds": 44
+    },
+    "train": {
+      "paragraphs": 1165029,
+      "tokens": 120625719,
+      "cached_tokens": 120625719,
+      "window_vs_prefix": [
+        2000,
+        2000
+      ],
+      "ids_identical": true,
+      "pos_identical": true,
+      "pos_checked_tokens": 2044348,
+      "causal_equals_pos": 0.9208671328209865,
+      "source": "bpe_train_None_562b1cc17e_pos.codes.npy",
+      "seconds": 4141
+    }
+  },
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+    "timestamp_utc": "2026-10-16T00:14:13+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 5090 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": null,
+    "git_dirty": false
+  }
+}

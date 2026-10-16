@@ -4166,3 +4166,90 @@ and the smoke tests could not, each fixed before any piece reached it:
 The causal tagger's validation split passed both its checks there: the same ids, and the cached `pos`
 reproduced on all 252,255 tokens. Its causal codes equal `pos` at 92.22% of tokens; the validation file
 is written, and the training split follows.
+
+### 33.102 The night of 16 October: width 512 settles, a removed feature's deficit halves by 50k, and case leaves none
+
+The chain of §33.101 completed on the second machine at 04:50 local time, two hours inside its time
+box: 28 runs, every piece but fiction, whose data build stopped (below). Each comparison below is
+within one machine, and each record names its GPU.
+
+**Item 1 — width 512 at 20k, four seeds.** At seeds 2 and 3 the endings-apart null ends below BPE
+17k's by +0.0107 and +0.0088; over the last 5,000 steps the lead moves by −0.0005 and +0.0006. With
+seeds 0–1 (§33.96, §33.100) the lead is **+0.0102 ± 0.0006 (4/4)**, 1.25% of the null's bits per
+byte, and every seed has levelled off. **P211, P212 and P213 right.**
+
+**Item 4a — English part of speech switched off at 5,000 of 50k.** Against the model never fed it,
+the switched model ends −0.0011, +0.0022, +0.0036 and +0.0031 behind: **+0.0019 ± 0.0011**, a deficit
+at three seeds of four, half the 20k budget's 0.0039 ± 0.0009. The gap closes slowly (mean over the
+four seeds):
+
+| step | 5k | 6k | 10k | 20k | 30k | 40k | 50k |
+|---|---|---|---|---|---|---|---|
+| switched minus never fed | +0.0413 | +0.0110 | +0.0049 | +0.0038 | +0.0032 | +0.0024 | +0.0019 |
+
+- Seed 0 recovers by step 30,000 and ends 0.0011 ahead; seeds 1–3 keep 0.0022–0.0036.
+- At step 20,000 the gap is +0.0038, as at the end of a 20k budget (0.0039), though there the learning
+  rate had annealed and here it is still high. The further 30,000 steps halve it.
+
+**P214 right** (three seeds of four), **P215 right** (+0.0019, under 0.0039). The deficit lasts well
+past where a 20k budget ends, and shrinks with time.
+
+**Item 4b — Ukrainian case switched off at 5,000 of 20k, under endings apart (~38M tokens).** The
+switched model ends −0.0022, −0.0012, −0.0003 and +0.0007 against the model never fed case:
+**−0.0008 ± 0.0006**, level or better at three seeds of four. The jump at the switch (+0.0239 at step
+5,000) is gone by step 7,500 (+0.0002), and from step 10,000 the switched model is ahead (−0.0008 to
+−0.0010). **P218 wrong**; P219 (under English's 0.0039) **right**, trivially: there is no deficit.
+Removal's lasting deficit is not general. English part of speech leaves one; Ukrainian case under
+endings apart does not. One reading, untested: with endings apart the case ending is a token of its
+own, so what the feature carried stays in the input.
+
+**Item 6 — English at full training, seeds 4–7.** Endings apart ends below BPE 17k at every seed:
++0.0160, +0.0016, +0.0065, +0.0009 (+0.0062 ± 0.0035). With seeds 0–3 (§33.92), over eight seeds:
+**median +0.0053, mean +0.0066 ± 0.0024, 7 of 8**. Seed 4's BPE 17k run ends about 0.009 above the
+typical run, as seed 2's did on the thesis machine. Endings apart's highest runs, seeds 3 and 7, end
+about 0.005 above its typical one. With eight seeds the median stays the measure, as at four.
+**P220 right** (4/4), **P221 right** (median +0.0053, against 20k's +0.0055). BLiMP for seeds 4–7
+is tonight's (§33.103).
+
+**Item 2 — the causal tagger's training split.** On the second machine
+(`derive_causal_pos_20261016T001413`, 69 minutes):
+- 120,625,719 tokens, the ids identical to the cache;
+- the full pipeline reproduces the cached `pos` on the first 20,000 paragraphs (2,044,348 tokens);
+- the causal tag equals `pos` at 92.09% of tokens (validation: 92.22%).
+
+Its codes were copied to the thesis machine with SHA-256 checks at both ends. Its runs pair there
+with `pos`, `poslex` and the null.
+
+**Item 3 — fiction: the build stopped.** The download, the conversion and both validation streams
+matched the thesis machine's (`ubertext_fiction_20261016T000257`, `check_cache_20261016T000349`,
+`check_cache_20261016T000601`). Both builds tagged 1,046,000 of the training split's 1,121,272
+paragraphs (92.5M tokens) in 2 h 04 min. Then they stopped on paragraph 1,046,116: the Bible, in
+Ohienko's translation, as one line of 2,713,718 characters, past spaCy's limit of a million. It is
+the only paragraph over the limit at 0.4; the next longest has 587,473.
+
+The fix: the pipeline lifts the limit to 4 million characters, the corpus's longest document being
+3.6 million, so a paragraph is still tagged whole.
+- Measured on this paragraph, the Ukrainian pipeline needs ~3 GB per million characters (1.5 GB at
+  500,000).
+- No text under the old limit is touched, so no cache built before changes.
+
+P216 and P217 wait.
+
+**A question the night raised (G-78).** Case switched off from the start holds its slot at exactly
+zero: an empty slot, in effect the zero slot of §33.11.
+- Under endings apart at 20k its four seeds end at 0.99398 on average. That is 0.0036 better than the
+  null's four seeds on the thesis machine (0.99756), and level with case there (0.99373; case 0.0002
+  ahead).
+- In English the two are level: at 20k, part of speech switched off from the start ends at 1.4252
+  against the null's 1.4261, both on the thesis machine. FINDINGS states the same for learned
+  positions.
+
+If the Ukrainian gap holds on one machine, an empty slot matches case's gain over the same-shape null
+(+0.0038 ± 0.0008 at 20k under endings apart, §33.76). The null would still measure what case carries
+against the slot's constant, but it would not be the best model without case. This comparison crosses
+machines. The calibration put them within 0.0005 at 10k on the Ukrainian null, but no run has been
+repeated at 20k. Both questions go to one night (§33.103).
+
+**Predictions.** P211–P215 right, P218 wrong, P219–P221 right; P216–P217 wait for fiction. The tally
+is 124 right, 8 half right, 78 wrong, 8 never tested, 1 withdrawn, 2 pending, of 221.
+

@@ -219,6 +219,12 @@ class BPEPipeline:
             # the codes are identical (docs/reference/ukrainian_pipeline.md, block U1).
             skip = [] if self._spacy_model.startswith('en_') else ['ner', 'lemmatizer']
             self._nlp = spacy.load(self._spacy_model, disable=skip)
+            # A paragraph is tagged whole, however long: fiction at 0.4 holds the
+            # Bible as one line of 2.7M characters, past spaCy's default 1M. The
+            # Ukrainian pipeline needs ~3 GB per million characters (measured on
+            # it); 4M covers the corpus's longest document (3.6M). No text below
+            # the default limit is touched, so no cache built before changes.
+            self._nlp.max_length = max(self._nlp.max_length, 4_000_000)
         return self._nlp
 
     def _char_annotation_map(self, text):

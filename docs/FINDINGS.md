@@ -26,13 +26,13 @@ morphology helps: **+0.0046 ± 0.0010 BPB (0.30%, 4/4)** at a 10k budget, every 
 every BPE 17k run. That is a fifth of the Ukrainian gain, as English inflects far less: the
 rule cuts 10.2% of words and reaches half of the inflected ones. It does not fade: at twice
 the budget **+0.0055 ± 0.0008 (0.38%, 4/4)**, and at full training — 50k steps — **+0.0053 on
-the median seed (0.39%)**, at three seeds of four. There, in each tokenizer one run in four
-drifts after 20k steps, by 0.005 to 0.009, which leaves one pair level and inflates the mean
-(+0.0069 ± 0.0037). The grammar test agrees at every seed: on BLiMP the full-training models
+the median seed (0.39%)**, at seven seeds of eight. There, runs drift after 20k steps — two
+BPE 17k runs of eight by about 0.009, two endings-apart runs by about 0.005 — which leaves one
+pair level and makes the mean (+0.0066 ± 0.0024) less telling than the median. The grammar test agrees at every seed: on BLiMP the full-training models
 are **+1.0 ± 0.2 points** better over all 67 paradigms (4/4; +0.3 at 10k), +2.1 ± 0.8 in
 morphology (4/4), and better on average in each agreement phenomenon (3/4 each). *Plain
-baselines, four seeds, three budgets; at full training three seeds of four.* (§33.85, §33.87,
-§33.92)
+baselines, four seeds at 10k and 20k, eight at full training (seven of eight; seeds 4–7 on a
+second machine); BLiMP at seeds 0–3.* (§33.85, §33.87, §33.92, §33.102)
 
 **Q1 in Ukrainian, with morphology inside BPE: yes — and the gain lasts, to full
 training.** BPE that never joins a stem to its inflectional ending — the cut read from
@@ -52,9 +52,9 @@ BPB. **It peaks there.** At width 512 — 30M parameters, four times width 128 �
 of learning it starts above width 256's (+0.041 against +0.038 at null BPB 1.18), then keeps
 falling as the model learns, as a feature's gain does: below width 256's from 1.11 on, and at
 width 128's level near 0.98 (+0.018), +0.014 at 0.92, while the smaller widths' leads hold
-flat. At 20k it levels off from about step 7,500 at two seeds of two: +0.0115 and +0.0097
-(+0.0106, 1.3%), smaller than at widths 128 and 256 but lasting, where a feature's gain falls to
-nothing (§33.94, §33.96, §33.100). Unigram, which cuts
+flat. At 20k it levels off from about step 7,500 at every seed: **+0.0102 ± 0.0006 (1.25%,
+4/4)**, smaller than at widths 128 and 256 but lasting, where a feature's gain falls to
+nothing (§33.94, §33.96, §33.100, §33.102). Unigram, which cuts
 words differently and into even more tokens, leads early, loses the lead by step 3,000
 and gains nothing by the end (−0.0005 ± 0.0004): where the cuts fall matters, not how
 many there are. Every tokenizer's validation stream decodes to the same text, byte for
@@ -71,8 +71,8 @@ On UberText 2.0's fiction subcorpus — novels and prose, both tokenizers traine
 endings apart beats BPE 17k at every seed, **+0.0097 ± 0.0010 BPB (0.8%, 4/4)** at a 10k
 budget, half its share on Wikipedia, and on MultiBLiMP by **+5.3 ± 0.6 points (4/4)**, as much
 as on Wikipedia or more. *Two corpora (fiction at one size and budget), two corpus sizes and
-three budgets on Wikipedia, three widths (512 at 20k at two seeds).* (§33.61–§33.68, §33.76,
-§33.79, §33.86, §33.88, §33.94, §33.96, §33.100)
+three budgets on Wikipedia, three widths (512 at 20k: seeds 2–3 on a second machine).*
+(§33.61–§33.68, §33.76, §33.79, §33.86, §33.88, §33.94, §33.96, §33.100, §33.102)
 
 **Q2 — Do injected linguistic facts help? No — in either way of injecting
 them, and in either language.** Against a **null of the same shape** — which in this codebase sees
@@ -230,8 +230,9 @@ still beats its null, +0.0015 ± 0.0010 (3/4); read from the word form alone —
 so no leak — +0.0016 ± 0.0009 (3/4), which is **+0.0036 ± 0.0010 (4/4)** more than the word
 form gains under BPE 17k, where it ends below its null. What lasts to full training where
 endings are tokens is the word's own case; the other half is the leak (+0.0015 ± 0.0001,
-4/4). *Four seeds each; the gains without the leak at three seeds of four.* (§33.68,
-§33.76, §33.81)
+4/4). *Four seeds each; the gains without the leak at three seeds of four. Measured against
+the same-shape null; whether an empty slot — its dims held at zero — does as well as case is
+open (G-78).* (§33.68, §33.76, §33.81, §33.102)
 
 **Case helps by predicting endings; the exposure effect lies elsewhere.** Re-scored
 token by token, case's gain sits on the tokens that hold an inflectional ending under
@@ -287,12 +288,16 @@ deepest layer reads it at 0.68 — and at the end of a 20k budget the base null
 reads it at 0.619 (the current word's: 0.881). *The probes, one seed per width.*
 (§33.40, §33.42, §33.49–§33.50, §33.52, §33.60)
 
-**Removing a feature leaves a lasting deficit; adding one late does not.**
+**Removing English part of speech leaves a lasting deficit; adding it late does not.**
 Switched off at step 2,500 of a 10k budget, English part of speech ends 0.0023
 below a model that never had it; at 7,500, 0.0118 below; and at 5,000 of a 20k
 budget — with 15,000 steps to recover — still **0.0039 ± 0.0009** below (5 of 5
 seeds), the gap levelling off near 0.004 from step 12,500 while the learning rate
-is still a third of its peak. **It is not lost knowledge of part of speech**: a
+is still a third of its peak. At full training — 45,000 steps to recover — it halves
+and lasts: **0.0019 ± 0.0011** below (3 of 4 seeds; the fourth recovers by step 30,000).
+**The deficit is not general**: Ukrainian case, switched off at 5,000 of a 20k budget
+under endings apart, ends level or ahead of the model never fed it (0.0008 ± 0.0006
+ahead, 3 of 4 seeds), back level within 2,500 steps of the switch. **It is not lost knowledge of part of speech**: a
 probe finds the switched model's deepest layer 1.2 points behind one step after
 the switch, level 1,000 steps later, and level or ahead to the end (seed 4). Nor
 of what the feature carried, the previous word's tag: rebuilt from context within
@@ -302,7 +307,8 @@ Switched *on* late the feature is integrated slowly but well: with 15,000 steps
 left it recovers 54–104% of the kept gain (mean 73%). Weaning — dropped at a
 rising rate, fully by step 5,000 — leaves 70% of the abrupt switch's deficit
 (−0.0029 ± 0.0016 against −0.0042 ± 0.0011, 4 seeds). *Firm (4–5 seeds; the
-probe, one seed).* (§33.34, §33.38, §33.40, §33.42, §33.50, §33.52)
+probe, one seed; Ukrainian case at one size and budget).* (§33.34, §33.38, §33.40, §33.42,
+§33.50, §33.52, §33.102)
 
 **As a target, morphology teaches — and the knowledge stops paying.** Predicted
 as an auxiliary target from the final hidden state (weight 0.1), English part of
@@ -431,9 +437,10 @@ Each withdrawal was decided by a rule recorded before its result.
 ## Open
 
 The research programme, [`DIRECTIONS.md`](DIRECTIONS.md), pursues:
-- the width-512 lead at 20k at seeds 2–3 — its size and spread (seeds 0–1 level off at +0.0106);
+- whether an empty slot — its dims held at zero — beats the same-shape null in Ukrainian, as
+  one comparison across machines suggests (G-78, §33.102);
 - whether the tokenizer's gain holds on fiction beyond a 10k budget;
 
-It leaves open, as limitations: whether reliance's deficit is permanent beyond a 20k
-budget; and, across model sizes, the half of
+It leaves open, as limitations: whether English part of speech's deficit ever closes
+(at full training it is half the 20k budget's, at three seeds of four); and, across model sizes, the half of
 the width difference that the previous word's tag does not account for (§33.83).

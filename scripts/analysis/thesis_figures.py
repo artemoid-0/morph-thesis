@@ -114,7 +114,11 @@ TXT = {
                 ('38 млн токенів, 10 тис. кроків', '0.05', '_st10k', 1, '-'),
                 ('38 млн токенів, 10 тис. кроків, ширина 256', '0.05', '_st10k_w256', 1, '-.'),
                 ('38 млн токенів, 20 тис. кроків, ширина 256', '0.05', '_st20k_w256', 2, '-.'),
-                ('38 млн токенів, 10 тис. кроків, ширина 512', '0.05', '_st10k_w512', 1, ':')],
+                ('38 млн токенів, 10 тис. кроків, ширина 512', '0.05', '_st10k_w512', 1, ':'),
+                ('38 млн токенів, 20 тис. кроків, ширина 512', '0.05', '_st20k_w512', 2, ':')],
+        'tok_keys': [('151 млн токенів, 50 тис. кроків', 0), ('38 млн токенів, 20 тис. кроків', 2),
+                     ('38 млн токенів, 10 тис. кроків', 1)],
+        'tok_widths': [('ширина 128', '-'), ('ширина 256', '-.'), ('ширина 512', ':')],
         'unigram': 'Unigram 17k',
     },
     'en': {
@@ -142,7 +146,10 @@ TXT = {
                 ('38M tokens, 10k steps', '0.05', '_st10k', 1, '-'),
                 ('38M tokens, 10k steps, width 256', '0.05', '_st10k_w256', 1, '-.'),
                 ('38M tokens, 20k steps, width 256', '0.05', '_st20k_w256', 2, '-.'),
-                ('38M tokens, 10k steps, width 512', '0.05', '_st10k_w512', 1, ':')],
+                ('38M tokens, 10k steps, width 512', '0.05', '_st10k_w512', 1, ':'),
+                ('38M tokens, 20k steps, width 512', '0.05', '_st20k_w512', 2, ':')],
+        'tok_keys': [('151M tokens, 50k steps', 0), ('38M tokens, 20k steps', 2), ('38M tokens, 10k steps', 1)],
+        'tok_widths': [('width 128', '-'), ('width 256', '-.'), ('width 512', ':')],
         'unigram': 'Unigram 17k',
     },
 }
@@ -267,22 +274,21 @@ def fig_law_english(R, t, path):
 
 def fig_tokenizer(R, t, path):
     fig, (a, b) = plt.subplots(1, 2, figsize=(WIDTH, 10.0 * CM), sharey=True)
-    handles = []
     for name, fr, x, k, ls in t['tok']:
         pts = lead(R, TOK('mconst', 'bpe_uk_17k', fr, x), TOK('mconst', 'bpeend_uk_17k', fr, x))
         st_, rb, m, e = [p[0] for p in pts], [p[1] for p in pts], [p[2] for p in pts], [p[3] for p in pts]
         for ax, xs in ((a, st_), (b, rb)):
-            h, = ax.plot(xs, m, ls, color=SERIES[k], lw=1.5)
+            ax.plot(xs, m, ls, color=SERIES[k], lw=1.5)
             ax.fill_between(xs, [u - v for u, v in zip(m, e)], [u + v for u, v in zip(m, e)], color=SERIES[k], alpha=0.14, lw=0)
-        handles.append((h, name))
     pts = lead(R, TOK('mconst', 'bpe_uk_17k'), TOK('mconst', 'unigram_uk_17k'))
     st_, rb, m, e = [p[0] for p in pts], [p[1] for p in pts], [p[2] for p in pts], [p[3] for p in pts]
     for ax, xs in ((a, st_), (b, rb)):
         ax.plot(xs, m, '--', color=GREY, lw=1.4)
         ax.fill_between(xs, [u - v for u, v in zip(m, e)], [u + v for u, v in zip(m, e)], color=GREY, alpha=0.14, lw=0)
     # the contrast is labelled on its line, not in the legend (n = 4 as well)
-    i2 = min(range(len(st_)), key=lambda i: abs(st_[i] - 2000))
-    a.annotate(t['unigram'], xy=(st_[i2], m[i2]), xytext=(6, 12), textcoords='offset points', color=MUTED,
+    # at the line's end, where nothing else runs (at step 2,000 it met the width-512 lines)
+    i2 = len(st_) - 1
+    a.annotate(t['unigram'], xy=(st_[i2], m[i2]), xytext=(6, 3), textcoords='offset points', color=MUTED,
                fontsize=9.5, va='bottom', ha='left')
     step_axis(a, t['lang'], 50000)
     b.invert_xaxis()
@@ -296,9 +302,14 @@ def fig_tokenizer(R, t, path):
         ax.grid(color='#e6e5e0', lw=0.6)
         ax.set_axisbelow(True)
         letter(ax, ch)
-    fig.legend([h for h, _ in handles], [n for _, n in handles], title=t['tok_title'], title_fontsize=9,
-               loc='lower center', ncol=2, frameon=False, fontsize=8.8, bbox_to_anchor=(0.5, 0.0),
-               alignment='left')
+    # two keys, not one entry per line: colour is the corpus and budget, the line style the width
+    # (seven lines' full names overflowed the figure in Ukrainian)
+    from matplotlib.lines import Line2D
+    keys = [Line2D([], [], color=SERIES[k], lw=1.5) for _, k in t['tok_keys']] + \
+           [Line2D([], [], color=INK, lw=1.5, ls=ls) for _, ls in t['tok_widths']]
+    fig.legend(keys, [n for n, _ in t['tok_keys']] + [n for n, _ in t['tok_widths']], title=t['tok_title'],
+               title_fontsize=9, loc='lower center', ncol=2, frameon=False, fontsize=8.8,
+               bbox_to_anchor=(0.5, 0.0), alignment='left')
     fig.tight_layout(rect=(0, 0.19, 1, 1), w_pad=1.2)
     fig.savefig(path)
     plt.close(fig)
