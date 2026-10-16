@@ -4154,3 +4154,15 @@ Predictions, before any run:
 - **P220** (~65%). At 50k, English endings apart ends below BPE 17k at three or more of seeds 4–7.
 - **P221** (~55%). Over eight seeds, the median lead lies within 0.002 of the 20k lead (+0.0035 to
   +0.0075).
+
+**Launched** at 03:00 Kyiv on 16 October, with the time box at 14:00. Before launch, a cell of each piece
+ran 30 steps through the real loader on the second machine. That found three gaps the readiness check
+and the smoke tests could not, each fixed before any piece reached it:
+- the single-fact codes files sent for `pos` and `ucase` had been written one-dimensional; they were
+  rewritten as one row each, contents unchanged;
+- three data files the English pipeline reads through its configuration had not been sent;
+- one package (`openpyxl`) was missing from the environment.
+
+The causal tagger's validation split passed both its checks there: the same ids, and the cached `pos`
+reproduced on all 252,255 tokens. Its causal codes equal `pos` at 92.22% of tokens; the validation file
+is written, and the training split follows.
