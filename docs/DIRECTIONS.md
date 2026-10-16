@@ -2,7 +2,8 @@
 
 > **Kind:** claims — the current plan and queue; rewritten as they change.
 > **Authoritative for:** what is investigated next, why, and in what order.
-> Updated 16 October 2026: the night of 16 October answered items 1, 4a, 4b and 6 (journey §33.102).
+> Updated 17 October 2026: the night of 16 October answered items 1, 4a, 4b and 6 (journey §33.102); twins and
+> the empty slot prepared for the second machine, with fiction again (§33.103).
 
 The thesis stands on what is established ([`FINDINGS.md`](FINDINGS.md)). The
 programme began on 2 October from its one positive regularity — *a feature helps
@@ -150,9 +151,9 @@ naming (G-66).
 Rewritten 15 October (journey §33.98) in the order of the thesis's list of that day: nine
 experiments ranked by what each result changes in the text, each with the sentence it states for
 every outcome. Results committed by about 31 October reach the text; the work is admitted on
-4 November. Each item's preparation runs on the CPU while the item before it trains. **Next**, on the
-second machine: twins of the thesis machine's runs and the empty slot (G-78), BLiMP and MultiBLiMP for
-items 6 and 1, and item 3 again, with the fix of §33.102.
+4 November. Each item's preparation runs on the CPU while the item before it trains. **Prepared**
+(§33.103), for the second machine once it is free: twins of the thesis machine's runs and the empty
+slot (G-78), BLiMP and MultiBLiMP for items 6 and 1, and item 3 again, with the fix of §33.102.
 
 **Answered on 16 October** (§33.102, on the second machine):
 - item 1: the lead levels off at +0.0102 ± 0.0006 (4/4);
@@ -177,13 +178,13 @@ off at about +0.011 (1.4%). On MultiBLiMP it grows: +6.8 points.
 
 | # | candidate | each outcome's sentence | GPU | ready |
 |---|---|---|---|---|
-| 1 | **Width 512 at 20k, seeds 1–3** (§3.3.2; conclusion 2) | *Settles near +0.011 at four seeds:* the gain does not fade with learning at any of the three widths. *Keeps falling:* at 30M parameters the tokenizer's gain fades with learning, as a feature's does | — | **done** (§33.102): +0.0102 ± 0.0006, 4/4; MultiBLiMP at seeds 2–3 to run |
+| 1 | **Width 512 at 20k, seeds 1–3** (§3.3.2; conclusion 2) | *Settles near +0.011 at four seeds:* the gain does not fade with learning at any of the three widths. *Keeps falling:* at 30M parameters the tokenizer's gain fades with learning, as a feature's does | — | **done** (§33.102): +0.0102 ± 0.0006, 4/4; MultiBLiMP at seeds 2–3 prepared |
 | 2 | **English part of speech without the right-context leak**, over the null, 10k and 20k, four seeds — every word tagged from its left context alone, since in English the leak is spread over thousands of words (§33.99; the thesis's §3.10, conclusion 7) | *Leak-free ≈ word form:* in both languages what a context-aware feature adds over the lexical one is mostly not context. *Leak-free clearly above the word form:* for English part of speech the sentence's context adds information of its own; for Ukrainian case it does not | ~2.3 h | its codes built and checked (§33.102); a piece on the thesis machine, where its comparisons are |
-| 3 | **Fiction at full training**: both fiction nulls at fraction 0.4 (~133M tokens), 50k, seeds 0–3 (§3.3.3; conclusion 2) | *Holds:* on both corpora the gain does not fade with training. *Fades:* on fiction the tokenizer's gain belongs to short training | ~3.5 h on the second machine | to run again: its data stopped on a paragraph past spaCy's limit, fixed (§33.102) |
+| 3 | **Fiction at full training**: both fiction nulls at fraction 0.4 (~133M tokens), 50k, seeds 0–3 (§3.3.3; conclusion 2) | *Holds:* on both corpora the gain does not fade with training. *Fades:* on fiction the tokenizer's gain belongs to short training | ~3.5 h on the second machine | prepared again (§33.103): its data stopped on a paragraph past spaCy's limit, fixed (§33.102) |
 | 4a | **Part of speech switched off early at 50k**, four seeds (§3.8; conclusion 5) | *The deficit persists:* the model relies on the feature at full training too. *It closes:* at full training the model makes up the removed feature; the reliance is temporary | — | **done** (§33.102): +0.0019 ± 0.0011, 3/4 |
 | 4b | **Ukrainian case switched off mid-training**, under endings apart at 20k (+0.0038) or on a small corpus | *A deficit:* in both languages. *None:* the deficit belongs to a strong feature, not to features in general | — | **done** (§33.102): no deficit, −0.0008 ± 0.0006 |
 | 5 | **The one-seed probes at more seeds**: after removal, with the auxiliary target, across widths (§3.7, §3.8) | *They agree:* the qualifiers go, and §3.7's share is stated with its spread. *They disagree:* the sentence says how far the seeds differ | ~6–9 h, and probing on the CPU | no: re-runs with checkpoints along training |
-| 6 | **English at full training, seeds 4–7** of both tokenizers (§3.3.6; conclusion 1) | *7/8 or more:* at full training, at 7 of 8 seeds. *Fewer:* at full training the English gain is within the seed spread, and conclusion 1 loses its full-training clause | — | **done** (§33.102): 7/8, median +0.0053; BLiMP at seeds 4–7 to run |
+| 6 | **English at full training, seeds 4–7** of both tokenizers (§3.3.6; conclusion 1) | *7/8 or more:* at full training, at 7 of 8 seeds. *Fewer:* at full training the English gain is within the seed spread, and conclusion 1 loses its full-training clause | — | **done** (§33.102): 7/8, median +0.0053; BLiMP at seeds 4–7 prepared |
 | 7 | **The leak at full training under BPE 17k**: `ucaseprep` at 151M, 50k, four seeds (§3.10; conclusion 7) | *All of the lead (+0.0006 ± 0.0004) is leak:* under both tokenizers. *Some is not:* under BPE 17k part of the lead is context | ~3.7 h | no: its codes at 0.2 under BPE 17k (CPU, under an hour) |
 | 8 | **The two-seed rows at 50k**: frequency band and part of speech from the word form, seeds 2–3 (§3.5; conclusion 4) | *Still within 0.002:* the sentence stands on four seeds for every row. *Either exceeds it:* the claim names the exception | ~3.7 h | a piece |
 

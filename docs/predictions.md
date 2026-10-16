@@ -6,7 +6,7 @@ Each prediction was recorded in `docs/record/journey/README.md` **before** its r
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 124 right, 8 half right, 78 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 2 pending — of 221. The wrong ones carried
+**Tally:** 124 right, 8 half right, 78 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 9 pending — of 228. The wrong ones carried
 the information: the null's gain (P18), the shuffled control (P15), the
 leak's absence (P11), the training-budget reframing (P61), the tokenizer
 hypothesis (P119, P120), Unigram's early lead (P130), the wider model's larger
@@ -236,3 +236,10 @@ over the word form's (P148–P150), and how much of it the tagger's leak is (P16
 | P219 | Its deficit is smaller than English part of speech's at 20k (under 0.0039) | right — trivially: there is no deficit (−0.0008) | §33.101, §33.102 |
 | P220 | At 50k English endings apart ends below BPE 17k at three or more of seeds 4–7 | right — four of four (+0.0160, +0.0016, +0.0065, +0.0009) | §33.101, §33.102 |
 | P221 | Over eight seeds the median English lead at 50k lies within 0.002 of the 20k lead (+0.0035 to +0.0075) | right — median +0.0053 (7/8) | §33.101, §33.102 |
+| P222 | At 20k each of the twelve Ukrainian twins ends within 0.001 of its run on the thesis machine, and their mean difference lies within ±0.0005 | pending | §33.103 |
+| P223 | At 50k each English twin ends within 0.002 of its run on the thesis machine, and endings apart's lead at seeds 0 and 1 is reproduced within 0.002 | pending | §33.103 |
+| P224 | On one machine, under endings apart at 20k, the empty slot ends better than the null by more than 0.002 on average over seeds 0–3 | pending | §33.103 |
+| P225 | On one machine, case ends within 0.001 of the empty slot on average over seeds 0–3 | pending | §33.103 |
+| P226 | Under BPE 17k at 20k the empty slot also ends better than the null by more than 0.002 on average | pending | §33.103 |
+| P227 | On BLiMP endings apart judges better overall than BPE 17k at three or more of seeds 4–7 | pending | §33.103 |
+| P228 | On MultiBLiMP at width 512 and 20k endings apart judges better at seeds 2 and 3, by 4 to 8 points each | pending | §33.103 |

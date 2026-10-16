@@ -4253,3 +4253,61 @@ repeated at 20k. Both questions go to one night (§33.103).
 **Predictions.** P211–P215 right, P218 wrong, P219–P221 right; P216–P217 wait for fiction. The tally
 is 124 right, 8 half right, 78 wrong, 8 never tested, 1 withdrawn, 2 pending, of 221.
 
+### 33.103 Twins and the empty slot, on one machine (prepared, 17 October)
+
+Two questions first, then what remains of the list for the second machine
+(`scripts/chains/night_2026-10-17.sh`):
+
+- **Do the machines differ at 20k and 50k?** TWINS are runs of the thesis machine repeated on the
+  second with the same arguments and seeds:
+  - Ukrainian, 20k, seeds 0–3: the null and case under endings apart, and the null under BPE 17k;
+  - English, 50k, seeds 0–1: both plain baselines.
+
+  Twins are compared with their originals, never pooled with them. They say whether the machines
+  differ like a seed effect (then a comparison within a machine stands, and so does an average of
+  such comparisons over machines) or by an offset (then nothing is compared across machines).
+- **Does the empty slot beat the null on one machine (G-78)?** The null switched off from step 0:
+  the null's own initial weights, its slot held at zero. Under endings apart it runs beside the twins
+  of the null and case; under BPE 17k, beside the null's twin.
+- **The grammar tests of items 6 and 1:** BLiMP on English seeds 4–7, MultiBLiMP on width 512 at 20k,
+  seeds 2–3. Their checkpoints are on the second machine; the data is sent, not downloaded.
+- **Fiction (item 3)**, with §33.102's fix, its data rebuilt on the CPU from the start.
+
+About 8.7 hours of GPU with margins (7.8 at the last night's times):
+
+| piece | runs | time |
+|---|---|---|
+| twins and the empty slot under endings apart | 12 | ~1.7 h |
+| English twins | 4 | ~1.4 h |
+| BLiMP and MultiBLiMP | — | ~0.25 h |
+| fiction | 8 | ~3.5 h |
+| twins and the empty slot under BPE 17k | 8 | ~1.2 h |
+
+Rehearsed with the stub in ten scenarios, all passing. The Ukrainian twins and English endings
+apart's twins keep the thesis machine's run ids. The September BPE 17k baselines' configuration has
+gained fields since, at defaults that reproduce it (G-69), so their twins have new ids. On the thesis
+machine the twins' records go to `results/audits/device_twins_20261017/`, never to `results/`.
+
+Predictions, before any run:
+
+- **P222** (~60%). At 20k each of the twelve Ukrainian twins ends within 0.001 of its original, and
+  their mean difference lies within ±0.0005: the machines differ like a small seed effect, not by an
+  offset.
+- **P223** (~55%). At 50k each English twin ends within 0.002 of its original, and endings apart's
+  lead at seeds 0 and 1 is reproduced within 0.002.
+- **P224** (~60%). On one machine, under endings apart at 20k, the empty slot ends better than the
+  null by more than 0.002 on average over seeds 0–3 (across machines: 0.0036).
+- **P225** (~55%). On one machine, case ends within 0.001 of the empty slot on average over seeds 0–3.
+- **P226** (~45%). Under BPE 17k at 20k the empty slot also ends better than the null by more than
+  0.002 on average.
+- **P227** (~70%). On BLiMP endings apart judges better overall than BPE 17k at three or more of
+  seeds 4–7 (seeds 0–3: +1.0 ± 0.2, 4/4).
+- **P228** (~75%). On MultiBLiMP at width 512 and 20k endings apart judges better at seeds 2 and 3,
+  by 4 to 8 points each (seeds 0–1: +5.6, +6.4).
+
+Each question has a different sentence for each outcome, so both pass the sentence test.
+- **Twins.** If P222 holds, the methods state the machines' difference as measured, and averages over
+  both machines stand. If the twins show an offset, every comparison is stated within one machine.
+- **The empty slot.** If P224 holds, the Ukrainian gains are restated against the empty slot as well,
+  and G-78 asks where else it holds. If it fails, the gap of §33.102 was the machine, and the null
+  stands as the reference.

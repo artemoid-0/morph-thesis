@@ -169,5 +169,6 @@ the tokenizer was built as it was.
   - [33.100 Width 512 at 20k, seed 1: levelled off too, at +0.0097](9_ukrainian_and_learning.md#33100-width-512-at-20k-seed-1-levelled-off-too-at-00097)
   - [33.101 A second machine, and the night of 16 October (prepared)](9_ukrainian_and_learning.md#33101-a-second-machine-and-the-night-of-16-october-prepared)
   - [33.102 The night of 16 October: width 512 settles, a removed feature's deficit halves by 50k, and case leaves none](9_ukrainian_and_learning.md#33102-the-night-of-16-october-width-512-settles-a-removed-features-deficit-halves-by-50k-and-case-leaves-none)
+  - [33.103 Twins and the empty slot, on one machine (prepared, 17 October)](9_ukrainian_and_learning.md#33103-twins-and-the-empty-slot-on-one-machine-prepared-17-october)
 - [Appendix A — Decision Record](appendices.md#appendix-a--decision-record)
 - [Appendix B — Section Mapping](appendices.md#appendix-b--section-mapping)
