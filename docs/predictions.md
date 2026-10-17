@@ -6,7 +6,7 @@ Each prediction was recorded in `docs/record/journey/README.md` **before** its r
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 134 right, 8 half right, 83 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 16 pending — of 250. The wrong ones carried
+**Tally:** 138 right, 8 half right, 84 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 11 pending — of 250. The wrong ones carried
 the information: the null's gain (P18), the shuffled control (P15), the
 leak's absence (P11), the training-budget reframing (P61), the tokenizer
 hypothesis (P119, P120), Unigram's early lead (P130), the wider model's larger
@@ -240,7 +240,7 @@ over the word form's (P148–P150), and how much of it the tagger's leak is (P16
 | P223 | At 50k each English twin ends within 0.002 of its run on the thesis machine, and endings apart's lead at seeds 0 and 1 is reproduced within 0.002 | wrong — endings apart's twins end +0.0063 and +0.0023 away; the lead at seeds 0–1 is −0.0009 and +0.0022 there | §33.103, §33.107 |
 | P224 | On one machine, under endings apart at 20k, the empty slot ends better than the null by more than 0.002 on average over seeds 0–3 | right — +0.0034 ± 0.0009 (4/4) | §33.103, §33.106 |
 | P225 | On one machine, case ends within 0.001 of the empty slot on average over seeds 0–3 | right — +0.0003 ± 0.0006 | §33.103, §33.106 |
-| P226 | Under BPE 17k at 20k the empty slot also ends better than the null by more than 0.002 on average | pending | §33.103 |
+| P226 | Under BPE 17k at 20k the empty slot also ends better than the null by more than 0.002 on average | wrong — +0.0005 ± 0.0003 (second machine) | §33.103, §33.109 |
 | P227 | On BLiMP endings apart judges better overall than BPE 17k at three or more of seeds 4–7 | right — +2.0, +0.6, +0.5, +1.0 points (8/8 with seeds 0–3) | §33.103, §33.107 |
 | P228 | On MultiBLiMP at width 512 and 20k endings apart judges better at seeds 2 and 3, by 4 to 8 points each | right — +5.6 and +6.1 (four seeds +5.9 ± 0.2) | §33.103, §33.107 |
 | P229 | `poscausal` beats the null at every seed, at 10k and at 20k | right — +0.0105 and +0.0054, 4/4 each | §33.104, §33.107 |
@@ -250,10 +250,10 @@ over the word form's (P148–P150), and how much of it the tagger's leak is (P16
 | P233 | On the thesis machine the empty slot ends better than the null by more than 0.002 on average, paired by seed | right — +0.0025 ± 0.0004 (4/4) | §33.104, §33.106 |
 | P234 | Each of those four runs ends within 0.001 of its twin on the second machine | wrong — seed 3's twin ends 0.0025 away | §33.104, §33.106 |
 | P235 | On the thesis machine case ends within 0.001 of the empty slot on average | wrong — +0.0013 ± 0.0007 (3/4) | §33.104, §33.106 |
-| P236 | The two GPUs draw different dropout masks from the same seed for every shape; the CPU's masks are the same on both machines | pending | §33.105 |
-| P237 | The fixed arithmetic agrees between the GPUs: each result's float64 sum within 10⁻⁶, relative | pending | §33.105 |
-| P238 | With dropout off, each pair of twins at 10k ends within 0.0002 | pending | §33.105 |
-| P239 | With dropout off, the twins differ by less than 10⁻⁵ at the first evaluation | pending | §33.105 |
+| P236 | The two GPUs draw different dropout masks from the same seed for every shape; the CPU's masks are the same on both machines | right — every GPU mask differs between the machines; the CPU's are equal | §33.105, §33.109 |
+| P237 | The fixed arithmetic agrees between the GPUs: each result's float64 sum within 10⁻⁶, relative | right — bitwise identical | §33.105, §33.109 |
+| P238 | With dropout off, each pair of twins at 10k ends within 0.0002 | right — 9.9 × 10⁻⁹ and 5.7 × 10⁻⁹ apart | §33.105, §33.109 |
+| P239 | With dropout off, the twins differ by less than 10⁻⁵ at the first evaluation | right — 0 and 2.8 × 10⁻⁹ at step 500 | §33.105, §33.109 |
 | P240 | At 10k under endings apart, on the second machine, the empty slot ends better than the null's twin by more than 0.001 on average | pending | §33.105 |
 | P241 | At 10k under BPE 17k likewise | pending | §33.105 |
 | P242 | At 10k under endings apart, case's twin ends better than the empty slot by more than 0.001 on average | pending | §33.105 |

@@ -74,7 +74,8 @@ endings apart beats BPE 17k at every seed, **+0.0097 ± 0.0010 BPB (0.8%, 4/4)**
 budget, half its share on Wikipedia, and on MultiBLiMP by **+5.3 ± 0.6 points (4/4)**, as much
 as on Wikipedia or more. At full training on four times that text (154M tokens, 50k steps) the lead is
 **+0.0155 ± 0.0010 (1.45%, 4/4)**, flat from step 20,000. That is close to its share on Wikipedia:
-the smaller share on fiction belonged to the 10k budget (§33.108). *Two corpora (fiction at 10k and at full training, on a second machine), two corpus
+the smaller share on fiction belonged to the 10k budget. On MultiBLiMP it is +2.3 ± 0.3 points (4/4)
+from 88.1% (§33.108, §33.109). *Two corpora (fiction at 10k and at full training, on a second machine), two corpus
 sizes and three budgets on Wikipedia, three widths (512 at 20k: seeds 2–3 on a second machine).*
 (§33.61–§33.68, §33.76, §33.79, §33.86, §33.88, §33.94, §33.96, §33.100, §33.102, §33.108)
 
@@ -252,8 +253,9 @@ and at non-words, where the slot says whether the previous unit was a word, not 
 Case's slot says the same and pays the same cost. **What case carries is on the endings:**
 +0.0024 ± 0.0002 there (4/4), where the empty slot gains +0.0001. Net, case beats the empty slot
 by +0.0013 ± 0.0007 (3/4; +0.0003 on the second machine), a third of its +0.0038 over the null.
-*One size, budget and tokenizer, two machines; other budgets, sizes and BPE 17k are being
-measured (G-78).* (§33.106)
+Under BPE 17k at the same size and budget the null's handicap is small, +0.0005 ± 0.0003
+(4/4, second machine): it is mainly a property of endings apart. *Two tokenizers at one size and
+budget, two machines; other budgets and sizes are being measured (G-78).* (§33.106, §33.109)
 
 **Case helps by predicting endings; the exposure effect lies elsewhere.** Re-scored
 token by token, case's gain sits on the tokens that hold an inflectional ending under
@@ -445,12 +447,13 @@ meets in full.
    and a feature with the same slot pays it too. A gain over the null then overstates the gain
    over the best model without the feature: check against an empty slot. (§33.106)
 11. **Two GPUs run the same model alike, not the same run.** The same weights evaluate within
-   2 × 10⁻⁹ on both machines, but dropout's masks are drawn on the GPU, differently by kernel
-   layout. A run repeated on the other machine differs like a dropout draw: +0.0001 ± 0.0004 over
+   2 × 10⁻⁹ on both machines, and a matrix product, a softmax and a layer norm are bitwise
+   identical; with dropout off, two machines train the same run to within 2 × 10⁻⁸. But dropout's
+   masks are drawn on the GPU, differently by kernel layout. A run repeated on the other machine differs like a dropout draw: +0.0001 ± 0.0004 over
    19 pairs, with no consistent sign (9 above, 10 below), the largest difference growing with
    training (0.0005 at 10k, 0.0025 at 20k, 0.0063 at 50k). An effect measured within each machine
    agrees between them (case over the null +0.0038 and +0.0037); a single pair at full training
-   does not. (§33.106, §33.107)
+   does not. (§33.106, §33.107, §33.109)
 
 ## Withdrawn along the way
 

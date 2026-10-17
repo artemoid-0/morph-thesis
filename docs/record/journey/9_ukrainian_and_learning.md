@@ -4596,3 +4596,46 @@ machine's follow-up.
 
 **Predictions.** P216 right, P217 wrong. The tally is 134 right, 8 half right, 83 wrong, 8 never
 tested, 1 withdrawn, 16 pending, of 250.
+
+### 33.109 Why twins differ: only dropout's masks — and the null's handicap is endings apart's
+
+The second machine's follow-up began at 09:48 local time, after its chain completed. Its first
+pieces and BPE 17k's twins: `device_twins_20261017T135807`, `dropout_masks_20261017T103028`
+(thesis machine), `dropout_masks_20261017T134856` (second machine),
+`multiblimp_eval_20261017T134827`.
+
+**The mechanism, measured.** Two tests answer what §33.105 asked:
+- **The arithmetic is the same.** A matrix product, a softmax and a layer norm on the same inputs
+  give bitwise-identical results on both GPUs (equal SHA-256).
+- **Dropout's masks are not.** Seeded alike, the two GPUs draw different masks for every activation
+  shape of the model. The CPU draws the same masks on both machines. Each GPU keeps 90% of the units,
+  as it should.
+- **Without dropout the machines train identically.** BPE 17k's null at 10k with dropout off, seeds
+  0 and 1, run on both machines, ends 9.9 × 10⁻⁹ and 5.7 × 10⁻⁹ apart. No evaluation along the
+  10,000 steps differs by more than 2 × 10⁻⁸. The small differences in the GPUs' other kernels do
+  not grow in training.
+
+**P236, P237, P238, P239 right.** A twin is the same run with dropout drawn differently, and
+nothing else. With dropout, the 23 twins differ by +0.0001 ± 0.0003 (10 above, 13 below; mean
+|difference| 0.0009, largest 0.0063 at 50k). With dropout off the model is a different one (BPE
+17k's null ends at 1.0528 and 1.0543 at 10k, against 1.0891 and 1.0910 with it), so the thesis's
+runs keep dropout. **For the thesis:** the two machines run the same computation, and a run on
+either is a run of its cell. Results differ between them only as a dropout draw would make them
+differ: within a machine a seed fixes everything, across machines it fixes everything but dropout.
+
+**G-78 under BPE 17k** (the second machine; the null as a twin, and its empty slot, 20k, seeds 0–3).
+The null's twins end −0.0002, +0.0008, −0.0005 and −0.0004 from the thesis machine's. The empty slot
+leads the null by +0.0005, 0.0000, +0.0002 and +0.0012: **+0.0005 ± 0.0003**. Under endings apart
+it is +0.0025 and +0.0034 (§33.106). The null's handicap is therefore mainly endings apart's. Both
+tokenizers mark the same words (`lexical.token_class`: an ending is letters without a leading
+space, and so continues its word), so it is not a boundary bug. Its cause is not yet known.
+**P226 wrong.** P222 stays wrong: of its twelve twins, one ends 0.0012 away, though their mean is
+−0.0001.
+
+**MultiBLiMP on fiction at full training** (item 3's grammar test): BPE 17k's models judge 88.1% of
+the pairs right, and endings apart's do better by **+2.3 ± 0.3 points (4/4)**. By agreement type
+that is number +3.4, gender +3.6 and person +0.7, all 4/4. At 10k on a quarter of the text it was
++5.3 ± 0.6, from a lower base.
+
+**Predictions.** P236–P239 right; P226 wrong. The tally is 138 right, 8 half right, 84 wrong, 8 never
+tested, 1 withdrawn, 11 pending, of 250.

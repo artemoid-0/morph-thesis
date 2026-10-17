@@ -25,6 +25,7 @@
 | bpe_dep-LEARN_bpe_17k | 5,080,616 | 2,058,600 | 64 | 2,195,840 | 793,344 | 8 |
 | bpe_ectx_bpe_17k | 5,011,932 | 1,989,980 | 0 | 2,195,840 | 793,344 | 12 |
 | bpe_mconst-LEARN-CAUSAL-ADD_bpe_17k | 5,218,816 | 2,195,840 | 1,024 | 2,195,840 | 793,344 | 8 |
+| bpe_mconst-LEARN-CAUSAL-OFF0_bpe_uk_17k_ukwiki0.05_st20k | 5,043,168 | 2,040,480 | 64 | 2,176,512 | 793,344 | 8 |
 | bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.05_st20k | 5,043,168 | 2,040,480 | 64 | 2,176,512 | 793,344 | 8 |
 | bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.2 | 5,043,168 | 2,040,480 | 64 | 2,176,512 | 793,344 | 8 |
 | bpe_mconst-LEARN-CAUSAL-x2_bpe_17k_st10k_w256 | 11,734,032 | 4,117,200 | 64 | 4,391,680 | 3,159,552 | 16 |
