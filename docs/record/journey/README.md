@@ -171,5 +171,6 @@ the tokenizer was built as it was.
   - [33.102 The night of 16 October: width 512 settles, a removed feature's deficit halves by 50k, and case leaves none](9_ukrainian_and_learning.md#33102-the-night-of-16-october-width-512-settles-a-removed-features-deficit-halves-by-50k-and-case-leaves-none)
   - [33.103 Twins and the empty slot, on one machine (prepared, 17 October)](9_ukrainian_and_learning.md#33103-twins-and-the-empty-slot-on-one-machine-prepared-17-october)
   - [33.104 A day on both machines: the comparison, G-78 on each, and item 2 (prepared, 17 October)](9_ukrainian_and_learning.md#33104-a-day-on-both-machines-the-comparison-g-78-on-each-and-item-2-prepared-17-october)
+  - [33.105 Why twins differ, item 5's probes at four seeds, and each machine's afternoon (prepared, 17 October)](9_ukrainian_and_learning.md#33105-why-twins-differ-item-5s-probes-at-four-seeds-and-each-machines-afternoon-prepared-17-october)
 - [Appendix A — Decision Record](appendices.md#appendix-a--decision-record)
 - [Appendix B — Section Mapping](appendices.md#appendix-b--section-mapping)

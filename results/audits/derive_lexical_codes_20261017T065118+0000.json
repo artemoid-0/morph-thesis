@@ -1,0 +1,89 @@
+{
+  "script": "derive_lexical_codes",
+  "args": {
+    "bpe_path": "data/bpe_uk_17k.json",
+    "corpus": "ukwiki",
+    "corpus_fraction": 0.2,
+    "corpus_holdout": 2000,
+    "fact": "ucase",
+    "out_fact": "ucaseprep",
+    "cache_dir": "data/cache",
+    "splits": [
+      "train",
+      "validation",
+      "test"
+    ],
+    "verify": false,
+    "lexicon_fraction": null,
+    "shuffle_types": null,
+    "shuffle_bin": 64,
+    "transform": null,
+    "recode_pos": "ADP",
+    "keep": "ucase"
+  },
+  "timestamp_utc": "2026-10-17T06:51:18+00:00",
+  "results": {
+    "recode": {
+      "tags": [
+        "ADP"
+      ],
+      "types_recoded": 671,
+      "occurrences_recoded": 0.11413554922252402,
+      "recoded_tagged_so_in_context": 0.9756500113505243,
+      "tagged_so_and_recoded": 0.9968161485175747,
+      "occurrences_changed": 0.026578983239530358,
+      "recoded_occurrences_changed": 0.2328720842943571
+    },
+    "lexicon": {
+      "fact": "ucase",
+      "out_fact": "ucaseprep",
+      "word_types": 2646292,
+      "occurrences": 68931004,
+      "agreement_with_context": 0.8974376755052051,
+      "source": "bpe_train_None_d0a4e3909d_ucaselex.codes.npy",
+      "bpe": "bpe_uk_17k"
+    },
+    "recoded:train": {
+      "tokens_recoded": 7907014,
+      "tokens_changed": 1836415
+    },
+    "split:train": {
+      "tokens": 151133566,
+      "words": 68931004,
+      "unseen_rate": 0.0,
+      "replaced_changed": null
+    },
+    "recoded:validation": {
+      "tokens_recoded": 16927,
+      "tokens_changed": 3941
+    },
+    "split:validation": {
+      "tokens": 325867,
+      "words": 147696,
+      "unseen_rate": 0.030461217636225762,
+      "replaced_changed": null
+    }
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-10-17T06:51:18+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "a20dce424e22509c751041890899eefcdab75704",
+    "git_dirty": true
+  },
+  "notes": [
+    "Unseen words get the none class, never their contextual code, which would readmit the right-context information \u2014 except under --transform const, where every word gets the one class (G-73)."
+  ]
+}

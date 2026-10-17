@@ -4358,3 +4358,87 @@ Predictions, before any run:
 **Item 2's sentence for each outcome.** If P230 and P231 hold, in both languages what the sentence
 adds over the word form is mostly the tagger's leak. If not, English part of speech carries context
 of its own. G-78's sentences are those of §33.103.
+
+### 33.105 Why twins differ, item 5's probes at four seeds, and each machine's afternoon (prepared, 17 October)
+
+**What the first twins showed.** At step 0 a twin and its original evaluate to the same bits per byte
+within 2 × 10⁻⁹ (2.573648769 against 2.573648771): the weights are initialised on the CPU, alike on both
+machines, and the evaluation's arithmetic agrees. Yet the training loss of the very first batch differs
+(9.7766 against 9.7732), and the runs drift apart from there. The model's dropout (0.1, in every layer)
+draws its masks on the GPU from torch's CUDA generator, and a kernel's threads take their random numbers
+by their place in its launch grid, which depends on the GPU (24 multiprocessors against 82). A twin is
+then the same run with dropout drawn differently: the same initial weights and batches, a different
+dropout draw. Two tests:
+- **the masks** (`scripts/audits/dropout_masks.py`, seconds on each machine): dropout's masks for the
+  base model's activation shapes, seeded as training seeds them, and fixed arithmetic (a matrix
+  product, a softmax, a layer norm) on inputs made on the CPU;
+- **dropout off**: BPE 17k's null at ~38M and 10k with dropout 0, seeds 0–1, on both machines. What is
+  left between the twins is the GPUs' rounding alone. A run without dropout is a different model, so
+  its label carries the setting (`_do0`; no existing label changes: all 578 runs used 0.1).
+
+**Item 5 on the second machine** (the thesis's list): the four probes the thesis cites at one seed,
+seed 4, repeated at seeds 0–3. The runs are repeated with a checkpoint every 1,000 steps and probed as
+seed 4 was (every layer; 21 checkpoints):
+- after removal: part of speech switched off from the start and at 5,000, 20k — the word's tag and
+  the previous word's;
+- the auxiliary target, real and shuffled, 20k — the word's tag.
+
+Each run is also a twin of the thesis machine's run of that cell and seed. `probe.py` reproduces seed 4's
+record within 6 × 10⁻⁸ at every step on the CPU, so the probe does not depend on the machine.
+
+**Width 512 at 20k, seed 1**, both nulls as twins: item 1's four seeds are two per machine.
+
+**G-78 first, then item 5.** After two seeds on the thesis machine the empty slot leads the null there
+(−0.0019, −0.0035 bits per byte at 20k under endings apart, paired from identical initial weights),
+and case leads the empty slot (−0.0019, −0.0027). The null's handicap therefore looks real on the
+machine the thesis's runs came from, so the next hours map it:
+- on the second machine, at 10k: the empty slot under both tokenizers, beside twins of the null and
+  case (`g78at10k`), before item 5;
+- on the thesis machine, at full training (151M tokens, 50k steps, endings apart), where FINDINGS'
+  strongest Ukrainian case claim is stated against the null (+0.0030 ± 0.0009): the empty slot at
+  seeds 0–3 (`fullempty`, ~4 h). Then item 7 (`ucaseprep` under BPE 17k at full training, its codes
+  derived this morning: 671 preposition types read from their form, 1.22% of tokens changed) for as
+  many seeds as the time box allows.
+
+The chains: `scripts/chains/second_followup_2026-10-17.sh` (pieces masks, nodropout, g78at10k,
+w512twins, proberemoval, probetarget; ~5.5 h after the second machine's chain) and
+`scripts/chains/tulpar_followup_2026-10-17.sh` (masks, nodropout, fullempty, item7). Both start when
+their machine's chain ends. Rehearsed with the stub in eight scenarios, all passing.
+
+Predictions, before any of these runs:
+
+- **P236** (~85%). The two GPUs draw different dropout masks from the same seed for every shape; the
+  CPU's masks are the same on both machines.
+- **P237** (~75%). The fixed arithmetic agrees between the GPUs: each result's float64 sum within
+  10⁻⁶ of the other machine's, relative.
+- **P238** (~50%). With dropout off, each pair of twins at 10k ends within 0.0002.
+- **P239** (~65%). With dropout off, the twins differ by less than 10⁻⁵ at the first evaluation
+  (step 500).
+- **P240** (~60%). At 10k under endings apart, on the second machine, the empty slot ends better than
+  the null's twin by more than 0.001 on average over seeds 0–3.
+- **P241** (~50%). At 10k under BPE 17k likewise.
+- **P242** (~55%). At 10k under endings apart, case's twin ends better than the empty slot by more than
+  0.001 on average.
+- **P243** (~65%). Width 512 at 20k, seed 1: each twin ends within 0.002 of its original, and the lead
+  (+0.0097 on the thesis machine) is reproduced within 0.002.
+- **P244** (~70%). Item 5, removal: at each of seeds 0–3, from step 6,000 to the end, the switched
+  model's deepest layer reads the word's part of speech within 1.5 points of the model never fed it
+  (seed 4: level from step 6,000).
+- **P245** (~60%). At the end the switched model reads the previous word's tag better at the deepest
+  layer than the model never fed it, at three seeds of four or more (seed 4: +2.0 points).
+- **P246** (~70%). Item 5, the target: at each of seeds 0–3 the real target's model reads part of
+  speech better at layer 2 at step 2,000 than the shuffled target's, by more than 2 points (seed 4:
+  +4.6).
+- **P247** (~60%). It still reads it better at the end, at three seeds of four or more (seed 4: +1.6).
+- **P248** (~65%). At full training under endings apart, on the thesis machine, the empty slot ends
+  better than the null by more than 0.001 on average over seeds 0–3, paired by seed.
+- **P249** (~55%). There, case ends better than the empty slot by more than 0.001 on average.
+- **P250** (~60%). Item 7: `ucaseprep` under BPE 17k at full training ends within 0.0004 of `ucaselex`
+  on average over the seeds run, i.e. the whole lead there (+0.0006 ± 0.0004) is the leak.
+
+**The sentences these decide.**
+- **G-78 (P240–P242, P248–P249).** The thesis states each Ukrainian gain against the same-shape null.
+  Where an empty slot beats that null, the gain over the best model without the feature is smaller,
+  and the text gives both.
+- **Item 5 (P244–P247).** If the seeds agree, "one seed" goes from §3.7–§3.8; if not, the sentence
+  gives their spread.

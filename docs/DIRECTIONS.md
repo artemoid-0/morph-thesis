@@ -154,8 +154,10 @@ every outcome. Results committed by about 31 October reach the text; the work is
 4 November. Each item's preparation runs on the CPU while the item before it trains. **Running**
 (17 October, about eleven hours on each machine; §33.103, §33.104):
 - the second machine: twins of the thesis machine's runs and the empty slot (G-78), BLiMP and
-  MultiBLiMP for items 6 and 1, and item 3 again, with the fix of §33.102;
-- the thesis machine: the empty slot (G-78 there), then item 2.
+  MultiBLiMP for items 6 and 1, and item 3 again, with the fix of §33.102; then why twins differ
+  (dropout's masks, runs without dropout), G-78 at 10k, width 512's twins, and item 5 (§33.105);
+- the thesis machine: the empty slot (G-78 there), item 2, then the empty slot at full training and
+  item 7 (§33.105).
 
 The rest of each machine's hours is decided by what the twins and the empty slot show.
 

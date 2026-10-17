@@ -6,7 +6,7 @@ Each prediction was recorded in `docs/record/journey/README.md` **before** its r
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 124 right, 8 half right, 78 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 16 pending — of 235. The wrong ones carried
+**Tally:** 124 right, 8 half right, 78 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 31 pending — of 250. The wrong ones carried
 the information: the null's gain (P18), the shuffled control (P15), the
 leak's absence (P11), the training-budget reframing (P61), the tokenizer
 hypothesis (P119, P120), Unigram's early lead (P130), the wider model's larger
@@ -250,3 +250,18 @@ over the word form's (P148–P150), and how much of it the tagger's leak is (P16
 | P233 | On the thesis machine the empty slot ends better than the null by more than 0.002 on average, paired by seed | pending | §33.104 |
 | P234 | Each of those four runs ends within 0.001 of its twin on the second machine | pending | §33.104 |
 | P235 | On the thesis machine case ends within 0.001 of the empty slot on average | pending | §33.104 |
+| P236 | The two GPUs draw different dropout masks from the same seed for every shape; the CPU's masks are the same on both machines | pending | §33.105 |
+| P237 | The fixed arithmetic agrees between the GPUs: each result's float64 sum within 10⁻⁶, relative | pending | §33.105 |
+| P238 | With dropout off, each pair of twins at 10k ends within 0.0002 | pending | §33.105 |
+| P239 | With dropout off, the twins differ by less than 10⁻⁵ at the first evaluation | pending | §33.105 |
+| P240 | At 10k under endings apart, on the second machine, the empty slot ends better than the null's twin by more than 0.001 on average | pending | §33.105 |
+| P241 | At 10k under BPE 17k likewise | pending | §33.105 |
+| P242 | At 10k under endings apart, case's twin ends better than the empty slot by more than 0.001 on average | pending | §33.105 |
+| P243 | Width 512 at 20k, seed 1: each twin within 0.002 of its original, and the lead reproduced within 0.002 | pending | §33.105 |
+| P244 | Item 5: at seeds 0–3, from step 6,000 on, the switched model's deepest layer reads the word's part of speech within 1.5 points of the model never fed it | pending | §33.105 |
+| P245 | At the end the switched model reads the previous word's tag better at the deepest layer, at three seeds of four or more | pending | §33.105 |
+| P246 | Item 5: at seeds 0–3 the real target's model reads part of speech better at layer 2 at step 2,000 than the shuffled target's, by more than 2 points | pending | §33.105 |
+| P247 | It still reads it better at the end, at three seeds of four or more | pending | §33.105 |
+| P248 | At full training under endings apart, on the thesis machine, the empty slot ends better than the null by more than 0.001 on average, paired by seed | pending | §33.105 |
+| P249 | There, case ends better than the empty slot by more than 0.001 on average | pending | §33.105 |
+| P250 | Item 7: `ucaseprep` under BPE 17k at full training ends within 0.0004 of `ucaselex` on average | pending | §33.105 |

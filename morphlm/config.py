@@ -369,6 +369,10 @@ class ExperimentConfig:
             tag += f'_{self.model.norm}'
         if getattr(self.model, 'mlp', 'gelu') != dm.mlp:
             tag += f'_{self.model.mlp}'
+        # dropout's masks are drawn on the GPU, differently on each GPU model; runs without it
+        # tell the GPUs' rounding from their random draws (journey §33.105)
+        if self.model.dropout != dm.dropout:
+            tag += f'_do{self.model.dropout:g}'
         return f'{self.data.pipeline}_{facts}{tag}'
 
     def describe(self) -> str:
