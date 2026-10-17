@@ -151,9 +151,13 @@ naming (G-66).
 Rewritten 15 October (journey §33.98) in the order of the thesis's list of that day: nine
 experiments ranked by what each result changes in the text, each with the sentence it states for
 every outcome. Results committed by about 31 October reach the text; the work is admitted on
-4 November. Each item's preparation runs on the CPU while the item before it trains. **Prepared**
-(§33.103), for the second machine once it is free: twins of the thesis machine's runs and the empty
-slot (G-78), BLiMP and MultiBLiMP for items 6 and 1, and item 3 again, with the fix of §33.102.
+4 November. Each item's preparation runs on the CPU while the item before it trains. **Running**
+(17 October, about eleven hours on each machine; §33.103, §33.104):
+- the second machine: twins of the thesis machine's runs and the empty slot (G-78), BLiMP and
+  MultiBLiMP for items 6 and 1, and item 3 again, with the fix of §33.102;
+- the thesis machine: the empty slot (G-78 there), then item 2.
+
+The rest of each machine's hours is decided by what the twins and the empty slot show.
 
 **Answered on 16 October** (§33.102, on the second machine):
 - item 1: the lead levels off at +0.0102 ± 0.0006 (4/4);

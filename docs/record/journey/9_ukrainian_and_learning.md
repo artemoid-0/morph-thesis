@@ -4311,3 +4311,50 @@ Each question has a different sentence for each outcome, so both pass the senten
 - **The empty slot.** If P224 holds, the Ukrainian gains are restated against the empty slot as well,
   and G-78 asks where else it holds. If it fails, the gap of §33.102 was the machine, and the null
   stands as the reference.
+
+### 33.104 A day on both machines: the comparison, G-78 on each, and item 2 (prepared, 17 October)
+
+Both machines have about eleven hours.
+
+**The second machine** runs §33.103's chain, launched at 02:41 local time (09:41 Kyiv) with its
+time box at 13:45. Fiction's data is rebuilt beside it, with the fix of §33.102. The machine has left
+the office network, so data now goes to it over the direct route, compressed.
+
+**The software is the same on both machines:** torch 2.11.0 with CUDA 13.0 and cuDNN 9.19, and every
+computation in single precision (no mixed precision; TF32 off for matrix products). Only the GPU
+differs (Ada, sm_89, against Blackwell, sm_120), and the driver (580 against 595). A twin's
+difference can therefore come only from each GPU's own kernels rounding differently, and from
+training amplifying that.
+
+**The thesis machine** (`scripts/chains/tulpar_2026-10-17.sh`, ~4.2 hours):
+- **The empty slot on this machine too.** G-78 is answered on the machine where the null and case
+  ran, each seed paired from identical initial weights. Each run is also a twin of the second
+  machine's empty slot (§33.103), so the comparison runs in both directions.
+- **Item 2:** `poscausal` at 10k and 20k, seeds 0–3. Its codes came from the second machine,
+  SHA-256-checked (§33.102). A 30-step run through the real loader passed. `poscausal` has
+  `pos`'s table shape (19 classes, 8 dims), so at each seed it starts from `pos`'s initial weights.
+  - At 10k, `pos` leads the null by +0.0130 and the word form (`poslex`) by +0.0099: the sentence
+    adds +0.0031 over the word form.
+  - At 20k: +0.0075 and +0.0050, so +0.0025.
+
+  Item 2 asks how much of that is the tagger's right-context leak.
+
+The rest of each machine's hours is decided once the twins and the empty slot have reported.
+Rehearsed with the stub in seven scenarios, all passing.
+
+Predictions, before any run:
+
+- **P229** (~85%). `poscausal` beats the null at every seed, at 10k and at 20k.
+- **P230** (~50%). At 10k `poscausal` keeps less than half of `pos`'s lead over the word form: it
+  ends less than +0.0016 ahead of `poslex` on average.
+- **P231** (~50%). At 20k likewise: less than +0.0013 ahead of `poslex`.
+- **P232** (~65%). Paired by seed, `poscausal` ends behind `pos` at both budgets by more than 0.0005
+  on average: the leak is measurable.
+- **P233** (~60%). On the thesis machine the empty slot ends better than the null by more than 0.002
+  on average over seeds 0–3, each seed paired from identical initial weights.
+- **P234** (~65%). Each of those four runs ends within 0.001 of its twin on the second machine.
+- **P235** (~55%). On the thesis machine, case ends within 0.001 of the empty slot on average.
+
+**Item 2's sentence for each outcome.** If P230 and P231 hold, in both languages what the sentence
+adds over the word form is mostly the tagger's leak. If not, English part of speech carries context
+of its own. G-78's sentences are those of §33.103.
