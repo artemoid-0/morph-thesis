@@ -3,6 +3,8 @@
 # The second machine's follow-up, prepared 17 October 2026 (journey §33.105): after
 # night_2026-10-17.sh, the twins' mechanism and the remaining comparisons. Time-boxed by END_BY.
 #
+#   fictioneval  MultiBLiMP on fiction's nulls at 0.4 and 50k, seeds 0–3 (item 3's grammar test, as at
+#              10k; minutes; once)
 #   masks      dropout's masks and fixed arithmetic on this GPU, for comparison with the thesis
 #              machine's record (scripts/audits/dropout_masks.py; seconds)
 #   nodropout  BPE 17k's null at ~38M and 10k with dropout off, seeds 0–1 — twins with dropout off,
@@ -33,7 +35,7 @@ fi
 export PYTHONUNBUFFERED=1
 stamp() { echo; echo "=== $(date '+%F %T')  $*"; }
 
-PIECES=${PIECES-masks nodropout w512twins proberemoval probetarget}
+PIECES=${PIECES-fictioneval masks nodropout w512twins proberemoval probetarget}
 MIN_FREE_GB=${MIN_FREE_GB:-5}
 MIN_GPU_GB=${MIN_GPU_GB:-6}
 TWIN_TOL=${TWIN_TOL:-0.01}
@@ -168,6 +170,7 @@ twinpiece() {   # twinpiece NAME KIND "SEEDS" REF FN... — every cell at each s
     fi
 }
 MASKS_DONE=scratch/second_followup_2026-10-17.masks_done
+FICEVAL_DONE=scratch/second_followup_2026-10-17.fictioneval_done
 probe_all() {   # probe_all "PROBE ARGS" FN... — probe every finished run of these cells (seeds 0–3), once each
     local pargs=$1 f s id tag
     shift
@@ -186,6 +189,13 @@ probe_all() {   # probe_all "PROBE ARGS" FN... — probe every finished run of t
 }
 run_piece() {
     case "$1" in
+        fictioneval)
+            stamp "fictioneval: MultiBLiMP on fiction's nulls at 0.4 and 50k"
+            if [ -n "${PLAN:-}" ] || [ -f "$FICEVAL_DONE" ] || [ -n "$STOP" ]; then return 0; fi
+            gpu_ok || return 0
+            python scripts/eval/multiblimp_eval.py --labels 'bpe_mconst-LEARN-CAUSAL_bpe_ukf_17k_ukfiction0.4' \
+                'bpe_mconst-LEARN-CAUSAL_bpeend_ukf_17k_ukfiction0.4' \
+                && mkdir -p scratch && date '+%F %T' > "$FICEVAL_DONE" || echo "  [failed] MultiBLiMP on fiction" ;;
         masks)
             stamp "masks: dropout's masks and fixed arithmetic on this GPU"
             if [ -n "${PLAN:-}" ] || [ -f "$MASKS_DONE" ] || [ -n "$STOP" ]; then return 0; fi
