@@ -6,7 +6,7 @@ Each prediction was recorded in `docs/record/journey/README.md` **before** its r
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 133 right, 8 half right, 82 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 18 pending — of 250. The wrong ones carried
+**Tally:** 134 right, 8 half right, 83 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 16 pending — of 250. The wrong ones carried
 the information: the null's gain (P18), the shuffled control (P15), the
 leak's absence (P11), the training-budget reframing (P61), the tokenizer
 hypothesis (P119, P120), Unigram's early lead (P130), the wider model's larger
@@ -230,8 +230,8 @@ over the word form's (P148–P150), and how much of it the tagger's leak is (P16
 | P213 | The four seeds' mean lead at width 512 and 20k lies between +0.008 and +0.013 | right — +0.0102 ± 0.0006 (4/4) | §33.101, §33.102 |
 | P214 | At 50k English part of speech switched off at 5,000 ends below the model never fed it at three seeds of four or more | right — three seeds of four (−0.0011, +0.0022, +0.0036, +0.0031) | §33.101, §33.102 |
 | P215 | Its deficit at 50k is smaller than at 20k (under 0.0039) | right — +0.0019 ± 0.0011 | §33.101, §33.102 |
-| P216 | On fiction at full training the endings-apart null ends below BPE 17k's at four seeds of four | pending | §33.101 |
-| P217 | Its lead lies within 0.003 of fiction's 10k lead (+0.0067 to +0.0127) | pending | §33.101 |
+| P216 | On fiction at full training the endings-apart null ends below BPE 17k's at four seeds of four | right — 4/4: +0.0176, +0.0147, +0.0129, +0.0167 | §33.101, §33.108 |
+| P217 | Its lead lies within 0.003 of fiction's 10k lead (+0.0067 to +0.0127) | wrong — +0.0155 ± 0.0010, above the 10k lead's band (it grew) | §33.101, §33.108 |
 | P218 | Ukrainian case switched off at 5,000 of 20k under endings apart ends below the model never fed it at three seeds of four or more | wrong — −0.0008 ± 0.0006: one seed of four, no lasting deficit | §33.101, §33.102 |
 | P219 | Its deficit is smaller than English part of speech's at 20k (under 0.0039) | right — trivially: there is no deficit (−0.0008) | §33.101, §33.102 |
 | P220 | At 50k English endings apart ends below BPE 17k at three or more of seeds 4–7 | right — four of four (+0.0160, +0.0016, +0.0065, +0.0009) | §33.101, §33.102 |

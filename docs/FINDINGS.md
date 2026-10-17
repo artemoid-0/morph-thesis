@@ -72,9 +72,11 @@ do it: BPE 4k is 1.2 points below BPE 17k, Unigram level with it. **And on a sec
 On UberText 2.0's fiction subcorpus — novels and prose, both tokenizers trained on it — keeping
 endings apart beats BPE 17k at every seed, **+0.0097 ± 0.0010 BPB (0.8%, 4/4)** at a 10k
 budget, half its share on Wikipedia, and on MultiBLiMP by **+5.3 ± 0.6 points (4/4)**, as much
-as on Wikipedia or more. *Two corpora (fiction at one size and budget), two corpus sizes and
-three budgets on Wikipedia, three widths (512 at 20k: seeds 2–3 on a second machine).*
-(§33.61–§33.68, §33.76, §33.79, §33.86, §33.88, §33.94, §33.96, §33.100, §33.102)
+as on Wikipedia or more. At full training on four times that text (154M tokens, 50k steps) the lead is
+**+0.0155 ± 0.0010 (1.45%, 4/4)**, flat from step 20,000. That is close to its share on Wikipedia:
+the smaller share on fiction belonged to the 10k budget (§33.108). *Two corpora (fiction at 10k and at full training, on a second machine), two corpus
+sizes and three budgets on Wikipedia, three widths (512 at 20k: seeds 2–3 on a second machine).*
+(§33.61–§33.68, §33.76, §33.79, §33.86, §33.88, §33.94, §33.96, §33.100, §33.102, §33.108)
 
 **Q2 — Do injected linguistic facts help? No — in either way of injecting
 them, and in either language.** Against a **null of the same shape** — which in this codebase sees

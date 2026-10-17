@@ -4567,3 +4567,32 @@ The fiction runs follow in the second machine's chain.
 
 **Predictions.** P223 wrong; P227, P228, P229, P230, P231 and P232 right. The tally is 133 right,
 8 half right, 82 wrong, 8 never tested, 1 withdrawn, 18 pending, of 250.
+
+### 33.108 Fiction at full training: the tokenizer's gain holds, and reaches Wikipedia's share
+
+The list's item 3, on the second machine (`tokenizer_table_20261017T124204`): both fiction nulls at
+fraction 0.4 (153.9M training tokens under endings apart), 50k steps, seeds 0–3, each seed's pair on
+one machine.
+
+| | BPE 17k | endings apart | lead |
+|---|---|---|---|
+| seed 0 | 1.0663 | 1.0487 | +0.0176 |
+| seed 1 | 1.0657 | 1.0510 | +0.0147 |
+| seed 2 | 1.0656 | 1.0527 | +0.0129 |
+| seed 3 | 1.0665 | 1.0498 | +0.0167 |
+
+The lead is **+0.0155 ± 0.0010 (1.45%, 4/4)**.
+
+Along training it is +0.0425 at step 500, +0.0254 at 1,000 and +0.0145 at 5,000. At 10,000 it dips
+to +0.0112, where the learning rate is still high. From 20,000 on it is flat: +0.0153, +0.0149,
++0.0149, +0.0155 at the end.
+
+At a 10k budget on a quarter of this text, fiction's lead was +0.0097 (0.8%), half its share on
+Wikipedia (§33.88). At full training it is 1.45%, close to Wikipedia's 1.75%. **P216 right
+(4/4); P217 wrong:** the lead grew instead of staying within 0.003 of the 10k lead. Of the list's
+two sentences, the first holds: on both corpora the gain does not fade with training. Fiction's
+smaller share at 10k belonged to the short budget. MultiBLiMP on these models runs in the second
+machine's follow-up.
+
+**Predictions.** P216 right, P217 wrong. The tally is 134 right, 8 half right, 83 wrong, 8 never
+tested, 1 withdrawn, 16 pending, of 250.

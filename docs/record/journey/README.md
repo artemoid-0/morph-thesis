@@ -174,5 +174,6 @@ the tokenizer was built as it was.
   - [33.105 Why twins differ, item 5's probes at four seeds, and each machine's afternoon (prepared, 17 October)](9_ukrainian_and_learning.md#33105-why-twins-differ-item-5s-probes-at-four-seeds-and-each-machines-afternoon-prepared-17-october)
   - [33.106 The machines agree, and the null is handicapped in Ukrainian: case's own gain sits on the endings](9_ukrainian_and_learning.md#33106-the-machines-agree-and-the-null-is-handicapped-in-ukrainian-cases-own-gain-sits-on-the-endings)
   - [33.107 In English too the sentence's lead over the word form is the tagger's leak; full training's twins drift apart](9_ukrainian_and_learning.md#33107-in-english-too-the-sentences-lead-over-the-word-form-is-the-taggers-leak-full-trainings-twins-drift-apart)
+  - [33.108 Fiction at full training: the tokenizer's gain holds, and reaches Wikipedia's share](9_ukrainian_and_learning.md#33108-fiction-at-full-training-the-tokenizers-gain-holds-and-reaches-wikipedias-share)
 - [Appendix A — Decision Record](appendices.md#appendix-a--decision-record)
 - [Appendix B — Section Mapping](appendices.md#appendix-b--section-mapping)
