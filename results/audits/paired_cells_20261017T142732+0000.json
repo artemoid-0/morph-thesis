@@ -1,0 +1,321 @@
+{
+  "script": "paired_cells",
+  "args": {
+    "pair": [
+      [
+        "the empty slot over the null, endings apart, 151M, 50k",
+        "bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.2",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2"
+      ],
+      [
+        "case over the empty slot, endings apart, 151M, 50k",
+        "bpe_ucase-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.2"
+      ],
+      [
+        "case over the null, endings apart, 151M, 50k",
+        "bpe_ucase-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2"
+      ],
+      [
+        "case with prepositions from their form over the empty slot, 151M, 50k",
+        "bpe_ucaseprep-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.2"
+      ],
+      [
+        "case from the word form over the empty slot, 151M, 50k",
+        "bpe_ucaselex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.2"
+      ]
+    ],
+    "seeds": null,
+    "results_dir": "/home/neko/PycharmProjects/Morph/results"
+  },
+  "timestamp_utc": "2026-10-17T14:27:32+00:00",
+  "results": {
+    "pairs": [
+      {
+        "name": "the empty slot over the null, endings apart, 151M, 50k",
+        "A": "bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.2",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "seeds": {
+          "0": {
+            "effect": -0.00029399955708020453,
+            "A": 0.9268572301435971,
+            "B": 0.9265632305865169,
+            "machine": "4060",
+            "runs": [
+              "ec4d7833e2a3",
+              "57f76ed51760"
+            ]
+          },
+          "1": {
+            "effect": 0.005979210899954124,
+            "A": 0.9226112757166227,
+            "B": 0.9285904866165768,
+            "machine": "4060",
+            "runs": [
+              "64e7f6851fb7",
+              "ae75b666d616"
+            ]
+          },
+          "2": {
+            "effect": 0.0018235039281364607,
+            "A": 0.9267929830305353,
+            "B": 0.9286164869586717,
+            "machine": "4060",
+            "runs": [
+              "4402e57a7ede",
+              "7e17426e0388"
+            ]
+          },
+          "3": {
+            "effect": 0.0005518227657271835,
+            "A": 0.9263733821191856,
+            "B": 0.9269252048849128,
+            "machine": "4060",
+            "runs": [
+              "c6b24f928c36",
+              "0d7539f05ca2"
+            ]
+          }
+        },
+        "mean": 0.002015134509184391,
+        "se": 0.0013911627422763483,
+        "positive": 3,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "case over the empty slot, endings apart, 151M, 50k",
+        "A": "bpe_ucase-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "B": "bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.2",
+        "seeds": {
+          "0": {
+            "effect": 0.0013338677694327838,
+            "A": 0.9255233623741643,
+            "B": 0.9268572301435971,
+            "machine": "4060",
+            "runs": [
+              "c3f92c6eefc1",
+              "ec4d7833e2a3"
+            ]
+          },
+          "1": {
+            "effect": -0.0010885731670703391,
+            "A": 0.923699848883693,
+            "B": 0.9226112757166227,
+            "machine": "4060",
+            "runs": [
+              "f81d99cc73a5",
+              "64e7f6851fb7"
+            ]
+          },
+          "2": {
+            "effect": 0.0023404296618513287,
+            "A": 0.9244525533686839,
+            "B": 0.9267929830305353,
+            "machine": "4060",
+            "runs": [
+              "a36cb1add569",
+              "4402e57a7ede"
+            ]
+          },
+          "3": {
+            "effect": 0.0013825344748118473,
+            "A": 0.9249908476443738,
+            "B": 0.9263733821191856,
+            "machine": "4060",
+            "runs": [
+              "a03cb8833829",
+              "c6b24f928c36"
+            ]
+          }
+        },
+        "mean": 0.0009920646847564052,
+        "se": 0.0007312340019646373,
+        "positive": 3,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "case over the null, endings apart, 151M, 50k",
+        "A": "bpe_ucase-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "seeds": {
+          "0": {
+            "effect": 0.0010398682123525793,
+            "A": 0.9255233623741643,
+            "B": 0.9265632305865169,
+            "machine": "4060",
+            "runs": [
+              "c3f92c6eefc1",
+              "57f76ed51760"
+            ]
+          },
+          "1": {
+            "effect": 0.004890637732883785,
+            "A": 0.923699848883693,
+            "B": 0.9285904866165768,
+            "machine": "4060",
+            "runs": [
+              "f81d99cc73a5",
+              "ae75b666d616"
+            ]
+          },
+          "2": {
+            "effect": 0.004163933589987789,
+            "A": 0.9244525533686839,
+            "B": 0.9286164869586717,
+            "machine": "4060",
+            "runs": [
+              "a36cb1add569",
+              "7e17426e0388"
+            ]
+          },
+          "3": {
+            "effect": 0.0019343572405390308,
+            "A": 0.9249908476443738,
+            "B": 0.9269252048849128,
+            "machine": "4060",
+            "runs": [
+              "a03cb8833829",
+              "0d7539f05ca2"
+            ]
+          }
+        },
+        "mean": 0.003007199193940796,
+        "se": 0.0009086049857276481,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "case with prepositions from their form over the empty slot, 151M, 50k",
+        "A": "bpe_ucaseprep-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "B": "bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.2",
+        "seeds": {
+          "0": {
+            "effect": -0.0002450716583004553,
+            "A": 0.9271023018018976,
+            "B": 0.9268572301435971,
+            "machine": "4060",
+            "runs": [
+              "b15d90d52298",
+              "ec4d7833e2a3"
+            ]
+          },
+          "1": {
+            "effect": -0.0022502001803421656,
+            "A": 0.9248614758969649,
+            "B": 0.9226112757166227,
+            "machine": "4060",
+            "runs": [
+              "8987c50c305e",
+              "64e7f6851fb7"
+            ]
+          },
+          "2": {
+            "effect": 0.0008838449101506995,
+            "A": 0.9259091381203846,
+            "B": 0.9267929830305353,
+            "machine": "4060",
+            "runs": [
+              "889bd9b20ae2",
+              "4402e57a7ede"
+            ]
+          },
+          "3": {
+            "effect": -0.0004285180540383182,
+            "A": 0.926801900173224,
+            "B": 0.9263733821191856,
+            "machine": "4060",
+            "runs": [
+              "309e21c1cfec",
+              "c6b24f928c36"
+            ]
+          }
+        },
+        "mean": -0.0005099862456325599,
+        "se": 0.0006485834972083754,
+        "positive": 1,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "case from the word form over the empty slot, 151M, 50k",
+        "A": "bpe_ucaselex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "B": "bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.2",
+        "seeds": {
+          "0": {
+            "effect": -0.0003118217124590261,
+            "A": 0.9271690518560561,
+            "B": 0.9268572301435971,
+            "machine": "4060",
+            "runs": [
+              "6b102982d7d1",
+              "ec4d7833e2a3"
+            ]
+          },
+          "1": {
+            "effect": -0.0025894371948050887,
+            "A": 0.9252007129114278,
+            "B": 0.9226112757166227,
+            "machine": "4060",
+            "runs": [
+              "7c14b41a95df",
+              "64e7f6851fb7"
+            ]
+          },
+          "2": {
+            "effect": 0.0008186107516557906,
+            "A": 0.9259743722788795,
+            "B": 0.9267929830305353,
+            "machine": "4060",
+            "runs": [
+              "e09bd8291f20",
+              "4402e57a7ede"
+            ]
+          },
+          "3": {
+            "effect": 0.00042304388306702023,
+            "A": 0.9259503382361186,
+            "B": 0.9263733821191856,
+            "machine": "4060",
+            "runs": [
+              "4173c4312469",
+              "c6b24f928c36"
+            ]
+          }
+        },
+        "mean": -0.000414901068135326,
+        "se": 0.0007617379181061593,
+        "positive": 2,
+        "n": 4,
+        "skipped_across_machines": {}
+      }
+    ]
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-10-17T14:27:32+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "8f3fc7ce027da573381b55583aa140450a07576a",
+    "git_dirty": true
+  },
+  "notes": [
+    "effect = B minus A in bits per byte at each seed (positive: A better); pairs on one machine only"
+  ]
+}
