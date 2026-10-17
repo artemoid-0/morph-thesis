@@ -241,7 +241,8 @@ def main():
     ap.add_argument('--tokenizers', nargs='+', default=['bpe_uk_17k', 'unigram_uk_17k', 'bpeend_uk_17k'])
     ap.add_argument('--reference', default='bpe_uk_17k')
     ap.add_argument('--null', default='mconst')
-    ap.add_argument('--facts', nargs='+', default=['ucase', 'ucaselex'])
+    ap.add_argument('--facts', nargs='+', default=['ucase', 'ucaselex'],
+                    help="features to place against the null; 'mconst@OFF0' names the null switched off from step 0")
     ap.add_argument('--tol', type=float, default=1e-5, help='largest allowed |re-scored − recorded| bits per byte')
     ap.add_argument('--previous', action='store_true',
                     help='G-38: the first fact\'s gain minus the second\'s (or minus nothing, with one fact), by the word the feature describes')
@@ -254,7 +255,11 @@ def main():
 
     R = LL.load(a.roots)
     corpus = a.corpus + a.fraction
-    lab = lambda f, t: f'bpe_{f}-LEARN-CAUSAL_{t}_{corpus}{a.budget}'
+    def lab(f, t):
+        # 'mconst@OFF0' names a switched cell, the switch's suffix after CAUSAL in its label: the null
+        # switched off from step 0 is the empty slot (G-78, journey §33.105)
+        base, _, switch = f.partition('@')
+        return f'bpe_{base}-LEARN-CAUSAL' + (f'-{switch}' if switch else '') + f'_{t}_{corpus}{a.budget}'
     rule = EndingRule()
     from morphlm.record import AuditRecord
     rec = AuditRecord('loss_by_kind', a, out_dir=a.audit_dir)

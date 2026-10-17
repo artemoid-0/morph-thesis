@@ -231,8 +231,20 @@ so no leak — +0.0016 ± 0.0009 (3/4), which is **+0.0036 ± 0.0010 (4/4)** mor
 form gains under BPE 17k, where it ends below its null. What lasts to full training where
 endings are tokens is the word's own case; the other half is the leak (+0.0015 ± 0.0001,
 4/4). *Four seeds each; the gains without the leak at three seeds of four. Measured against
-the same-shape null; whether an empty slot — its dims held at zero — does as well as case is
-open (G-78).* (§33.68, §33.76, §33.81, §33.102)
+the same-shape null, which in Ukrainian loses to an empty slot (below; G-78).* (§33.68, §33.76,
+§33.81, §33.102)
+
+**Against an empty slot, the null is handicapped; what case carries sits on the endings.** The
+same-shape null is not the best model without a feature in Ukrainian. Hold its 8 dims at zero —
+the null switched off from step 0, from identical initial weights — and the model ends
+**+0.0025 ± 0.0004** better at ~38M tokens and 20k under endings apart (4/4; on a second machine
++0.0034 ± 0.0009, 4/4). In English the two are level. The difference sits at units' first tokens
+and at non-words, where the slot says whether the previous unit was a word, not on the endings.
+Case's slot says the same and pays the same cost. **What case carries is on the endings:**
++0.0024 ± 0.0002 there (4/4), where the empty slot gains +0.0001. Net, case beats the empty slot
+by +0.0013 ± 0.0007 (3/4; +0.0003 on the second machine), a third of its +0.0038 over the null.
+*One size, budget and tokenizer, two machines; other budgets, sizes and BPE 17k are being
+measured (G-78).* (§33.106)
 
 **Case helps by predicting endings; the exposure effect lies elsewhere.** Re-scored
 token by token, case's gain sits on the tokens that hold an inflectional ending under
@@ -419,6 +431,15 @@ meets in full.
    a field is added; a quarantine rule written for one generation of runs misfired
    on the next; tests left out of a hand-kept list never ran. Each was caught
    before it changed a number. (§33.39, §33.43–§33.45, §33.48)
+10. **A same-shape null can itself be handicapped.** In Ukrainian the null's slot loses to the
+   same slot held at zero, by 0.0025–0.0034 at 20k. The cost sits at word starts and non-words,
+   and a feature with the same slot pays it too. A gain over the null then overstates the gain
+   over the best model without the feature: check against an empty slot. (§33.106)
+11. **Two GPUs run the same model alike, not the same run.** The same weights evaluate within
+   2 × 10⁻⁹ on both machines, but dropout's masks are drawn on the GPU, differently by kernel
+   layout. A run repeated on the other machine differs like a dropout draw: −0.0004 ± 0.0002 over
+   15 pairs, with no consistent sign. An effect measured within each machine agrees between them
+   (case over the null +0.0038 and +0.0037). (§33.106)
 
 ## Withdrawn along the way
 

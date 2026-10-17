@@ -4442,3 +4442,73 @@ Predictions, before any of these runs:
   and the text gives both.
 - **Item 5 (P244–P247).** If the seeds agree, "one seed" goes from §3.7–§3.8; if not, the sentence
   gives their spread.
+
+### 33.106 The machines agree, and the null is handicapped in Ukrainian: case's own gain sits on the endings
+
+The first pieces of both machines' days (§33.103, §33.104) have finished. Analyses:
+`device_twins_20261017T082521`, `paired_cells_20261017T081844`, `loss_by_kind_20261017T081901`.
+
+**The twins.** Fifteen runs of the thesis machine were repeated on the second with the same arguments
+and seeds: the calibration's three at 10k, and twelve at 20k under endings apart (the null, case and
+the empty slot, seeds 0–3).
+- **Overall:** the second machine minus the thesis machine is −0.0004 ± 0.0002 on average. Six pairs
+  end above and nine below, which is no consistent sign (sign test p = 0.61). The typical difference
+  is 0.0006; the largest is 0.0025, the empty slot at seed 3.
+- **Against the seed spread:** per cell, the twins spread 0.2 to 4.5 times as widely as the thesis
+  machine's seeds do. The null's four seeds there lie within 0.0004 of each other, closer than its
+  twins.
+- **The effects agree.** Case over the null is +0.0038 ± 0.0008 on the thesis machine and +0.0037 ±
+  0.0008 on the second, seed by seed within 0.0018. Width 512's tokenizer lead (§33.102) is +0.0106
+  and +0.0098 at different seeds.
+
+**Why twins differ.** A twin and its original evaluate to the same bits per byte at step 0, within
+2 × 10⁻⁹, so the initial weights and the evaluation's arithmetic are the same on both machines. From
+the first batch on, the training losses differ. Dropout draws its masks on the GPU, and by kernel
+layout the two GPUs draw them differently. A twin is therefore a run with a different dropout draw,
+and its difference behaves like a smaller part of a seed's. The second machine repeats itself bit
+for bit: the empty slot run on two days, 26 hours apart, gives the same bits per byte at every
+evaluation of every seed. (§33.105's tests measure the masks and the rounding directly.) **For the
+thesis:** a run on the second machine is a valid run of its cell, and so is an average over both
+machines of comparisons made within one. A single run is not reproduced across machines; a pair is
+still compared within one machine.
+
+**G-78 at 20k, under endings apart, on each machine** (each seed paired from identical initial
+weights; case's table has the null's shape, so case starts from the null's weights too):
+
+| | thesis machine | second machine |
+|---|---|---|
+| the empty slot over the null | **+0.0025 ± 0.0004 (4/4)** | **+0.0034 ± 0.0009 (4/4)** |
+| case over the empty slot | +0.0013 ± 0.0007 (3/4) | +0.0003 ± 0.0006 (2/4) |
+| case over the null | +0.0038 ± 0.0008 (4/4) | +0.0037 ± 0.0008 (4/4) |
+
+The same-shape null is handicapped in Ukrainian: a slot held at zero ends better. In English the two
+are level (§33.102). Case still beats the empty slot, by about a third of what it gains over the null
+on the thesis machine, and by little on the second machine.
+
+**Where.** The thesis machine's twelve models were re-scored token by token on the CPU, all within
+1.1 × 10⁻⁶ of their records. Each gain over the null is split by the kind of target it predicts
+(`loss_by_kind.py`, `--facts mconst@OFF0 ucase`):
+
+| target | share | the empty slot | case |
+|---|---|---|---|
+| a word's first token, uncut / first of a cut word | 21% / 20% | +0.0003 / +0.0007 | +0.0006 / +0.0007 |
+| **the ending token** | 20% | **+0.0001 ± 0.0001** | **+0.0024 ± 0.0002 (4/4)** |
+| the rest of a cut word / of an uncut word | 8% / 11% | +0.0004 / +0.0001 | +0.0001 / −0.0002 |
+| **non-word** (punctuation, digits, line breaks) | 20% | **+0.0009 ± 0.0001 (4/4)** | +0.0003 ± 0.0001 |
+
+The null's handicap is not morphological. It sits at units' first tokens and at non-words, where the
+null's slot says whether the previous unit was a word. Case's slot says the same, plus the case, and
+pays the same cost there. **What case carries is on the endings:** +0.0024 there (64% of its gain on
+20% of the targets), where the empty slot gains nothing.
+
+**Predictions.** P222 wrong (the null's seed-0 twin ends 0.0012 away; the rest of P222 waits for
+BPE 17k's twins); P224 right (+0.0034); P225 right (+0.0003); P233 right (+0.0025); P234 wrong (seed 3's
+twin −0.0025); P235 wrong (+0.0013). The tally is 127 right, 8 half right, 81 wrong, 8 never tested, 1
+withdrawn, 25 pending, of 250.
+
+**What it changes.** Every Ukrainian gain in the thesis is stated against the same-shape null. Where
+that null loses to an empty slot, part of the stated gain is the slot's boundary cost, shared by every
+slotted model, not information. At 20k under endings apart case's information is the endings' +0.0024,
+and its net gain over an empty slot is +0.0013 (thesis machine). G-78 stays open for other budgets,
+sizes and tokenizers. Today's next pieces measure 10k under both tokenizers, BPE 17k at 20k, and full
+training (§33.105).

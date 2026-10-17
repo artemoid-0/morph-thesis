@@ -16,6 +16,11 @@
   `morfessor`, `pandas`, `numpy`, `openpyxl`
 - Training on a single CUDA GPU; ~14–18.5 optimizer steps/second depending on
   vocabulary size and whether context codes are loaded
+- Two machines, each training on one GPU: an RTX 4060 Laptop GPU (8 GB; every run until 15 October)
+  and, from 16 October, an RTX 5090 Laptop GPU (24 GB), the same software (torch 2.11, CUDA 13.0,
+  everything in fp32). Each record names its GPU (`environment.gpu`). The same weights evaluate alike
+  on both; a run repeated on the other machine differs like a dropout draw, so every comparison is
+  made within one machine (journey §33.101, §33.106)
 
 ### 1.2 Data assets
 

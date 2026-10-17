@@ -1,0 +1,207 @@
+{
+  "script": "paired_cells",
+  "args": {
+    "pair": [
+      [
+        "the empty slot over the null, endings apart, 20k",
+        "bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.05_st20k",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k"
+      ],
+      [
+        "case over the empty slot, endings apart, 20k",
+        "bpe_ucase-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k",
+        "bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.05_st20k"
+      ],
+      [
+        "case over the null, endings apart, 20k",
+        "bpe_ucase-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k"
+      ]
+    ],
+    "seeds": null,
+    "results_dir": "/home/neko/PycharmProjects/Morph/results"
+  },
+  "timestamp_utc": "2026-10-17T08:18:44+00:00",
+  "results": {
+    "pairs": [
+      {
+        "name": "the empty slot over the null, endings apart, 20k",
+        "A": "bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.05_st20k",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k",
+        "seeds": {
+          "0": {
+            "effect": 0.0018696176672423626,
+            "A": 0.9955615406725171,
+            "B": 0.9974311583397595,
+            "machine": "4060",
+            "runs": [
+              "a7eac07e55f7",
+              "8f398c5a967e"
+            ]
+          },
+          "1": {
+            "effect": 0.003454014620401402,
+            "A": 0.994145851812644,
+            "B": 0.9975998664330454,
+            "machine": "4060",
+            "runs": [
+              "995ea127b867",
+              "9272ed2841aa"
+            ]
+          },
+          "2": {
+            "effect": 0.002912460473994738,
+            "A": 0.9948489187496673,
+            "B": 0.997761379223662,
+            "machine": "4060",
+            "runs": [
+              "95bfa9b58e8e",
+              "d2c01147fb4f"
+            ]
+          },
+          "3": {
+            "effect": 0.0018798311260583844,
+            "A": 0.9955499246494113,
+            "B": 0.9974297557754697,
+            "machine": "4060",
+            "runs": [
+              "a626f5d51d30",
+              "cefc2d34b3fd"
+            ]
+          }
+        },
+        "mean": 0.0025289809719242218,
+        "se": 0.0003935838823419007,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "case over the empty slot, endings apart, 20k",
+        "A": "bpe_ucase-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k",
+        "B": "bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.05_st20k",
+        "seeds": {
+          "0": {
+            "effect": 0.001897671078004315,
+            "A": 0.9936638695945128,
+            "B": 0.9955615406725171,
+            "machine": "4060",
+            "runs": [
+              "010f763044f8",
+              "a7eac07e55f7"
+            ]
+          },
+          "1": {
+            "effect": 0.0027136752966047117,
+            "A": 0.9914321765160393,
+            "B": 0.994145851812644,
+            "machine": "4060",
+            "runs": [
+              "89e8c77f972f",
+              "995ea127b867"
+            ]
+          },
+          "2": {
+            "effect": -0.0004544932507345445,
+            "A": 0.9953034120004018,
+            "B": 0.9948489187496673,
+            "machine": "4060",
+            "runs": [
+              "eb7f4c3af389",
+              "95bfa9b58e8e"
+            ]
+          },
+          "3": {
+            "effect": 0.0010386668112509767,
+            "A": 0.9945112578381603,
+            "B": 0.9955499246494113,
+            "machine": "4060",
+            "runs": [
+              "4b0c4a931243",
+              "a626f5d51d30"
+            ]
+          }
+        },
+        "mean": 0.0012988799837813647,
+        "se": 0.0006771401348307171,
+        "positive": 3,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "case over the null, endings apart, 20k",
+        "A": "bpe_ucase-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k",
+        "seeds": {
+          "0": {
+            "effect": 0.0037672887452466775,
+            "A": 0.9936638695945128,
+            "B": 0.9974311583397595,
+            "machine": "4060",
+            "runs": [
+              "010f763044f8",
+              "8f398c5a967e"
+            ]
+          },
+          "1": {
+            "effect": 0.006167689917006114,
+            "A": 0.9914321765160393,
+            "B": 0.9975998664330454,
+            "machine": "4060",
+            "runs": [
+              "89e8c77f972f",
+              "9272ed2841aa"
+            ]
+          },
+          "2": {
+            "effect": 0.0024579672232601935,
+            "A": 0.9953034120004018,
+            "B": 0.997761379223662,
+            "machine": "4060",
+            "runs": [
+              "eb7f4c3af389",
+              "d2c01147fb4f"
+            ]
+          },
+          "3": {
+            "effect": 0.002918497937309361,
+            "A": 0.9945112578381603,
+            "B": 0.9974297557754697,
+            "machine": "4060",
+            "runs": [
+              "4b0c4a931243",
+              "cefc2d34b3fd"
+            ]
+          }
+        },
+        "mean": 0.0038278609557055865,
+        "se": 0.0008257329319176816,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      }
+    ]
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-10-17T08:18:44+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "eb3aaa7ea585b5b272820b965843864311a31356",
+    "git_dirty": true
+  },
+  "notes": [
+    "effect = B minus A in bits per byte at each seed (positive: A better); pairs on one machine only"
+  ]
+}
