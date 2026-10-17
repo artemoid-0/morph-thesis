@@ -1,0 +1,492 @@
+{
+  "script": "paired_cells",
+  "args": {
+    "pair": [
+      [
+        "causal pos over the null, 10k",
+        "bpe_poscausal-LEARN-CAUSAL_bpe_17k_st10k",
+        "bpe_mconst-LEARN-CAUSAL_bpe_17k_st10k"
+      ],
+      [
+        "causal pos over the word form, 10k",
+        "bpe_poscausal-LEARN-CAUSAL_bpe_17k_st10k",
+        "bpe_poslex-LEARN-CAUSAL_bpe_17k_st10k"
+      ],
+      [
+        "pos over causal pos (the leak), 10k",
+        "bpe_pos-LEARN-CAUSAL_bpe_17k_st10k",
+        "bpe_poscausal-LEARN-CAUSAL_bpe_17k_st10k"
+      ],
+      [
+        "pos over the word form, 10k",
+        "bpe_pos-LEARN-CAUSAL_bpe_17k_st10k",
+        "bpe_poslex-LEARN-CAUSAL_bpe_17k_st10k"
+      ],
+      [
+        "causal pos over the null, 20k",
+        "bpe_poscausal-LEARN-CAUSAL_bpe_17k_st20k",
+        "bpe_mconst-LEARN-CAUSAL_bpe_17k_st20k"
+      ],
+      [
+        "causal pos over the word form, 20k",
+        "bpe_poscausal-LEARN-CAUSAL_bpe_17k_st20k",
+        "bpe_poslex-LEARN-CAUSAL_bpe_17k_st20k"
+      ],
+      [
+        "pos over causal pos (the leak), 20k",
+        "bpe_pos-LEARN-CAUSAL_bpe_17k_st20k",
+        "bpe_poscausal-LEARN-CAUSAL_bpe_17k_st20k"
+      ],
+      [
+        "pos over the word form, 20k",
+        "bpe_pos-LEARN-CAUSAL_bpe_17k_st20k",
+        "bpe_poslex-LEARN-CAUSAL_bpe_17k_st20k"
+      ]
+    ],
+    "seeds": null,
+    "results_dir": "/home/neko/PycharmProjects/Morph/results"
+  },
+  "timestamp_utc": "2026-10-17T10:30:00+00:00",
+  "results": {
+    "pairs": [
+      {
+        "name": "causal pos over the null, 10k",
+        "A": "bpe_poscausal-LEARN-CAUSAL_bpe_17k_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpe_17k_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.010390498193010744,
+            "A": 1.5158548590546066,
+            "B": 1.5262453572476173,
+            "machine": "4060",
+            "runs": [
+              "870e9a08d31c",
+              "3e7d5e2e10b8"
+            ]
+          },
+          "1": {
+            "effect": 0.011311243225825995,
+            "A": 1.5140541728432653,
+            "B": 1.5253654160690913,
+            "machine": "4060",
+            "runs": [
+              "22352eb286ab",
+              "a1ca381fcca2"
+            ]
+          },
+          "2": {
+            "effect": 0.010247819214727727,
+            "A": 1.5143246801159864,
+            "B": 1.5245724993307141,
+            "machine": "4060",
+            "runs": [
+              "90f62007eb27",
+              "2f3f7fce9574"
+            ]
+          },
+          "3": {
+            "effect": 0.010042858051237724,
+            "A": 1.5130290392696988,
+            "B": 1.5230718973209365,
+            "machine": "4060",
+            "runs": [
+              "19f7239cf657",
+              "5e216409c566"
+            ]
+          }
+        },
+        "mean": 0.010498104671200548,
+        "se": 0.0002802775050249542,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "causal pos over the word form, 10k",
+        "A": "bpe_poscausal-LEARN-CAUSAL_bpe_17k_st10k",
+        "B": "bpe_poslex-LEARN-CAUSAL_bpe_17k_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.0008803395997902808,
+            "A": 1.5158548590546066,
+            "B": 1.5167351986543969,
+            "machine": "4060",
+            "runs": [
+              "870e9a08d31c",
+              "2930118ce06d"
+            ]
+          },
+          "1": {
+            "effect": 0.0008304641070790986,
+            "A": 1.5140541728432653,
+            "B": 1.5148846369503444,
+            "machine": "4060",
+            "runs": [
+              "22352eb286ab",
+              "23abda6bdc1e"
+            ]
+          },
+          "2": {
+            "effect": -0.0005510525607614891,
+            "A": 1.5143246801159864,
+            "B": 1.513773627555225,
+            "machine": "4060",
+            "runs": [
+              "90f62007eb27",
+              "2cb626396c72"
+            ]
+          },
+          "3": {
+            "effect": 0.001291349798133501,
+            "A": 1.5130290392696988,
+            "B": 1.5143203890678323,
+            "machine": "4060",
+            "runs": [
+              "19f7239cf657",
+              "96c4b1d4591e"
+            ]
+          }
+        },
+        "mean": 0.0006127752360603478,
+        "se": 0.000401449219521345,
+        "positive": 3,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "pos over causal pos (the leak), 10k",
+        "A": "bpe_pos-LEARN-CAUSAL_bpe_17k_st10k",
+        "B": "bpe_poscausal-LEARN-CAUSAL_bpe_17k_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.003641764063606834,
+            "A": 1.5122130949909998,
+            "B": 1.5158548590546066,
+            "machine": "4060",
+            "runs": [
+              "c02a49956d0f",
+              "870e9a08d31c"
+            ]
+          },
+          "1": {
+            "effect": 0.001952423810781978,
+            "A": 1.5121017490324833,
+            "B": 1.5140541728432653,
+            "machine": "4060",
+            "runs": [
+              "0d863918f748",
+              "22352eb286ab"
+            ]
+          },
+          "2": {
+            "effect": 0.0026465539260578375,
+            "A": 1.5116781261899286,
+            "B": 1.5143246801159864,
+            "machine": "4060",
+            "runs": [
+              "a2c6a6f13341",
+              "90f62007eb27"
+            ]
+          },
+          "3": {
+            "effect": 0.0018579476067637213,
+            "A": 1.511171091662935,
+            "B": 1.5130290392696988,
+            "machine": "4060",
+            "runs": [
+              "a51402d7535d",
+              "19f7239cf657"
+            ]
+          }
+        },
+        "mean": 0.0025246723518025926,
+        "se": 0.0004117785902917607,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "pos over the word form, 10k",
+        "A": "bpe_pos-LEARN-CAUSAL_bpe_17k_st10k",
+        "B": "bpe_poslex-LEARN-CAUSAL_bpe_17k_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.0045221036633971146,
+            "A": 1.5122130949909998,
+            "B": 1.5167351986543969,
+            "machine": "4060",
+            "runs": [
+              "c02a49956d0f",
+              "2930118ce06d"
+            ]
+          },
+          "1": {
+            "effect": 0.0027828879178610766,
+            "A": 1.5121017490324833,
+            "B": 1.5148846369503444,
+            "machine": "4060",
+            "runs": [
+              "0d863918f748",
+              "23abda6bdc1e"
+            ]
+          },
+          "2": {
+            "effect": 0.0020955013652963483,
+            "A": 1.5116781261899286,
+            "B": 1.513773627555225,
+            "machine": "4060",
+            "runs": [
+              "a2c6a6f13341",
+              "2cb626396c72"
+            ]
+          },
+          "3": {
+            "effect": 0.003149297404897222,
+            "A": 1.511171091662935,
+            "B": 1.5143203890678323,
+            "machine": "4060",
+            "runs": [
+              "a51402d7535d",
+              "96c4b1d4591e"
+            ]
+          }
+        },
+        "mean": 0.0031374475878629404,
+        "se": 0.0005106186897602806,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "causal pos over the null, 20k",
+        "A": "bpe_poscausal-LEARN-CAUSAL_bpe_17k_st20k",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpe_17k_st20k",
+        "seeds": {
+          "0": {
+            "effect": 0.005635971277806906,
+            "A": 1.4217210761850707,
+            "B": 1.4273570474628776,
+            "machine": "4060",
+            "runs": [
+              "d900fdae5f32",
+              "48103d34e324"
+            ]
+          },
+          "1": {
+            "effect": 0.004751847993230474,
+            "A": 1.4202179035755538,
+            "B": 1.4249697515687842,
+            "machine": "4060",
+            "runs": [
+              "ffe35f017fe4",
+              "438f86ec47aa"
+            ]
+          },
+          "2": {
+            "effect": 0.006162038284760474,
+            "A": 1.4208025417626533,
+            "B": 1.4269645800474138,
+            "machine": "4060",
+            "runs": [
+              "a9ac823c5b29",
+              "e13fc3edc3a6"
+            ]
+          },
+          "3": {
+            "effect": 0.005000690819149778,
+            "A": 1.4199115050710616,
+            "B": 1.4249121958902113,
+            "machine": "4060",
+            "runs": [
+              "ce8a3eac18dc",
+              "869cc75b3095"
+            ]
+          }
+        },
+        "mean": 0.005387637093736908,
+        "se": 0.00031824024878699064,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "causal pos over the word form, 20k",
+        "A": "bpe_poscausal-LEARN-CAUSAL_bpe_17k_st20k",
+        "B": "bpe_poslex-LEARN-CAUSAL_bpe_17k_st20k",
+        "seeds": {
+          "0": {
+            "effect": 0.0006369204789755667,
+            "A": 1.4217210761850707,
+            "B": 1.4223579966640463,
+            "machine": "4060",
+            "runs": [
+              "d900fdae5f32",
+              "e07d2860450d"
+            ]
+          },
+          "1": {
+            "effect": 0.0010853835158883829,
+            "A": 1.4202179035755538,
+            "B": 1.4213032870914422,
+            "machine": "4060",
+            "runs": [
+              "ffe35f017fe4",
+              "1ddf55664126"
+            ]
+          },
+          "2": {
+            "effect": -0.0003924520736882098,
+            "A": 1.4208025417626533,
+            "B": 1.420410089688965,
+            "machine": "4060",
+            "runs": [
+              "a9ac823c5b29",
+              "066c70d64460"
+            ]
+          },
+          "3": {
+            "effect": 0.00032728191544384444,
+            "A": 1.4199115050710616,
+            "B": 1.4202387869865054,
+            "machine": "4060",
+            "runs": [
+              "ce8a3eac18dc",
+              "a0053dae7389"
+            ]
+          }
+        },
+        "mean": 0.00041428345915489606,
+        "se": 0.000310689289765793,
+        "positive": 3,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "pos over causal pos (the leak), 20k",
+        "A": "bpe_pos-LEARN-CAUSAL_bpe_17k_st20k",
+        "B": "bpe_poscausal-LEARN-CAUSAL_bpe_17k_st20k",
+        "seeds": {
+          "0": {
+            "effect": 0.0023658060955857874,
+            "A": 1.419355270089485,
+            "B": 1.4217210761850707,
+            "machine": "4060",
+            "runs": [
+              "bbfc6734e297",
+              "d900fdae5f32"
+            ]
+          },
+          "1": {
+            "effect": 0.0014607147878404891,
+            "A": 1.4187571887877133,
+            "B": 1.4202179035755538,
+            "machine": "4060",
+            "runs": [
+              "e97ff509013a",
+              "ffe35f017fe4"
+            ]
+          },
+          "2": {
+            "effect": 0.003298414195150645,
+            "A": 1.4175041275675027,
+            "B": 1.4208025417626533,
+            "machine": "4060",
+            "runs": [
+              "6ecaedc5da50",
+              "a9ac823c5b29"
+            ]
+          },
+          "3": {
+            "effect": 0.0013071687184846859,
+            "A": 1.4186043363525769,
+            "B": 1.4199115050710616,
+            "machine": "4060",
+            "runs": [
+              "7b635f39fd9e",
+              "ce8a3eac18dc"
+            ]
+          }
+        },
+        "mean": 0.002108025949265402,
+        "se": 0.00046042180150177985,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "pos over the word form, 20k",
+        "A": "bpe_pos-LEARN-CAUSAL_bpe_17k_st20k",
+        "B": "bpe_poslex-LEARN-CAUSAL_bpe_17k_st20k",
+        "seeds": {
+          "0": {
+            "effect": 0.003002726574561354,
+            "A": 1.419355270089485,
+            "B": 1.4223579966640463,
+            "machine": "4060",
+            "runs": [
+              "bbfc6734e297",
+              "e07d2860450d"
+            ]
+          },
+          "1": {
+            "effect": 0.002546098303728872,
+            "A": 1.4187571887877133,
+            "B": 1.4213032870914422,
+            "machine": "4060",
+            "runs": [
+              "e97ff509013a",
+              "1ddf55664126"
+            ]
+          },
+          "2": {
+            "effect": 0.0029059621214624354,
+            "A": 1.4175041275675027,
+            "B": 1.420410089688965,
+            "machine": "4060",
+            "runs": [
+              "6ecaedc5da50",
+              "066c70d64460"
+            ]
+          },
+          "3": {
+            "effect": 0.0016344506339285303,
+            "A": 1.4186043363525769,
+            "B": 1.4202387869865054,
+            "machine": "4060",
+            "runs": [
+              "7b635f39fd9e",
+              "a0053dae7389"
+            ]
+          }
+        },
+        "mean": 0.002522309408420298,
+        "se": 0.000311829169675965,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      }
+    ]
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-10-17T10:30:00+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "0568ef2028d2bc64e6ac4f2e85397bc864e5becf",
+    "git_dirty": true
+  },
+  "notes": [
+    "effect = B minus A in bits per byte at each seed (positive: A better); pairs on one machine only"
+  ]
+}

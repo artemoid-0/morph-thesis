@@ -6,7 +6,7 @@ Each prediction was recorded in `docs/record/journey/README.md` **before** its r
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 127 right, 8 half right, 81 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 25 pending — of 250. The wrong ones carried
+**Tally:** 133 right, 8 half right, 82 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 18 pending — of 250. The wrong ones carried
 the information: the null's gain (P18), the shuffled control (P15), the
 leak's absence (P11), the training-budget reframing (P61), the tokenizer
 hypothesis (P119, P120), Unigram's early lead (P130), the wider model's larger
@@ -237,16 +237,16 @@ over the word form's (P148–P150), and how much of it the tagger's leak is (P16
 | P220 | At 50k English endings apart ends below BPE 17k at three or more of seeds 4–7 | right — four of four (+0.0160, +0.0016, +0.0065, +0.0009) | §33.101, §33.102 |
 | P221 | Over eight seeds the median English lead at 50k lies within 0.002 of the 20k lead (+0.0035 to +0.0075) | right — median +0.0053 (7/8) | §33.101, §33.102 |
 | P222 | At 20k each of the twelve Ukrainian twins ends within 0.001 of its run on the thesis machine, and their mean difference lies within ±0.0005 | wrong — the null's seed-0 twin ends 0.0012 away | §33.103, §33.106 |
-| P223 | At 50k each English twin ends within 0.002 of its run on the thesis machine, and endings apart's lead at seeds 0 and 1 is reproduced within 0.002 | pending | §33.103 |
+| P223 | At 50k each English twin ends within 0.002 of its run on the thesis machine, and endings apart's lead at seeds 0 and 1 is reproduced within 0.002 | wrong — endings apart's twins end +0.0063 and +0.0023 away; the lead at seeds 0–1 is −0.0009 and +0.0022 there | §33.103, §33.107 |
 | P224 | On one machine, under endings apart at 20k, the empty slot ends better than the null by more than 0.002 on average over seeds 0–3 | right — +0.0034 ± 0.0009 (4/4) | §33.103, §33.106 |
 | P225 | On one machine, case ends within 0.001 of the empty slot on average over seeds 0–3 | right — +0.0003 ± 0.0006 | §33.103, §33.106 |
 | P226 | Under BPE 17k at 20k the empty slot also ends better than the null by more than 0.002 on average | pending | §33.103 |
-| P227 | On BLiMP endings apart judges better overall than BPE 17k at three or more of seeds 4–7 | pending | §33.103 |
-| P228 | On MultiBLiMP at width 512 and 20k endings apart judges better at seeds 2 and 3, by 4 to 8 points each | pending | §33.103 |
-| P229 | `poscausal` beats the null at every seed, at 10k and at 20k | pending | §33.104 |
-| P230 | At 10k `poscausal` keeps less than half of `pos`'s lead over the word form (under +0.0016 over `poslex`) | pending | §33.104 |
-| P231 | At 20k likewise (under +0.0013 over `poslex`) | pending | §33.104 |
-| P232 | Paired by seed, `poscausal` ends behind `pos` at both budgets by more than 0.0005 on average | pending | §33.104 |
+| P227 | On BLiMP endings apart judges better overall than BPE 17k at three or more of seeds 4–7 | right — +2.0, +0.6, +0.5, +1.0 points (8/8 with seeds 0–3) | §33.103, §33.107 |
+| P228 | On MultiBLiMP at width 512 and 20k endings apart judges better at seeds 2 and 3, by 4 to 8 points each | right — +5.6 and +6.1 (four seeds +5.9 ± 0.2) | §33.103, §33.107 |
+| P229 | `poscausal` beats the null at every seed, at 10k and at 20k | right — +0.0105 and +0.0054, 4/4 each | §33.104, §33.107 |
+| P230 | At 10k `poscausal` keeps less than half of `pos`'s lead over the word form (under +0.0016 over `poslex`) | right — +0.0006 ± 0.0004 over `poslex` | §33.104, §33.107 |
+| P231 | At 20k likewise (under +0.0013 over `poslex`) | right — +0.0004 ± 0.0003 | §33.104, §33.107 |
+| P232 | Paired by seed, `poscausal` ends behind `pos` at both budgets by more than 0.0005 on average | right — +0.0025 and +0.0021, 4/4 each | §33.104, §33.107 |
 | P233 | On the thesis machine the empty slot ends better than the null by more than 0.002 on average, paired by seed | right — +0.0025 ± 0.0004 (4/4) | §33.104, §33.106 |
 | P234 | Each of those four runs ends within 0.001 of its twin on the second machine | wrong — seed 3's twin ends 0.0025 away | §33.104, §33.106 |
 | P235 | On the thesis machine case ends within 0.001 of the empty slot on average | wrong — +0.0013 ± 0.0007 (3/4) | §33.104, §33.106 |

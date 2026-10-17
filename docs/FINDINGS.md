@@ -28,11 +28,13 @@ rule cuts 10.2% of words and reaches half of the inflected ones. It does not fad
 the budget **+0.0055 ± 0.0008 (0.38%, 4/4)**, and at full training — 50k steps — **+0.0053 on
 the median seed (0.39%)**, at seven seeds of eight. There, runs drift after 20k steps — two
 BPE 17k runs of eight by about 0.009, two endings-apart runs by about 0.005 — which leaves one
-pair level and makes the mean (+0.0066 ± 0.0024) less telling than the median. The grammar test agrees at every seed: on BLiMP the full-training models
-are **+1.0 ± 0.2 points** better over all 67 paradigms (4/4; +0.3 at 10k), +2.1 ± 0.8 in
-morphology (4/4), and better on average in each agreement phenomenon (3/4 each). *Plain
+pair level and makes the mean (+0.0066 ± 0.0024) less telling than the median. The drift is
+chance within training, not the seed's: a run repeated with the same initial weights and batches
+on another machine drifts or not (§33.107). The grammar test agrees at every seed: on BLiMP the full-training models
+are **+1.0 ± 0.2 points** better over all 67 paradigms (8/8; +0.3 at 10k), +1.1 ± 0.6 in
+morphology (6/8), and better on average in each agreement phenomenon (3/4 each at seeds 0–3). *Plain
 baselines, four seeds at 10k and 20k, eight at full training (seven of eight; seeds 4–7 on a
-second machine); BLiMP at seeds 0–3.* (§33.85, §33.87, §33.92, §33.102)
+second machine); BLiMP at eight seeds.* (§33.85, §33.87, §33.92, §33.102, §33.107)
 
 **Q1 in Ukrainian, with morphology inside BPE: yes — and the gain lasts, to full
 training.** BPE that never joins a stem to its inflectional ending — the cut read from
@@ -64,7 +66,7 @@ agreement pairs the endings-apart models prefer the grammatical sentence more of
 full training 76.3% against 71.4% (**+4.9 ± 0.4 points**, 4/4; in number, gender and
 person; +5.0 on the pairs whose two sentences have the same token length), at ~38M and 10k
 69.0% against 64.8% (+4.3 ± 0.3, 4/4); +4.5 ± 0.5 at twice the budget, +5.3 ± 0.3 at width 256 and
-**+6.8 ± 0.2 at width 512** (4/4; +5.6 and +6.4 at 20k, seeds 0–1), where the lead in bits per byte is half width 256's: the
+**+6.8 ± 0.2 at width 512** (4/4; +5.9 ± 0.2 at 20k, 4/4), where the lead in bits per byte is half width 256's: the
 grammatical gain grows with the model, and is not the code length's. Exposing more endings elsewhere does not
 do it: BPE 4k is 1.2 points below BPE 17k, Unigram level with it. **And on a second corpus.**
 On UberText 2.0's fiction subcorpus — novels and prose, both tokenizers trained on it — keeping
@@ -130,8 +132,13 @@ at 0.94 — while the leak, which carries the case of the noun being predicted, 
 +0.0014 to the end. Under BPE 17k the lead at full training is +0.0006 ± 0.0004 (3/4), the
 prepositions' part still positive (+0.0008, 4/4). A context-aware feature helps before the
 model has learned to read the context for itself; after that, what it adds is what the
-tagger saw of the word being predicted. *The control at four seeds: under two tokenizers at
-~38M, under endings apart at full training. A split of the lead by the word the feature
+tagger saw of the word being predicted. **And in English.** Part of speech read by a causal
+tagger, each word tagged from its left context alone, leads the word form by only +0.0006 ±
+0.0004 at 10k and +0.0004 ± 0.0003 at 20k (3/4 each), against the tagged feature's +0.0031 and
++0.0025. The tagger's right-context leak is +0.0025 ± 0.0004 and +0.0021 ± 0.0005 (4/4 each), four
+fifths of the lead: in both languages what the sentence adds over the word form is mostly not
+context (§33.99, §33.107). *The control at four seeds: under two tokenizers at
+~38M, under endings apart at full training; for English part of speech at 10k and 20k. A split of the lead by the word the feature
 describes had put 55–60% after prepositions — two trained models compared target by target
 are not a model and its counterfactual (§33.74, §33.76, §33.81).* Identity-like
 features (inflection bundles, lemma and root hashes) do worse than the null.
@@ -437,9 +444,11 @@ meets in full.
    over the best model without the feature: check against an empty slot. (§33.106)
 11. **Two GPUs run the same model alike, not the same run.** The same weights evaluate within
    2 × 10⁻⁹ on both machines, but dropout's masks are drawn on the GPU, differently by kernel
-   layout. A run repeated on the other machine differs like a dropout draw: −0.0004 ± 0.0002 over
-   15 pairs, with no consistent sign. An effect measured within each machine agrees between them
-   (case over the null +0.0038 and +0.0037). (§33.106)
+   layout. A run repeated on the other machine differs like a dropout draw: +0.0001 ± 0.0004 over
+   19 pairs, with no consistent sign (9 above, 10 below), the largest difference growing with
+   training (0.0005 at 10k, 0.0025 at 20k, 0.0063 at 50k). An effect measured within each machine
+   agrees between them (case over the null +0.0038 and +0.0037); a single pair at full training
+   does not. (§33.106, §33.107)
 
 ## Withdrawn along the way
 

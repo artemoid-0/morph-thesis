@@ -4512,3 +4512,58 @@ slotted model, not information. At 20k under endings apart case's information is
 and its net gain over an empty slot is +0.0013 (thesis machine). G-78 stays open for other budgets,
 sizes and tokenizers. Today's next pieces measure 10k under both tokenizers, BPE 17k at 20k, and full
 training (§33.105).
+
+### 33.107 In English too the sentence's lead over the word form is the tagger's leak; full training's twins drift apart
+
+**Item 2** (the thesis machine, `paired_cells_20261017T103000`). English part of speech from the
+causal tagger of §33.99 (every word tagged from its left context alone), at 10k and 20k, seeds 0–3.
+It starts from `pos`'s initial weights at each seed:
+
+| | 10k | 20k |
+|---|---|---|
+| the causal tag over the null | +0.0105 ± 0.0003 (4/4) | +0.0054 ± 0.0003 (4/4) |
+| **the causal tag over the word form** (`poslex`) | **+0.0006 ± 0.0004 (3/4)** | **+0.0004 ± 0.0003 (3/4)** |
+| `pos` over the causal tag: **the leak** | +0.0025 ± 0.0004 (4/4) | +0.0021 ± 0.0005 (4/4) |
+| `pos` over the word form (as recorded) | +0.0031 ± 0.0005 | +0.0025 ± 0.0003 |
+
+What the tagged sentence adds over the word form is four fifths the tagger's right-context leak:
+81% at 10k and 84% at 20k. The context left once the leak is gone is small and not established at
+four seeds. **P229, P230, P231 and P232 right.** In both languages, then, what a context-aware
+feature adds over the lexical one is mostly not context: the thesis's list gave this sentence for
+this outcome.
+
+**English twins at full training** (`device_twins_20261017T103034`). Both plain baselines at seeds
+0–1 were repeated on the second machine:
+- BPE 17k's twins end +0.0004 and −0.0009 away;
+- endings apart's end +0.0063 and +0.0023 away.
+
+So endings apart's lead at those seeds, +0.0051 and +0.0055 on the thesis machine, is −0.0009 and
++0.0022 on the second. Seed 0's twin drifts from early on: +0.0010 at step 5,000, +0.0027 at 20,000,
++0.0063 at the end. This is §33.92's drift of one run in four. The same initial weights and batches
+drift on one machine and not on the other, so the drift is a chance event within training, not a
+property of the seed. **P223 wrong.**
+
+Over all nineteen twins the second machine minus the thesis machine is +0.0001 ± 0.0004 (9 above,
+10 below). The largest difference grows with training: 0.0005 at 10k, 0.0025 at 20k, 0.0063 at 50k.
+At full training a single English pair is not reproducible, which is why the thesis reports the
+median of eight seeds (§33.102).
+
+**The grammar tests** (`blimp_eval_20261017T094816`, `multiblimp_eval_20261017T094841`; data sent,
+not downloaded):
+- **BLiMP, English seeds 4–7 at full training:** endings apart judges better overall at every seed,
+  +2.0, +0.6, +0.5 and +1.0 points. With seeds 0–3: **+1.0 ± 0.2 (8/8)**. Morphology is +1.1 ± 0.6
+  (6/8); seeds 4–7 alone are mixed (2/4). **P227 right.**
+- **MultiBLiMP, width 512 at 20k, seeds 2–3:** +5.6 and +6.1 points. With seeds 0–1: **+5.9 ± 0.2
+  (4/4)**. **P228 right.**
+
+**Fiction's data at 0.4**, rebuilt on the second machine with §33.102's fix (`fiction_full.sh`):
+- both conditions built and gated, endings apart's training split at 153,925,966 tokens, tagged in
+  2 h 13 min;
+- the Bible's line tagged whole;
+- both validation streams and null codes byte for byte the thesis machine's at 0.1;
+- `FULL_VERIFIED` at 05:01 local time.
+
+The fiction runs follow in the second machine's chain.
+
+**Predictions.** P223 wrong; P227, P228, P229, P230, P231 and P232 right. The tally is 133 right,
+8 half right, 82 wrong, 8 never tested, 1 withdrawn, 18 pending, of 250.

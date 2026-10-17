@@ -1,0 +1,130 @@
+{
+  "script": "check_cache",
+  "args": {
+    "bpe_path": "data/bpeend_ukf_17k.json",
+    "cache_dir": "data/cache",
+    "corpus": "ukfiction",
+    "corpus_fraction": 0.4,
+    "corpus_holdout": 500,
+    "split": "train",
+    "require_facts": [
+      "ucase",
+      "mconst",
+      "mzero",
+      "ucaselex"
+    ],
+    "require_constant": null
+  },
+  "timestamp_utc": "2026-10-17T09:00:03+00:00",
+  "results": {
+    "split": {
+      "tokens": 153925966,
+      "words": 76761026,
+      "rule": "decoded"
+    },
+    "facts": {
+      "dep": {
+        "fires": 1.0,
+        "word_constant": 0.9999939493239481,
+        "classes_used": 7,
+        "file": "bpe_train_None_e5d91ab9be_ucaselex.codes.json"
+      },
+      "pos": {
+        "fires": 0.9999944766681172,
+        "word_constant": 0.99999393047449,
+        "classes_used": 18,
+        "file": "bpe_train_None_e5d91ab9be_ucaselex.codes.json"
+      },
+      "ucase": {
+        "fires": 0.6237891337019082,
+        "word_constant": 1.0,
+        "classes_used": 8,
+        "file": "bpe_train_None_e5d91ab9be_ucaselex.codes.json"
+      },
+      "ugender": {
+        "fires": 0.5777731619054429,
+        "word_constant": 1.0,
+        "classes_used": 4,
+        "file": "bpe_train_None_e5d91ab9be_ucaselex.codes.json"
+      },
+      "unumber": {
+        "fires": 0.7259515150526317,
+        "word_constant": 1.0,
+        "classes_used": 3,
+        "file": "bpe_train_None_e5d91ab9be_ucaselex.codes.json"
+      },
+      "uperson": {
+        "fires": 0.10447690391811375,
+        "word_constant": 1.0,
+        "classes_used": 5,
+        "file": "bpe_train_None_e5d91ab9be_ucaselex.codes.json"
+      },
+      "utense": {
+        "fires": 0.17608974432897292,
+        "word_constant": 1.0,
+        "classes_used": 4,
+        "file": "bpe_train_None_e5d91ab9be_ucaselex.codes.json"
+      },
+      "uaspect": {
+        "fires": 0.22920952978273376,
+        "word_constant": 1.0,
+        "classes_used": 3,
+        "file": "bpe_train_None_e5d91ab9be_ucaselex.codes.json"
+      },
+      "uanimacy": {
+        "fires": 0.40127677863631306,
+        "word_constant": 1.0,
+        "classes_used": 3,
+        "file": "bpe_train_None_e5d91ab9be_ucaselex.codes.json"
+      },
+      "ucaselex": {
+        "fires": 0.6238029073663521,
+        "word_constant": 1.0,
+        "classes_used": 8,
+        "file": "bpe_train_None_e5d91ab9be_ucaselex.codes.json"
+      },
+      "mconst": {
+        "fires": 1.0,
+        "word_constant": 1.0,
+        "classes_used": 1,
+        "file": "bpe_train_None_e5d91ab9be_mconst.codes.json"
+      },
+      "mzero": {
+        "fires": 1.0,
+        "word_constant": 1.0,
+        "classes_used": 1,
+        "file": "bpe_train_None_e5d91ab9be_mzero.codes.json"
+      }
+    },
+    "gate": {
+      "required": [
+        "ucase",
+        "mconst",
+        "mzero",
+        "ucaselex"
+      ],
+      "missing": [],
+      "below": [],
+      "threshold": null
+    }
+  },
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+    "timestamp_utc": "2026-10-17T09:00:03+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 5090 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": null,
+    "git_dirty": false
+  }
+}

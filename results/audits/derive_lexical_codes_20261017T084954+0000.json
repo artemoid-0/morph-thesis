@@ -1,0 +1,83 @@
+{
+  "script": "derive_lexical_codes",
+  "args": {
+    "bpe_path": "data/bpe_ukf_17k.json",
+    "corpus": "ukfiction",
+    "corpus_fraction": 0.4,
+    "corpus_holdout": 500,
+    "fact": "ucase",
+    "out_fact": "mconst",
+    "cache_dir": "data/cache",
+    "splits": [
+      "train",
+      "validation",
+      "test"
+    ],
+    "verify": true,
+    "lexicon_fraction": null,
+    "shuffle_types": null,
+    "shuffle_bin": 64,
+    "transform": "const",
+    "recode_pos": null,
+    "keep": "ucase"
+  },
+  "timestamp_utc": "2026-10-17T08:49:54+00:00",
+  "results": {
+    "transform": {
+      "kind": "const",
+      "shares": {
+        "simple": 1.0,
+        "prefixed": 0.0,
+        "suffixed": 0.0,
+        "both": 0.0,
+        "compound": 0.0,
+        "entity": 0.0,
+        "unanalysed": 0.0,
+        "none": 0.0
+      }
+    },
+    "lexicon": {
+      "fact": "ucase",
+      "out_fact": "mconst",
+      "word_types": 1854427,
+      "occurrences": 76761026,
+      "agreement_with_context": 0.8787006963664087,
+      "source": "bpe_train_None_b0e7d58c3f.codes.npy",
+      "bpe": "bpe_ukf_17k"
+    },
+    "split:train": {
+      "tokens": 137774671,
+      "words": 76761026,
+      "unseen_rate": 0.0,
+      "replaced_changed": null
+    },
+    "split:validation": {
+      "tokens": 708105,
+      "words": 401404,
+      "unseen_rate": 0.010241552151946668,
+      "replaced_changed": null
+    }
+  },
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+    "timestamp_utc": "2026-10-17T08:49:54+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 5090 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": null,
+    "git_dirty": false
+  },
+  "notes": [
+    "Unseen words get the none class, never their contextual code, which would readmit the right-context information \u2014 except under --transform const, where every word gets the one class (G-73)."
+  ]
+}

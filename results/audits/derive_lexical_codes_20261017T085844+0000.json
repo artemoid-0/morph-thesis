@@ -1,0 +1,74 @@
+{
+  "script": "derive_lexical_codes",
+  "args": {
+    "bpe_path": "data/bpeend_ukf_17k.json",
+    "corpus": "ukfiction",
+    "corpus_fraction": 0.4,
+    "corpus_holdout": 500,
+    "fact": "ucase",
+    "out_fact": null,
+    "cache_dir": "data/cache",
+    "splits": [
+      "train",
+      "validation",
+      "test"
+    ],
+    "verify": true,
+    "lexicon_fraction": null,
+    "shuffle_types": null,
+    "shuffle_bin": 64,
+    "transform": null,
+    "recode_pos": null,
+    "keep": "all"
+  },
+  "timestamp_utc": "2026-10-17T08:58:44+00:00",
+  "results": {
+    "lexicon": {
+      "fact": "ucase",
+      "out_fact": "ucaselex",
+      "word_types": 1854950,
+      "occurrences": 76761026,
+      "agreement_with_context": 0.8787693379710688,
+      "source": "bpe_train_None_0e08d3f265.codes.npy",
+      "bpe": "bpeend_ukf_17k"
+    },
+    "known_words": {
+      "mismatched": [],
+      "absent": []
+    },
+    "split:train": {
+      "tokens": 153925966,
+      "words": 76761026,
+      "unseen_rate": 0.0,
+      "replaced_changed": null
+    },
+    "split:validation": {
+      "tokens": 790812,
+      "words": 401404,
+      "unseen_rate": 0.010244043407639186,
+      "replaced_changed": null
+    }
+  },
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+    "timestamp_utc": "2026-10-17T08:58:44+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 5090 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": null,
+    "git_dirty": false
+  },
+  "notes": [
+    "Unseen words get the none class, never their contextual code, which would readmit the right-context information \u2014 except under --transform const, where every word gets the one class (G-73)."
+  ]
+}

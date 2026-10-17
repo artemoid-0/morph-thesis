@@ -1,0 +1,226 @@
+{
+  "script": "multiblimp_eval",
+  "args": {
+    "labels": [
+      "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w512",
+      "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w512"
+    ],
+    "reference": null,
+    "results_dir": "scratch/mb_w512_s23",
+    "data": "/home/vyzserver/morph/code/external/multiblimp/ukr/data.tsv",
+    "check": 40,
+    "device": null,
+    "threads": 0,
+    "batch": 128,
+    "limit": 0,
+    "by_length": false,
+    "check_only": false
+  },
+  "timestamp_utc": "2026-10-17T09:48:41+00:00",
+  "results": {
+    "runs": {
+      "7c67de57b1be": {
+        "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w512",
+        "seed": 2,
+        "accuracy": {
+          "number": 0.7835249042145593,
+          "gender": 0.808837656099904,
+          "person": 0.7654530059271804,
+          "all": 0.7853498542274052
+        },
+        "margin": {
+          "number": 2.1148354797070965,
+          "gender": 2.5303646311178216,
+          "person": 5.0469903727894,
+          "all": 3.5344567535222446
+        },
+        "batch_check_max_diff": 6.103515625e-05
+      },
+      "3836680f746a": {
+        "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w512",
+        "seed": 3,
+        "accuracy": {
+          "number": 0.7509578544061303,
+          "gender": 0.803073967339097,
+          "person": 0.7552921253175275,
+          "all": 0.7725947521865889
+        },
+        "margin": {
+          "number": 2.1499955334425884,
+          "gender": 2.4744150104944116,
+          "person": 4.80361268239744,
+          "all": 3.41517138203101
+        },
+        "batch_check_max_diff": 6.103515625e-05
+      },
+      "f518b23725ad": {
+        "label": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w512",
+        "seed": 2,
+        "accuracy": {
+          "number": 0.8314176245210728,
+          "gender": 0.8731988472622478,
+          "person": 0.817104149026249,
+          "all": 0.8411078717201166
+        },
+        "margin": {
+          "number": 2.5748848604516508,
+          "gender": 2.8266654770381168,
+          "person": 5.180648030112296,
+          "all": 3.791907427957385
+        },
+        "batch_check_max_diff": 6.103515625e-05
+      },
+      "665fb7c3d0bd": {
+        "label": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w512",
+        "seed": 3,
+        "accuracy": {
+          "number": 0.8218390804597702,
+          "gender": 0.8568683957732949,
+          "person": 0.8179508890770534,
+          "all": 0.8334548104956269
+        },
+        "margin": {
+          "number": 2.657131085450622,
+          "gender": 2.7541671664982776,
+          "person": 5.240270010603372,
+          "all": 3.8057103970307997
+        },
+        "batch_check_max_diff": 6.103515625e-05
+      }
+    },
+    "reference": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w512",
+    "summary": {
+      "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w512": {
+        "all": {
+          "accuracy": 0.7789723032069971,
+          "seeds": [
+            2,
+            3
+          ]
+        },
+        "number": {
+          "accuracy": 0.7672413793103448,
+          "seeds": [
+            2,
+            3
+          ]
+        },
+        "gender": {
+          "accuracy": 0.8059558117195005,
+          "seeds": [
+            2,
+            3
+          ]
+        },
+        "person": {
+          "accuracy": 0.7603725656223539,
+          "seeds": [
+            2,
+            3
+          ]
+        }
+      },
+      "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w512": {
+        "all": {
+          "accuracy": 0.8372813411078717,
+          "seeds": [
+            2,
+            3
+          ],
+          "paired_seeds": [
+            2,
+            3
+          ],
+          "paired_acc_diff": [
+            5.575801749271136,
+            6.086005830903796
+          ],
+          "paired_margin_diff": [
+            0.25745067443514014,
+            0.3905390149997898
+          ]
+        },
+        "number": {
+          "accuracy": 0.8266283524904214,
+          "seeds": [
+            2,
+            3
+          ],
+          "paired_seeds": [
+            2,
+            3
+          ],
+          "paired_acc_diff": [
+            4.7892720306513485,
+            7.0881226053639885
+          ],
+          "paired_margin_diff": [
+            0.46004938074455426,
+            0.5071355520080334
+          ]
+        },
+        "gender": {
+          "accuracy": 0.8650336215177714,
+          "seeds": [
+            2,
+            3
+          ],
+          "paired_seeds": [
+            2,
+            3
+          ],
+          "paired_acc_diff": [
+            6.4361191162343845,
+            5.37944284341979
+          ],
+          "paired_margin_diff": [
+            0.29630084592029515,
+            0.27975215600386605
+          ]
+        },
+        "person": {
+          "accuracy": 0.8175275190516511,
+          "seeds": [
+            2,
+            3
+          ],
+          "paired_seeds": [
+            2,
+            3
+          ],
+          "paired_acc_diff": [
+            5.16511430990686,
+            6.265876375952583
+          ],
+          "paired_margin_diff": [
+            0.13365765732289603,
+            0.43665732820593206
+          ]
+        }
+      }
+    },
+    "checked_paragraphs": {
+      "bpe_uk_17k.json ['mconst'] ukwiki0.05": 40,
+      "bpeend_uk_17k.json ['mconst'] ukwiki0.05": 40
+    }
+  },
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+    "timestamp_utc": "2026-10-17T09:48:41+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 5090 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": null,
+    "git_dirty": false
+  }
+}

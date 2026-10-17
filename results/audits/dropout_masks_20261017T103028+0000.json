@@ -1,0 +1,114 @@
+{
+  "script": "dropout_masks",
+  "args": {
+    "seed": 0,
+    "device": "cuda"
+  },
+  "timestamp_utc": "2026-10-17T10:30:28+00:00",
+  "results": {
+    "device": {
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "sm_count": 24,
+      "capability": [
+        8,
+        9
+      ],
+      "masks": {
+        "embedding (B, L, D)": {
+          "shape": [
+            32,
+            256,
+            128
+          ],
+          "gpu_sha256": "491b6cc6b63f415e222b7bb5c335f1439364208fd9ce2838ac6a4da1a29b4209",
+          "kept_share_gpu": 0.8999710083007812,
+          "cpu_sha256": "a4877ae0ee528f4263e2c62c77a9722cd5bc21a7cb53c27f3e6143e026d7187c",
+          "gpu_equals_cpu": false
+        },
+        "attention (B, H, L, L)": {
+          "shape": [
+            32,
+            4,
+            256,
+            256
+          ],
+          "gpu_sha256": "962e1f95b50a3a7bc35cb677dd2bbd7642c09f17d119d085989ca2af57a48bce",
+          "kept_share_gpu": 0.899896502494812,
+          "cpu_sha256": "f2626211c5e24f9515b0d099c470f59af87094b603cfe489dce4c22703ca8ad3",
+          "gpu_equals_cpu": false
+        },
+        "feed-forward (B, L, 4D)": {
+          "shape": [
+            32,
+            256,
+            512
+          ],
+          "gpu_sha256": "c43e91f72237dd4faf0f9bd039ef3afbaa739f8f43706ee85713b4d0c7e1d802",
+          "kept_share_gpu": 0.8998534679412842,
+          "cpu_sha256": "832954c53ae813b35fd64d96ac33bb3722f2b974aa5da322ade7b2f14babca02",
+          "gpu_equals_cpu": false
+        }
+      },
+      "arithmetic": {
+        "matmul (B\u00b7L, D) \u00d7 (D, 4D)": {
+          "gpu_sha256": "69e4f996b58c38abda21d35a932c3453a134332fb8f8b134b3c782de33ed4be1",
+          "gpu_sum_f64": 1474.3470814156926,
+          "gpu_first": [
+            -0.41742607951164246,
+            0.565498948097229,
+            0.2611151337623596,
+            1.805125117301941,
+            -0.48631149530410767,
+            0.1203865185379982
+          ],
+          "largest_gpu_minus_cpu": 2.384185791015625e-06
+        },
+        "softmax (B, H, L, L)": {
+          "gpu_sha256": "5fd7b9e04e63708468f8ebf3c38d7f53a74d68ea64c2ae6a06c3ae67a1e2c9a9",
+          "gpu_sum_f64": 32768.00000367111,
+          "gpu_first": [
+            0.004420456942170858,
+            0.004156527575105429,
+            0.022206654772162437,
+            0.005074809305369854,
+            0.0017224185867235065,
+            0.0023379081394523382
+          ],
+          "largest_gpu_minus_cpu": 5.960464477539063e-08
+        },
+        "layer norm (B\u00b7L, D)": {
+          "gpu_sha256": "7c10ee95addda33a80798896a918fd7a2b167cea59b94b01dfe94d62b263996d",
+          "gpu_sum_f64": 0.0001272150797149152,
+          "gpu_first": [
+            -1.1341607570648193,
+            -1.159688115119934,
+            -0.29167330265045166,
+            -0.46810993552207947,
+            0.7664533257484436,
+            0.6156197190284729
+          ],
+          "largest_gpu_minus_cpu": 9.5367431640625e-07
+        }
+      }
+    }
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-10-17T10:30:28+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "0568ef2028d2bc64e6ac4f2e85397bc864e5becf",
+    "git_dirty": true
+  }
+}

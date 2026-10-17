@@ -5,7 +5,7 @@
 | cuda | 13.0 |
 | cuda_available | True |
 | datasets | 4.8.4 |
-| git_commit | 0a20b03c54a2816b49be425a9098c2a97d6d5a41, 2923462481888e07a79bd705228ce5830ce3ab0e, 5d59c87ad50f21fa96c3e264450bdab8bf5260e2, a20dce424e22509c751041890899eefcdab75704 ... |
+| git_commit | 0568ef2028d2bc64e6ac4f2e85397bc864e5becf, 0a20b03c54a2816b49be425a9098c2a97d6d5a41, 2923462481888e07a79bd705228ce5830ce3ab0e, 5d59c87ad50f21fa96c3e264450bdab8bf5260e2 ... |
 | git_dirty | False, True |
 | gpu | NVIDIA GeForce RTX 4060 Laptop GPU, NVIDIA GeForce RTX 5090 Laptop GPU |
 | gpu_count | 1 |
@@ -22,4 +22,4 @@
 | tokenizers | 0.22.2 |
 | torch | 2.11.0+cu130 |
 
-*Captured from 557 of 582 runs.*
+*Captured from 565 of 590 runs.*
