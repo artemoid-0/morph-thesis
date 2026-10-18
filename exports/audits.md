@@ -170,6 +170,7 @@
 | `device_twins` | 2026-10-17T10:30:34+00:00 | root=/home/neko/PycharmProjects/Morph | effects, groups, overall, pairs, repeats |
 | `device_twins` | 2026-10-17T13:54:12+00:00 | root=/home/neko/PycharmProjects/Morph | effects, groups, overall, pairs, repeats |
 | `device_twins` | 2026-10-17T13:58:07+00:00 | root=/home/neko/PycharmProjects/Morph | effects, groups, overall, pairs, repeats |
+| `device_twins` | 2026-10-18T03:30:29+00:00 | root=/home/neko/PycharmProjects/Morph | effects, groups, overall, pairs, repeats |
 | `dropout_masks` | 2026-10-17T10:30:28+00:00 | device=cuda | device |
 | `dropout_masks` | 2026-10-17T13:48:56+00:00 | device=cuda | device |
 | `?` | ? | - | - |
@@ -192,6 +193,7 @@
 | `loss_by_kind` | 2026-10-09T14:38:15+00:00 | roots=['/home/neko/PycharmProjects/Morph/results'] results_dir=/home/neko/PycharmProjects/Morph/results corpus=ukwiki fraction=0.2 tokenizers=['bpeend_uk_17k', 'bpe_uk_17k'] reference=bpe_uk_17k null=mconst facts=['ucase'] tol=1e-05 previous=True previous_facts=['pos', 'ucase', 'ucaselex'] audit_dir=/home/neko/PycharmProjects/Morph/results/audits | against_reference, ending_rule, rescore_checks, tokenizers |
 | `loss_by_kind` | 2026-10-10T17:09:15+00:00 | roots=['/home/neko/PycharmProjects/Morph/results'] results_dir=/home/neko/PycharmProjects/Morph/results corpus=ukwiki fraction=0.2 tokenizers=['bpeend_uk_17k'] reference=bpeend_uk_17k null=mconst facts=['ucase', 'ucaseprep', 'ucaselex'] tol=1e-05 previous=True previous_facts=['pos', 'ucase', 'ucaselex'] audit_dir=/home/neko/PycharmProjects/Morph/results/audits | against_reference, ending_rule, rescore_checks, tokenizers |
 | `loss_by_kind` | 2026-10-17T08:19:01+00:00 | roots=['/home/neko/PycharmProjects/Morph/results'] results_dir=/home/neko/PycharmProjects/Morph/results corpus=ukwiki fraction=0.05 budget=_st20k tokenizers=['bpeend_uk_17k'] reference=bpeend_uk_17k null=mconst facts=['mconst@OFF0', 'ucase'] tol=1e-05 previous_facts=['pos', 'ucase', 'ucaselex'] audit_dir=/home/neko/PycharmProjects/Morph/results/audits | against_reference, ending_rule, rescore_checks, tokenizers |
+| `loss_by_kind` | 2026-10-17T14:27:34+00:00 | roots=['/home/neko/PycharmProjects/Morph/results'] results_dir=/home/neko/PycharmProjects/Morph/results corpus=ukwiki fraction=0.2 tokenizers=['bpeend_uk_17k'] reference=bpeend_uk_17k null=mconst facts=['mconst@OFF0', 'ucase'] tol=1e-05 previous_facts=['pos', 'ucase', 'ucaselex'] audit_dir=/home/neko/PycharmProjects/Morph/results/audits | against_reference, ending_rule, rescore_checks, tokenizers |
 | `morph_causality_check` | 2026-09-26T11:59:29+00:00 | sentences=30 split=validation max_words=40 | by_words_after, mfeat_changes, summary |
 | `morph_causality_check` | 2026-09-26T12:04:01+00:00 | sentences=3000 split=validation max_words=40 | by_words_after, mfeat_changes, summary |
 | `morph_causality_check` | 2026-09-28T22:47:44+00:00 | sentences=3000 split=validation max_words=40 spacy_model=uk_core_news_sm corpus=ukwiki corpus_holdout=2000 | by_words_after, mfeat_changes, summary |
@@ -212,8 +214,31 @@
 | `multiblimp_eval` | 2026-10-17T13:48:27+00:00 | labels=['bpe_mconst-LEARN-CAUSAL_bpe_ukf_17k_ukfiction0.4', 'bpe_mconst-LEARN-CAUSAL_bpeend_ukf_17k_ukfiction0.4'] results_dir=/home/vyzserver/morph/code/results data=/home/vyzserver/morph/code/external/multiblimp/ukr/data.tsv check=40 batch=128 | checked_paragraphs, reference, runs, summary |
 | `paired_cells` | 2026-10-17T08:18:44+00:00 | pair=[['the empty slot over the null, endings apart, 20k', 'bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.05_st20k', 'bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k'], ['case over the empty slot, endings apart, 20k', 'bpe_ucase-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k', 'bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.05_st20k'], ['case over the null, endings apart, 20k', 'bpe_ucase-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k', 'bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k']] results_dir=/home/neko/PycharmProjects/Morph/results | pairs |
 | `paired_cells` | 2026-10-17T10:30:00+00:00 | pair=[['causal pos over the null, 10k', 'bpe_poscausal-LEARN-CAUSAL_bpe_17k_st10k', 'bpe_mconst-LEARN-CAUSAL_bpe_17k_st10k'], ['causal pos over the word form, 10k', 'bpe_poscausal-LEARN-CAUSAL_bpe_17k_st10k', 'bpe_poslex-LEARN-CAUSAL_bpe_17k_st10k'], ['pos over causal pos (the leak), 10k', 'bpe_pos-LEARN-CAUSAL_bpe_17k_st10k', 'bpe_poscausal-LEARN-CAUSAL_bpe_17k_st10k'], ['pos over the word form, 10k', 'bpe_pos-LEARN-CAUSAL_bpe_17k_st10k', 'bpe_poslex-LEARN-CAUSAL_bpe_17k_st10k'], ['causal pos over the null, 20k', 'bpe_poscausal-LEARN-CAUSAL_bpe_17k_st20k', 'bpe_mconst-LEARN-CAUSAL_bpe_17k_st20k'], ['causal pos over the word form, 20k', 'bpe_poscausal-LEARN-CAUSAL_bpe_17k_st20k', 'bpe_poslex-LEARN-CAUSAL_bpe_17k_st20k'], ['pos over causal pos (the leak), 20k', 'bpe_pos-LEARN-CAUSAL_bpe_17k_st20k', 'bpe_poscausal-LEARN-CAUSAL_bpe_17k_st20k'], ['pos over the word form, 20k', 'bpe_pos-LEARN-CAUSAL_bpe_17k_st20k', 'bpe_poslex-LEARN-CAUSAL_bpe_17k_st20k']] results_dir=/home/neko/PycharmProjects/Morph/results | pairs |
+| `paired_cells` | 2026-10-17T14:27:32+00:00 | pair=[['the empty slot over the null, endings apart, 151M, 50k', 'bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.2', 'bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2'], ['case over the empty slot, endings apart, 151M, 50k', 'bpe_ucase-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2', 'bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.2'], ['case over the null, endings apart, 151M, 50k', 'bpe_ucase-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2', 'bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2'], ['case with prepositions from their form over the empty slot, 151M, 50k', 'bpe_ucaseprep-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2', 'bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.2'], ['case from the word form over the empty slot, 151M, 50k', 'bpe_ucaselex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2', 'bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.2']] results_dir=/home/neko/PycharmProjects/Morph/results | pairs |
 | `preflight_rebuild` | 2026-09-26T11:59:34+00:00 | bpe_path=data/bpe_17k.json lines=300 cache_dir=data/cache | failures, magr, mfeat, minfl |
 | `preflight_rebuild` | 2026-09-26T12:04:00+00:00 | bpe_path=data/bpe_17k.json lines=300 cache_dir=data/cache | failures, magr, mfeat, minfl |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
 | `?` | ? | - | - |
 | `?` | ? | - | - |
 | `?` | ? | - | - |
@@ -231,6 +256,8 @@
 | `probe_dep` | 2026-09-22T12:09:28+00:00 | runs=['a7175857fdf6', '979a7d1f5878', 'd2af7d9ffe75', '67346ed11499'] fact=pos results_dir=results batches=12 sample=40000 | fact, probes |
 | `probe_dep` | 2026-09-22T12:12:58+00:00 | runs=['a7175857fdf6', 'a12b91da4049', 'd2af7d9ffe75', 'ad6ea7603bfe', '979a7d1f5878', '1bcbac60f6b5', '4de10670e169'] fact=pos results_dir=results batches=12 sample=40000 | fact, probes |
 | `probe_dep` | 2026-09-23T07:35:24+00:00 | runs=['a7175857fdf6', 'c564d066df6b'] fact=dep results_dir=results batches=12 sample=40000 | fact, probes |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
 | `?` | ? | labels=['bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2', 'bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2'] facts=['ucase', 'unumber', 'ugender'] split_fact=ucaselex results_dir=/home/neko/PycharmProjects/Morph/results epochs=300 device=cpu threads=12 audit_dir=/home/neko/PycharmProjects/Morph/results/audits | - |
 | `?` | ? | labels=['bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2', 'bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2'] facts=['ucase', 'unumber', 'ugender'] split_fact=ucaselex results_dir=/home/neko/PycharmProjects/Morph/results after=1 epochs=300 device=cpu threads=12 audit_dir=/home/neko/PycharmProjects/Morph/results/audits | - |
 | `scripts/analysis/steps_saved.py` | 20261012T003033+0000 | - | 3 rows |
@@ -374,6 +401,7 @@
 - **device_twins**: difference = second machine (RTX 5090 Laptop) minus thesis machine (RTX 4060 Laptop), bits per byte at the best step; effects are B minus A (positive: A better)
 - **device_twins**: difference = second machine (RTX 5090 Laptop) minus thesis machine (RTX 4060 Laptop), bits per byte at the best step; effects are B minus A (positive: A better)
 - **device_twins**: difference = second machine (RTX 5090 Laptop) minus thesis machine (RTX 4060 Laptop), bits per byte at the best step; effects are B minus A (positive: A better)
+- **device_twins**: difference = second machine (RTX 5090 Laptop) minus thesis machine (RTX 4060 Laptop), bits per byte at the best step; effects are B minus A (positive: A better)
 - **lookahead_check**: Continuation targets are intrinsically easier, so a moderate imbalance is not proof of leakage. The definitive test is a causal feature carrying only information available at generation time.
 - **lookahead_check**: Continuation targets are intrinsically easier, so a moderate imbalance is not proof of leakage. The definitive test is a causal feature carrying only information available at generation time.
 - **lookahead_check**: Continuation targets are intrinsically easier, so a moderate imbalance is not proof of leakage. The definitive test is a causal feature carrying only information available at generation time.
@@ -383,6 +411,7 @@
 - **lookahead_check**: Continuation targets are intrinsically easier, so a moderate imbalance is not proof of leakage. The definitive test is a causal feature carrying only information available at generation time.
 - **lookahead_check**: Continuation targets are intrinsically easier, so a moderate imbalance is not proof of leakage. The definitive test is a causal feature carrying only information available at generation time.
 - **lookahead_check**: Continuation targets are intrinsically easier, so a moderate imbalance is not proof of leakage. The definitive test is a causal feature carrying only information available at generation time.
+- **paired_cells**: effect = B minus A in bits per byte at each seed (positive: A better); pairs on one machine only
 - **paired_cells**: effect = B minus A in bits per byte at each seed (positive: A better); pairs on one machine only
 - **paired_cells**: effect = B minus A in bits per byte at each seed (positive: A better); pairs on one machine only
 - **probe_dep**: chance is the MAJORITY-CLASS rate, not 1/n: the label distribution is skewed.

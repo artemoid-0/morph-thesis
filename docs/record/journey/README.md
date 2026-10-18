@@ -176,5 +176,7 @@ the tokenizer was built as it was.
   - [33.107 In English too the sentence's lead over the word form is the tagger's leak; full training's twins drift apart](9_ukrainian_and_learning.md#33107-in-english-too-the-sentences-lead-over-the-word-form-is-the-taggers-leak-full-trainings-twins-drift-apart)
   - [33.108 Fiction at full training: the tokenizer's gain holds, and reaches Wikipedia's share](9_ukrainian_and_learning.md#33108-fiction-at-full-training-the-tokenizers-gain-holds-and-reaches-wikipedias-share)
   - [33.109 Why twins differ: only dropout's masks — and the null's handicap is endings apart's](9_ukrainian_and_learning.md#33109-why-twins-differ-only-dropouts-masks--and-the-nulls-handicap-is-endings-aparts)
+  - [33.110 G-78 mapped: the null's handicap is endings apart's at every budget — and it confounds "exposure makes case more useful"](9_ukrainian_and_learning.md#33110-g-78-mapped-the-nulls-handicap-is-endings-aparts-at-every-budget--and-it-confounds-exposure-makes-case-more-useful)
+  - [33.111 The probes at five seeds, width 512's twins, and fifty-two twins in all](9_ukrainian_and_learning.md#33111-the-probes-at-five-seeds-width-512s-twins-and-fifty-two-twins-in-all)
 - [Appendix A — Decision Record](appendices.md#appendix-a--decision-record)
 - [Appendix B — Section Mapping](appendices.md#appendix-b--section-mapping)

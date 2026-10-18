@@ -4639,3 +4639,84 @@ that is number +3.4, gender +3.6 and person +0.7, all 4/4. At 10k on a quarter o
 
 **Predictions.** P236–P239 right; P226 wrong. The tally is 138 right, 8 half right, 84 wrong, 8 never
 tested, 1 withdrawn, 11 pending, of 250.
+
+### 33.110 G-78 mapped: the null's handicap is endings apart's at every budget — and it confounds "exposure makes case more useful"
+
+The rest of 17 October's runs (`device_twins_20261018T033029`, `paired_cells_20261017T142732`,
+`loss_by_kind_20261017T142734`). The thesis machine lost power at 18:02 and was shut down once its
+records were committed, with item 7's first run unfinished. The second machine finished its
+follow-up alone.
+
+**The empty slot against the null** (each seed paired from identical initial weights; ~38M tokens
+unless noted):
+
+| | endings apart | BPE 17k |
+|---|---|---|
+| 10k (second machine) | **+0.0022 ± 0.0007 (4/4)** | −0.0006 ± 0.0004 (1/4) |
+| 20k (thesis / second machine) | +0.0025 ± 0.0004 / +0.0034 ± 0.0009 (4/4 each) | +0.0005 ± 0.0003 (4/4, second) |
+| 151M, 50k (thesis machine) | +0.0020 ± 0.0014 (3/4; one seed +0.0060) | — |
+
+**Case against the empty slot, under endings apart:**
+- **10k: +0.0022 ± 0.0007 (4/4)**, against +0.0044 over the null on the same machine, and +0.0048
+  on the thesis machine;
+- 20k: +0.0013 ± 0.0007 (3/4) and +0.0003 ± 0.0006 (2/4) on the two machines (§33.106);
+- **full training: +0.0010 ± 0.0007 (3/4)**, against +0.0030 ± 0.0009 over the null.
+
+At full training, case without the leak (prepositions from their form) and case from the word form
+end level with the empty slot: −0.0005 ± 0.0006 (1/4) and −0.0004 ± 0.0008 (2/4). So against the
+empty slot, what case keeps at full training is about the tagger's leak (+0.0015 ± 0.0001, §33.81).
+Split by target, case's gain over the null sits on the endings at full training too: +0.0021 ±
+0.0001 (4/4), 68% of it, where the empty slot gains −0.0001. The empty slot's own advantage is
+spread thinly over word starts and continuations, and is noisy.
+
+**P240 right** (+0.0022), **P241 wrong** (−0.0006), **P242 right** (+0.0022), **P248 right**
+(+0.0020), **P249 wrong** on its boundary (+0.000992, not above 0.001).
+
+**What it changes for the thesis.**
+1. Under BPE 17k the null is as good as an empty slot (−0.0006 at 10k, +0.0005 at 20k), so its
+   gains stand against both references. Under endings apart the null carries a cost of about 0.002
+   at every budget, so its gains over the null are about 0.002 larger than over the best model
+   without the feature.
+2. This confounds a cross-tokenizer comparison the thesis makes. "Exposed endings make case more
+   useful" compares case's gain over each tokenizer's own null (§33.58, §33.65), and that null's
+   handicap depends on the tokenizer. At 10k case gains +0.0032 over BPE 17k's null, which is
+   about the same as over an empty slot there. Under endings apart it gains +0.0048 over that
+   tokenizer's null but +0.0022 over an empty slot. Against the empty slot, then, case gains less
+   where endings are exposed: the hypothesis the comparison was built on (case helps where the
+   tokenizer hides endings) would stand after all. Unigram 17k and BPE 4k, 8k and 32k have no
+   empty slot yet. Until they do, the exposure claim is under revision (G-78), not withdrawn.
+3. At full training under endings apart, what case adds over the empty slot is the tagger's leak,
+   not the word's own case.
+
+### 33.111 The probes at five seeds, width 512's twins, and fifty-two twins in all
+
+**Item 5** (the thesis's list: the probes it cites at one seed). The cited one-seed runs were repeated
+on the second machine at seeds 0–3, with a checkpoint every 1,000 steps. Each was probed as seed 4 was:
+every layer, every checkpoint, the word's tag and, after removal, the previous word's. All 24 probes
+ran on its GPU, about 30 seconds each; on the CPU the probe reproduces seed 4's GPU record within 6 ×
+10⁻⁸ (§33.105).
+- **After removal, the word's tag at the deepest layer** (switched minus never fed): 0.5–1.3
+  points behind at the switch (step 5,000), then level within 0.3 points from step 6,000 to the
+  end, at every seed (seed 4: level from 6,000). **P244 right.**
+- **After removal, the previous word's tag at the end** (deepest layer): +1.8, +2.4, +1.9, +1.7;
+  with seed 4's +2.0, **+2.0 ± 0.1 points (5/5)**. **P245 right.**
+- **The auxiliary target, layer 2** (real minus shuffled): +5.1, +5.0, +4.3, +4.8 at step 2,000, and
+  +2.0, +1.5, +1.7, +1.5 at the end; with seed 4's, **+4.8 ± 0.1 and +1.7 ± 0.1 (5/5 each)**. **P246,
+  P247 right.**
+
+For the thesis: §3.8's two probe sentences no longer rest on one seed; the probes across widths
+(§3.7) still do.
+
+**Width 512's twins at 20k, seed 1:** BPE 17k's null ends +0.0005 and endings apart's +0.0001 from
+the thesis machine's, so seed 1's lead is reproduced within 0.0004 (+0.0101 against +0.0097). The
+second machine's seeds 1–3 give +0.0099 ± 0.0006. **P243 right.**
+
+**All twins** (`device_twins_20261018T033029`): 52 runs of the thesis machine repeated on the second,
+two of them with dropout off. They differ by +0.0001 ± 0.0002 (27 above, 25 below). The mean
+|difference| is 0.0007, and the largest grows with training: 0.0011 at 10k, 0.0025 at 20k, 0.0063 at
+50k. Per seed, effects measured within each machine agree: case over the null at 10k is +0.0048 and
++0.0044, at 20k +0.0038 and +0.0037.
+
+**Predictions** (§33.110–§33.111). P240, P242, P243, P244, P245, P246, P247 and P248 right; P241 and
+P249 wrong. P250 waits for item 7. The tally is 146 right, 8 half right, 86 wrong, 8 never tested, 1
+withdrawn, 1 pending, of 250.

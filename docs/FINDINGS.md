@@ -210,7 +210,7 @@ fifths. Case beats its null under each of six tokenizers (BPE at 4k, 8k, 17k and
 32k, Unigram at 17k, endings apart; +0.0029 to +0.0054, every seed), and leads
 early under each (+0.0045 to +0.0090 at step 2,000).
 
-**Exposed endings make case more useful, not redundant.** The hypothesis behind
+**Exposed endings make case more useful, not redundant — against each tokenizer's own null.** The hypothesis behind
 the comparison was the reverse: case should help where the tokenizer hides
 endings. Paired by seed from identical initial weights, case gains more under
 Unigram 17k, which exposes 43% of endings, than under BPE 17k, which exposes 9% —
@@ -224,7 +224,11 @@ thirds of the size (+0.0021 ± 0.0008 and +0.0033 ± 0.0017 at 1.15, 4/4 each).
 Unigram's early lead is real:
 at null BPB 1.40, +0.0094 against BPE 17k's +0.0045 (+0.0049 ± 0.0009 paired, 4/4).
 *Firm at this size (4 seeds), ~38M tokens and a 10k budget; where it
-sits, below.* (§33.58, §33.65) At the end of that budget about half of the extra under
+sits, below.* (§33.58, §33.65) **Under revision (G-78):** each gain is over its own tokenizer's
+null, and that null's handicap depends on the tokenizer. Against an empty slot at 10k, case gains
++0.0022 ± 0.0007 under endings apart (4/4). Under BPE 17k it gains about +0.0038, since that null
+is level with the empty slot (−0.0006 ± 0.0004). Measured this way, exposed endings make case less
+useful, as the hypothesis said. Unigram and BPE 4k–32k have no empty slot yet (§33.110). At the end of that budget about half of the extra under
 endings apart is the tagger's leak: with prepositions read from their form it is +0.0008 ±
 0.0012 (3/4), not +0.0016; at null BPB 1.15 it is mostly not (+0.0035 ± 0.0015 against
 +0.0043; §33.76). **And the difference grows with training, to full training.** At twice
@@ -244,18 +248,23 @@ endings are tokens is the word's own case; the other half is the leak (+0.0015 �
 the same-shape null, which in Ukrainian loses to an empty slot (below; G-78).* (§33.68, §33.76,
 §33.81, §33.102)
 
-**Against an empty slot, the null is handicapped; what case carries sits on the endings.** The
-same-shape null is not the best model without a feature in Ukrainian. Hold its 8 dims at zero —
-the null switched off from step 0, from identical initial weights — and the model ends
-**+0.0025 ± 0.0004** better at ~38M tokens and 20k under endings apart (4/4; on a second machine
-+0.0034 ± 0.0009, 4/4). In English the two are level. The difference sits at units' first tokens
+**Against an empty slot, the null is handicapped under endings apart; what case carries sits on
+the endings.** The same-shape null is not always the best model without a feature. Hold its 8 dims
+at zero — the null switched off from step 0, from identical initial weights — and under endings
+apart the model ends better at every budget measured: **+0.0022 ± 0.0007** at ~38M tokens and 10k,
+**+0.0025 ± 0.0004** at 20k (on a second machine +0.0034 ± 0.0009), +0.0020 ± 0.0014 at full
+training (3/4; one seed +0.0060). Under BPE 17k it does not (−0.0006 ± 0.0004 at 10k, +0.0005 ±
+0.0003 at 20k), and in English the two are level. The difference sits at units' first tokens
 and at non-words, where the slot says whether the previous unit was a word, not on the endings.
 Case's slot says the same and pays the same cost. **What case carries is on the endings:**
 +0.0024 ± 0.0002 there (4/4), where the empty slot gains +0.0001. Net, case beats the empty slot
 by +0.0013 ± 0.0007 (3/4; +0.0003 on the second machine), a third of its +0.0038 over the null.
-Under BPE 17k at the same size and budget the null's handicap is small, +0.0005 ± 0.0003
-(4/4, second machine): it is mainly a property of endings apart. *Two tokenizers at one size and
-budget, two machines; other budgets and sizes are being measured (G-78).* (§33.106, §33.109)
+At 10k it beats it by +0.0022 ± 0.0007 (4/4), half its +0.0044 over the null. At full training it
+beats it by +0.0010 ± 0.0007 (3/4), about the tagger's leak: without the leak, and from the word
+form, case ends level with the empty slot (−0.0005 ± 0.0006, −0.0004 ± 0.0008), while its gain on
+the endings stays (+0.0021 ± 0.0001, 4/4). *Two tokenizers, three budgets, two corpus sizes, two
+machines; Unigram, BPE 4k–32k and the smaller corpora are not measured (G-78).* (§33.106,
+§33.109, §33.110)
 
 **Case helps by predicting endings; the exposure effect lies elsewhere.** Re-scored
 token by token, case's gain sits on the tokens that hold an inflectional ending under
@@ -321,17 +330,17 @@ and lasts: **0.0019 ± 0.0011** below (3 of 4 seeds; the fourth recovers by step
 **The deficit is not general**: Ukrainian case, switched off at 5,000 of a 20k budget
 under endings apart, ends level or ahead of the model never fed it (0.0008 ± 0.0006
 ahead, 3 of 4 seeds), back level within 2,500 steps of the switch. **It is not lost knowledge of part of speech**: a
-probe finds the switched model's deepest layer 1.2 points behind one step after
-the switch, level 1,000 steps later, and level or ahead to the end (seed 4). Nor
-of what the feature carried, the previous word's tag: rebuilt from context within
-1,000 steps of the switch, it ends 2.0 points better read at the deepest layer
-than in the model never fed it (seed 4).
+probe finds the switched model's deepest layer 0.5–1.3 points behind at the switch,
+level within 0.3 points from 1,000 steps later to the end (5/5 seeds). Nor of what the
+feature carried, the previous word's tag: rebuilt from context within 1,000 steps of the
+switch, it ends **+2.0 ± 0.1 points** better read at the deepest layer than in the model
+never fed it (5/5).
 Switched *on* late the feature is integrated slowly but well: with 15,000 steps
 left it recovers 54–104% of the kept gain (mean 73%). Weaning — dropped at a
 rising rate, fully by step 5,000 — leaves 70% of the abrupt switch's deficit
 (−0.0029 ± 0.0016 against −0.0042 ± 0.0011, 4 seeds). *Firm (4–5 seeds; the
-probe, one seed; Ukrainian case at one size and budget).* (§33.34, §33.38, §33.40, §33.42,
-§33.50, §33.52, §33.102)
+probes at five; Ukrainian case at one size and budget).* (§33.34, §33.38, §33.40, §33.42,
+§33.50, §33.52, §33.102, §33.111)
 
 **As a target, morphology teaches — and the knowledge stops paying.** Predicted
 as an auxiliary target from the final hidden state (weight 0.1), English part of
@@ -340,11 +349,11 @@ speech beats an information-free target — the same head on shuffled labels —
 seeds, 3 positive): faster than the same feature as an input (+0.0150 at 1k,
 +0.0075 at the end). The teacher works — a probe finds part of speech better
 encoded at every layer of the real-target model, its input embeddings included:
-+4.6 points at layer 2 by step 2,000 and still +1.6 at the end (seed 4) — yet the
+**+4.8 ± 0.1 points** at layer 2 by step 2,000 and still +1.7 ± 0.1 at the end (5/5) — yet the
 advantage in prediction fades: knowing more part of speech than language modelling
 itself acquires does not help predict text. Any auxiliary head helps a little
 (the shuffled target +0.0006 ± 0.0004 over the plain baseline); the morphology in
-it does not, at the end. *Firm (4–5 seeds; the probe, one seed).* (§33.50, §33.52)
+it does not, at the end. *Firm (4–5 seeds; the probe at five).* (§33.50, §33.52, §33.111)
 
 ## What the slot did instead: a token-independent input
 

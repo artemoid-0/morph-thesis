@@ -151,15 +151,24 @@ naming (G-66).
 Rewritten 15 October (journey §33.98) in the order of the thesis's list of that day: nine
 experiments ranked by what each result changes in the text, each with the sentence it states for
 every outcome. Results committed by about 31 October reach the text; the work is admitted on
-4 November. Each item's preparation runs on the CPU while the item before it trains. **Running**
-(17 October, about eleven hours on each machine; §33.103, §33.104):
-- the second machine: twins of the thesis machine's runs and the empty slot (G-78), BLiMP and
-  MultiBLiMP for items 6 and 1, and item 3 again, with the fix of §33.102; then why twins differ
-  (dropout's masks, runs without dropout), G-78 at 10k, width 512's twins, and item 5 (§33.105);
-- the thesis machine: the empty slot (G-78 there), item 2, then the empty slot at full training and
-  item 7 (§33.105).
+4 November. Each item's preparation runs on the CPU while the item before it trains. **Next, by what it changes in the text** (18 October):
+1. **G-78 across tokenizers:** the empty slot at ~38M and 10k under Unigram 17k and BPE 4k, 8k and 32k,
+   four seeds (16 runs). It decides the exposure claim, now under revision (§33.110).
+2. **Item 7's seeds 1–3** (its seed 0 runs on the thesis machine on 18 October), and **item 8**.
+3. **The width probes at more seeds** (item 5's third part, §3.7).
 
-The rest of each machine's hours is decided by what the twins and the empty slot show.
+**Where runs go.** The second machine is equivalent to the thesis machine up to dropout's draw
+(§33.109), 2.8 times faster, and free at night and at weekends. New experiments run there, each
+comparison within it. Where a comparison needs the thesis machine's existing runs, its partners are
+repeated there as twins.
+
+**Answered on 17 October** (§33.106–§33.111):
+- the two machines agree, up to dropout's draw;
+- G-78 is mapped for endings apart and BPE 17k;
+- item 2: in English too the sentence's lead over the word form is the leak;
+- item 3: fiction at full training holds, at Wikipedia's share;
+- items 1 and 6: their grammar tests;
+- item 5: the removal and target probes at five seeds.
 
 **Answered on 16 October** (§33.102, on the second machine):
 - item 1: the lead levels off at +0.0102 ± 0.0006 (4/4);
