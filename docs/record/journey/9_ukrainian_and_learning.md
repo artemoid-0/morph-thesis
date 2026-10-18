@@ -4940,3 +4940,45 @@ number in FINDINGS used those pairs.
 **Predictions** (§33.113–§33.114). P250, P251, P253, P254, P257 and P258 right; P255 and P259 half
 right; P252 and P256 wrong. The tally is 152 right, 10 half right, 88 wrong, 8 never tested and 1
 withdrawn, of 259.
+
+### 33.115 Two follow-ups: the exposure comparison at 20k, and where the null's help sits (prepared, 18 October)
+
+The queue review of 18 October (DIRECTIONS, "The queue") put two questions first. Both run on the
+second machine's records:
+
+1. **The exposure comparison at twice the budget.** The null and the empty slot under BPE 17k at
+   20k ran on the second machine on 17 October, and so did endings apart's three cells (§33.109).
+   Case under BPE 17k at 20k did not. Four runs, as twins of the thesis machine's, about 35 minutes
+   (`scripts/chains/second_followup_2026-10-18.sh`; rehearsed with the stub in seven scenarios, all
+   passing). At 20k the empty slot is the better reference under both tokenizers: by 0.0005 under
+   BPE 17k and 0.0034 under endings apart on that machine. So case is compared with it. Under
+   endings apart there case gains +0.0003 over it.
+2. **Where the null's help sits under BPE.** The second machine's 48 models of the null and the
+   empty slot under the six tokenizers, at ~38M and 10k, are re-scored token by token
+   (`loss_by_kind.py --facts mconst@OFF0`). The thesis machine does it once it holds the models.
+   Evaluation draws no dropout, so either machine gives the same number.
+
+Every run's saved model and checkpoints are being copied to the thesis machine, so that it keeps
+everything the records need.
+
+Predictions, before any run:
+
+- **P260** (~65%). On the second machine at 20k, case's gain over the empty slot under BPE 17k is
+  within 0.001 of its gain under endings apart (+0.0003): against the best model without the
+  feature, the two tokenizers end level at twice the budget.
+- **P261** (~70%). Case over the null under BPE 17k at 20k on the second machine is within 0.001
+  of the thesis machine's (+0.0010 ± 0.0008).
+- **P262** (~55%). Under BPE 4k, 8k and 32k, more than half of the null's advantage over the empty
+  slot sits on units' first tokens and on non-word targets.
+- **P263** (~70%). Under endings apart and Unigram 17k at 10k, more than half of the empty slot's
+  advantage over the null sits on units' first tokens and on non-word targets, as under endings
+  apart at 20k (§33.106).
+
+**The sentences these decide.**
+- **P260.** *Level:* the redundancy is an early-training property; by 20k case adds about as much
+  under either tokenizer, against the best model without it. *BPE 17k clearly ahead:* exposed
+  endings keep case partly redundant at twice the budget.
+- **P262–P263.** *Units' first tokens under every tokenizer:* method point 10 gains its mechanism:
+  the slot's signal acts where a unit starts, and the tokenizer sets its sign. *Later tokens under
+  BPE:* the point says the null helps BPE continue a word, and costs where endings are exposed at
+  word starts.

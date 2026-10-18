@@ -6,7 +6,7 @@ Each prediction was recorded in `docs/record/journey/README.md` **before** its r
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 152 right, 10 half right, 88 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn — of 259. The wrong ones carried
+**Tally:** 152 right, 10 half right, 88 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 4 pending — of 263. The wrong ones carried
 the information: the null's gain (P18), the shuffled control (P15), the
 leak's absence (P11), the training-budget reframing (P61), the tokenizer
 hypothesis (P119, P120), Unigram's early lead (P130), the wider model's larger
@@ -274,3 +274,7 @@ over the word form's (P148–P150), and how much of it the tagger's leak is (P16
 | P257 | At seeds 0–3 the 256-wide null reads the previous word's tag better than the 128-wide at matched null BPB 1.70–1.45, by more than 3 points somewhere | right — each seed leads by 8.7 to 10.4 at its largest | §33.112, §33.114 |
 | P258 | On the probe's axis the widths' part-of-speech gains at 10k differ by at most half as much as on the null-BPB axis, over five seeds | right — 0.0036 ± 0.0003 against 0.0099 | §33.112, §33.114 |
 | P259 | At 50k, seeds 2–3, frequency band and part of speech from the word form each end within 0.002 of the null's twin | half right — part of speech within; the frequency band −0.0036 at seed 2 | §33.112, §33.114 |
+| P260 | At 20k, case's gain over the empty slot under BPE 17k is within 0.001 of endings apart's (+0.0003), on the second machine | pending | §33.115 |
+| P261 | Case over the null under BPE 17k at 20k on the second machine is within 0.001 of the thesis machine's (+0.0010) | pending | §33.115 |
+| P262 | Under BPE 4k, 8k and 32k more than half of the null's advantage over the empty slot sits on units' first tokens and non-words | pending | §33.115 |
+| P263 | Under endings apart and Unigram 17k at 10k more than half of the empty slot's advantage over the null sits on units' first tokens and non-words | pending | §33.115 |

@@ -152,8 +152,9 @@ naming (G-66).
 Rewritten 15 October (journey §33.98) in the order of the thesis's list of that day: nine
 experiments ranked by what each result changes in the text, each with the sentence it states for
 every outcome. Results committed by about 31 October reach the text; the work is admitted on
-4 November. Each item's preparation runs on the CPU while the item before it trains. **Running:**
-nothing (18 October, evening).
+4 November. Each item's preparation runs on the CPU while the item before it trains. **Running**
+(18 October, evening; §33.115): candidates 1 and 2 below — case under BPE 17k at 20k on the second
+machine, and the re-scoring of its null and empty-slot models; P260–P263.
 
 **Answered on 18 October** (§33.113–§33.114, the second machine): the thesis's list of 15 October
 is done.
