@@ -178,5 +178,6 @@ the tokenizer was built as it was.
   - [33.109 Why twins differ: only dropout's masks — and the null's handicap is endings apart's](9_ukrainian_and_learning.md#33109-why-twins-differ-only-dropouts-masks--and-the-nulls-handicap-is-endings-aparts)
   - [33.110 G-78 mapped: the null's handicap is endings apart's at every budget — and it confounds "exposure makes case more useful"](9_ukrainian_and_learning.md#33110-g-78-mapped-the-nulls-handicap-is-endings-aparts-at-every-budget--and-it-confounds-exposure-makes-case-more-useful)
   - [33.111 The probes at five seeds, width 512's twins, and fifty-two twins in all](9_ukrainian_and_learning.md#33111-the-probes-at-five-seeds-width-512s-twins-and-fifty-two-twins-in-all)
+  - [33.112 One long chain on the second machine: G-78 across tokenizers and sizes, the width probes, items 7 and 8 (prepared, 18 October)](9_ukrainian_and_learning.md#33112-one-long-chain-on-the-second-machine-g-78-across-tokenizers-and-sizes-the-width-probes-items-7-and-8-prepared-18-october)
 - [Appendix A — Decision Record](appendices.md#appendix-a--decision-record)
 - [Appendix B — Section Mapping](appendices.md#appendix-b--section-mapping)

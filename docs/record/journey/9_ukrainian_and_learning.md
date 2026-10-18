@@ -4720,3 +4720,63 @@ two of them with dropout off. They differ by +0.0001 ± 0.0002 (27 above, 25 bel
 **Predictions** (§33.110–§33.111). P240, P242, P243, P244, P245, P246, P247 and P248 right; P241 and
 P249 wrong. P250 waits for item 7. The tally is 146 right, 8 half right, 86 wrong, 8 never tested, 1
 withdrawn, 1 pending, of 250.
+
+### 33.112 One long chain on the second machine: G-78 across tokenizers and sizes, the width probes, items 7 and 8 (prepared, 18 October)
+
+The two machines are equivalent up to dropout's draw (§33.109), and the second is free for the day. One
+chain of about fifteen hours runs there unattended (`scripts/chains/second_2026-10-18.sh`), each
+comparison within it. Where a cell is the thesis machine's, it is repeated as a twin. In order of what
+the results change in the text:
+
+1. **G-78 across tokenizers** (the exposure claim, §33.110). At ~38M tokens and 10k, seeds 0–3, under
+   Unigram 17k and BPE 4k, 8k and 32k: the null and case as twins, and the empty slot (48 runs). Under
+   BPE 17k, case as a twin (4 runs): its null and empty slot are on that machine already.
+2. **G-78 on less data:** under BPE 17k at ~1.5M and ~7.6M tokens, 10k, the null and case as twins,
+   and the empty slot (24 runs). FINDINGS states case's gains on less data against the null.
+3. **The width probes** (the list's item 5, last part; §3.7). The English null at widths 128 and 256,
+   10k and 20k, seeds 0–3, with a checkpoint every 1,000 steps, each probed as seed 4 was: the word's
+   tag and the previous word's, every layer (16 runs, 32 probes).
+4. **Item 7:** case and its word form as twins, and case with prepositions from their form. 151M
+   tokens, BPE 17k, 50k, seeds 0–3 (12 runs). The thesis machine's seed 0 of the last, run this
+   morning, is one more twin.
+5. **Item 8:** the null as a twin, frequency band and part of speech from the word form. English, 50k,
+   seeds 2–3 (6 runs).
+
+**Data.** The streams went over the direct route, compressed, checked by SHA-256 on arrival: 3.5 GB
+in under three minutes. Where a stream's codes file holds many facts, the one a run reads was
+written to a file of its own and read back equal (`scripts/ops/slim_codes.py`). Before the chain, a
+30-step run through the real loader passed for each kind of cell on the second machine (12 of 12).
+Rehearsed with the stub in seven scenarios, all passing.
+
+Predictions, before any run:
+
+- **P251** (~55%). Under Unigram 17k at 10k the empty slot ends better than the null's twin by more
+  than 0.001 on average.
+- **P252** (~60%). Under each of BPE 4k, 8k and 32k at 10k the empty slot ends within 0.001 of the
+  null's twin on average.
+- **P253** (~60%). Against the empty slot, case at 10k gains less under endings apart than under BPE
+  17k, by more than 0.001 on average (both on the second machine).
+- **P254** (~50%). Against the empty slot, case at 10k gains no more under Unigram 17k than under BPE
+  17k: the difference is below +0.0005.
+- **P255** (~70%). The new twins at 10k (the null and case under five tokenizers) end within 0.0015 of
+  their originals each, and within ±0.0005 on average.
+- **P256** (~55%). Under BPE 17k at ~1.5M and at ~7.6M the empty slot ends within 0.001 of the null's
+  twin on average, at each size.
+- **P257** (~70%). At each of seeds 0–3, at matched null BPB between 1.70 and 1.45, the 256-wide null's
+  deepest layer reads the previous word's tag better than the 128-wide null's, by more than 3 points
+  somewhere (seed 4: +3.9 to +10.4).
+- **P258** (~55%). On the probe's axis (`probe_axis.py --previous`), the widths' part-of-speech gains
+  at 10k differ by at most half as much as on the null-BPB axis, over five seeds (seed 4: 0.0035
+  against 0.0098).
+- **P259** (~70%). At 50k, seeds 2–3, frequency band and part of speech from the word form each end
+  within 0.002 of the null's twin at both seeds.
+
+P250 (item 7) stands as recorded in §33.105.
+
+**The sentences these decide.**
+- **G-78 (P251–P256).** If the handicap follows exposure, the exposure claim is restated against the
+  empty slot: exposed endings make case partly redundant, as first hypothesised. If only endings
+  apart carries it, the claim stands for Unigram and falls for endings apart. If BPE 17k has none on
+  less data, the size claims stand against both references.
+- **The width probes (P257–P258).** If they agree, §3.7's half is stated with its spread; if not,
+  the sentence says how far the seeds differ.
