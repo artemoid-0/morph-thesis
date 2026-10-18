@@ -11,7 +11,9 @@
 | `cache_index.py` | What is in data/cache/, and what would a given cell reuse? | historical |
 | `check_cache.py` | The health of a built cache, in any language. | active |
 | `corpus_info.py` | Look at a dataset before it becomes a corpus: splits, sizes, fields, samples, estimates. | active |
+| `fiction_full.sh` | UberText fiction's two conditions at fraction 0.4, built from the public source on a machine that has none of it; CPU only. | historical |
 | `derive_lexical_codes.py` | A strictly causal version of a contextual feature; and the controls derived the same way — the constant null, frequency bands, a shuffle, and `--recode-pos` (G-38: prepositions read from their form, `ucaseprep`). | active |
+| `derive_causal_pos.py` | `poscausal`: part of speech from a strictly causal tagger, every word tagged from its left context only. | active |
 | `derive_prefix_codes.py` | Build `mprefix` codes from the cached token stream. | historical |
 | `preflight_level2.py` | Check everything that could void a Level-2 run, BEFORE the multi-hour cache build. | historical |
 | `preflight_rebuild.py` | The gate to pass BEFORE the multi-hour cache rebuild. | active |
@@ -39,14 +41,18 @@
 |---|---|---|
 | `compare_buckets.py` | Does context freezing help RARE tokens, or everything? | historical |
 | `demo_figures.py` | The thesis figures, each computed from raw run records. | active |
+| `device_twins.py` | Do the two machines give the same results? Every run repeated on the other machine, its difference along training, and chosen effects per seed on each machine. | active |
 | `thesis_figures.py` | The thesis's figures in Ukrainian and English (`exports/figures/uk/`, `en/`): no titles, 16 cm at 300 dpi; a figure with planned runs missing is not drawn. | active |
-| `export_results.py` | Turn results/ into thesis material. | active |
+| `export_results.py` | Turn results/ into thesis material; effects paired by seed within one machine. | active |
 | `learning_law.py` | A feature's gain against how much its null has learned (D1). | active |
 | `loss_by_kind.py` | Where a feature's gain sits, by what each predicted token is — a word's first token or a later one, holding an inflectional ending or not — re-scoring saved models token by token (each must reproduce its record); the tokenizers' difference by word class; `--previous` places one feature's lead over another — or over the null — by the word the feature describes (G-38, G-77). | active |
+| `paired_cells.py` | One cell against another, paired by seed, each pair on one machine. | active |
 | `probe.py` | When a model comes to know a feature: a linear probe over checkpoints (D2); `--previous` probes for what a causal feature carries, the previous unit's class. | active |
-| `probe_axis.py` | Does a probe's accuracy line model widths up on the law? Pairs each probed null's accuracy with the feature's gain at the same steps (D2). | active |
+| `probe_axis.py` | Does a probe's accuracy line model widths up on the law? Pairs each probed null's accuracy with the feature's gain at the same steps (D2); with several probed seeds, compares at each and on their averaged accuracy, finding a second machine's probed twins by id. | active |
 | `probe_words.py` | What a model builds for itself: a linear probe reads each word's case, number and gender in context from final checkpoints, at the word's last token (`--after N`: N units later), with case split by whether the form alone decides it; cells paired by seed (journey §33.84). | active |
+| `steps_saved.py` | What a feature's early help is worth in training steps. | historical |
 | `tokenizer_table.py` | D7's table from the run records: each feature's gain under each tokenizer, paired by seed; tokenizers against a reference (null against null — at the end and along training — and gain against gain); gains at a step and at matched null BPB, per seed. | active |
+| `tokenizer_widths.py` | The tokenizer's lead across model widths, at matched null BPB (D8). | active |
 | `temporal_profile.py` | When during training does a feature's gain appear? | active |
 
 ## `audits/` — one question each — most answered and kept to reproduce the answer
@@ -60,6 +66,7 @@
 | `coverage_audit.py` | What fraction of the corpus does each pipeline ACTUALLY encode? | historical |
 | `coverage_economics.py` | Is the Q1 deficit COVERAGE or SEGMENTATION? | historical |
 | `dep_causality_check.py` | How much does a `dep` label depend on LATER words? | historical |
+| `dropout_masks.py` | Do two GPUs draw the same dropout masks, and compute the same numbers? | active |
 | `ending_gold_check.py` | Does the ending rule cut where a morpheme dictionary does? (citation forms of two Ukrainian dictionaries, read from a clone in the gitignored `external/`) | active |
 | `morph_causality_check.py` | How much do tagger-derived features depend on the words to their RIGHT? | active |
 | `multiroot_audit.py` | How many MorphoLex entries did the multi-root bug affect? | historical |
@@ -75,13 +82,16 @@
 | `backfill_results.py` | Recover the derivable provenance for runs that predate it. | historical |
 | `refresh_exports.sh` | Bring `exports/` up to date with `results/`: every table and figure; run after every chain and every result. | active |
 | `chain_status.sh` | Where every chain stands, in one command — and the runs finished in the last day, flagging duplicate seeds; changes nothing. | active |
+| `cells_ready.py` | Does this machine hold every cache a run needs? A chain's readiness guard. | active |
 | `check_claims.py` | Verify every number in the documents against results/. | active |
+| `check_docs.py` | Keep the documents honest: links, names, citations, kinds, numbers. | active |
 | `fit_check.py` | Will a model fit, and how long will its run take? Measured, over a grid of sizes. | active |
 | `project_health.sh` | Diagnose a PyCharm project that shows no files. | historical |
 | `quarantine.py` | Move invalid runs out of results/, keeping the record. | active |
 | `run_batch.py` | Run a block of experiments unattended, safely. | historical |
 | `run_ids.py` | The run id a command line would produce, without running it; `--done` tells a chain whether a cell's seed is already finished, `--bpb` what it scored. | active |
 | `run_times.py` | How long runs of a kind took, from their records — the source of every estimate in a queue review. | active |
+| `slim_codes.py` | One fact of a stream's codes in a file of its own, for a machine that holds only what its runs read. | active |
 | `smoke_model.py` | Build each cell's REAL model and push one batch through it. | active |
 | `tagger_record.py` | Which spaCy tagger, at which version, tagged each corpus's caches? From the installed packages and the earliest evidence of each corpus's caches (G-74). | active |
 | `verify.py` | Run this first, before spending GPU time. | active |

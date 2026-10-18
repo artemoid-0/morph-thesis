@@ -79,9 +79,16 @@ def load(roots):
     return R
 
 
+def same_machine(R, a, b, s):
+    """Both cells' runs at this seed come from one GPU (FINDINGS, method point 11): across the two
+    machines a pair differs by dropout's draw as well as by the cells (journey §33.109, §33.113)."""
+    second = lambda r: '5090' in ((r.get('environment') or {}).get('gpu') or '')
+    return second(R[(a, s)]) == second(R[(b, s)])
+
+
 def curve(R, null, feat):
     """[(null BPB, gain)] averaged over the seeds both cells share, to each run's best step."""
-    seeds = sorted(s for (l, s) in R if l == feat and (null, s) in R)
+    seeds = sorted(s for (l, s) in R if l == feat and (null, s) in R and same_machine(R, null, feat, s))
     pts = {}
     for s in seeds:
         ln = {e['step']: e['bits_per_byte'] for e in R[(null, s)]['log'] if e['step'] > 0}
@@ -97,7 +104,7 @@ def curve(R, null, feat):
 def per_seed(R, null, feat, ref):
     """{seed: gain at `ref`} from each seed's own curve, to its best step."""
     out = {}
-    for s in sorted(s for (l, s) in R if l == feat and (null, s) in R):
+    for s in sorted(s for (l, s) in R if l == feat and (null, s) in R and same_machine(R, null, feat, s)):
         pts, _ = curve({k: v for k, v in R.items() if k in ((null, s), (feat, s))}, null, feat)
         g = at(pts, ref)
         if g is not None:

@@ -1,4 +1,4 @@
-# What We Know — 15 October 2026
+# What We Know — 18 October 2026
 
 > **Kind:** claims — what the thesis claims now, each with its numbers, firmness and the journey
 > sections behind it. **Authoritative for:** the claims. Rewritten in place when a result changes one.
@@ -91,15 +91,17 @@ data and dropout only (§33.15):
 | word structure, added to a full-width embedding | −0.0013 | 4 |
 | structure shuffled among words of similar frequency | +0.0015 ± 0.0005 | 4 |
 | real structure against its shuffled version | −0.0012 ± 0.0008 | 4 |
-| frequency band of the word | +0.0007 ± 0.0003 | 2 |
+| frequency band of the word | −0.0005 ± 0.0011 | 4 |
 | part of speech (tagger) | +0.0012 ± 0.0007 | 4 |
-| part of speech (strictly causal) | −0.0007 | 2 |
+| part of speech (strictly causal) | −0.0001 ± 0.0014 | 4 |
 | inflection (strictly causal) | **−0.0046 ± 0.0013** | 4 |
 | **Ukrainian** case (tagger) | −0.0013 ± 0.0008 | 4 |
 | **Ukrainian** case (strictly causal) | −0.0020 ± 0.0010 | 4 |
 
-*Firm for structure and for Ukrainian case; the two-seed rows are consistent
-with them. The Ukrainian rows are against a null constant on every word — as
+*Four seeds for every row: none beats its null by more than 0.002 on average. The frequency
+band and strictly causal part of speech (read from the word form) have their seeds 2–3 from a
+second machine, each against the null's twin there; per seed they range from −0.0037 to +0.0023
+(§33.114). The Ukrainian rows are against a null constant on every word — as
 first recorded, −0.0009 and −0.0015 (G-73, §33.56).* **Before the model has learned it, the answer turns: yes.** At a 10k-step
 budget Ukrainian case beats its same-shape null at every seed: **+0.0076 ±
 0.0016** at ~1.5M train tokens, +0.0031 at ~7.6M, +0.0032 at ~38M, **+0.0026 ±
@@ -108,7 +110,10 @@ nothing at 20k (−0.0003 ± 0.0004) or 50k. *Restated against a null constant o
 every word (G-72, G-73, §33.55–§33.58; re-runs reproduce them exactly): as first recorded, +0.0096, +0.0052,
 +0.0052, +0.0044 and +0.0015 at 20k — the null had been scored with words unseen
 in its train split marked as non-words, and 20 runs on another corpus size's
-lexicon.* Case read from the word form alone keeps two-fifths to two-thirds of
+lexicon.* On less data the null is the better reference: an empty slot (its 8 dims held at
+zero) ends 0.0032 ± 0.0013 worse at ~1.5M and 0.0015 ± 0.0005 worse at ~7.6M (0/4 each),
+so these are gains over the best model without the feature. Over the empty slot they are
+larger (+0.0097, +0.0040, +0.0038; a second machine, §33.113). Case read from the word form alone keeps two-fifths to two-thirds of
 it (+0.0050 at ~1.5M, +0.0014 at ~7.6M) and about a third at ~38M under six
 tokenizers, so it is case, not only the tagger's right context — shares that are lower
 bounds, since the word form marks words unseen in train `none` and its model falls below
@@ -126,14 +131,17 @@ apart (+0.0014 ± 0.0004)**, 4/4 each. What remains (+0.0015 ± 0.0003, +0.0018 
 is about half words unseen in train, where the word form gives nothing and misleads its
 model below the null on them (−0.0006, −0.0007; G-76), +0.0002 to +0.0003 context
 resolving another word's case, and +0.0004 to +0.0005 spread over targets that both models
-see alike. **At full training — 151M tokens, 50k steps — the whole lead is the leak.**
+see alike. **At full training — 151M tokens, 50k steps — the whole lead is the leak, under both
+tokenizers.**
 Under endings apart case leads its word form by +0.0014 ± 0.0002 (4/4), and reading
 prepositions from their form takes away +0.0015 ± 0.0001 (4/4): the control and the word
 form end level (−0.0001 ± 0.0003). Along the law's axis context without the leak falls as a
 feature's gain falls — +0.0011 to +0.0013 over the word form at null BPB 1.25 to 1.05, +0.0002
 at 0.94 — while the leak, which carries the case of the noun being predicted, keeps +0.0012 to
-+0.0014 to the end. Under BPE 17k the lead at full training is +0.0006 ± 0.0004 (3/4), the
-prepositions' part still positive (+0.0008, 4/4). A context-aware feature helps before the
++0.0014 to the end. Under BPE 17k (a second machine) case leads its word form by +0.0005 ±
+0.0007 (+0.0006 ± 0.0004 on the thesis machine), reading prepositions from their form takes away
++0.0006 ± 0.0001 (4/4), and the control and the word form end level (−0.0001 ± 0.0007; §33.114).
+A context-aware feature helps before the
 model has learned to read the context for itself; after that, what it adds is what the
 tagger saw of the word being predicted. **And in English.** Part of speech read by a causal
 tagger, each word tagged from its left context alone, leads the word form by only +0.0006 ±
@@ -141,7 +149,7 @@ tagger, each word tagged from its left context alone, leads the word form by onl
 +0.0025. The tagger's right-context leak is +0.0025 ± 0.0004 and +0.0021 ± 0.0005 (4/4 each), four
 fifths of the lead: in both languages what the sentence adds over the word form is mostly not
 context (§33.99, §33.107). *The control at four seeds: under two tokenizers at
-~38M, under endings apart at full training; for English part of speech at 10k and 20k. A split of the lead by the word the feature
+~38M and at full training; for English part of speech at 10k and 20k. A split of the lead by the word the feature
 describes had put 55–60% after prepositions — two trained models compared target by target
 are not a model and its counterfactual (§33.74, §33.76, §33.81).* Identity-like
 features (inflection bundles, lemma and root hashes) do worse than the null.
@@ -210,12 +218,22 @@ fifths. Case beats its null under each of six tokenizers (BPE at 4k, 8k, 17k and
 32k, Unigram at 17k, endings apart; +0.0029 to +0.0054, every seed), and leads
 early under each (+0.0045 to +0.0090 at step 2,000).
 
-**Exposed endings make case more useful, not redundant — against each tokenizer's own null.** The hypothesis behind
-the comparison was the reverse: case should help where the tokenizer hides
-endings. Paired by seed from identical initial weights, case gains more under
-Unigram 17k, which exposes 43% of endings, than under BPE 17k, which exposes 9% —
-**+0.0021 ± 0.0006 (4/4)** at the same null BPB — and under endings apart, which
-exposes all, +0.0016 ± 0.0010 (4/4), its null 0.017 further along. Along the law's
+**Where the tokenizer exposes endings, adding case gains less: exposed endings make case
+partly redundant.** That was the hypothesis behind the comparison: case should help where the
+tokenizer hides endings. The best model without the feature differs by tokenizer (below): where
+the tokenizer exposes endings it is an empty slot, under BPE the same-shape null. Against it, at
+~38M tokens and 10k, case gains **+0.0022 ± 0.0007 under endings apart (4/4) and +0.0018 ± 0.0012
+under Unigram 17k (3/4)**, against **+0.0030 to +0.0049 under BPE** at 4k, 8k, 17k and 32k (4/4
+each; +0.0032 ± 0.0006 at 17k). Where the tokenizer exposes endings, case adds about half as much.
+*Four seeds per tokenizer, ~38M tokens, a 10k budget, on a second machine, each comparison within
+it.* (§33.110, §33.113)
+
+**Over each tokenizer's own null the order turns, and the difference grows with training.** Case's
+slot says what the null's says and pays its cost (below). So over the null it is case's own values
+that are compared, and they gain more where endings are exposed. Paired by seed from identical
+initial weights, case gains more under Unigram 17k, which exposes 43% of endings, than under BPE
+17k, which exposes 9% — **+0.0021 ± 0.0006 (4/4)** at the same null BPB — and under endings apart,
+which exposes all, +0.0016 ± 0.0010 (4/4), its null 0.017 further along. Along the law's
 axis the six agree up to null BPB 1.25; after it the two that expose endings gain
 again — at 1.15, +0.0031 ± 0.0006 (Unigram) and +0.0043 ± 0.0013 (endings apart)
 over BPE 17k, 4/4 each — while the BPE curves fall. Case read from the word form,
@@ -223,48 +241,47 @@ which reads no context and so cannot leak, shows the same pattern at about two
 thirds of the size (+0.0021 ± 0.0008 and +0.0033 ± 0.0017 at 1.15, 4/4 each).
 Unigram's early lead is real:
 at null BPB 1.40, +0.0094 against BPE 17k's +0.0045 (+0.0049 ± 0.0009 paired, 4/4).
-*Firm at this size (4 seeds), ~38M tokens and a 10k budget; where it
-sits, below.* (§33.58, §33.65) **Under revision (G-78):** each gain is over its own tokenizer's
-null, and that null's handicap depends on the tokenizer. Against an empty slot at 10k, case gains
-+0.0022 ± 0.0007 under endings apart (4/4). Under BPE 17k it gains about +0.0038, since that null
-is level with the empty slot (−0.0006 ± 0.0004). Measured this way, exposed endings make case less
-useful, as the hypothesis said. Unigram and BPE 4k–32k have no empty slot yet (§33.110). At the end of that budget about half of the extra under
-endings apart is the tagger's leak: with prepositions read from their form it is +0.0008 ±
-0.0012 (3/4), not +0.0016; at null BPB 1.15 it is mostly not (+0.0035 ± 0.0015 against
-+0.0043; §33.76). **And the difference grows with training, to full training.** At twice
-the budget case under BPE 17k has faded to +0.0010 ± 0.0008 (3/4), while under endings
-apart it holds +0.0038 ± 0.0008 (4/4; paired +0.0029 ± 0.0016, 4/4). At 151M tokens and
-50k steps, where under BPE 17k case ends below its null (−0.0013 ± 0.0008), **under
+The information case carries is larger where endings are exposed; the slot that carries it costs
+there, so what adding case buys is smaller (above). At the end of that budget about half of the
+extra under endings apart is the tagger's leak: with prepositions read from their form it is
++0.0008 ± 0.0012 (3/4), not +0.0016; at null BPB 1.15 it is mostly not (+0.0035 ± 0.0015 against
++0.0043; §33.76). At twice the budget case under BPE 17k has faded to +0.0010 ± 0.0008 (3/4),
+while under endings apart it holds +0.0038 ± 0.0008 (4/4; paired +0.0029 ± 0.0016, 4/4). At 151M
+tokens and 50k steps, where under BPE 17k case ends below its null (−0.0013 ± 0.0008), **under
 endings apart it still beats its null at every seed, +0.0030 ± 0.0009** (paired +0.0044 ±
 0.0011, 4/4), +0.0033 at null BPB 0.94; the two together end +0.0195 ± 0.0013 below BPE
-17k's null. Where endings are their own tokens, case keeps helping after it has stopped
-helping under BPE 17k — **and half of it does without the tagger's leak**, which there can
-reach the noun's ending, a token of its own. With prepositions read from their form case
-still beats its null, +0.0015 ± 0.0010 (3/4); read from the word form alone — no context,
-so no leak — +0.0016 ± 0.0009 (3/4), which is **+0.0036 ± 0.0010 (4/4)** more than the word
-form gains under BPE 17k, where it ends below its null. What lasts to full training where
-endings are tokens is the word's own case; the other half is the leak (+0.0015 ± 0.0001,
-4/4). *Four seeds each; the gains without the leak at three seeds of four. Measured against
-the same-shape null, which in Ukrainian loses to an empty slot (below; G-78).* (§33.68, §33.76,
-§33.81, §33.102)
+17k's null. Half of that gain does without the tagger's leak, which there can reach the noun's
+ending, a token of its own. With prepositions read from their form case still beats its null,
++0.0015 ± 0.0010 (3/4); read from the word form alone — no context, so no leak — +0.0016 ±
+0.0009 (3/4), which is **+0.0036 ± 0.0010 (4/4)** more than the word form gains under BPE 17k,
+where it ends below its null. The other half is the leak (+0.0015 ± 0.0001, 4/4). But under
+endings apart the null costs about 0.002 at every budget (below): over the empty slot case keeps
++0.0010 at full training, about the leak, and without the leak it is level. *Four seeds each; the
+gains without the leak at three seeds of four; ~38M tokens at 10k and 20k.* (§33.58, §33.65,
+§33.68, §33.76, §33.81, §33.102, §33.110)
 
-**Against an empty slot, the null is handicapped under endings apart; what case carries sits on
-the endings.** The same-shape null is not always the best model without a feature. Hold its 8 dims
-at zero — the null switched off from step 0, from identical initial weights — and under endings
-apart the model ends better at every budget measured: **+0.0022 ± 0.0007** at ~38M tokens and 10k,
-**+0.0025 ± 0.0004** at 20k (on a second machine +0.0034 ± 0.0009), +0.0020 ± 0.0014 at full
-training (3/4; one seed +0.0060). Under BPE 17k it does not (−0.0006 ± 0.0004 at 10k, +0.0005 ±
-0.0003 at 20k), and in English the two are level. The difference sits at units' first tokens
-and at non-words, where the slot says whether the previous unit was a word, not on the endings.
-Case's slot says the same and pays the same cost. **What case carries is on the endings:**
-+0.0024 ± 0.0002 there (4/4), where the empty slot gains +0.0001. Net, case beats the empty slot
-by +0.0013 ± 0.0007 (3/4; +0.0003 on the second machine), a third of its +0.0038 over the null.
-At 10k it beats it by +0.0022 ± 0.0007 (4/4), half its +0.0044 over the null. At full training it
-beats it by +0.0010 ± 0.0007 (3/4), about the tagger's leak: without the leak, and from the word
-form, case ends level with the empty slot (−0.0005 ± 0.0006, −0.0004 ± 0.0008), while its gain on
-the endings stays (+0.0021 ± 0.0001, 4/4). *Two tokenizers, three budgets, two corpus sizes, two
-machines; Unigram, BPE 4k–32k and the smaller corpora are not measured (G-78).* (§33.106,
-§33.109, §33.110)
+**The same-shape null is not neutral: its slot costs where endings are exposed and helps under BPE;
+what case carries sits on the endings.** The same-shape null is not always the best model without
+a feature. Hold its 8 dims at zero — the null switched off from step 0, from identical initial
+weights — and compare. At ~38M tokens and 10k the empty slot ends better than the null under the
+two tokenizers that expose endings: **+0.0022 ± 0.0007** under endings apart
+(4/4) and **+0.0039 ± 0.0016** under Unigram 17k (3/4). Under BPE the null ends better: by
+**0.0037 ± 0.0014** at 4k, 0.0016 ± 0.0006 at 8k and 0.0025 ± 0.0006 at 32k (0/4 each), and
+under BPE 17k by 0.0032 ± 0.0013 on ~1.5M tokens and 0.0015 ± 0.0005 on ~7.6M. On ~38M under
+BPE 17k the two are level (−0.0006 ± 0.0004 at 10k, +0.0005 ± 0.0003 at 20k), and in English too.
+Under endings apart the cost holds at every budget measured: **+0.0025 ± 0.0004** at 20k (on a
+second machine +0.0034 ± 0.0009), +0.0020 ± 0.0014 at full training (3/4; one seed +0.0060).
+There the difference sits at units' first tokens and at non-words, where the slot says whether the
+previous unit was a word, not on the endings. Case's slot says the same and pays the same cost.
+**What case carries is on the endings:** +0.0024 ± 0.0002 there (4/4), where the empty slot gains
++0.0001. Net, at 20k case beats the empty slot by +0.0013 ± 0.0007 (3/4; +0.0003 on the second
+machine), a third of its +0.0038 over the null. At 10k it beats it by +0.0022 ± 0.0007 (4/4), half
+its +0.0044 over the null. At full training it beats it by +0.0010 ± 0.0007 (3/4), about the
+tagger's leak: without the leak, and from the word form, case ends level with the empty slot
+(−0.0005 ± 0.0006, −0.0004 ± 0.0008), while its gain on the endings stays (+0.0021 ± 0.0001,
+4/4). *Six tokenizers and three corpus sizes at 10k, on a second machine; endings apart at three
+budgets and BPE 17k at two, on both machines. Where the null's help sits under BPE is not
+re-scored (G-78).* (§33.106, §33.109, §33.110, §33.113)
 
 **Case helps by predicting endings; the exposure effect lies elsewhere.** Re-scored
 token by token, case's gain sits on the tokens that hold an inflectional ending under
@@ -280,7 +297,7 @@ the endings (+0.0005, against +0.0028 from the sentence): the previous word's en
 plain view there, and what the sentence adds on the endings is largely the leak at
 prepositions, whose case the tagger reads from the noun being predicted: read from their
 form, case's gain on those tokens falls from +0.0028 to +0.0012 (§33.74, §33.76). *Four
-seeds at 10k, three at 20k.* (§33.69–§33.70, §33.74, §33.76)
+seeds at 10k, three at 20k; over each tokenizer's own null.* (§33.69–§33.70, §33.74, §33.76)
 
 **What the model builds for itself: the form's grammar, more accurately; context, no
 better.** Probed linearly at each word's last token, the full-training nulls, which carry no
@@ -306,19 +323,21 @@ and 1.60 — and at a 20k budget its part of speech ends at its null (−0.0008 
 0.0005, 4 seeds); a model half as wide (64) gains less throughout. The collapse is not
 the slot's share (tiled to the base share: +0.0024 and +0.0037 at 1.55, 2 seeds),
 nor the model's linear knowledge of the current word's part of speech: a probe
-finds the wider model's deeper layers ahead at every matched null BPB (+0.8 to
-+1.3 points, input layers alike), yet at the same probe accuracy (0.870) the base
-model gains +0.0133 and the wider one +0.0076 (one probed seed per width). **What
-the feature carries — the previous word's part of speech — accounts for about half
-of the difference.** The wider model reads it from context far earlier (+3.9 to
-+10.4 points at matched null BPB), and on that axis the widths' gains differ by at
-most 0.0035, against 0.0063 on the current word's tag and 0.0098 on the null's
-BPB; at the top of the shared range they meet (+0.0075 at accuracy 0.62). Not
-fully: the law is stated within one model size. The feature stops paying well
-before the null knows the tag fully — the wider model's gain collapses when its
-deepest layer reads it at 0.68 — and at the end of a 20k budget the base null
-reads it at 0.619 (the current word's: 0.881). *The probes, one seed per width.*
-(§33.40, §33.42, §33.49–§33.50, §33.52, §33.60)
+finds the wider model's deeper layers ahead at every matched null BPB (+0.4 to
++1.5 points, input layers alike), yet at the same probe accuracy the widths' gains
+still differ by up to 0.0068 ± 0.0005. **What the feature carries — the previous
+word's part of speech — accounts for about half of the difference.** The wider model
+reads it from context far earlier (+2.5 to +10.4 points at matched null BPB along
+the 20k budgets; each seed's largest lead 8.7 to 10.4), and on that axis the widths'
+gains differ by at most **0.0039 ± 0.0001** (0.0035 to 0.0043 per seed), against
+0.0098 on the null's BPB; at the top of the shared range they nearly meet (+0.0075
+and +0.0070 at accuracy 0.63). Not fully: the law is stated within one model size.
+The feature stops paying well before the null knows the tag fully — the wider
+model's gain collapses when its deepest layer reads it at 0.68, at every seed — and
+at the end of a 20k budget the base null reads it at 0.629 ± 0.004 (the current
+word's: 0.883 ± 0.001). *The probes at five seeds per width, four of them on a
+second machine; the gains at four.* (§33.40, §33.42, §33.49–§33.50, §33.52, §33.60,
+§33.114)
 
 **Removing English part of speech leaves a lasting deficit; adding it late does not.**
 Switched off at step 2,500 of a 10k budget, English part of speech ends 0.0023
@@ -451,18 +470,23 @@ meets in full.
    a field is added; a quarantine rule written for one generation of runs misfired
    on the next; tests left out of a hand-kept list never ran. Each was caught
    before it changed a number. (§33.39, §33.43–§33.45, §33.48)
-10. **A same-shape null can itself be handicapped.** In Ukrainian the null's slot loses to the
-   same slot held at zero, by 0.0025–0.0034 at 20k. The cost sits at word starts and non-words,
-   and a feature with the same slot pays it too. A gain over the null then overstates the gain
-   over the best model without the feature: check against an empty slot. (§33.106)
+10. **A same-shape null is not neutral, and its sign depends on the tokenizer.** In Ukrainian the
+   null's slot loses to the same slot held at zero where the tokenizer exposes endings (by 0.0022 to
+   0.0039 at 10k, 0.0025 to 0.0034 at 20k), and beats it under BPE at 4k, 8k and 32k and on less
+   data (by 0.0015 to 0.0037). The cost sits at word starts and non-words, and a feature with the
+   same slot pays it too. A gain over the null then overstates or understates the gain over the
+   best model without the feature, and gains compared across tokenizers over their own nulls can
+   turn a conclusion round: check against an empty slot. (§33.106, §33.113)
 11. **Two GPUs run the same model alike, not the same run.** The same weights evaluate within
    2 × 10⁻⁹ on both machines, and a matrix product, a softmax and a layer norm are bitwise
    identical; with dropout off, two machines train the same run to within 2 × 10⁻⁸. But dropout's
-   masks are drawn on the GPU, differently by kernel layout. A run repeated on the other machine differs like a dropout draw: +0.0001 ± 0.0004 over
-   19 pairs, with no consistent sign (9 above, 10 below), the largest difference growing with
-   training (0.0005 at 10k, 0.0025 at 20k, 0.0063 at 50k). An effect measured within each machine
-   agrees between them (case over the null +0.0038 and +0.0037); a single pair at full training
-   does not. (§33.106, §33.107, §33.109)
+   masks are drawn on the GPU, differently by kernel layout. A run repeated on the other machine
+   differs like a dropout draw: −0.0001 ± 0.0001 over 131 pairs, with no consistent sign (65 above,
+   66 below), the largest difference growing with training (0.0031 at 10k, 0.0044 at 20k, 0.0063 at
+   50k). An effect measured within each machine agrees between them (case over the null under
+   eight conditions at 10k, within 0.0011; at 20k +0.0038 and +0.0037); a single pair at full
+   training does not. Every comparison is made within one machine. (§33.106, §33.107, §33.109,
+   §33.114)
 
 ## Withdrawn along the way
 
@@ -481,9 +505,8 @@ Each withdrawal was decided by a rule recorded before its result.
 ## Open
 
 The research programme, [`DIRECTIONS.md`](DIRECTIONS.md), pursues:
-- whether an empty slot — its dims held at zero — beats the same-shape null in Ukrainian, as
-  one comparison across machines suggests (G-78, §33.102);
-- whether the tokenizer's gain holds on fiction beyond a 10k budget;
+- where the same-shape null's help sits under BPE, and whether exposed endings keep case partly
+  redundant beyond a 10k budget against the best model without it (G-78, §33.113);
 
 It leaves open, as limitations: whether English part of speech's deficit ever closes
 (at full training it is half the 20k budget's, at three seeds of four); and, across model sizes, the half of

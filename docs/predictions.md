@@ -6,12 +6,12 @@ Each prediction was recorded in `docs/record/journey/README.md` **before** its r
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 146 right, 8 half right, 86 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 10 pending — of 259. The wrong ones carried
+**Tally:** 152 right, 10 half right, 88 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn — of 259. The wrong ones carried
 the information: the null's gain (P18), the shuffled control (P15), the
 leak's absence (P11), the training-budget reframing (P61), the tokenizer
 hypothesis (P119, P120), Unigram's early lead (P130), the wider model's larger
 tokenizer gain (P135) and its peak at width 256 (P202, P203), where the exposure effect sits (P144–P146), and what the sentence's case adds
-over the word form's (P148–P150), and how much of it the tagger's leak is (P164, P166), and what context adds inside the models (P184, P187).
+over the word form's (P148–P150), and how much of it the tagger's leak is (P164, P166), and what context adds inside the models (P184, P187), and that the null's slot helps under BPE (P252, P256).
 
 | # | prediction | outcome | journey |
 |---|---|---|---|
@@ -264,13 +264,13 @@ over the word form's (P148–P150), and how much of it the tagger's leak is (P16
 | P247 | It still reads it better at the end, at three seeds of four or more | right — +1.5 to +2.0 at every seed | §33.105, §33.111 |
 | P248 | At full training under endings apart, on the thesis machine, the empty slot ends better than the null by more than 0.001 on average, paired by seed | right — +0.0020 ± 0.0014 (3/4) | §33.105, §33.110 |
 | P249 | There, case ends better than the empty slot by more than 0.001 on average | wrong — +0.000992, on the boundary | §33.105, §33.110 |
-| P250 | Item 7: `ucaseprep` under BPE 17k at full training ends within 0.0004 of `ucaselex` on average | pending | §33.105 |
-| P251 | Under Unigram 17k at 10k the empty slot ends better than the null's twin by more than 0.001 on average | pending | §33.112 |
-| P252 | Under each of BPE 4k, 8k and 32k at 10k the empty slot ends within 0.001 of the null's twin on average | pending | §33.112 |
-| P253 | Against the empty slot, case at 10k gains less under endings apart than under BPE 17k, by more than 0.001 | pending | §33.112 |
-| P254 | Against the empty slot, case at 10k gains no more under Unigram 17k than under BPE 17k (below +0.0005) | pending | §33.112 |
-| P255 | The new twins at 10k end within 0.0015 of their originals each, and within ±0.0005 on average | pending | §33.112 |
-| P256 | Under BPE 17k at ~1.5M and ~7.6M the empty slot ends within 0.001 of the null's twin on average, each | pending | §33.112 |
-| P257 | At seeds 0–3 the 256-wide null reads the previous word's tag better than the 128-wide at matched null BPB 1.70–1.45, by more than 3 points somewhere | pending | §33.112 |
-| P258 | On the probe's axis the widths' part-of-speech gains at 10k differ by at most half as much as on the null-BPB axis, over five seeds | pending | §33.112 |
-| P259 | At 50k, seeds 2–3, frequency band and part of speech from the word form each end within 0.002 of the null's twin | pending | §33.112 |
+| P250 | Item 7: `ucaseprep` under BPE 17k at full training ends within 0.0004 of `ucaselex` on average | right — −0.0001 ± 0.0007 (the second machine, 4 seeds) | §33.105, §33.114 |
+| P251 | Under Unigram 17k at 10k the empty slot ends better than the null's twin by more than 0.001 on average | right — +0.0039 ± 0.0016 | §33.112, §33.113 |
+| P252 | Under each of BPE 4k, 8k and 32k at 10k the empty slot ends within 0.001 of the null's twin on average | wrong — the null ends better, by 0.0037, 0.0016 and 0.0025 | §33.112, §33.113 |
+| P253 | Against the empty slot, case at 10k gains less under endings apart than under BPE 17k, by more than 0.001 | right — +0.0022 against +0.0038 | §33.112, §33.113 |
+| P254 | Against the empty slot, case at 10k gains no more under Unigram 17k than under BPE 17k (below +0.0005) | right — +0.0018 against +0.0038 | §33.112, §33.113 |
+| P255 | The new twins at 10k end within 0.0015 of their originals each, and within ±0.0005 on average | half right — −0.00001 on average; four of 36 beyond 0.0015 | §33.112, §33.114 |
+| P256 | Under BPE 17k at ~1.5M and ~7.6M the empty slot ends within 0.001 of the null's twin on average, each | wrong — the null ends better, by 0.0032 and 0.0015 | §33.112, §33.113 |
+| P257 | At seeds 0–3 the 256-wide null reads the previous word's tag better than the 128-wide at matched null BPB 1.70–1.45, by more than 3 points somewhere | right — each seed leads by 8.7 to 10.4 at its largest | §33.112, §33.114 |
+| P258 | On the probe's axis the widths' part-of-speech gains at 10k differ by at most half as much as on the null-BPB axis, over five seeds | right — 0.0036 ± 0.0003 against 0.0099 | §33.112, §33.114 |
+| P259 | At 50k, seeds 2–3, frequency band and part of speech from the word form each end within 0.002 of the null's twin | half right — part of speech within; the frequency band −0.0036 at seed 2 | §33.112, §33.114 |

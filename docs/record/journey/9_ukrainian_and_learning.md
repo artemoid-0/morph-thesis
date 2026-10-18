@@ -4780,3 +4780,163 @@ P250 (item 7) stands as recorded in §33.105.
   less data, the size claims stand against both references.
 - **The width probes (P257–P258).** If they agree, §3.7's half is stated with its spread; if not,
   the sentence says how far the seeds differ.
+
+### 33.113 G-78 across tokenizers and corpus sizes: the slot costs where endings are exposed, helps under BPE — and exposure makes case partly redundant
+
+The chain of §33.112 ran on the second machine on 18 October from 00:12 to 14:08 (its clock),
+unattended: 110 runs and 32 probes. Every piece's first run passed its twin check, within 0.002 of
+the thesis machine's, and nothing was skipped or failed. 79 runs repeat the thesis machine's (twins,
+kept apart in `results/audits/device_twins_20261018/`); 31 are new. The effects below are in
+`device_twins_20261018T182550`, per seed on each machine.
+
+**The empty slot against the null, and case against both** (the second machine; ~38M tokens, 10k;
+seeds 0–3, each pair from identical initial weights; positive: the first named ends better):
+
+| tokenizer | the empty slot over the null | case over the empty slot | case over the null |
+|---|---|---|---|
+| endings apart (§33.110) | **+0.0022 ± 0.0007** (4/4) | +0.0022 ± 0.0007 (4/4) | +0.0044 ± 0.0008 (4/4) |
+| Unigram 17k | **+0.0039 ± 0.0016** (3/4) | +0.0018 ± 0.0012 (3/4) | +0.0056 ± 0.0007 (4/4) |
+| BPE 4k | **−0.0037 ± 0.0014** (0/4) | +0.0076 ± 0.0012 (4/4) | +0.0039 ± 0.0007 (4/4) |
+| BPE 8k | **−0.0016 ± 0.0006** (0/4) | +0.0065 ± 0.0014 (4/4) | +0.0049 ± 0.0012 (4/4) |
+| BPE 17k | −0.0006 ± 0.0004 (1/4) | +0.0038 ± 0.0007 (4/4) | +0.0032 ± 0.0006 (4/4) |
+| BPE 32k | **−0.0025 ± 0.0006** (0/4) | +0.0055 ± 0.0005 (4/4) | +0.0030 ± 0.0004 (4/4) |
+
+**On less data, under BPE 17k** (10k):
+
+| train tokens | the empty slot over the null | case over the empty slot | case over the null |
+|---|---|---|---|
+| ~1.5M | **−0.0032 ± 0.0013** (0/4) | +0.0097 ± 0.0005 (4/4) | +0.0065 ± 0.0015 (4/4) |
+| ~7.6M | **−0.0015 ± 0.0005** (0/4) | +0.0040 ± 0.0006 (4/4) | +0.0025 ± 0.0005 (4/4) |
+| ~38M | −0.0006 ± 0.0004 (1/4) | +0.0038 ± 0.0007 (4/4) | +0.0032 ± 0.0006 (4/4) |
+
+On the thesis machine case over the null was +0.0076, +0.0031 and +0.0032 at the three sizes
+(§33.56).
+
+**The null's slot is not neutral, and its sign follows exposure.** Under the two tokenizers that
+expose endings, the empty slot ends better than the null: by 0.0022 under endings
+apart, the handicap of §33.106, and by 0.0039 under Unigram 17k. Under BPE the null ends better:
+by 0.0037 at 4k, 0.0016 at 8k and 0.0025 at 32k (0/4 each), and under BPE 17k by 0.0032 on ~1.5M
+tokens and 0.0015 on ~7.6M. On ~38M under BPE 17k the two are level (0.0006 ± 0.0004 here, the
+empty slot 0.0005 better at 20k, §33.109). The null's slot says whether the previous unit was a
+word (§33.106). That costs where endings are exposed and helps, or does nothing, under BPE. Where
+the help sits under BPE was not re-scored.
+
+**Verdicts.** **P251 right** (+0.0039). **P252 wrong:** under BPE 4k, 8k and 32k the empty slot is
+not level with the null but worse, by 0.0016 to 0.0037. **P253 right:** against the empty slot case
+gains +0.0022 under endings apart and +0.0038 under BPE 17k, 0.0016 less. **P254 right:** under
+Unigram 17k it gains +0.0018, 0.0020 less than under BPE 17k. **P256 wrong:** on less data the
+empty slot ends 0.0032 and 0.0015 worse than the null. P255, on the twins, is in §33.114.
+
+**What it changes for the thesis.**
+1. **The best model without the feature is not one model.** Where endings are exposed it is the
+   empty slot; under BPE it is the null (at 17k on ~38M the two are level). Against it, case gains
+   **+0.0022 under endings apart and +0.0018 under Unigram 17k**, against **+0.0030 to +0.0049
+   under BPE** (32k +0.0030, 17k +0.0032, 4k +0.0039, 8k +0.0049; 4/4 each). Where the tokenizer
+   exposes endings case adds about half as much. **Exposed endings make case partly redundant**: the
+   hypothesis the comparison was built on (§33.58), as §33.112 set out for this outcome. Against
+   the empty slot alone the gap is wider (+0.0038 to +0.0076 under BPE), since there the empty model
+   lacks a slot that helps.
+2. **Over each tokenizer's own null the order turns.** There case gains +0.0044 and +0.0056 where
+   endings are exposed, and +0.0032 under BPE at the same vocabulary size (17k; +0.0030 to +0.0049
+   across BPE's four). That is the measurement behind FINDINGS' "exposed endings make case more
+   useful" (§33.58, §33.65), and it stays true as stated. Case's slot says what the null's says and
+   pays the same cost (measured under endings apart, §33.106), so over the null it is case's own
+   values that gain more where endings are exposed. But the slot that carries them costs there,
+   and net the feature adds less. The thesis can state both: case's information is larger where
+   endings are exposed, and what adding case buys is smaller.
+3. **The size claims stand against both references.** On less data under BPE 17k the null is the
+   better reference. So case's gains over it (+0.0076 at ~1.5M and +0.0031 at ~7.6M on the thesis
+   machine) are gains over the best model without the feature. Over the empty slot they are larger
+   (+0.0097, +0.0040). More gain on less data holds either way.
+4. The statements comparing tokenizers over their own nulls at 20k and at full training (§33.68,
+   §33.76) carry the same caveat. Under endings apart the null costs about 0.002 at every budget,
+   and under BPE 17k it costs nothing (§33.110). Against the best model without the feature, case at
+   full training keeps +0.0010 under endings apart, about the tagger's leak (§33.110). Under BPE 17k
+   it ends below its null (−0.0013 ± 0.0008).
+
+### 33.114 The width probes at five seeds, items 7 and 8, and 131 twins
+
+**The width probes** (item 5's last part; `probe_axis_20261018T182434` on the previous word's tag,
+`…T182436` on the word's own). The English null at widths 128 and 256, at 10k and 20k, seeds 0–3,
+was repeated on the second machine with a checkpoint every 1,000 steps and probed as seed 4 was.
+The gains are the thesis machine's, over seeds 0–3 of each width (§33.50). The probe is each seed's
+own, at the deepest layer. `probe_axis.py` now finds a probed twin by its id among the twin copies.
+It compares the widths at each seed, then once more on the accuracy averaged over the five seeds,
+at the steps they share (seed 4 has a checkpoint every 500 steps, the others every 1,000).
+
+| largest gap between the widths' gains at a common level | 10k | 20k |
+|---|---|---|
+| the previous word's tag, per seed | 0.0041, 0.0034, 0.0039, 0.0042, 0.0025: **0.0036 ± 0.0003** | 0.0041, 0.0037, 0.0037, 0.0043, 0.0035: **0.0039 ± 0.0001** |
+| the same, on the accuracy averaged over seeds | 0.0038 | 0.0037 |
+| the word's own tag, per seed | 0.0063, 0.0053, 0.0082, 0.0068, 0.0052: 0.0063 ± 0.0005 | 0.0066, 0.0056, 0.0084, 0.0068, 0.0063: 0.0068 ± 0.0005 |
+| the null's BPB (the gains alone, recomputed as in §33.50) | 0.0099 | 0.0098 |
+
+Seed 4's values are §33.50's, reproduced. At every matched null BPB from 1.75 to 1.45 the wider
+null reads the previous word's tag better: by +2.5 to +10.4 points over the five seeds, each
+seed's largest lead 8.7 to 10.4 at 20k (seed 4: +3.9 to +10.4). On the word's own tag the lead is
++0.4 to +1.5. At the end of the 20k budget the base null reads the previous word's tag at **0.629 ±
+0.004** (seed 4: 0.619) and the wider at 0.732 ± 0.002. On the word's own tag the two read 0.883 ±
+0.001 and 0.895 ± 0.001. The wider model's gain has collapsed by step 3,000 (+0.0033). By then its
+deepest layer reads the previous word's tag at 0.678 to 0.686, at every seed.
+
+**P257 right:** each of seeds 0–3 leads by more than 3 points (8.8, 10.4, 8.7 and 9.2 at its
+largest). **P258 right:** at 10k the widths' gains differ by at most 0.0036 ± 0.0003 per seed (0.0042
+at most) on the probe's axis, against 0.0099 on the null's BPB, under half. For the thesis (§3.7)
+"about half" now holds at five seeds. On the previous word's tag the widths' gains differ by at most
+0.0039 ± 0.0001 (20k), against 0.0068 ± 0.0005 on the word's own tag and 0.0098 on the null's BPB.
+The axis closest to what the feature carries removes about three fifths of the widest gap. It also
+halves the mean gap: +0.0034 on the null's BPB (§33.50), +0.0019 on the averaged accuracy.
+
+**Item 7: case at full training under BPE 17k, without the leak** (the second machine; 151M tokens,
+50k; seeds 0–3, each against the case and word-form twins there):
+- case 0.9430, 0.9451, 0.9433, 0.9470; case with prepositions read from their form 0.9435, 0.9459,
+  0.9437, 0.9475; case from the word form 0.9422, 0.9475, 0.9441, 0.9466;
+- case over its word form +0.0005 ± 0.0007 (2/4; the thesis machine +0.0006 ± 0.0004, 3/4);
+- the leak, case over prepositions from their form: **+0.0006 ± 0.0001 (4/4)** (the thesis
+  machine's seed 0: +0.0005);
+- prepositions from their form over the word form: **−0.0001 ± 0.0007 (2/4)** (seed 0 on the thesis
+  machine +0.0004).
+
+**P250 right** (within 0.0004 on average). Under BPE 17k too, all of case's lead over its word form
+at full training is the tagger's leak. That is the list's outcome «під обома токенізаторами».
+
+**Item 8: the frequency band and part of speech from the word form at 50k, seeds 2–3** (English;
+the second machine, each against the null's twin there):
+- the null 1.3432, 1.3388; the frequency band 1.3468, 1.3385; part of speech from the word form
+  1.3439, 1.3370;
+- the frequency band over the null −0.0036, +0.0003; part of speech from the word form −0.0008,
+  +0.0018;
+- with seeds 0–1 from the thesis machine: the frequency band **−0.0005 ± 0.0011** (3/4: +0.0004,
+  +0.0009, −0.0036, +0.0003); part of speech from the word form **−0.0001 ± 0.0014** (2/4: +0.0023,
+  −0.0037, −0.0008, +0.0018).
+
+At seed 2 the second machine's three runs end 0.004 to 0.008 above the thesis machine's null (its
+twin +0.0043). They drift apart from step 20,000, with no spike, on the draw they share. **P259 half
+right:** part of speech from the word form stays within 0.002 at both seeds; the frequency band falls
+0.0036 below the null at seed 2. For the thesis every row of the full-training table now has four
+seeds, and none beats its null by more than 0.002 on average. That is the list's outcome: the
+sentence stands on four seeds for every row.
+
+**The twins** (`device_twins_20261018T182550`): 131 runs repeated across the two machines, two of
+them with dropout off. They differ by −0.0001 ± 0.0001 (65 above, 66 below; mean |difference|
+0.0010). The largest difference is 0.0031 at 10k (BPE 4k's null, seed 2), 0.0044 at 20k and 0.0063
+at 50k. The 36 new twins at 10k are the null and case under Unigram 17k and BPE 4k, 8k and 32k, and
+case under BPE 17k. They differ by −0.00001 ± 0.00018, but four exceed 0.0015: BPE 4k's null
+−0.0031, BPE 8k's null +0.0025, and BPE 8k's case −0.0018 and +0.0018. **P255 half right:** level on
+average, not within 0.0015 each. Effects measured within each machine agree. Case over the null at
+10k, thesis machine against second: Unigram 17k +0.0054 / +0.0056; BPE 4k +0.0044 / +0.0039; 8k
++0.0040 / +0.0049; 17k +0.0032 / +0.0032; 32k +0.0029 / +0.0030; ~1.5M +0.0076 / +0.0065; ~7.6M
++0.0031 / +0.0025.
+
+**Pairs across machines, found and left out.** With the second machine's new cells beside the
+thesis machine's in `results/`, the exported comparisons paired 23 seeds across machines against the
+thesis machine's plain baselines. Eight were item 4a's 50k runs; fifteen came from today's pull (the
+empty slots on less data, item 7's control, item 8's two features). Refreshed as they were, the
+figures would also have paired item 8's seeds 2–3 with the thesis machine's null.
+`export_results.py`, `demo_figures.py`, `learning_law.py`, `thesis_figures.py` and `probe_axis.py`
+now pair within one machine and name the seeds left out. The figures come out unchanged, and no
+number in FINDINGS used those pairs.
+
+**Predictions** (§33.113–§33.114). P250, P251, P253, P254, P257 and P258 right; P255 and P259 half
+right; P252 and P256 wrong. The tally is 152 right, 10 half right, 88 wrong, 8 never tested and 1
+withdrawn, of 259.

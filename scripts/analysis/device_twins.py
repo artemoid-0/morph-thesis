@@ -61,6 +61,30 @@ EFFECTS = [
     ('endings apart over BPE 17k, Ukrainian, width 512, 20k', f'bpe_mconst-LEARN-CAUSAL_{UKE}_w512',
      f'bpe_mconst-LEARN-CAUSAL_{UKB}_w512', 20000),
 ]
+# G-78 across tokenizers and corpus sizes at 10k (journey §33.112–§33.113): per stream, the empty slot
+# over the null, case over the empty slot, case over the null
+G78 = [('Unigram 17k', 'unigram_uk_17k_ukwiki0.05_st10k'), ('BPE 4k', 'bpe_uk_4k_ukwiki0.05_st10k'),
+       ('BPE 8k', 'bpe_uk_8k_ukwiki0.05_st10k'), ('BPE 32k', 'bpe_uk_32k_ukwiki0.05_st10k'),
+       ('BPE 17k', UKB10), ('BPE 17k at ~1.5M', 'bpe_uk_17k_ukwiki0.002_st10k'),
+       ('BPE 17k at ~7.6M', 'bpe_uk_17k_ukwiki0.01_st10k')]
+for _name, _s in G78:
+    for _what, _a, _b in (('the empty slot over the null', 'mconst-LEARN-CAUSAL-OFF0', 'mconst-LEARN-CAUSAL'),
+                          ('case over the empty slot', 'ucase-LEARN-CAUSAL', 'mconst-LEARN-CAUSAL-OFF0'),
+                          ('case over the null', 'ucase-LEARN-CAUSAL', 'mconst-LEARN-CAUSAL')):
+        if (_name, _what) != ('BPE 17k', 'the empty slot over the null'):     # listed above
+            EFFECTS.append((f'{_what}, {_name}, 10k', f'bpe_{_a}_{_s}', f'bpe_{_b}_{_s}', 10000))
+# item 7: case, case with prepositions from their form, the word form (151M, BPE 17k, 50k); item 8 (English, 50k)
+F7 = 'bpe_uk_17k_ukwiki0.2'
+EFFECTS += [
+    ('case over its word form, BPE 17k, 151M, 50k', f'bpe_ucase-LEARN-CAUSAL_{F7}', f'bpe_ucaselex-LEARN-CAUSAL_{F7}', 50000),
+    ('case over prepositions from their form (the leak), BPE 17k, 151M, 50k', f'bpe_ucase-LEARN-CAUSAL_{F7}',
+     f'bpe_ucaseprep-LEARN-CAUSAL_{F7}', 50000),
+    ('prepositions from their form over the word form, BPE 17k, 151M, 50k', f'bpe_ucaseprep-LEARN-CAUSAL_{F7}',
+     f'bpe_ucaselex-LEARN-CAUSAL_{F7}', 50000),
+    ('frequency band over the null, English, 50k', 'bpe_mfreq-LEARN-CAUSAL_bpe_17k', 'bpe_mconst-LEARN-CAUSAL_bpe_17k', 50000),
+    ('part of speech from the word form over the null, English, 50k', 'bpe_poslex-LEARN-CAUSAL_bpe_17k',
+     'bpe_mconst-LEARN-CAUSAL_bpe_17k', 50000),
+]
 
 
 def machine(r):

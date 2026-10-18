@@ -30,6 +30,7 @@ UK = lambda f, fr='0.2', steps='': f'bpe_{f}-LEARN-CAUSAL_bpe_uk_17k_ukwiki{fr}{
 EN_BASE = 'bpe_baseline_bpe_17k'
 UK_BASE = lambda fr='0.2', steps='': f'bpe_baseline_bpe_uk_17k_ukwiki{fr}{steps}'
 TOKENS = {'0.002': 1.51e6, '0.01': 7.66e6, '0.05': 37.8e6, '0.2': 151.1e6}
+from learning_law import same_machine  # noqa: E402  pairs within one machine (this script's folder is on the path)
 BLUE, ORANGE, GREY, GREEN, RED = '#2b6cb0', '#dd6b20', '#718096', '#2f855a', '#c53030'
 
 
@@ -49,7 +50,7 @@ def paired(R, base, feat, at=None):
     """Per-seed (base - feature) in bits per byte; at=a step reads the log."""
     out = []
     for (lab, s) in sorted(R):
-        if lab != feat or (base, s) not in R:
+        if lab != feat or (base, s) not in R or not same_machine(R, base, feat, s):
             continue
         if at is None:
             out.append(R[(base, s)]['bits_per_byte'] - R[(feat, s)]['bits_per_byte'])
@@ -112,7 +113,7 @@ def fig1(R, out):
 
 
 def curve(R, base, feat):
-    seeds = sorted(s for (l, s) in R if l == feat and (base, s) in R)
+    seeds = sorted(s for (l, s) in R if l == feat and (base, s) in R and same_machine(R, base, feat, s))
     if not seeds:
         return [], [], []
     steps = sorted(set.intersection(*[{e['step'] for e in R[(k, s)]['log']} for k in (base, feat) for s in seeds]))

@@ -171,6 +171,7 @@
 | `device_twins` | 2026-10-17T13:54:12+00:00 | root=/home/neko/PycharmProjects/Morph | effects, groups, overall, pairs, repeats |
 | `device_twins` | 2026-10-17T13:58:07+00:00 | root=/home/neko/PycharmProjects/Morph | effects, groups, overall, pairs, repeats |
 | `device_twins` | 2026-10-18T03:30:29+00:00 | root=/home/neko/PycharmProjects/Morph | effects, groups, overall, pairs, repeats |
+| `device_twins` | 2026-10-18T18:25:50+00:00 | root=/home/neko/PycharmProjects/Morph | effects, groups, overall, pairs, repeats |
 | `dropout_masks` | 2026-10-17T10:30:28+00:00 | device=cuda | device |
 | `dropout_masks` | 2026-10-17T13:48:56+00:00 | device=cuda | device |
 | `?` | ? | - | - |
@@ -253,9 +254,43 @@
 | `?` | ? | - | - |
 | `?` | ? | - | - |
 | `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `probe_axis` | 2026-10-18T18:24:34+00:00 | roots=['/home/neko/PycharmProjects/Morph/results'] fact=pos null=mconst previous=True bpb_levels=[1.75, 1.7, 1.65, 1.6, 1.55, 1.5, 1.45] tolerance=0.0015 | averaged, conditions, per_seed, summary |
+| `probe_axis` | 2026-10-18T18:24:36+00:00 | roots=['/home/neko/PycharmProjects/Morph/results'] fact=pos null=mconst bpb_levels=[1.75, 1.7, 1.65, 1.6, 1.55, 1.5, 1.45] tolerance=0.0015 | averaged, conditions, per_seed, summary |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
 | `probe_dep` | 2026-09-22T12:09:28+00:00 | runs=['a7175857fdf6', '979a7d1f5878', 'd2af7d9ffe75', '67346ed11499'] fact=pos results_dir=results batches=12 sample=40000 | fact, probes |
 | `probe_dep` | 2026-09-22T12:12:58+00:00 | runs=['a7175857fdf6', 'a12b91da4049', 'd2af7d9ffe75', 'ad6ea7603bfe', '979a7d1f5878', '1bcbac60f6b5', '4de10670e169'] fact=pos results_dir=results batches=12 sample=40000 | fact, probes |
 | `probe_dep` | 2026-09-23T07:35:24+00:00 | runs=['a7175857fdf6', 'c564d066df6b'] fact=dep results_dir=results batches=12 sample=40000 | fact, probes |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
+| `?` | ? | - | - |
 | `?` | ? | - | - |
 | `?` | ? | - | - |
 | `?` | ? | labels=['bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2', 'bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2'] facts=['ucase', 'unumber', 'ugender'] split_fact=ucaselex results_dir=/home/neko/PycharmProjects/Morph/results epochs=300 device=cpu threads=12 audit_dir=/home/neko/PycharmProjects/Morph/results/audits | - |
@@ -402,6 +437,7 @@
 - **device_twins**: difference = second machine (RTX 5090 Laptop) minus thesis machine (RTX 4060 Laptop), bits per byte at the best step; effects are B minus A (positive: A better)
 - **device_twins**: difference = second machine (RTX 5090 Laptop) minus thesis machine (RTX 4060 Laptop), bits per byte at the best step; effects are B minus A (positive: A better)
 - **device_twins**: difference = second machine (RTX 5090 Laptop) minus thesis machine (RTX 4060 Laptop), bits per byte at the best step; effects are B minus A (positive: A better)
+- **device_twins**: difference = second machine (RTX 5090 Laptop) minus thesis machine (RTX 4060 Laptop), bits per byte at the best step; effects are B minus A (positive: A better)
 - **lookahead_check**: Continuation targets are intrinsically easier, so a moderate imbalance is not proof of leakage. The definitive test is a causal feature carrying only information available at generation time.
 - **lookahead_check**: Continuation targets are intrinsically easier, so a moderate imbalance is not proof of leakage. The definitive test is a causal feature carrying only information available at generation time.
 - **lookahead_check**: Continuation targets are intrinsically easier, so a moderate imbalance is not proof of leakage. The definitive test is a causal feature carrying only information available at generation time.
@@ -414,6 +450,8 @@
 - **paired_cells**: effect = B minus A in bits per byte at each seed (positive: A better); pairs on one machine only
 - **paired_cells**: effect = B minus A in bits per byte at each seed (positive: A better); pairs on one machine only
 - **paired_cells**: effect = B minus A in bits per byte at each seed (positive: A better); pairs on one machine only
+- **probe_axis**: gain: the feature over its null, averaged over the seeds both cells share, each run to its best step; accuracy: the probed null at each checkpoint; a probed twin of the second machine stands for its seed
+- **probe_axis**: gain: the feature over its null, averaged over the seeds both cells share, each run to its best step; accuracy: the probed null at each checkpoint; a probed twin of the second machine stands for its seed
 - **probe_dep**: chance is the MAJORITY-CLASS rate, not 1/n: the label distribution is skewed.
 - **probe_dep**: chance is the MAJORITY-CLASS rate, not 1/n: the label distribution is skewed.
 - **probe_dep**: chance is the MAJORITY-CLASS rate, not 1/n: the label distribution is skewed.

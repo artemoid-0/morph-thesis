@@ -266,6 +266,9 @@ def write_comparisons(runs, out):
     standard error, and how many seeds agree in sign — how the project's reporting rule says
     small effects are reported.
 
+    A pair is counted only when both runs come from the same GPU (FINDINGS, method point 11;
+    journey §33.113): a seed whose cell and baseline ran on two machines is named and left out.
+
     Two defects of the earlier version (journey §33.6, GAPS G-27):
       * the baseline was "the" feature-free cell of a group — whichever came
         last — and once the learning-rate sweep existed that was a 10k-step
@@ -287,14 +290,19 @@ def write_comparisons(runs, out):
     notes = []
 
     def by_seed(label, v):
+        """{seed: (bits per byte, machine)} — the first run at each seed."""
         seen = defaultdict(list)
         for x in v:
-            seen[x.get('seed', 0)].append(x['bits_per_byte'])
+            seen[x.get('seed', 0)].append(x)
         for s_, xs in seen.items():
-            if max(xs) - min(xs) > 1e-9:
+            b_ = [x['bits_per_byte'] for x in xs]
+            if max(b_) - min(b_) > 1e-9:
                 notes.append(f'`{label}` has {len(xs)} runs at seed {s_} that DIFFER '
-                             f'by {max(xs) - min(xs):.4f} BPB; the first is used.')
-        return {s_: xs[0] for s_, xs in seen.items()}
+                             f'by {max(b_) - min(b_):.4f} BPB; the first is used.')
+        return {s_: (xs[0]['bits_per_byte'], machine(xs[0])) for s_, xs in seen.items()}
+
+    def machine(x):      # not g(): this function binds g to a list below
+        return 'second' if '5090' in ((x.get('environment') or {}).get('gpu') or '') else 'thesis'
 
     lines = ['# Effects, paired by seed', '',
              'Each effect is **gain = baseline BPB - cell BPB at the same seed** '
@@ -324,19 +332,25 @@ def write_comparisons(runs, out):
                 continue
             base = by_seed(base_label, cells[base_label])
             lines += [f'baseline `{base_label}`, seeds {sorted(base)}: '
-                      + ', '.join(f'{base[k]:.4f}' for k in sorted(base)), '',
+                      + ', '.join(f'{base[k][0]:.4f}' for k in sorted(base)), '',
                       '| cell | paired seeds | gain per seed | mean gain +/- se | % | agree |',
                       '|---|---|---|---|---|---|']
             for label in members:
                 c = by_seed(label, cells[label])
-                shared = sorted(set(c) & set(base))
+                both = sorted(set(c) & set(base))
+                shared = [k for k in both if c[k][1] == base[k][1]]
+                apart = [k for k in both if c[k][1] != base[k][1]]
+                if apart:
+                    notes.append(f'`{label}` against `{base_label}`: seed(s) {apart} left out, '
+                                 f'the cell and its baseline ran on two machines.')
                 if not shared:
-                    lines.append(f'| {label} | none of {sorted(c)} | - | not comparable: '
-                                 f'no seed shared with the baseline | | |')
+                    why = (f'its baseline ran on the other machine at seed(s) {apart}' if apart
+                           else 'no seed shared with the baseline')
+                    lines.append(f'| {label} | none of {sorted(c)} | - | not comparable: {why} | | |')
                     continue
-                g = [base[k] - c[k] for k in shared]
+                g = [base[k][0] - c[k][0] for k in shared]
                 m = st.mean(g)
-                pct = 100.0 * m / st.mean(base[k] for k in shared)
+                pct = 100.0 * m / st.mean(base[k][0] for k in shared)
                 per = ' '.join(f'{x:+.4f}' for x in g)
                 seeds = ','.join(str(k) for k in shared)
                 if len(g) >= 2:
@@ -350,7 +364,7 @@ def write_comparisons(runs, out):
                 n_paired += 1
             lines.append('')
     if notes:
-        lines += ['## Duplicate runs that disagree', ''] + [f'- {n}' for n in notes] + ['']
+        lines += ['## Duplicate runs that disagree, and seeds left out', ''] + [f'- {n}' for n in notes] + ['']
     lines += ['---', '',
               '*One paired seed carries no claim. Two agreeing seeds are not a '
               'noise estimate: read the standard error and the '

@@ -179,7 +179,7 @@ def needs(lang):
 
 def lead(R, ref, other):
     """Per step: the step, the reference null's BPB, and ref − other (mean, se), over shared seeds."""
-    seeds = sorted(s for (l, s) in R if l == other and (ref, s) in R)
+    seeds = sorted(s for (l, s) in R if l == other and (ref, s) in R and D.same_machine(R, ref, other, s))
     if not seeds:
         return []
     logs = {(k, s): {e['step']: e['bits_per_byte'] for e in R[(k, s)]['log'] if e['step'] > 0}

@@ -54,8 +54,8 @@ baseline `bpe_baseline_bpe_17k`, seeds [0, 1, 2, 3, 4, 5, 6, 7]: 1.3477, 1.3482,
 | bpe_mzero-LEARN-CAUSAL_bpe_17k | 0,1,2,3 | +0.0083 +0.0071 +0.0210 +0.0058 | +0.0105 +/- 0.0035 | +0.78% | 4/4 |
 | bpe_mzeronopos-LEARN-CAUSAL_bpe_17k | 0,1,2,3 | +0.0002 +0.0020 +0.0124 -0.0054 | +0.0023 +/- 0.0037 | +0.17% | 3/4 |
 | bpe_mzeroposonly-LEARN-CAUSAL_bpe_17k | 0,1,2,3 | +0.0044 +0.0043 +0.0083 +0.0004 | +0.0043 +/- 0.0016 | +0.32% | 4/4 |
-| bpe_pos-LEARN-CAUSAL-OFF0_bpe_17k | 0,1,2,3 | +0.0097 +0.0106 +0.0203 +0.0116 | +0.0130 +/- 0.0025 | +0.97% | 4/4 |
-| bpe_pos-LEARN-CAUSAL-OFF5000_bpe_17k | 0,1,2,3 | +0.0108 +0.0084 +0.0167 +0.0085 | +0.0111 +/- 0.0019 | +0.82% | 4/4 |
+| bpe_pos-LEARN-CAUSAL-OFF0_bpe_17k | none of [0, 1, 2, 3] | - | not comparable: its baseline ran on the other machine at seed(s) [0, 1, 2, 3] | | |
+| bpe_pos-LEARN-CAUSAL-OFF5000_bpe_17k | none of [0, 1, 2, 3] | - | not comparable: its baseline ran on the other machine at seed(s) [0, 1, 2, 3] | | |
 | bpe_pos-LEARN-CAUSAL_bpe_17k | 0,1,2,3 | +0.0072 +0.0109 +0.0198 +0.0113 | +0.0123 +/- 0.0027 | +0.91% | 4/4 |
 | bpe_poslex-LEARN-CAUSAL_bpe_17k | 0,1 | +0.0098 +0.0064 | +0.0081 +/- 0.0017 | +0.60% | 2/2 |
 
@@ -124,6 +124,7 @@ baseline `bpe_baseline_bpe_uk_17k_ukwiki0.002_st10k`, seeds [0, 1, 2, 3]: 1.2718
 
 | cell | paired seeds | gain per seed | mean gain +/- se | % | agree |
 |---|---|---|---|---|---|
+| bpe_mconst-LEARN-CAUSAL-OFF0_bpe_uk_17k_ukwiki0.002_st10k | none of [0, 1, 2, 3] | - | not comparable: its baseline ran on the other machine at seed(s) [0, 1, 2, 3] | | |
 | bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.002_st10k | 0,1,2,3 | +0.0057 +0.0102 +0.0105 +0.0134 | +0.0099 +/- 0.0016 | +0.78% | 4/4 |
 | bpe_ucase-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.002_st10k | 0,1,2,3 | +0.0161 +0.0175 +0.0200 +0.0166 | +0.0175 +/- 0.0009 | +1.38% | 4/4 |
 | bpe_ucaselex-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.002_st10k | 0,1,2,3 | +0.0137 +0.0148 +0.0162 +0.0151 | +0.0149 +/- 0.0005 | +1.17% | 4/4 |
@@ -132,6 +133,7 @@ baseline `bpe_baseline_bpe_uk_17k_ukwiki0.01_st10k`, seeds [0, 1, 2, 3]: 1.1118,
 
 | cell | paired seeds | gain per seed | mean gain +/- se | % | agree |
 |---|---|---|---|---|---|
+| bpe_mconst-LEARN-CAUSAL-OFF0_bpe_uk_17k_ukwiki0.01_st10k | none of [0, 1, 2, 3] | - | not comparable: its baseline ran on the other machine at seed(s) [0, 1, 2, 3] | | |
 | bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.01_st10k | 0,1,2,3 | +0.0081 +0.0038 +0.0115 +0.0106 | +0.0085 +/- 0.0017 | +0.77% | 4/4 |
 | bpe_ucase-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.01_st10k | 0,1,2,3 | +0.0115 +0.0074 +0.0142 +0.0135 | +0.0117 +/- 0.0015 | +1.05% | 4/4 |
 | bpe_ucaselex-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.01_st10k | 0,1,2,3 | +0.0093 +0.0054 +0.0119 +0.0129 | +0.0099 +/- 0.0017 | +0.89% | 4/4 |
@@ -145,6 +147,7 @@ baseline `bpe_baseline_bpe_uk_17k_ukwiki0.2`, seeds [0, 1, 2, 3]: 0.9475, 0.9483
 | bpe_ucase-LEARN-CAUSAL-ADD_bpe_uk_17k_ukwiki0.2 | 0,1 | +0.0021 +0.0033 | +0.0027 +/- 0.0006 | +0.28% | 2/2 |
 | bpe_ucase-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2 | 0,1,2,3 | +0.0027 -0.0007 +0.0026 +0.0011 | +0.0014 +/- 0.0008 | +0.15% | 3/4 |
 | bpe_ucaselex-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2 | 0,1,2,3 | +0.0018 -0.0013 +0.0031 -0.0003 | +0.0008 +/- 0.0010 | +0.09% | 2/4 |
+| bpe_ucaseprep-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2 | 0 | +0.0022 | +0.0022 (n=1: no claim) | +0.23% | - |
 
 *No run of `bpe_baseline_bpe_uk_17k_ukwiki0.05_st10k` exists, so these are not comparable:* `bpe_mconst-LEARN-CAUSAL-OFF0_bpe_uk_17k_ukwiki0.05_st10k`, `bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k`, `bpe_ucase-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k`, `bpe_ucaselex-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k`, `bpe_ucaseprep-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k`
 
@@ -168,15 +171,15 @@ baseline `bpe_baseline_bpe_uk_17k_ukwiki0.2`, seeds [0, 1, 2, 3]: 0.9475, 0.9483
 
 ## bpe/bpe_uk_32k
 
-*No run of `bpe_baseline_bpe_uk_32k_ukwiki0.05_st10k` exists, so these are not comparable:* `bpe_mconst-LEARN-CAUSAL_bpe_uk_32k_ukwiki0.05_st10k`, `bpe_ucase-LEARN-CAUSAL_bpe_uk_32k_ukwiki0.05_st10k`, `bpe_ucaselex-LEARN-CAUSAL_bpe_uk_32k_ukwiki0.05_st10k`
+*No run of `bpe_baseline_bpe_uk_32k_ukwiki0.05_st10k` exists, so these are not comparable:* `bpe_mconst-LEARN-CAUSAL-OFF0_bpe_uk_32k_ukwiki0.05_st10k`, `bpe_mconst-LEARN-CAUSAL_bpe_uk_32k_ukwiki0.05_st10k`, `bpe_ucase-LEARN-CAUSAL_bpe_uk_32k_ukwiki0.05_st10k`, `bpe_ucaselex-LEARN-CAUSAL_bpe_uk_32k_ukwiki0.05_st10k`
 
 ## bpe/bpe_uk_4k
 
-*No run of `bpe_baseline_bpe_uk_4k_ukwiki0.05_st10k` exists, so these are not comparable:* `bpe_mconst-LEARN-CAUSAL_bpe_uk_4k_ukwiki0.05_st10k`, `bpe_ucase-LEARN-CAUSAL_bpe_uk_4k_ukwiki0.05_st10k`, `bpe_ucaselex-LEARN-CAUSAL_bpe_uk_4k_ukwiki0.05_st10k`
+*No run of `bpe_baseline_bpe_uk_4k_ukwiki0.05_st10k` exists, so these are not comparable:* `bpe_mconst-LEARN-CAUSAL-OFF0_bpe_uk_4k_ukwiki0.05_st10k`, `bpe_mconst-LEARN-CAUSAL_bpe_uk_4k_ukwiki0.05_st10k`, `bpe_ucase-LEARN-CAUSAL_bpe_uk_4k_ukwiki0.05_st10k`, `bpe_ucaselex-LEARN-CAUSAL_bpe_uk_4k_ukwiki0.05_st10k`
 
 ## bpe/bpe_uk_8k
 
-*No run of `bpe_baseline_bpe_uk_8k_ukwiki0.05_st10k` exists, so these are not comparable:* `bpe_mconst-LEARN-CAUSAL_bpe_uk_8k_ukwiki0.05_st10k`, `bpe_ucase-LEARN-CAUSAL_bpe_uk_8k_ukwiki0.05_st10k`, `bpe_ucaselex-LEARN-CAUSAL_bpe_uk_8k_ukwiki0.05_st10k`
+*No run of `bpe_baseline_bpe_uk_8k_ukwiki0.05_st10k` exists, so these are not comparable:* `bpe_mconst-LEARN-CAUSAL-OFF0_bpe_uk_8k_ukwiki0.05_st10k`, `bpe_mconst-LEARN-CAUSAL_bpe_uk_8k_ukwiki0.05_st10k`, `bpe_ucase-LEARN-CAUSAL_bpe_uk_8k_ukwiki0.05_st10k`, `bpe_ucaselex-LEARN-CAUSAL_bpe_uk_8k_ukwiki0.05_st10k`
 
 ## bpe/bpe_ukf_17k
 
@@ -208,7 +211,7 @@ baseline `bpe_baseline_bpe_uk_17k_ukwiki0.2`, seeds [0, 1, 2, 3]: 0.9475, 0.9483
 
 ## bpe/unigram_uk_17k
 
-*No run of `bpe_baseline_unigram_uk_17k_ukwiki0.05_st10k` exists, so these are not comparable:* `bpe_mconst-LEARN-CAUSAL_unigram_uk_17k_ukwiki0.05_st10k`, `bpe_ucase-LEARN-CAUSAL_unigram_uk_17k_ukwiki0.05_st10k`, `bpe_ucaselex-LEARN-CAUSAL_unigram_uk_17k_ukwiki0.05_st10k`
+*No run of `bpe_baseline_unigram_uk_17k_ukwiki0.05_st10k` exists, so these are not comparable:* `bpe_mconst-LEARN-CAUSAL-OFF0_unigram_uk_17k_ukwiki0.05_st10k`, `bpe_mconst-LEARN-CAUSAL_unigram_uk_17k_ukwiki0.05_st10k`, `bpe_ucase-LEARN-CAUSAL_unigram_uk_17k_ukwiki0.05_st10k`, `bpe_ucaselex-LEARN-CAUSAL_unigram_uk_17k_ukwiki0.05_st10k`
 
 ## det/pdiwc
 
@@ -231,6 +234,16 @@ baseline `morph_baseline_Spdiwc`, seeds [0, 1]: 1.5292, 1.5297
 | morph_dep-S0.22_Spdiwc | 0 | +0.0408 | +0.0408 (n=1: no claim) | +2.67% | - |
 | morph_dep-SHUF_Spdiwc | 0 | -0.0268 | -0.0268 (n=1: no claim) | -1.75% | - |
 | morph_dep_Spdiwc | 0 | +0.0379 | +0.0379 (n=1: no claim) | +2.48% | - |
+
+## Duplicate runs that disagree, and seeds left out
+
+- `bpe_mfreq-LEARN-CAUSAL_bpe_17k` against `bpe_baseline_bpe_17k`: seed(s) [2, 3] left out, the cell and its baseline ran on two machines.
+- `bpe_pos-LEARN-CAUSAL-OFF0_bpe_17k` against `bpe_baseline_bpe_17k`: seed(s) [0, 1, 2, 3] left out, the cell and its baseline ran on two machines.
+- `bpe_pos-LEARN-CAUSAL-OFF5000_bpe_17k` against `bpe_baseline_bpe_17k`: seed(s) [0, 1, 2, 3] left out, the cell and its baseline ran on two machines.
+- `bpe_poslex-LEARN-CAUSAL_bpe_17k` against `bpe_baseline_bpe_17k`: seed(s) [2, 3] left out, the cell and its baseline ran on two machines.
+- `bpe_mconst-LEARN-CAUSAL-OFF0_bpe_uk_17k_ukwiki0.002_st10k` against `bpe_baseline_bpe_uk_17k_ukwiki0.002_st10k`: seed(s) [0, 1, 2, 3] left out, the cell and its baseline ran on two machines.
+- `bpe_mconst-LEARN-CAUSAL-OFF0_bpe_uk_17k_ukwiki0.01_st10k` against `bpe_baseline_bpe_uk_17k_ukwiki0.01_st10k`: seed(s) [0, 1, 2, 3] left out, the cell and its baseline ran on two machines.
+- `bpe_ucaseprep-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2` against `bpe_baseline_bpe_uk_17k_ukwiki0.2`: seed(s) [1, 2, 3] left out, the cell and its baseline ran on two machines.
 
 ---
 
