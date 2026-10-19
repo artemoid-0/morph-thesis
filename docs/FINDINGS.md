@@ -32,7 +32,8 @@ pair level and makes the mean (+0.0066 ± 0.0024) less telling than the median. 
 chance within training, not the seed's: a run repeated with the same initial weights and batches
 on another machine drifts or not (§33.107). The grammar test agrees at every seed: on BLiMP the full-training models
 are **+1.0 ± 0.2 points** better over all 67 paradigms (8/8; +0.3 at 10k), +1.1 ± 0.6 in
-morphology (6/8), and better on average in each agreement phenomenon (3/4 each at seeds 0–3). *Plain
+morphology (6/8), and on average better in each agreement phenomenon: subject–verb +1.1 ± 0.5 and
+anaphor +3.8 ± 1.8 at six seeds of eight, determiner–noun +1.2 ± 1.1 at only four (§33.117). *Plain
 baselines, four seeds at 10k and 20k, eight at full training (seven of eight; seeds 4–7 on a
 second machine); BLiMP at eight seeds.* (§33.85, §33.87, §33.92, §33.102, §33.107)
 
@@ -218,8 +219,8 @@ fifths. Case beats its null under each of six tokenizers (BPE at 4k, 8k, 17k and
 32k, Unigram at 17k, endings apart; +0.0029 to +0.0054, every seed), and leads
 early under each (+0.0045 to +0.0090 at step 2,000).
 
-**Where the tokenizer exposes endings, adding case gains less: exposed endings make case
-partly redundant.** That was the hypothesis behind the comparison: case should help where the
+**At a fixed budget, adding case gains less where the tokenizer exposes endings; at the same
+point of learning, only under Unigram.** That was the hypothesis behind the comparison: case should help where the
 tokenizer hides endings. The best model without the feature differs by tokenizer (below): where
 the tokenizer exposes endings it is an empty slot, under BPE the same-shape null. Against it, at
 ~38M tokens and 10k, case gains **+0.0022 ± 0.0007 under endings apart (4/4) and +0.0018 ± 0.0012
@@ -228,8 +229,16 @@ each; +0.0032 ± 0.0006 at 17k). Where the tokenizer exposes endings, case adds 
 **It is an early-training effect.** By 20k the difference is gone: against the empty slot, the better
 reference there under both tokenizers, case gains +0.0005 ± 0.0004 under BPE 17k and +0.0003 ± 0.0006
 under endings apart. At full training it adds only the tagger's leak under endings apart and nothing
-under BPE 17k (below). *Four seeds per tokenizer, ~38M tokens; a 10k budget under six tokenizers and
-20k under two, on a second machine, each comparison within it.* (§33.110, §33.113, §33.116)
+under BPE 17k (below). **Read at the same point of learning, the redundancy narrows.** That is the
+law's axis: each tokenizer's gain at its reference's bits per byte along training. Endings apart
+learns faster, and its models are further along at a given step. Late in the budget its gain matches
+BPE 17k's: +0.0002 ± 0.0011 less at reference BPB 1.09, −0.0001 at 1.18. Its fixed-budget shortfall
+is that head start, as the law has a feature's gain fall while the model learns. Unigram learns no
+faster than BPE 17k, and its shortfall stays: +0.0020 ± 0.0007 (3/4) and +0.0016 ± 0.0003 (4/4) less
+there. Earlier, at reference BPB 1.37–1.57, both exposing tokenizers gain more than BPE 17k. *Four
+seeds per tokenizer, ~38M tokens; a 10k budget under six tokenizers and 20k under two, on a second
+machine, each comparison within it; the law's axis at width 128, width 512 running.* (§33.110,
+§33.113, §33.116, §33.117)
 
 **Over each tokenizer's own null the order turns, and the difference grows with training.** Case's
 slot says what the null's says and pays its cost (below). So over the null it is case's own values

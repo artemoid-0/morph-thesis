@@ -149,35 +149,71 @@ naming (G-66).
 
 ## The queue
 
-Rewritten 15 October (journey §33.98) in the order of the thesis's list of that day: nine
-experiments ranked by what each result changes in the text, each with the sentence it states for
-every outcome. Results committed by about 31 October reach the text; the work is admitted on
-4 November. Each item's preparation runs on the CPU while the item before it trains. **Running:**
-nothing (19 October).
+Rewritten 19 October (journey §33.117) in the order of the thesis's list of that day: five items
+ranked by what each result changes in the text, each with the sentence it states for every outcome.
+The list of 15 October (nine items) is done. Results committed by about 31 October reach the text;
+the work is admitted on 4 November. Each item's preparation runs on the CPU while the item before it
+trains.
 
-**Answered on 18 October, evening** (§33.116, the second machine):
+**Running** (19 October, the second machine; §33.117): item 4 below, the exposure comparison at
+width 512, 24 runs, ~6.4 h; P264–P266.
+
+**Answered on 19 October** (§33.117):
+- item 5, BLiMP's agreement at eight seeds: subject–verb and anaphor agreement better at six seeds of
+  eight, determiner–noun agreement at four;
+- the exposure comparison on the law's axis, at width 128: at the same point of learning endings
+  apart gains as much as BPE 17k late in the budget, and Unigram about 0.002 less.
+
+**Answered on 18 October, evening** (§33.116):
 - the exposure comparison at 20k: under BPE 17k and endings apart case gains alike over the best
-  model without it (+0.0005, +0.0003), so the redundancy is an early-training effect;
-- where the null's slot acts: it costs at units' first tokens and non-words where endings are
-  exposed, and helps on a word's later tokens, mostly its ending, under BPE 4k and 8k;
-- the third candidate, G-78 at 20k under the other tokenizers, is dropped: it was to run only if the
-  redundancy lasted.
+  model without it (+0.0005, +0.0003);
+- where the null's slot acts: at units' first tokens and non-words where endings are exposed, and on
+  a word's later tokens under BPE 4k and 8k;
+- G-78 at 20k under the other tokenizers was dropped, by its condition.
 
-**Next — under review, nothing prepared** (19 October). The thesis's list of 15 October is done.
-The next candidates follow what the text still needs, and each is weighed by the sentence test
-before any preparation:
-1. **The redundancy in a wider model.** Case, the null and the empty slot at width 512 under BPE 17k
-   and endings apart, 10k, four seeds: 24 runs, ~6.4 h on the second machine, whose data is there.
-   *It holds:* "exposed endings make case partly redundant at 30M parameters too". *It does not:* the
-   claim is stated for the 5M-parameter model. A wider model learns faster per step, so the
-   comparison may need the law's axis (matched null BPB) rather than the step.
-2. **Grammatical features beyond case.** Number and gender (registered, their codes built) under the
-   six tokenizers. In agreement the tagger reads an adjective's number and gender from the next noun,
-   so each needs a leak control first, as case had (`ucaseprep`). Its data must also be sent to the
-   second machine. *They behave like case:* "exposed endings make a word's grammatical features
-   partly redundant". *They do not:* "the redundancy is case's".
-3. **A third language** (the title is not limited to two): a corpus, a tagger, an ending rule and its
-   tokenizers. Days of preparation, so it is for the defence unless the text asks.
+**Next — the text's list of 19 October, in its order** (its sentences per outcome: journey §33.117;
+costs from the recorded timings, `scripts/ops/run_times.py`):
+1. **The tokenizer's gain beyond 30M parameters** (§3.12, §3.3.2, conclusion 2): width 1024, ~38M
+   tokens, both nulls (BPE 17k, endings apart), seeds 0–3, at 10k and at 20k. It is compared on the
+   law's axis as at width 512 (`tokenizer_widths.py`), with MultiBLiMP on the 20k models.
+   - **Cost:** width 1024 has never run. Scaled from width 512 (~16 min per 10k run on the second
+     machine; each layer's cost four times at twice the width), ~50 min per 10k run and ~100 min per
+     20k run: 16 runs, **~20 h**, plus 8 MultiBLiMP evaluations (minutes).
+   - **First:** a fit check on the second machine for memory and speed (`scripts/ops/fit_check.py`,
+     minutes).
+   - **Ready:** the data are on the second machine, and no twins are needed (no width-1024 run
+     exists).
+   - **Fallback** if it does not fit the hours or the date: width 512 at full training (151M, 50k),
+     both nulls, four seeds: 8 runs of ~80 min, **~10.7 h**. BPE 17k's 151M stream is on the second
+     machine; endings apart's is to be checked or sent.
+2. **Number and gender as context-aware features** (§3.10, conclusion 7): under BPE 17k and endings
+   apart, ~38M, 10k, seeds 0–3. For each feature, the tagged one, its word form and its leak control,
+   each over the null and the empty slot (both already on the second machine): 2 × 3 × 2 × 4 = **48
+   runs, ~3.4 h**. The exposure comparison for both features comes with the same runs.
+   - **Preparation**, about half a day of the thesis machine's CPU:
+     1. the leak audit for `ugender` and `unumber` on a sample (`morph_causality_check.py`): which
+        words take their number and gender from the right context (agreement in the noun phrase:
+        adjectives, determiners and numerals before their noun);
+     2. the word-form variants and the leak controls, derived with `derive_lexical_codes.py` and
+        registered beside `ucaselex` and `ucaseprep`;
+     3. their codes for both streams, slimmed and sent to the second machine (~1 GB).
+3. **Whether English part of speech's deficit closes** (§3.8, conclusion 5): switched off at 5,000
+   against never fed (`OFF0`), seeds 0–3, at a 100k budget: 8 runs of ~42 min, **~5.6 h**, on data
+   already on the second machine.
+   - WikiText-103 then repeats 6.8 times (3.4 at 50k). If the null's validation curve stops falling,
+     the fallback is seeds 4–7 at 50k: 8 runs of ~21 min, **~2.8 h**.
+4. **The exposure redundancy at width 512**: running (above).
+5. **BLiMP's agreement at eight seeds**: answered (above).
+
+In all, items 1–3 take ~29 h of the second machine (~17 h with both fallbacks), plus half a day of
+the thesis machine's CPU for item 2.
+
+**After item 4, if its reading asks for it:** Unigram at width 512 (its null, case and empty slot, 12
+runs, ~3.2 h, data on the second machine). It would say whether Unigram's same-point shortfall
+holds at 30M parameters (*it stays* / *it goes*).
+
+**Not requested:** a third language (a defence item); the law's other half across widths (no
+hypothesis yet).
 
 Maintenance, when there is time: G-79 (three of the thesis machine's models to re-make, ~36 min on
 it).

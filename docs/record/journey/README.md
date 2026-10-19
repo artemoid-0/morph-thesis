@@ -183,5 +183,6 @@ the tokenizer was built as it was.
   - [33.114 The width probes at five seeds, items 7 and 8, and 131 twins](9_ukrainian_and_learning.md#33114-the-width-probes-at-five-seeds-items-7-and-8-and-131-twins)
   - [33.115 Two follow-ups: the exposure comparison at 20k, and where the null's help sits (prepared, 18 October)](9_ukrainian_and_learning.md#33115-two-follow-ups-the-exposure-comparison-at-20k-and-where-the-nulls-help-sits-prepared-18-october)
   - [33.116 The follow-ups: by 20k the two tokenizers are level; the slot costs at word starts or helps on a word's ending, by tokenizer](9_ukrainian_and_learning.md#33116-the-follow-ups-by-20k-the-two-tokenizers-are-level-the-slot-costs-at-word-starts-or-helps-on-a-words-ending-by-tokenizer)
+  - [33.117 The text's list of 19 October: BLiMP's agreement at eight seeds, the exposure comparison on the law's axis, and item 4 prepared](9_ukrainian_and_learning.md#33117-the-texts-list-of-19-october-blimps-agreement-at-eight-seeds-the-exposure-comparison-on-the-laws-axis-and-item-4-prepared)
 - [Appendix A — Decision Record](appendices.md#appendix-a--decision-record)
 - [Appendix B — Section Mapping](appendices.md#appendix-b--section-mapping)

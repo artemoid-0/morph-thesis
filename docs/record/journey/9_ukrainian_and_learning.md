@@ -5041,3 +5041,72 @@ to be re-made by retraining when there is time.
 
 **Predictions** (§33.115). P260, P261 and P263 right; P262 wrong. The tally is 155 right, 10 half
 right, 89 wrong, 8 never tested and 1 withdrawn, of 263.
+
+### 33.117 The text's list of 19 October: BLiMP's agreement at eight seeds, the exposure comparison on the law's axis, and item 4 prepared
+
+The thesis's list of 19 October ranks five items. In its order: the tokenizer's gain beyond 30M
+parameters (width 1024); number and gender as context-aware features; whether English part of
+speech's deficit closes; the exposure redundancy in a wider model; and BLiMP's agreement phenomena
+over all eight English seeds. Items 4 and 5 run now. The others are ranked and costed in DIRECTIONS'
+queue.
+
+**Item 5: BLiMP's agreement phenomena at eight seeds** (`blimp_eval_20261012T043938`, seeds 0–3;
+`blimp_eval_20261017T094816`, seeds 4–7 on the second machine; the full-training plain baselines,
+endings apart minus BPE 17k, points):
+- determiner–noun −0.3, +3.2, +2.9, +6.0, −4.1, +2.8, −1.2, −0.0: **+1.2 ± 1.1 (4/8)**;
+- subject–verb +1.5, +0.7, −0.3, +3.2, +1.3, +0.4, +3.2, −1.2: **+1.1 ± 0.5 (6/8)**;
+- anaphor +6.2, +9.5, −3.9, +6.0, +0.7, +7.1, +7.5, −2.4: **+3.8 ± 1.8 (6/8)**.
+
+Every agreement phenomenon is better on average, but determiner–noun agreement only at half the
+seeds: seeds 4–7 give −0.6 ± 1.4. All 67 paradigms stay +1.0 ± 0.2 (8/8), morphology +1.1 ± 0.6 (6/8).
+The text's rule for this item: the clause stands as «x/8» where the direction holds. So it stands for
+subject–verb and anaphor agreement (6/8 each), and not for determiner–noun agreement (4/8).
+
+**The exposure comparison on the law's axis** (`exposure_axis_20261019T035335`, against the empty
+slot; `…T035337`, against the null; new tool `scripts/analysis/exposure_axis.py`; the second
+machine's runs at width 128, ~38M, 10k, seeds 0–3). Item 4 compares widths on the law's axis, so
+width 128 was read the same way first. Each tokenizer's gain is read at its reference's bits per
+byte along training, interpolated per seed at common levels, and compared with BPE 17k's, paired by
+seed.
+
+| case over the empty slot, BPE 17k minus | reference BPB 1.27–1.28 | 1.18–1.19 | 1.09 (BPE 17k's end) | end of the 10k budget |
+|---|---|---|---|---|
+| endings apart | +0.0017 ± 0.0010 (3/4) | −0.0001 ± 0.0010 | **+0.0002 ± 0.0011** | +0.0016 ± 0.0013 (3/4) |
+| Unigram 17k | +0.0017 ± 0.0005 (4/4) | +0.0016 ± 0.0003 (4/4) | **+0.0020 ± 0.0007 (3/4)** | +0.0020 ± 0.0008 (3/4) |
+
+Earlier in training (reference BPB 1.37–1.57) both exposing tokenizers gain more than BPE 17k, by
+0.0005 to 0.0080. Endings apart learns faster, and its models are further along at a given step:
+its empty slot ends at ~1.07 where BPE 17k's ends at 1.09. Measured at the same point of learning,
+its fixed-budget shortfall is gone late in the budget. Unigram learns no faster than BPE 17k (its
+tokenizer gains nothing), and its shortfall stays at the same point of learning. Over the null,
+case gains more under both exposing tokenizers late in the budget, by 0.0025–0.0035 at reference
+BPB 1.18 and 1.09, as FINDINGS stated first: the null's cost there (§33.113).
+
+**What it changes for the thesis.** The redundancy sentence of §33.113 holds at a fixed budget. At
+the same point of learning it holds under Unigram (about 0.002, late in the budget) and not under
+endings apart: there the fixed-budget shortfall is the head start, and a feature's gain falls as a
+model learns (the law). So the sentence must name the axis.
+
+**Item 4 prepared** (`scripts/chains/second_2026-10-19.sh`; rehearsed with the stub in seven
+scenarios, all passing). Width 512, ~38M tokens, 10k, seeds 0–3, under BPE 17k and endings apart:
+the null (eight twins of the thesis machine's, its run ids kept), case and the empty slot. 24 runs,
+about 16 minutes each on the second machine (6.4 h). Read with `exposure_axis.py --widths 128 512`.
+
+Predictions, before any run:
+
+- **P264** (~60%). At width 512, at the lowest reference BPB both tokenizers' curves share, case's
+  gain over the empty slot under endings apart is within 0.001 of BPE 17k's: level at the same
+  point of learning, as at width 128 (+0.0002 ± 0.0011).
+- **P265** (~70%). At the end of the 10k budget at width 512, case's gains over the empty slot
+  under the two tokenizers differ by less than 0.001. At width 128 the gap was +0.0016 at 10k and
+  +0.0002 at 20k; width 512 at 10k is further along than either.
+- **P266** (~55%). At width 512 and 10k the empty slot ends better than the null under endings
+  apart by more than 0.001, and within 0.001 of it under BPE 17k: the null's cost where endings are
+  exposed holds at 30M parameters.
+
+**The sentences these decide.**
+- *Level at both sizes on the law's axis:* «за однакового поступу навчання відмінок додає однаково
+  за обох токенізаторів у моделях на 5 і 30 млн параметрів; за фіксованого бюджету менше там, де
+  закінчення відкриті, бо ці моделі вже далі». *Endings apart short at width 512 on that axis too:*
+  «у більшій моделі відкриті закінчення частково дублюють відмінок і за однакового поступу».
+- *P266:* method point 10 is stated for both sizes, or for the 5M model only.

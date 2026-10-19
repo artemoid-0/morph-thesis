@@ -176,6 +176,8 @@
 | `dropout_masks` | 2026-10-17T10:30:28+00:00 | device=cuda | device |
 | `dropout_masks` | 2026-10-17T13:48:56+00:00 | device=cuda | device |
 | `?` | ? | - | - |
+| `exposure_axis` | 2026-10-19T03:53:35+00:00 | widths=[128] budget=10000 reference=empty machine=second tokenizers=['bpeend_uk_17k', 'unigram_uk_17k', 'bpe_uk_4k', 'bpe_uk_8k', 'bpe_uk_32k'] against=bpe_uk_17k root=/home/neko/PycharmProjects/Morph | comparisons |
+| `exposure_axis` | 2026-10-19T03:53:37+00:00 | widths=[128] budget=10000 reference=null machine=second tokenizers=['bpeend_uk_17k', 'unigram_uk_17k', 'bpe_uk_4k', 'bpe_uk_8k', 'bpe_uk_32k'] against=bpe_uk_17k root=/home/neko/PycharmProjects/Morph | comparisons |
 | `scripts/analysis/learning_law.py` | 20261012T003054+0000 | - | - |
 | `scripts/analysis/learning_law.py` | 20261015T154512+0000 | - | - |
 | `lookahead_check` | 2026-09-22T12:27:35+00:00 | baseline=a7175857fdf6 treatment=['f97f597841fa', '67346ed11499', '56239ccfaf84'] results_dir=results | 56239ccfaf84, 67346ed11499, f97f597841fa, token_shares |
@@ -441,6 +443,8 @@
 - **device_twins**: difference = second machine (RTX 5090 Laptop) minus thesis machine (RTX 4060 Laptop), bits per byte at the best step; effects are B minus A (positive: A better)
 - **device_twins**: difference = second machine (RTX 5090 Laptop) minus thesis machine (RTX 4060 Laptop), bits per byte at the best step; effects are B minus A (positive: A better)
 - **device_twins**: difference = second machine (RTX 5090 Laptop) minus thesis machine (RTX 4060 Laptop), bits per byte at the best step; effects are B minus A (positive: A better)
+- **exposure_axis**: gain = the reference's bits per byte minus case's at the same step, paired by seed; each tuple (mean, se, seeds positive, seeds); redundancy = --against's gain minus the tokenizer's, per seed
+- **exposure_axis**: gain = the reference's bits per byte minus case's at the same step, paired by seed; each tuple (mean, se, seeds positive, seeds); redundancy = --against's gain minus the tokenizer's, per seed
 - **lookahead_check**: Continuation targets are intrinsically easier, so a moderate imbalance is not proof of leakage. The definitive test is a causal feature carrying only information available at generation time.
 - **lookahead_check**: Continuation targets are intrinsically easier, so a moderate imbalance is not proof of leakage. The definitive test is a causal feature carrying only information available at generation time.
 - **lookahead_check**: Continuation targets are intrinsically easier, so a moderate imbalance is not proof of leakage. The definitive test is a causal feature carrying only information available at generation time.
