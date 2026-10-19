@@ -4982,3 +4982,62 @@ Predictions, before any run:
   the slot's signal acts where a unit starts, and the tokenizer sets its sign. *Later tokens under
   BPE:* the point says the null helps BPE continue a word, and costs where endings are exposed at
   word starts.
+
+### 33.116 The follow-ups: by 20k the two tokenizers are level; the slot costs at word starts or helps on a word's ending, by tokenizer
+
+Both follow-ups of §33.115 ran on 18 October.
+
+**The exposure comparison at 20k** (`device_twins_20261018T193030`; the second machine; ~38M tokens,
+seeds 0–3). Case under BPE 17k at 20k ended at 1.0130, 1.0156, 1.0109 and 1.0142; its first seed
+was within 0.0003 of the thesis machine's. Against the empty slot, the better reference at 20k under
+both tokenizers, case gains:
+- under BPE 17k +0.0004, −0.0001, +0.0016, +0.0003: **+0.0005 ± 0.0004 (3/4)**;
+- under endings apart +0.0003 ± 0.0006 (2/4).
+
+Over the null under BPE 17k it gains +0.0010 ± 0.0004 (3/4), as on the thesis machine (+0.0010 ±
+0.0008). **P260 right, P261 right.** At 10k case gained 0.0016 less where endings are exposed
+(+0.0022 against +0.0038); by 20k the difference is gone, and under either tokenizer case adds about
++0.0005 over the best model without it. The redundancy is an early-training effect. The queue's
+third candidate, G-78 at 20k under the other tokenizers, ran only if the redundancy lasted, so it is
+dropped.
+
+**Where the slot's effect sits** (`loss_by_kind_20261018T192042`). The second machine's 48 models of
+the null and the empty slot under six tokenizers (~38M, 10k, seeds 0–3) were re-scored token by token
+on the thesis machine. Each re-scored within 1.5 × 10⁻⁸ of its record. In the table, the empty slot
+over the null: positive where the null's slot costs, negative where it helps.
+
+| tokenizer | in all | units' first tokens | later tokens | of which the ending's token | non-words | first tokens and non-words |
+|---|---|---|---|---|---|---|
+| endings apart | +0.0022 ± 0.0007 | +0.0011 ± 0.0003 | +0.0006 ± 0.0003 | +0.0000 | +0.0005 ± 0.0002 | 72% |
+| Unigram 17k | +0.0039 ± 0.0016 | +0.0024 ± 0.0006 | +0.0008 ± 0.0007 | +0.0004 | +0.0007 ± 0.0004 | 79% |
+| BPE 4k | −0.0037 ± 0.0014 | −0.0006 ± 0.0003 | **−0.0032 ± 0.0012** | −0.0019 ± 0.0010 | +0.0001 | 13% |
+| BPE 8k | −0.0016 ± 0.0006 | +0.0001 | **−0.0019 ± 0.0006** | −0.0011 ± 0.0005 | +0.0002 | none |
+| BPE 17k | −0.0006 ± 0.0004 | −0.0002 | −0.0006 ± 0.0002 | −0.0002 | +0.0002 | none |
+| BPE 32k | −0.0025 ± 0.0006 | −0.0011 ± 0.0003 | −0.0010 ± 0.0004 | −0.0004 | −0.0004 ± 0.0002 | 62% |
+
+Where the tokenizer exposes endings, the slot's cost sits at units' first tokens and non-words, as
+under endings apart at 20k (§33.106). Under BPE at 4k and 8k its help sits on a word's later tokens,
+half and three fifths of it on the token that holds the ending's start (50% and 60%). Under 32k it
+is spread, three fifths at first tokens and non-words. **P262 wrong** (only 32k has more than half
+there); **P263 right** (72%, 79%).
+
+**What it changes for the thesis.**
+1. **The exposure claim gains its time course.** Against the best model without the feature,
+   exposed endings make case partly redundant early in training (10k). By 20k the two tokenizers are
+   level. At full training case adds only the tagger's leak under endings apart (§33.110) and
+   nothing under BPE 17k (§33.114).
+2. **Method point 10 gains where the slot acts.** The null's slot says whether the previous unit was
+   a word. Where the tokenizer makes endings tokens of their own, that costs at units' first tokens
+   and non-words. Where BPE at a small vocabulary spreads a word over several tokens, it helps on the
+   word's later tokens, mostly its ending. The tokenizer sets the sign of the slot's effect and where
+   it acts.
+
+**The second machine's models on the thesis machine.** Every saved model and checkpoint of the second
+machine is being copied to the thesis machine, so that its records keep their models: a new run's
+next to its record, a twin's in `results/audits/device_twins_models/`. In the first copy the three
+calibration reruns of 16 October, which share the thesis machine's run ids, were taken for new runs.
+Their models overwrote the thesis machine's own (G-79). The records are intact; those three models are
+to be re-made by retraining when there is time.
+
+**Predictions** (§33.115). P260, P261 and P263 right; P262 wrong. The tally is 155 right, 10 half
+right, 89 wrong, 8 never tested and 1 withdrawn, of 263.

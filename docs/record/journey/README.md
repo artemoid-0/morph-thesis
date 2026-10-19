@@ -182,5 +182,6 @@ the tokenizer was built as it was.
   - [33.113 G-78 across tokenizers and corpus sizes: the slot costs where endings are exposed, helps under BPE — and exposure makes case partly redundant](9_ukrainian_and_learning.md#33113-g-78-across-tokenizers-and-corpus-sizes-the-slot-costs-where-endings-are-exposed-helps-under-bpe--and-exposure-makes-case-partly-redundant)
   - [33.114 The width probes at five seeds, items 7 and 8, and 131 twins](9_ukrainian_and_learning.md#33114-the-width-probes-at-five-seeds-items-7-and-8-and-131-twins)
   - [33.115 Two follow-ups: the exposure comparison at 20k, and where the null's help sits (prepared, 18 October)](9_ukrainian_and_learning.md#33115-two-follow-ups-the-exposure-comparison-at-20k-and-where-the-nulls-help-sits-prepared-18-october)
+  - [33.116 The follow-ups: by 20k the two tokenizers are level; the slot costs at word starts or helps on a word's ending, by tokenizer](9_ukrainian_and_learning.md#33116-the-follow-ups-by-20k-the-two-tokenizers-are-level-the-slot-costs-at-word-starts-or-helps-on-a-words-ending-by-tokenizer)
 - [Appendix A — Decision Record](appendices.md#appendix-a--decision-record)
 - [Appendix B — Section Mapping](appendices.md#appendix-b--section-mapping)

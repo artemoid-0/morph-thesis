@@ -225,8 +225,11 @@ the tokenizer exposes endings it is an empty slot, under BPE the same-shape null
 ~38M tokens and 10k, case gains **+0.0022 ± 0.0007 under endings apart (4/4) and +0.0018 ± 0.0012
 under Unigram 17k (3/4)**, against **+0.0030 to +0.0049 under BPE** at 4k, 8k, 17k and 32k (4/4
 each; +0.0032 ± 0.0006 at 17k). Where the tokenizer exposes endings, case adds about half as much.
-*Four seeds per tokenizer, ~38M tokens, a 10k budget, on a second machine, each comparison within
-it.* (§33.110, §33.113)
+**It is an early-training effect.** By 20k the difference is gone: against the empty slot, the better
+reference there under both tokenizers, case gains +0.0005 ± 0.0004 under BPE 17k and +0.0003 ± 0.0006
+under endings apart. At full training it adds only the tagger's leak under endings apart and nothing
+under BPE 17k (below). *Four seeds per tokenizer, ~38M tokens; a 10k budget under six tokenizers and
+20k under two, on a second machine, each comparison within it.* (§33.110, §33.113, §33.116)
 
 **Over each tokenizer's own null the order turns, and the difference grows with training.** Case's
 slot says what the null's says and pays its cost (below). So over the null it is case's own values
@@ -271,8 +274,11 @@ under BPE 17k by 0.0032 ± 0.0013 on ~1.5M tokens and 0.0015 ± 0.0005 on ~7.6M.
 BPE 17k the two are level (−0.0006 ± 0.0004 at 10k, +0.0005 ± 0.0003 at 20k), and in English too.
 Under endings apart the cost holds at every budget measured: **+0.0025 ± 0.0004** at 20k (on a
 second machine +0.0034 ± 0.0009), +0.0020 ± 0.0014 at full training (3/4; one seed +0.0060).
-There the difference sits at units' first tokens and at non-words, where the slot says whether the
-previous unit was a word, not on the endings. Case's slot says the same and pays the same cost.
+Re-scored token by token, the cost sits at units' first tokens and at non-words wherever endings are
+exposed (72% of it under endings apart, 79% under Unigram), where the slot says whether the previous
+unit was a word; the help under BPE 4k and 8k sits on a word's later tokens instead, half and three
+fifths of it on the token holding the ending, and under 32k three fifths at first tokens and
+non-words. Case's slot says the same as the null's and, under endings apart, pays the same cost.
 **What case carries is on the endings:** +0.0024 ± 0.0002 there (4/4), where the empty slot gains
 +0.0001. Net, at 20k case beats the empty slot by +0.0013 ± 0.0007 (3/4; +0.0003 on the second
 machine), a third of its +0.0038 over the null. At 10k it beats it by +0.0022 ± 0.0007 (4/4), half
@@ -280,8 +286,7 @@ its +0.0044 over the null. At full training it beats it by +0.0010 ± 0.0007 (3/
 tagger's leak: without the leak, and from the word form, case ends level with the empty slot
 (−0.0005 ± 0.0006, −0.0004 ± 0.0008), while its gain on the endings stays (+0.0021 ± 0.0001,
 4/4). *Six tokenizers and three corpus sizes at 10k, on a second machine; endings apart at three
-budgets and BPE 17k at two, on both machines. Where the null's help sits under BPE is not
-re-scored (G-78).* (§33.106, §33.109, §33.110, §33.113)
+budgets and BPE 17k at two, on both machines.* (§33.106, §33.109, §33.110, §33.113, §33.116)
 
 **Case helps by predicting endings; the exposure effect lies elsewhere.** Re-scored
 token by token, case's gain sits on the tokens that hold an inflectional ending under
@@ -474,9 +479,10 @@ meets in full.
    null's slot loses to the same slot held at zero where the tokenizer exposes endings (by 0.0022 to
    0.0039 at 10k, 0.0025 to 0.0034 at 20k), and beats it under BPE at 4k, 8k and 32k and on less
    data (by 0.0015 to 0.0037). The cost sits at word starts and non-words, and a feature with the
-   same slot pays it too. A gain over the null then overstates or understates the gain over the
-   best model without the feature, and gains compared across tokenizers over their own nulls can
-   turn a conclusion round: check against an empty slot. (§33.106, §33.113)
+   same slot pays it too; the help under a small BPE vocabulary sits on a word's later tokens, mostly
+   its ending. A gain over the null then overstates or understates the gain over the best model
+   without the feature, and gains compared across tokenizers over their own nulls can turn a
+   conclusion round: check against an empty slot. (§33.106, §33.113, §33.116)
 11. **Two GPUs run the same model alike, not the same run.** The same weights evaluate within
    2 × 10⁻⁹ on both machines, and a matrix product, a softmax and a layer norm are bitwise
    identical; with dropout off, two machines train the same run to within 2 × 10⁻⁸. But dropout's
@@ -504,9 +510,8 @@ Each withdrawal was decided by a rule recorded before its result.
 
 ## Open
 
-The research programme, [`DIRECTIONS.md`](DIRECTIONS.md), pursues:
-- where the same-shape null's help sits under BPE, and whether exposed endings keep case partly
-  redundant beyond a 10k budget against the best model without it (G-78, §33.113);
+The research programme, [`DIRECTIONS.md`](DIRECTIONS.md), has no question running; its next
+candidates are under review there.
 
 It leaves open, as limitations: whether English part of speech's deficit ever closes
 (at full training it is half the 20k budget's, at three seeds of four); and, across model sizes, the half of

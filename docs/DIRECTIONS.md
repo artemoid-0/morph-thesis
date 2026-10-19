@@ -25,7 +25,7 @@ Questions about small transformers in general are parked, however interesting.
 | D4 | morphology as a target | **answered; closed** | helps early and fades (+0.0009 ± 0.0008 at the end, 5 seeds); the model knows more part of speech, which stops helping (§33.50, §33.52) |
 | D5 | the rare and novel tail | **screened; parked** | no hidden benefit in rare tokens at full training (§33.47) |
 | D6 | the token-independent input | **parked — outside the thesis** | the confound behind "structure helps": one learned vector shared by every input helps by itself — the vector, not a mark of the window's start (G-71 closed) — hence the same-shape null (§33.49–§33.52, §33.58, §33.59) |
-| D7 | tokenization | **answered at four seeds**; holds on a second corpus and in English, there to full training on the median seed, 7/8 (§33.87, §33.88, §33.92, §33.102); the gain lasts at twice the budget, at full training on 4× the text, and is larger at twice the width; case on top still helps at full training under endings apart — half of it the word's own case, half the tagger's leak (G-77, closed) | BPE that keeps endings apart beats BPE 17k by 1.6% by itself — +0.0169 at twice the budget, +0.0254 at twice the width, where a feature's gain fades — and case adds on top, more under it the longer the training; case beats its null under all six tokenizers at every seed; the law holds across them to null BPB 1.25, after which case gains more over its own null where endings are exposed — but against the best model without the feature (an empty slot there, the null under BPE) it gains less at 10k, +0.0018 and +0.0022 against +0.0030 to +0.0049: the hypothesis holds (§33.113); Unigram's early lead is real, and fades; at 151M tokens and 50k steps the lead is +0.0165 (4/4) and case still adds +0.0030 under endings apart, half of it without the leak (the word form +0.0016, 3/4; +0.0036 over its gain under BPE 17k, 4/4); of the sentence's lead over the word form the tagger's leak is 29–43% at ~38M and all of it at full training, where context without the leak adds nothing (§33.58, §33.61–§33.81) |
+| D7 | tokenization | **answered at four seeds**; holds on a second corpus and in English, there to full training on the median seed, 7/8 (§33.87, §33.88, §33.92, §33.102); the gain lasts at twice the budget, at full training on 4× the text, and is larger at twice the width; case on top still helps at full training under endings apart — half of it the word's own case, half the tagger's leak (G-77, closed) | BPE that keeps endings apart beats BPE 17k by 1.6% by itself — +0.0169 at twice the budget, +0.0254 at twice the width, where a feature's gain fades — and case adds on top, more under it the longer the training; case beats its null under all six tokenizers at every seed; the law holds across them to null BPB 1.25, after which case gains more over its own null where endings are exposed — but against the best model without the feature (an empty slot there, the null under BPE) it gains less at 10k, +0.0018 and +0.0022 against +0.0030 to +0.0049: the hypothesis holds early in training, and by 20k the two are level (§33.113, §33.116); Unigram's early lead is real, and fades; at 151M tokens and 50k steps the lead is +0.0165 (4/4) and case still adds +0.0030 under endings apart, half of it without the leak (the word form +0.0016, 3/4; +0.0036 over its gain under BPE 17k, 4/4); of the sentence's lead over the word form the tagger's leak is 29–43% at ~38M and all of it at full training, where context without the leak adds nothing (§33.58, §33.61–§33.81) |
 | D8 | scale and architecture | **width 512 answered** at 10k and 20k, where its lead levels off at +0.0102 ± 0.0006 (4/4; §33.94, §33.102) | the tokenizer's gain in bits per byte peaks at width 256 — 1.6%, 2.6% and 1.4% at widths 128, 256 and 512 (10k), the widest one's falling along the law's axis where the others hold flat — while its grammatical gain grows, +4.3, +5.3 and +6.8 points; a fit check over widths and depths (§33.54, §33.90) |
 | D9 | a second corpus per language | **tools ready; corpora to choose** | `corpus_info.py`, then a spec (§33.53) |
 
@@ -152,9 +152,35 @@ naming (G-66).
 Rewritten 15 October (journey §33.98) in the order of the thesis's list of that day: nine
 experiments ranked by what each result changes in the text, each with the sentence it states for
 every outcome. Results committed by about 31 October reach the text; the work is admitted on
-4 November. Each item's preparation runs on the CPU while the item before it trains. **Running**
-(18 October, evening; §33.115): candidates 1 and 2 below — case under BPE 17k at 20k on the second
-machine, and the re-scoring of its null and empty-slot models; P260–P263.
+4 November. Each item's preparation runs on the CPU while the item before it trains. **Running:**
+nothing (19 October).
+
+**Answered on 18 October, evening** (§33.116, the second machine):
+- the exposure comparison at 20k: under BPE 17k and endings apart case gains alike over the best
+  model without it (+0.0005, +0.0003), so the redundancy is an early-training effect;
+- where the null's slot acts: it costs at units' first tokens and non-words where endings are
+  exposed, and helps on a word's later tokens, mostly its ending, under BPE 4k and 8k;
+- the third candidate, G-78 at 20k under the other tokenizers, is dropped: it was to run only if the
+  redundancy lasted.
+
+**Next — under review, nothing prepared** (19 October). The thesis's list of 15 October is done.
+The next candidates follow what the text still needs, and each is weighed by the sentence test
+before any preparation:
+1. **The redundancy in a wider model.** Case, the null and the empty slot at width 512 under BPE 17k
+   and endings apart, 10k, four seeds: 24 runs, ~6.4 h on the second machine, whose data is there.
+   *It holds:* "exposed endings make case partly redundant at 30M parameters too". *It does not:* the
+   claim is stated for the 5M-parameter model. A wider model learns faster per step, so the
+   comparison may need the law's axis (matched null BPB) rather than the step.
+2. **Grammatical features beyond case.** Number and gender (registered, their codes built) under the
+   six tokenizers. In agreement the tagger reads an adjective's number and gender from the next noun,
+   so each needs a leak control first, as case had (`ucaseprep`). Its data must also be sent to the
+   second machine. *They behave like case:* "exposed endings make a word's grammatical features
+   partly redundant". *They do not:* "the redundancy is case's".
+3. **A third language** (the title is not limited to two): a corpus, a tagger, an ending rule and its
+   tokenizers. Days of preparation, so it is for the defence unless the text asks.
+
+Maintenance, when there is time: G-79 (three of the thesis machine's models to re-make, ~36 min on
+it).
 
 **Answered on 18 October** (§33.113–§33.114, the second machine): the thesis's list of 15 October
 is done.
@@ -164,21 +190,6 @@ is done.
 - item 5's last part: the width probes at five seeds. §3.7's "about half" holds, with its spread.
 - item 7: under BPE 17k too, all of case's lead over its word form at full training is the leak.
 - item 8: every row of the full-training table at four seeds, none beyond 0.002 on average.
-
-**Next, by what it changes in the text** (reviewed 18 October, after the chain):
-1. **Case under BPE 17k at 20k, on the second machine** (4 runs, ~35 min there). Its empty slot and
-   null at 20k are there already, so the exposure comparison against the best model without the
-   feature runs at 20k within one machine (under endings apart there: +0.0003). *BPE 17k still gains
-   more:* exposed endings keep case partly redundant at twice the budget. *Level:* the redundancy is
-   an early-training property; by 20k case adds about as much under either tokenizer.
-2. **Where the null's help sits under BPE** (`loss_by_kind.py` on the 24 models of BPE 4k, 8k and
-   32k at 10k; minutes, on the second machine, which holds them). *At word starts and non-words:*
-   method point 10 gains its mechanism: the slot's word-boundary signal helps where BPE leaves
-   boundaries implicit and costs where endings are tokens. *Elsewhere:* the point says the help's
-   source is open.
-3. **G-78 at 20k across tokenizers** (the null, case and the empty slot under Unigram 17k and BPE 4k,
-   8k and 32k, four seeds; 48 runs, ~6.5 h). Only if candidate 1 finds the redundancy still there at
-   20k. If it does not, every outcome here gives the same sentence, and the candidate is dropped.
 
 **Where runs go.** The second machine is equivalent to the thesis machine up to dropout's draw
 (§33.109), 2.8 times faster, and free at night and at weekends. New experiments run there, each

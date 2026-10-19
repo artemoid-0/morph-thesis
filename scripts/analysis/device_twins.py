@@ -49,6 +49,8 @@ EFFECTS = [
     ('case over the empty slot, endings apart, 20k', f'bpe_ucase-LEARN-CAUSAL_{UKE}', f'bpe_mconst-LEARN-CAUSAL-OFF0_{UKE}', 20000),
     ('case off from the start over the null, endings apart, 20k', f'bpe_ucase-LEARN-CAUSAL-OFF0_{UKE}', f'bpe_mconst-LEARN-CAUSAL_{UKE}', 20000),
     ('the empty slot over the null, BPE 17k, 20k', f'bpe_mconst-LEARN-CAUSAL-OFF0_{UKB}', f'bpe_mconst-LEARN-CAUSAL_{UKB}', 20000),
+    ('case over the empty slot, BPE 17k, 20k', f'bpe_ucase-LEARN-CAUSAL_{UKB}', f'bpe_mconst-LEARN-CAUSAL-OFF0_{UKB}', 20000),
+    ('case over the null, BPE 17k, 20k', f'bpe_ucase-LEARN-CAUSAL_{UKB}', f'bpe_mconst-LEARN-CAUSAL_{UKB}', 20000),
     ('case over the null, endings apart, 10k', f'bpe_ucase-LEARN-CAUSAL_{UKE10}', f'bpe_mconst-LEARN-CAUSAL_{UKE10}', 10000),
     ('the empty slot over the null, endings apart, 10k', f'bpe_mconst-LEARN-CAUSAL-OFF0_{UKE10}', f'bpe_mconst-LEARN-CAUSAL_{UKE10}', 10000),
     ('case over the empty slot, endings apart, 10k', f'bpe_ucase-LEARN-CAUSAL_{UKE10}', f'bpe_mconst-LEARN-CAUSAL-OFF0_{UKE10}', 10000),

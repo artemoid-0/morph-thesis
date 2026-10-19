@@ -172,6 +172,7 @@
 | `device_twins` | 2026-10-17T13:58:07+00:00 | root=/home/neko/PycharmProjects/Morph | effects, groups, overall, pairs, repeats |
 | `device_twins` | 2026-10-18T03:30:29+00:00 | root=/home/neko/PycharmProjects/Morph | effects, groups, overall, pairs, repeats |
 | `device_twins` | 2026-10-18T18:25:50+00:00 | root=/home/neko/PycharmProjects/Morph | effects, groups, overall, pairs, repeats |
+| `device_twins` | 2026-10-18T19:30:30+00:00 | root=/home/neko/PycharmProjects/Morph | effects, groups, overall, pairs, repeats |
 | `dropout_masks` | 2026-10-17T10:30:28+00:00 | device=cuda | device |
 | `dropout_masks` | 2026-10-17T13:48:56+00:00 | device=cuda | device |
 | `?` | ? | - | - |
@@ -195,6 +196,7 @@
 | `loss_by_kind` | 2026-10-10T17:09:15+00:00 | roots=['/home/neko/PycharmProjects/Morph/results'] results_dir=/home/neko/PycharmProjects/Morph/results corpus=ukwiki fraction=0.2 tokenizers=['bpeend_uk_17k'] reference=bpeend_uk_17k null=mconst facts=['ucase', 'ucaseprep', 'ucaselex'] tol=1e-05 previous=True previous_facts=['pos', 'ucase', 'ucaselex'] audit_dir=/home/neko/PycharmProjects/Morph/results/audits | against_reference, ending_rule, rescore_checks, tokenizers |
 | `loss_by_kind` | 2026-10-17T08:19:01+00:00 | roots=['/home/neko/PycharmProjects/Morph/results'] results_dir=/home/neko/PycharmProjects/Morph/results corpus=ukwiki fraction=0.05 budget=_st20k tokenizers=['bpeend_uk_17k'] reference=bpeend_uk_17k null=mconst facts=['mconst@OFF0', 'ucase'] tol=1e-05 previous_facts=['pos', 'ucase', 'ucaselex'] audit_dir=/home/neko/PycharmProjects/Morph/results/audits | against_reference, ending_rule, rescore_checks, tokenizers |
 | `loss_by_kind` | 2026-10-17T14:27:34+00:00 | roots=['/home/neko/PycharmProjects/Morph/results'] results_dir=/home/neko/PycharmProjects/Morph/results corpus=ukwiki fraction=0.2 tokenizers=['bpeend_uk_17k'] reference=bpeend_uk_17k null=mconst facts=['mconst@OFF0', 'ucase'] tol=1e-05 previous_facts=['pos', 'ucase', 'ucaselex'] audit_dir=/home/neko/PycharmProjects/Morph/results/audits | against_reference, ending_rule, rescore_checks, tokenizers |
+| `loss_by_kind` | 2026-10-18T19:20:42+00:00 | roots=['scratch/second_root_1018'] results_dir=scratch/second_root_1018 corpus=ukwiki fraction=0.05 budget=_st10k tokenizers=['bpe_uk_4k', 'bpe_uk_8k', 'bpe_uk_32k', 'bpe_uk_17k', 'unigram_uk_17k', 'bpeend_uk_17k'] reference=bpe_uk_17k null=mconst facts=['mconst@OFF0'] tol=1e-05 previous_facts=['pos', 'ucase', 'ucaselex'] audit_dir=/home/neko/PycharmProjects/Morph/results/audits | against_reference, ending_rule, rescore_checks, tokenizers |
 | `morph_causality_check` | 2026-09-26T11:59:29+00:00 | sentences=30 split=validation max_words=40 | by_words_after, mfeat_changes, summary |
 | `morph_causality_check` | 2026-09-26T12:04:01+00:00 | sentences=3000 split=validation max_words=40 | by_words_after, mfeat_changes, summary |
 | `morph_causality_check` | 2026-09-28T22:47:44+00:00 | sentences=3000 split=validation max_words=40 spacy_model=uk_core_news_sm corpus=ukwiki corpus_holdout=2000 | by_words_after, mfeat_changes, summary |
@@ -429,6 +431,7 @@
 - **derive_lexical_codes**: Unseen words get the none class, never their contextual code, which would readmit the right-context information — except under --transform const, where every word gets the one class (G-73).
 - **derive_lexical_codes**: Unseen words get the none class, never their contextual code, which would readmit the right-context information — except under --transform const, where every word gets the one class (G-73).
 - **derive_lexical_codes**: Unseen words get the none class, never their contextual code, which would readmit the right-context information — except under --transform const, where every word gets the one class (G-73).
+- **device_twins**: difference = second machine (RTX 5090 Laptop) minus thesis machine (RTX 4060 Laptop), bits per byte at the best step; effects are B minus A (positive: A better)
 - **device_twins**: difference = second machine (RTX 5090 Laptop) minus thesis machine (RTX 4060 Laptop), bits per byte at the best step; effects are B minus A (positive: A better)
 - **device_twins**: difference = second machine (RTX 5090 Laptop) minus thesis machine (RTX 4060 Laptop), bits per byte at the best step; effects are B minus A (positive: A better)
 - **device_twins**: difference = second machine (RTX 5090 Laptop) minus thesis machine (RTX 4060 Laptop), bits per byte at the best step; effects are B minus A (positive: A better)
