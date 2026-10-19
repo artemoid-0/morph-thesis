@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 exposure_axis.py — does case gain less where the tokenizer exposes endings, at the same point of
-learning? (journey §33.113, §33.116, §33.117)
+learning? (journey §33.113, §33.116–§33.118)
 
 Against the best model without the feature, case at ~38M tokens and 10k steps gains less under
 endings apart than under BPE 17k (+0.0022 against +0.0038 at width 128), and by 20k the two are
@@ -13,10 +13,13 @@ machine (FINDINGS, method point 11).
 For each width and tokenizer, case's gain over the reference (the empty slot, or with --reference
 null the same-shape null) at every evaluation, paired by seed, each pair to the earlier of its two
 best steps; per seed it is interpolated at common reference levels, and the redundancy at a level
-is BPE 17k's gain minus endings apart's, seed by seed. The end of the budget is reported too.
+is BPE 17k's gain minus endings apart's, seed by seed. The end of the budget is reported too. With
+--feature empty the gain read is the empty slot's over the null instead (method point 10 along
+training; journey §33.118).
 
     python scripts/analysis/exposure_axis.py --widths 128 512
     python scripts/analysis/exposure_axis.py --widths 128 --reference null --levels 1.15 1.10 1.05
+    python scripts/analysis/exposure_axis.py --widths 128 512 --feature empty --reference null
 
 Records: the second machine's by default (its twins are read from results/audits/device_*/), as
 device_twins.py reads them. Written to results/audits/exposure_axis_<time>.json.
@@ -92,6 +95,8 @@ def main():
     ap.add_argument('--widths', nargs='+', type=int, default=[128, 512])
     ap.add_argument('--budget', type=int, default=10000)
     ap.add_argument('--reference', choices=('empty', 'null'), default='empty')
+    ap.add_argument('--feature', choices=('case', 'empty'), default='case',
+                    help="whose gain is read: case's, or the empty slot's (over the null only)")
     ap.add_argument('--machine', choices=('second', 'thesis'), default='second')
     ap.add_argument('--levels', nargs='*', type=float, default=None,
                     help="reference BPB levels (default: six across each width's common range)")
@@ -100,6 +105,8 @@ def main():
     ap.add_argument('--against', default='bpe_uk_17k', help='the tokenizer that hides endings')
     ap.add_argument('--root', default=ROOT)
     a = ap.parse_args()
+    if a.feature == 'empty' and a.reference != 'null':
+        ap.error('--feature empty is read over the null: add --reference null')
     from device_twins import load
     from morphlm.record import AuditRecord
     recs = load(a.root)
@@ -111,9 +118,11 @@ def main():
             cur = {}
             for t in pair:
                 ref = label('mconst', t, a.budget, w, off=(a.reference == 'empty'))
-                cur[t] = per_seed_curves(recs, a.machine, ref, label('ucase', t, a.budget, w), a.budget)
+                feat = label('mconst', t, a.budget, w, off=True) if a.feature == 'empty' else label('ucase', t, a.budget, w)
+                cur[t] = per_seed_curves(recs, a.machine, ref, feat, a.budget)
             seeds = sorted(set(cur[a.against]) & set(cur[tok]))
-            print(f'\n  width {w}, {a.budget // 1000}k, case over the {"empty slot" if a.reference == "empty" else "null"}: '
+            what = 'the empty slot' if a.feature == 'empty' else 'case'
+            print(f'\n  width {w}, {a.budget // 1000}k, {what} over the {"empty slot" if a.reference == "empty" else "null"}: '
                   f'{NAMES.get(a.against, a.against)} against {NAMES.get(tok, tok)}, the {a.machine} machine, seeds {seeds}')
             if not seeds:
                 print('    no seed has both tokenizers — skipped')
@@ -138,7 +147,7 @@ def main():
                                  'runs': {t: {str(s): cur[t][s]['runs'] for s in seeds} for t in pair},
                                  'curves': {t: {str(s): cur[t][s]['points'] for s in seeds} for t in pair}}
     rec.add('comparisons', out)
-    rec.note('gain = the reference\'s bits per byte minus case\'s at the same step, paired by seed; '
+    rec.note(f'gain = the reference\'s bits per byte minus {"the empty slot" if a.feature == "empty" else "case"}\'s at the same step, paired by seed; '
              'each tuple (mean, se, seeds positive, seeds); redundancy = --against\'s gain minus the tokenizer\'s, per seed')
     rec.write()
 

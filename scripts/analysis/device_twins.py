@@ -87,6 +87,17 @@ EFFECTS += [
     ('part of speech from the word form over the null, English, 50k', 'bpe_poslex-LEARN-CAUSAL_bpe_17k',
      'bpe_mconst-LEARN-CAUSAL_bpe_17k', 50000),
 ]
+# item 4 (journey §33.117–§33.118): the same three effects at width 512, ~38M, 10k, under both tokenizers
+for _name, _s in (('BPE 17k', UKB10), ('endings apart', UKE10)):
+    for _what, _a, _b in (('the empty slot over the null', 'mconst-LEARN-CAUSAL-OFF0', 'mconst-LEARN-CAUSAL'),
+                          ('case over the empty slot', 'ucase-LEARN-CAUSAL', 'mconst-LEARN-CAUSAL-OFF0'),
+                          ('case over the null', 'ucase-LEARN-CAUSAL', 'mconst-LEARN-CAUSAL')):
+        EFFECTS.append((f'{_what}, {_name}, width 512, 10k', f'bpe_{_a}_{_s}_w512', f'bpe_{_b}_{_s}_w512', 10000))
+# the tokenizer's gain over each tokenizer's null and over its empty slot, at widths 128 and 512 (§33.118)
+for _w in ('', '_w512'):
+    for _ref, _a in (('the nulls', 'mconst-LEARN-CAUSAL'), ('the empty slots', 'mconst-LEARN-CAUSAL-OFF0')):
+        EFFECTS.append((f'endings apart over BPE 17k over {_ref}, Ukrainian, width {512 if _w else 128}, 10k',
+                        f'bpe_{_a}_{UKE10}{_w}', f'bpe_{_a}_{UKB10}{_w}', 10000))
 
 
 def machine(r):

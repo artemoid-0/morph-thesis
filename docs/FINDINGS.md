@@ -1,4 +1,4 @@
-# What We Know — 18 October 2026
+# What We Know — 19 October 2026
 
 > **Kind:** claims — what the thesis claims now, each with its numbers, firmness and the journey
 > sections behind it. **Authoritative for:** the claims. Rewritten in place when a result changes one.
@@ -57,7 +57,11 @@ falling as the model learns, as a feature's gain does: below width 256's from 1.
 width 128's level near 0.98 (+0.018), +0.014 at 0.92, while the smaller widths' leads hold
 flat. At 20k it levels off from about step 7,500 at every seed: **+0.0102 ± 0.0006 (1.25%,
 4/4)**, smaller than at widths 128 and 256 but lasting, where a feature's gain falls to
-nothing (§33.94, §33.96, §33.100, §33.102). Unigram, which cuts
+nothing (§33.94, §33.96, §33.100, §33.102). These gains are between the two tokenizers' nulls. In
+the 5M model the null costs endings apart about 0.002 (below), so its figure at 10k is conservative:
+between the empty slots the gain is +0.0203 ± 0.0013, against +0.0175 ± 0.0015 between the nulls on
+a second machine. At width 512 the two references agree (+0.0142, +0.0141), and its gain is the
+smaller over either (§33.118). Unigram, which cuts
 words differently and into even more tokens, leads early, loses the lead by step 3,000
 and gains nothing by the end (−0.0005 ± 0.0004): where the cuts fall matters, not how
 many there are. Every tokenizer's validation stream decodes to the same text, byte for
@@ -219,28 +223,35 @@ fifths. Case beats its null under each of six tokenizers (BPE at 4k, 8k, 17k and
 32k, Unigram at 17k, endings apart; +0.0029 to +0.0054, every seed), and leads
 early under each (+0.0045 to +0.0090 at step 2,000).
 
-**At a fixed budget, adding case gains less where the tokenizer exposes endings; at the same
-point of learning, only under Unigram.** That was the hypothesis behind the comparison: case should help where the
-tokenizer hides endings. The best model without the feature differs by tokenizer (below): where
-the tokenizer exposes endings it is an empty slot, under BPE the same-shape null. Against it, at
+**Where the tokenizer exposes endings, adding case gains less for a stretch of training, in models
+of 5M and 30M parameters; late in training, only under Unigram.** That was the hypothesis behind the
+comparison: case should help where the tokenizer hides endings. In the 5M model the best model
+without the feature differs by tokenizer (below): where the tokenizer exposes endings it is an empty
+slot, under BPE the same-shape null. Against it, at
 ~38M tokens and 10k, case gains **+0.0022 ± 0.0007 under endings apart (4/4) and +0.0018 ± 0.0012
 under Unigram 17k (3/4)**, against **+0.0030 to +0.0049 under BPE** at 4k, 8k, 17k and 32k (4/4
 each; +0.0032 ± 0.0006 at 17k). Where the tokenizer exposes endings, case adds about half as much.
 **It is an early-training effect.** By 20k the difference is gone: against the empty slot, the better
 reference there under both tokenizers, case gains +0.0005 ± 0.0004 under BPE 17k and +0.0003 ± 0.0006
 under endings apart. At full training it adds only the tagger's leak under endings apart and nothing
-under BPE 17k (below). **Read at the same point of learning, the redundancy narrows.** That is the
-law's axis: each tokenizer's gain at its reference's bits per byte along training. Endings apart
-learns faster, and its models are further along at a given step. Late in the budget its gain matches
-BPE 17k's: +0.0002 ± 0.0011 less at reference BPB 1.09, −0.0001 at 1.18. Its fixed-budget shortfall
-is that head start, as the law has a feature's gain fall while the model learns. Unigram learns no
-faster than BPE 17k, and its shortfall stays: +0.0020 ± 0.0007 (3/4) and +0.0016 ± 0.0003 (4/4) less
-there. Earlier, at reference BPB 1.37–1.57, both exposing tokenizers gain more than BPE 17k. *Four
-seeds per tokenizer, ~38M tokens; a 10k budget under six tokenizers and 20k under two, on a second
-machine, each comparison within it; the law's axis at width 128, width 512 running.* (§33.110,
-§33.113, §33.116, §33.117)
+under BPE 17k (below). **Read at the same point of learning, the redundancy is a middle stretch.**
+That is the law's axis: each tokenizer's gain at its reference's bits per byte along training.
+Endings apart learns faster, and its models are further along at a given step. Early, at reference
+BPB 1.37–1.57, both exposing tokenizers gain more than BPE 17k. Endings apart then gains less for a
+stretch (+0.0017 ± 0.0010 less at 1.27, 3/4), and late in the budget its gain matches BPE 17k's:
++0.0002 ± 0.0011 less at 1.09. Its fixed-budget shortfall is that head start, as the law has a
+feature's gain fall while the model learns. **A model of 30M parameters (width 512) shows the same
+order.** Endings apart gains more early (by 0.0037 ± 0.0001 at 1.35), less in the middle (+0.0033 ±
+0.0003 less at 1.18, 4/4), and as much from 1.09 on (+0.0001 ± 0.0004 less at 0.88). A 10k budget
+takes that model past the stretch, so at a fixed budget too the two end level: case gains **+0.0022 ±
+0.0004 under BPE 17k and +0.0024 ± 0.0003 under endings apart** (4/4 each). Unigram learns no faster
+than BPE 17k, and in the 5M model its shortfall stays at the same point of learning: +0.0020 ± 0.0007
+(3/4) and +0.0016 ± 0.0003 (4/4) less at 1.09 and 1.18. *Four seeds per tokenizer, ~38M tokens; in
+the 5M model a 10k budget under six tokenizers and 20k under two, at width 512 a 10k budget under
+two; on a second machine, each comparison within it.* (§33.110, §33.113, §33.116–§33.118)
 
-**Over each tokenizer's own null the order turns, and the difference grows with training.** Case's
+**Over each tokenizer's own null the order turns in the 5M model, and the difference grows with
+training.** Case's
 slot says what the null's says and pays its cost (below). So over the null it is case's own values
 that are compared, and they gain more where endings are exposed. Paired by seed from identical
 initial weights, case gains more under Unigram 17k, which exposes 43% of endings, than under BPE
@@ -268,12 +279,14 @@ ending, a token of its own. With prepositions read from their form case still be
 0.0009 (3/4), which is **+0.0036 ± 0.0010 (4/4)** more than the word form gains under BPE 17k,
 where it ends below its null. The other half is the leak (+0.0015 ± 0.0001, 4/4). But under
 endings apart the null costs about 0.002 at every budget (below): over the empty slot case keeps
-+0.0010 at full training, about the leak, and without the leak it is level. *Four seeds each; the
-gains without the leak at three seeds of four; ~38M tokens at 10k and 20k.* (§33.58, §33.65,
-§33.68, §33.76, §33.81, §33.102, §33.110)
++0.0010 at full training, about the leak, and without the leak it is level. In the 30M model, where
+the null costs nothing (below), the order does not turn: over the null too the two tokenizers end
+level, +0.0020 ± 0.0002 under BPE 17k and +0.0022 ± 0.0003 under endings apart (4/4 each). *Four
+seeds each; the gains without the leak at three seeds of four; ~38M tokens at 10k and 20k.* (§33.58,
+§33.65, §33.68, §33.76, §33.81, §33.102, §33.110, §33.118)
 
-**The same-shape null is not neutral: its slot costs where endings are exposed and helps under BPE;
-what case carries sits on the endings.** The same-shape null is not always the best model without
+**In the 5M model the same-shape null is not neutral: its slot costs where endings are exposed and
+helps under BPE; what case carries sits on the endings.** The same-shape null is not always the best model without
 a feature. Hold its 8 dims at zero — the null switched off from step 0, from identical initial
 weights — and compare. At ~38M tokens and 10k the empty slot ends better than the null under the
 two tokenizers that expose endings: **+0.0022 ± 0.0007** under endings apart
@@ -294,8 +307,14 @@ machine), a third of its +0.0038 over the null. At 10k it beats it by +0.0022 ±
 its +0.0044 over the null. At full training it beats it by +0.0010 ± 0.0007 (3/4), about the
 tagger's leak: without the leak, and from the word form, case ends level with the empty slot
 (−0.0005 ± 0.0006, −0.0004 ± 0.0008), while its gain on the endings stays (+0.0021 ± 0.0001,
-4/4). *Six tokenizers and three corpus sizes at 10k, on a second machine; endings apart at three
-budgets and BPE 17k at two, on both machines.* (§33.106, §33.109, §33.110, §33.113, §33.116)
+4/4). **In a model of 30M parameters the null costs nothing.** At width 512 and 10k the empty slot
+ends level with it under both tokenizers: −0.0002 ± 0.0001 under endings apart (1/4), −0.0002 ±
+0.0005 under BPE 17k. Along training the slot helps there, as it does early in the 5M model, and the
+help fades. At the null BPB where the 5M model's slot costs under endings apart (+0.0017 at 1.15,
++0.0021 at 1.10), the 30M model's still helps (−0.0015, −0.0012; 0/4 each): the cost belongs to the
+small model, not to a stage of learning. *Six tokenizers and three corpus sizes at 10k, on a second
+machine; endings apart at three budgets and BPE 17k at two, on both machines; width 512 under both
+at 10k, on the second machine.* (§33.106, §33.109, §33.110, §33.113, §33.116, §33.118)
 
 **Case helps by predicting endings; the exposure effect lies elsewhere.** Re-scored
 token by token, case's gain sits on the tokens that hold an inflectional ending under
@@ -484,24 +503,28 @@ meets in full.
    a field is added; a quarantine rule written for one generation of runs misfired
    on the next; tests left out of a hand-kept list never ran. Each was caught
    before it changed a number. (§33.39, §33.43–§33.45, §33.48)
-10. **A same-shape null is not neutral, and its sign depends on the tokenizer.** In Ukrainian the
-   null's slot loses to the same slot held at zero where the tokenizer exposes endings (by 0.0022 to
+10. **A same-shape null is not neutral, and its sign depends on the tokenizer and the model's size.**
+   In the 5M Ukrainian model the null's slot loses to the same slot held at zero where the tokenizer
+   exposes endings (by 0.0022 to
    0.0039 at 10k, 0.0025 to 0.0034 at 20k), and beats it under BPE at 4k, 8k and 32k and on less
    data (by 0.0015 to 0.0037). The cost sits at word starts and non-words, and a feature with the
    same slot pays it too; the help under a small BPE vocabulary sits on a word's later tokens, mostly
-   its ending. A gain over the null then overstates or understates the gain over the best model
-   without the feature, and gains compared across tokenizers over their own nulls can turn a
-   conclusion round: check against an empty slot. (§33.106, §33.113, §33.116)
+   its ending. In a model of 30M parameters the two end level under endings apart and BPE 17k. A
+   gain over the null then overstates or understates the gain over the best model without the
+   feature, the tokenizer's own gain included, and gains compared across tokenizers over their own
+   nulls can turn a conclusion round: check against an empty slot, at each model size. (§33.106,
+   §33.113, §33.116, §33.118)
 11. **Two GPUs run the same model alike, not the same run.** The same weights evaluate within
    2 × 10⁻⁹ on both machines, and a matrix product, a softmax and a layer norm are bitwise
    identical; with dropout off, two machines train the same run to within 2 × 10⁻⁸. But dropout's
    masks are drawn on the GPU, differently by kernel layout. A run repeated on the other machine
-   differs like a dropout draw: −0.0001 ± 0.0001 over 131 pairs, with no consistent sign (65 above,
-   66 below), the largest difference growing with training (0.0031 at 10k, 0.0044 at 20k, 0.0063 at
-   50k). An effect measured within each machine agrees between them (case over the null under
-   eight conditions at 10k, within 0.0011; at 20k +0.0038 and +0.0037); a single pair at full
-   training does not. Every comparison is made within one machine. (§33.106, §33.107, §33.109,
-   §33.114)
+   differs like a dropout draw: −0.0001 ± 0.0001 over 143 pairs, with no consistent sign (71 above,
+   72 below), the largest difference growing with training (0.0034 at 10k, 0.0044 at 20k, 0.0063 at
+   50k); at width 512 a repeated run differs from its original about as much as one seed's run from
+   another's. An effect measured within each machine agrees between them (case over the null under
+   eight conditions at 10k, within 0.0011; at 20k +0.0038 and +0.0037; the tokenizer's gain at width
+   512, +0.0125 ± 0.0009 and +0.0141 ± 0.0016); a single pair at full training does not. Every
+   comparison is made within one machine. (§33.106, §33.107, §33.109, §33.114, §33.118)
 
 ## Withdrawn along the way
 

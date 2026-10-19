@@ -6,7 +6,7 @@ Each prediction was recorded in `docs/record/journey/README.md` **before** its r
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 155 right, 10 half right, 89 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 3 pending — of 266. The wrong ones carried
+**Tally:** 157 right, 11 half right, 89 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn — of 266. The wrong ones carried
 the information: the null's gain (P18), the shuffled control (P15), the
 leak's absence (P11), the training-budget reframing (P61), the tokenizer
 hypothesis (P119, P120), Unigram's early lead (P130), the wider model's larger
@@ -278,6 +278,6 @@ over the word form's (P148–P150), and how much of it the tagger's leak is (P16
 | P261 | Case over the null under BPE 17k at 20k on the second machine is within 0.001 of the thesis machine's (+0.0010) | right — +0.0010 and +0.0010 | §33.115, §33.116 |
 | P262 | Under BPE 4k, 8k and 32k more than half of the null's advantage over the empty slot sits on units' first tokens and non-words | wrong — 13% (4k), none (8k), 62% (32k): under 4k and 8k the help sits on later tokens | §33.115, §33.116 |
 | P263 | Under endings apart and Unigram 17k at 10k more than half of the empty slot's advantage over the null sits on units' first tokens and non-words | right — 72% and 79% | §33.115, §33.116 |
-| P264 | At width 512, at the lowest common reference BPB, case's gain over the empty slot under endings apart is within 0.001 of BPE 17k's (on the law's axis) | pending | §33.117 |
-| P265 | At the end of the 10k budget at width 512, case's gains over the empty slot under the two tokenizers differ by less than 0.001 | pending | §33.117 |
-| P266 | At width 512 and 10k the empty slot beats the null by more than 0.001 under endings apart and is within 0.001 of it under BPE 17k | pending | §33.117 |
+| P264 | At width 512, at the lowest common reference BPB, case's gain over the empty slot under endings apart is within 0.001 of BPE 17k's (on the law's axis) | right — +0.0001 ± 0.0004 at 0.88 | §33.117, §33.118 |
+| P265 | At the end of the 10k budget at width 512, case's gains over the empty slot under the two tokenizers differ by less than 0.001 | right — +0.0022 against +0.0024 (−0.0001 ± 0.0003) | §33.117, §33.118 |
+| P266 | At width 512 and 10k the empty slot beats the null by more than 0.001 under endings apart and is within 0.001 of it under BPE 17k | half right — within under BPE 17k (−0.0002); under endings apart level too (−0.0002 ± 0.0001): the null's cost is the 5M model's | §33.117, §33.118 |

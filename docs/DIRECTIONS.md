@@ -2,8 +2,8 @@
 
 > **Kind:** claims — the current plan and queue; rewritten as they change.
 > **Authoritative for:** what is investigated next, why, and in what order.
-> Updated 17 October 2026: the night of 16 October answered items 1, 4a, 4b and 6 (journey §33.102); twins and
-> the empty slot prepared for the second machine, with fiction again (§33.103).
+> Updated 19 October 2026: item 4 of the text's list of that day answered on the second machine (journey
+> §33.118); items 1–3 of the queue wait for hours.
 
 The thesis stands on what is established ([`FINDINGS.md`](FINDINGS.md)). The
 programme began on 2 October from its one positive regularity — *a feature helps
@@ -25,8 +25,8 @@ Questions about small transformers in general are parked, however interesting.
 | D4 | morphology as a target | **answered; closed** | helps early and fades (+0.0009 ± 0.0008 at the end, 5 seeds); the model knows more part of speech, which stops helping (§33.50, §33.52) |
 | D5 | the rare and novel tail | **screened; parked** | no hidden benefit in rare tokens at full training (§33.47) |
 | D6 | the token-independent input | **parked — outside the thesis** | the confound behind "structure helps": one learned vector shared by every input helps by itself — the vector, not a mark of the window's start (G-71 closed) — hence the same-shape null (§33.49–§33.52, §33.58, §33.59) |
-| D7 | tokenization | **answered at four seeds**; holds on a second corpus and in English, there to full training on the median seed, 7/8 (§33.87, §33.88, §33.92, §33.102); the gain lasts at twice the budget, at full training on 4× the text, and is larger at twice the width; case on top still helps at full training under endings apart — half of it the word's own case, half the tagger's leak (G-77, closed) | BPE that keeps endings apart beats BPE 17k by 1.6% by itself — +0.0169 at twice the budget, +0.0254 at twice the width, where a feature's gain fades — and case adds on top, more under it the longer the training; case beats its null under all six tokenizers at every seed; the law holds across them to null BPB 1.25, after which case gains more over its own null where endings are exposed — but against the best model without the feature (an empty slot there, the null under BPE) it gains less at 10k, +0.0018 and +0.0022 against +0.0030 to +0.0049: the hypothesis holds early in training, and by 20k the two are level (§33.113, §33.116); Unigram's early lead is real, and fades; at 151M tokens and 50k steps the lead is +0.0165 (4/4) and case still adds +0.0030 under endings apart, half of it without the leak (the word form +0.0016, 3/4; +0.0036 over its gain under BPE 17k, 4/4); of the sentence's lead over the word form the tagger's leak is 29–43% at ~38M and all of it at full training, where context without the leak adds nothing (§33.58, §33.61–§33.81) |
-| D8 | scale and architecture | **width 512 answered** at 10k and 20k, where its lead levels off at +0.0102 ± 0.0006 (4/4; §33.94, §33.102) | the tokenizer's gain in bits per byte peaks at width 256 — 1.6%, 2.6% and 1.4% at widths 128, 256 and 512 (10k), the widest one's falling along the law's axis where the others hold flat — while its grammatical gain grows, +4.3, +5.3 and +6.8 points; a fit check over widths and depths (§33.54, §33.90) |
+| D7 | tokenization | **answered at four seeds**; holds on a second corpus and in English, there to full training on the median seed, 7/8 (§33.87, §33.88, §33.92, §33.102); the gain lasts at twice the budget, at full training on 4× the text, and is larger at twice the width; case on top still helps at full training under endings apart — half of it the word's own case, half the tagger's leak (G-77, closed) | BPE that keeps endings apart beats BPE 17k by 1.6% by itself — +0.0169 at twice the budget, +0.0254 at twice the width, where a feature's gain fades — and case adds on top, more under it the longer the training; case beats its null under all six tokenizers at every seed; the law holds across them to null BPB 1.25, after which case gains more over its own null where endings are exposed — but against the best model without the feature (an empty slot there, the null under BPE) it gains less at 10k, +0.0018 and +0.0022 against +0.0030 to +0.0049: the hypothesis holds early in training, and by 20k the two are level (§33.113, §33.116); at width 512 they end level at 10k, less under endings apart only in a middle stretch of training, and the null costs nothing there (§33.118); Unigram's early lead is real, and fades; at 151M tokens and 50k steps the lead is +0.0165 (4/4) and case still adds +0.0030 under endings apart, half of it without the leak (the word form +0.0016, 3/4; +0.0036 over its gain under BPE 17k, 4/4); of the sentence's lead over the word form the tagger's leak is 29–43% at ~38M and all of it at full training, where context without the leak adds nothing (§33.58, §33.61–§33.81) |
+| D8 | scale and architecture | **width 512 answered** at 10k and 20k, where its lead levels off at +0.0102 ± 0.0006 (4/4; §33.94, §33.102); case there gains alike under both tokenizers, and the null costs nothing (§33.118) | the tokenizer's gain in bits per byte peaks at width 256 — 1.6%, 2.6% and 1.4% at widths 128, 256 and 512 (10k), the widest one's falling along the law's axis where the others hold flat — while its grammatical gain grows, +4.3, +5.3 and +6.8 points; a fit check over widths and depths (§33.54, §33.90) |
 | D9 | a second corpus per language | **tools ready; corpora to choose** | `corpus_info.py`, then a spec (§33.53) |
 
 ## D3 — Is the reliance deficit permanent?
@@ -98,7 +98,10 @@ the feature it gains less, as the hypothesis above said (§33.113).
 - **Where the wider model's lead settles: at +0.022** (§33.86) — width 256, 20k, flat from
   step 7,500; 2.4% against width 128's 1.7%.
 - **BPE 32k at four seeds** (§33.81): case +0.0029 ± 0.0002 (4/4); nothing moved (P140 right).
-- **Case in the wider model** (queue 4).
+- **Case in the wider model: answered** (§33.118). At 30M parameters and 10k case gains alike under
+  BPE 17k and endings apart (+0.0022, +0.0024 over the empty slot, 4/4 each). On the law's axis it
+  gains less under endings apart only in a middle stretch, as at width 128. The null costs nothing
+  there.
 - **Answered:** the tokenizer's gain lasts at full training on 4× the text (§33.76); why
   exposure helps case (§33.70); what the sentence's case adds over the form's — the leak at
   prepositions 29–43% in trained models, about half the rest the words the form never
@@ -155,10 +158,13 @@ The list of 15 October (nine items) is done. Results committed by about 31 Octob
 the work is admitted on 4 November. Each item's preparation runs on the CPU while the item before it
 trains.
 
-**Running** (19 October, the second machine; §33.117): item 4 below, the exposure comparison at
-width 512, 24 runs, ~6.4 h; P264–P266.
+**Running:** nothing.
 
-**Answered on 19 October** (§33.117):
+**Answered on 19 October** (§33.117, §33.118):
+- item 4, the exposure comparison at width 512: at 10k case gains alike under both tokenizers
+  (+0.0022, +0.0024); on the law's axis less under endings apart only in a middle stretch, as at width
+  128. The null costs nothing there, so method point 10 is the 5M model's. P264 and P265 right, P266
+  half right;
 - item 5, BLiMP's agreement at eight seeds: subject–verb and anaphor agreement better at six seeds of
   eight, determiner–noun agreement at four;
 - the exposure comparison on the law's axis, at width 128: at the same point of learning endings
@@ -182,7 +188,7 @@ costs from the recorded timings, `scripts/ops/run_times.py`):
    - **First:** a fit check on the second machine for memory and speed (`scripts/ops/fit_check.py`,
      minutes).
    - **Ready:** the data are on the second machine, and no twins are needed (no width-1024 run
-     exists).
+     exists). The nulls suffice as references: at width 512 the null costs nothing (§33.118).
    - **Fallback** if it does not fit the hours or the date: width 512 at full training (151M, 50k),
      both nulls, four seeds: 8 runs of ~80 min, **~10.7 h**. BPE 17k's 151M stream is on the second
      machine; endings apart's is to be checked or sent.
@@ -202,15 +208,18 @@ costs from the recorded timings, `scripts/ops/run_times.py`):
    already on the second machine.
    - WikiText-103 then repeats 6.8 times (3.4 at 50k). If the null's validation curve stops falling,
      the fallback is seeds 4–7 at 50k: 8 runs of ~21 min, **~2.8 h**.
-4. **The exposure redundancy at width 512**: running (above).
+4. **The exposure redundancy at width 512**: answered (§33.118, above).
 5. **BLiMP's agreement at eight seeds**: answered (above).
 
 In all, items 1–3 take ~29 h of the second machine (~17 h with both fallbacks), plus half a day of
 the thesis machine's CPU for item 2.
 
-**After item 4, if its reading asks for it:** Unigram at width 512 (its null, case and empty slot, 12
-runs, ~3.2 h, data on the second machine). It would say whether Unigram's same-point shortfall
-holds at 30M parameters (*it stays* / *it goes*).
+**After item 4, held for the text's ask:** Unigram at width 512 (its null, case and empty slot, 12
+runs, ~3.2 h, data on the second machine). Unigram is now the one exposing tokenizer whose
+same-point shortfall is measured at one size only. *It stays:* under Unigram, exposed endings make
+case partly redundant at both sizes. *It goes:* at 30M parameters the redundancy is gone under both
+exposing tokenizers. Both outcomes change the sentence, but it follows up an answered question, so it
+runs only if the text asks (§33.118).
 
 **Not requested:** a third language (a defence item); the law's other half across widths (no
 hypothesis yet).
@@ -231,7 +240,8 @@ is done.
 (§33.109), 2.8 times faster, and free at night and at weekends. New experiments run there, each
 comparison within it. Where a comparison needs the thesis machine's existing runs, its partners are
 repeated there as twins: 79 of 18 October's 110 runs. It now holds its own null, case and empty slot
-under six tokenizers at 10k, and the English nulls at both widths, so fewer comparisons need them.
+under six tokenizers at 10k and under two at width 512, and the English nulls at both widths, so
+fewer comparisons need them.
 
 **Answered on 17 October** (§33.106–§33.111):
 - the two machines agree, up to dropout's draw;

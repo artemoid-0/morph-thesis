@@ -173,11 +173,18 @@
 | `device_twins` | 2026-10-18T03:30:29+00:00 | root=/home/neko/PycharmProjects/Morph | effects, groups, overall, pairs, repeats |
 | `device_twins` | 2026-10-18T18:25:50+00:00 | root=/home/neko/PycharmProjects/Morph | effects, groups, overall, pairs, repeats |
 | `device_twins` | 2026-10-18T19:30:30+00:00 | root=/home/neko/PycharmProjects/Morph | effects, groups, overall, pairs, repeats |
+| `device_twins` | 2026-10-19T15:17:46+00:00 | root=/home/neko/PycharmProjects/Morph | effects, groups, overall, pairs, repeats |
+| `device_twins` | 2026-10-19T15:22:31+00:00 | root=/home/neko/PycharmProjects/Morph | effects, groups, overall, pairs, repeats |
 | `dropout_masks` | 2026-10-17T10:30:28+00:00 | device=cuda | device |
 | `dropout_masks` | 2026-10-17T13:48:56+00:00 | device=cuda | device |
 | `?` | ? | - | - |
 | `exposure_axis` | 2026-10-19T03:53:35+00:00 | widths=[128] budget=10000 reference=empty machine=second tokenizers=['bpeend_uk_17k', 'unigram_uk_17k', 'bpe_uk_4k', 'bpe_uk_8k', 'bpe_uk_32k'] against=bpe_uk_17k root=/home/neko/PycharmProjects/Morph | comparisons |
 | `exposure_axis` | 2026-10-19T03:53:37+00:00 | widths=[128] budget=10000 reference=null machine=second tokenizers=['bpeend_uk_17k', 'unigram_uk_17k', 'bpe_uk_4k', 'bpe_uk_8k', 'bpe_uk_32k'] against=bpe_uk_17k root=/home/neko/PycharmProjects/Morph | comparisons |
+| `exposure_axis` | 2026-10-19T15:16:43+00:00 | widths=[128, 512] budget=10000 reference=empty machine=second tokenizers=['bpeend_uk_17k'] against=bpe_uk_17k root=/home/neko/PycharmProjects/Morph | comparisons |
+| `exposure_axis` | 2026-10-19T15:17:04+00:00 | widths=[128, 512] budget=10000 reference=null machine=second tokenizers=['bpeend_uk_17k'] against=bpe_uk_17k root=/home/neko/PycharmProjects/Morph | comparisons |
+| `exposure_axis` | 2026-10-19T15:19:27+00:00 | widths=[128, 512] budget=10000 reference=empty machine=second levels=[1.45, 1.35, 1.27, 1.18, 1.09, 0.98, 0.88] tokenizers=['bpeend_uk_17k'] against=bpe_uk_17k root=/home/neko/PycharmProjects/Morph | comparisons |
+| `exposure_axis` | 2026-10-19T15:19:30+00:00 | widths=[128, 512] budget=10000 reference=null machine=second levels=[1.45, 1.35, 1.27, 1.18, 1.09, 0.98, 0.88] tokenizers=['bpeend_uk_17k'] against=bpe_uk_17k root=/home/neko/PycharmProjects/Morph | comparisons |
+| `exposure_axis` | 2026-10-19T15:22:10+00:00 | widths=[128, 512] budget=10000 reference=null feature=empty machine=second levels=[1.45, 1.35, 1.25, 1.15, 1.1, 1.0, 0.95, 0.89] tokenizers=['bpeend_uk_17k'] against=bpe_uk_17k root=/home/neko/PycharmProjects/Morph | comparisons |
 | `scripts/analysis/learning_law.py` | 20261012T003054+0000 | - | - |
 | `scripts/analysis/learning_law.py` | 20261015T154512+0000 | - | - |
 | `lookahead_check` | 2026-09-22T12:27:35+00:00 | baseline=a7175857fdf6 treatment=['f97f597841fa', '67346ed11499', '56239ccfaf84'] results_dir=results | 56239ccfaf84, 67346ed11499, f97f597841fa, token_shares |
@@ -443,8 +450,15 @@
 - **device_twins**: difference = second machine (RTX 5090 Laptop) minus thesis machine (RTX 4060 Laptop), bits per byte at the best step; effects are B minus A (positive: A better)
 - **device_twins**: difference = second machine (RTX 5090 Laptop) minus thesis machine (RTX 4060 Laptop), bits per byte at the best step; effects are B minus A (positive: A better)
 - **device_twins**: difference = second machine (RTX 5090 Laptop) minus thesis machine (RTX 4060 Laptop), bits per byte at the best step; effects are B minus A (positive: A better)
+- **device_twins**: difference = second machine (RTX 5090 Laptop) minus thesis machine (RTX 4060 Laptop), bits per byte at the best step; effects are B minus A (positive: A better)
+- **device_twins**: difference = second machine (RTX 5090 Laptop) minus thesis machine (RTX 4060 Laptop), bits per byte at the best step; effects are B minus A (positive: A better)
 - **exposure_axis**: gain = the reference's bits per byte minus case's at the same step, paired by seed; each tuple (mean, se, seeds positive, seeds); redundancy = --against's gain minus the tokenizer's, per seed
 - **exposure_axis**: gain = the reference's bits per byte minus case's at the same step, paired by seed; each tuple (mean, se, seeds positive, seeds); redundancy = --against's gain minus the tokenizer's, per seed
+- **exposure_axis**: gain = the reference's bits per byte minus case's at the same step, paired by seed; each tuple (mean, se, seeds positive, seeds); redundancy = --against's gain minus the tokenizer's, per seed
+- **exposure_axis**: gain = the reference's bits per byte minus case's at the same step, paired by seed; each tuple (mean, se, seeds positive, seeds); redundancy = --against's gain minus the tokenizer's, per seed
+- **exposure_axis**: gain = the reference's bits per byte minus case's at the same step, paired by seed; each tuple (mean, se, seeds positive, seeds); redundancy = --against's gain minus the tokenizer's, per seed
+- **exposure_axis**: gain = the reference's bits per byte minus case's at the same step, paired by seed; each tuple (mean, se, seeds positive, seeds); redundancy = --against's gain minus the tokenizer's, per seed
+- **exposure_axis**: gain = the reference's bits per byte minus the empty slot's at the same step, paired by seed; each tuple (mean, se, seeds positive, seeds); redundancy = --against's gain minus the tokenizer's, per seed
 - **lookahead_check**: Continuation targets are intrinsically easier, so a moderate imbalance is not proof of leakage. The definitive test is a causal feature carrying only information available at generation time.
 - **lookahead_check**: Continuation targets are intrinsically easier, so a moderate imbalance is not proof of leakage. The definitive test is a causal feature carrying only information available at generation time.
 - **lookahead_check**: Continuation targets are intrinsically easier, so a moderate imbalance is not proof of leakage. The definitive test is a causal feature carrying only information available at generation time.
