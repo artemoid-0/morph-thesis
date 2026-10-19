@@ -64,6 +64,8 @@ def main():
                 print(f'    {t:18} no tokenizer or no cache — skipped')
                 continue
             meta = json.load(open(meta_path))
+            from morphlm.data.stream import require_unpacked
+            require_unpacked(a.cache_dir, stem)         # a packed stream is unpacked first (cache_pack.py)
             ids = np.load(os.path.join(a.cache_dir, stem + '.npy'), mmap_mode='r')
             tok = load_tokenizer(path, vocab_only=True)        # decoding needs only the vocabulary
             text = tok.decode([int(i) for i in ids])

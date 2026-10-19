@@ -77,6 +77,8 @@ def main():
     stem = os.path.basename(args.bpe_path).replace('.json', '')
     spec = '' if stem == 'bpe_tokenizer' else f'tok:{stem}'
     ids_stem = cache_stem('bpe', 'validation', None, spec)
+    from morphlm.data.stream import require_unpacked
+    require_unpacked(args.cache_dir, ids_stem)          # a packed stream is unpacked first (cache_pack.py)
     cached_ids = np.load(os.path.join(args.cache_dir, ids_stem + '.npy'), mmap_mode='r')
 
     # read the corpus EXACTLY as build_stream does (including its quirk: the

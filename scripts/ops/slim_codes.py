@@ -30,8 +30,9 @@ def main():
     ap.add_argument('--cache-dir', default=os.path.join(ROOT, 'data', 'cache'))
     a = ap.parse_args()
     import numpy as np
-    from morphlm.data.stream import stream_codes_files
+    from morphlm.data.stream import require_unpacked, stream_codes_files
     stem = a.ids_stem
+    require_unpacked(a.cache_dir, stem)                 # a packed stream is unpacked first (cache_pack.py)
     pipeline, split = stem.split('_')[0], stem.split('_')[1]
     n = int(np.load(os.path.join(a.cache_dir, stem + '.npy'), mmap_mode='r').shape[0])
     files = stream_codes_files(a.cache_dir, pipeline, split, None, stem, n)

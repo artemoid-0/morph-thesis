@@ -188,6 +188,8 @@ def audit_constants(cache):
     for b, (fact, bpe, ids_stem) in sorted(cache.const_files.items()):
         ip = os.path.join(cache.dir, ids_stem + '.npy')
         bp = bpe if os.path.isabs(bpe) else os.path.join(ROOT, bpe)
+        from morphlm.data.stream import require_unpacked
+        require_unpacked(cache.dir, ids_stem)           # never a packed stream skipped as missing
         if not (os.path.exists(ip) and os.path.exists(bp)):
             continue
         if bp not in tables:
@@ -244,6 +246,8 @@ def score(run_id, results_dir, cache, ids_stem, n, facts, variants, device):
     model, cfg = load_checkpoint(run_id, results_dir)
     model = model.to(device).eval()
     meta = json.load(open(os.path.join(cache.dir, ids_stem + '.json')))
+    from morphlm.data.stream import require_unpacked
+    require_unpacked(cache.dir, ids_stem)               # a packed stream is unpacked first (cache_pack.py)
     meta['ids'] = np.load(os.path.join(cache.dir, ids_stem + '.npy'), mmap_mode='r')
     meta['fact_names'] = facts
     out = {}
@@ -264,6 +268,8 @@ def constant_row(cache, own_row, bpe_path, ids_stem, none_code):
     """The constant itself: class 0 on every word token, `none` elsewhere — the
     null's training codes exactly, with no word left out as unseen."""
     from morphlm.features.lexical import tokenizer_tables, word_spans
+    from morphlm.data.stream import require_unpacked
+    require_unpacked(cache.dir, ids_stem)               # a packed stream is unpacked first (cache_pack.py)
     ids = np.asarray(np.load(os.path.join(cache.dir, ids_stem + '.npy'), mmap_mode='r'), dtype=np.int64)
     wid, _, _ = word_spans(ids, tokenizer_tables(bpe_path))
     row = np.where(wid >= 0, 0, none_code).astype(np.int16)

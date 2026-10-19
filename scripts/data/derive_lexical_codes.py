@@ -180,6 +180,8 @@ def main():
     def load_split(split, sp=None):
         ids_stem = cache_stem('bpe', split, None, sp or spec)
         ids_path = os.path.join(args.cache_dir, ids_stem + '.npy')
+        from morphlm.data.stream import require_unpacked
+        require_unpacked(args.cache_dir, ids_stem)      # never a packed stream taken for a missing one
         if not os.path.exists(ids_path):
             return None
         ids = np.load(ids_path, mmap_mode='r')

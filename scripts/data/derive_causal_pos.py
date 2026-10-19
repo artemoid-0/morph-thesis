@@ -167,7 +167,7 @@ def main():
     os.chdir(ROOT)
 
     from morphlm.config import ExperimentConfig, apply_overrides
-    from morphlm.data.stream import cache_stem, stream_codes_files
+    from morphlm.data.stream import cache_stem, require_unpacked, stream_codes_files
     from morphlm.record import AuditRecord
     rec = AuditRecord('derive_causal_pos', args)
     cfg = apply_overrides(ExperimentConfig(), ['data.pipeline=bpe', f'data.bpe_path={args.bpe_path}'])
@@ -177,6 +177,7 @@ def main():
         t0 = time.time()
         ids_stem = cache_stem('bpe', split, None, cfg.surface_spec())
         ids_path = os.path.join(args.cache_dir, ids_stem + '.npy')
+        require_unpacked(args.cache_dir, ids_stem)      # a packed stream is unpacked first (cache_pack.py)
         if not os.path.exists(ids_path):
             raise SystemExit(f'{split}: no cached ids {ids_stem}')
         cached_ids = np.load(ids_path, mmap_mode='r')

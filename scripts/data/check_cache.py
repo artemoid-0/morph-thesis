@@ -46,6 +46,8 @@ def main():
         f'data.corpus_fraction={args.corpus_fraction}', f'data.corpus_holdout={args.corpus_holdout}'])
     stem = cache_stem('bpe', args.split, None, cfg.surface_spec())
     ids_path = os.path.join(args.cache_dir, stem + '.npy')
+    from morphlm.data.stream import require_unpacked
+    require_unpacked(args.cache_dir, stem)          # a packed stream is unpacked first (cache_pack.py)
     if not os.path.exists(ids_path):
         raise SystemExit(f'no cache at {ids_path}')
     ids = np.load(ids_path, mmap_mode='r')

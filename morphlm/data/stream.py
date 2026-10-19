@@ -157,6 +157,61 @@ def codes_owner(basename, prefix):
     return None, None
 
 
+#: A machine may keep a stream packed: every array of it — its ids and each codes
+#: file that describes them — as `<name>.npy.zst` beside the sidecar `.json`, made
+#: and checked by scripts/data/cache_pack.py, the whole stream at once. Nothing
+#: reads a packed array and nothing rebuilds one: whatever needs a packed stream
+#: stops and names it. A cache that holds no packed file behaves as it always did.
+PACKED = '.zst'
+
+
+class PackedCacheError(RuntimeError):
+    """A stream that is needed is packed on this machine (scripts/data/cache_pack.py)."""
+
+
+def stream_files(cache_dir, ids_stem, packed=False):
+    """
+    The arrays of the stream `ids_stem`: its ids and every codes file that
+    describes it, by the rule of stream_codes_files (a file derived for it, or
+    a build file with its token count). Those on disk unpacked, or with
+    packed=True those packed; each path is given as its `.npy` name.
+    """
+    import glob as _glob
+    sfx = '.npy' + (PACKED if packed else '')
+    prefix = ids_stem[:-10]
+    ids_npy = os.path.join(cache_dir, ids_stem + '.npy')
+    out = [ids_npy] if os.path.exists(ids_npy[:-4] + sfx) else []
+    try:
+        with open(os.path.join(cache_dir, ids_stem + '.json')) as f:
+            num_tokens = json.load(f).get('num_tokens')
+    except (OSError, ValueError):
+        num_tokens = None
+    for cand in sorted(_glob.glob(os.path.join(cache_dir, prefix + '*.codes.json'))):
+        kind, owner = codes_owner(os.path.basename(cand), prefix)
+        if kind == 'derived' and owner != ids_stem:
+            continue
+        try:
+            with open(cand) as f:
+                if json.load(f).get('num_tokens') != num_tokens:
+                    continue
+        except (OSError, ValueError):
+            continue
+        npy = cand[:-len('.json')] + '.npy'
+        if os.path.exists(npy[:-4] + sfx):
+            out.append(npy)
+    return out
+
+
+def require_unpacked(cache_dir, ids_stem):
+    """Stop when the stream `ids_stem` is packed on this machine, in whole or in
+    part: an array packed and not also unpacked is never read, and never rebuilt."""
+    held = sorted(set(stream_files(cache_dir, ids_stem, packed=True)) - set(stream_files(cache_dir, ids_stem)))
+    if held:
+        raise PackedCacheError(
+            f'{ids_stem} is packed on this machine ({len(held)} of its arrays), so nothing reads or '
+            f'rebuilds it. Unpack the stream first: python scripts/data/cache_pack.py unpack {ids_stem}')
+
+
 def stream_codes_files(cache_dir, pipeline, split, max_articles, ids_stem, num_tokens):
     """
     Every codes file that describes the ids stream `ids_stem`, sorted by name:
@@ -183,6 +238,7 @@ def stream_codes_files(cache_dir, pipeline, split, max_articles, ids_stem, num_t
     token-count rule.
     """
     import glob as _glob
+    require_unpacked(cache_dir, ids_stem)
     prefix = f'{pipeline}_{split}_{max_articles}_'
     out = []
     for cand in sorted(_glob.glob(os.path.join(cache_dir, prefix + '*.codes.json'))):
@@ -300,6 +356,8 @@ def build_stream(pipeline, cfg, split='train', max_articles=None,
     ids_stem = cache_stem(cfg.data.pipeline, split, max_articles, sfc)
     ids_npy = os.path.join(cache_dir, ids_stem + '.npy')
     ids_meta = os.path.join(cache_dir, ids_stem + '.json')
+    # a stream packed on this machine is unpacked on purpose, never rebuilt
+    require_unpacked(cache_dir, ids_stem)
 
     c_spec = codes_spec(build_facts, gran)
     if sfc:

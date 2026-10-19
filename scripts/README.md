@@ -9,6 +9,7 @@
 | script | what it answers | status |
 |---|---|---|
 | `cache_index.py` | What is in data/cache/, and what would a given cell reuse? | historical |
+| `cache_pack.py` | Keep a cache's streams packed, losslessly (zstd; each array checked by SHA-256 before its original goes to the trash), and unpack a stream when it is needed. Nothing reads or rebuilds a packed stream: `morphlm/data/stream.py` stops and names it. | active |
 | `check_cache.py` | The health of a built cache, in any language. | active |
 | `corpus_info.py` | Look at a dataset before it becomes a corpus: splits, sizes, fields, samples, estimates. | active |
 | `fiction_full.sh` | UberText fiction's two conditions at fraction 0.4, built from the public source on a machine that has none of it; CPU only. | historical |

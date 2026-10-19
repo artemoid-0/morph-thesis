@@ -27,7 +27,7 @@ def main():
     a = ap.parse_args()
     import numpy as np
     from morphlm.config import ExperimentConfig, apply_overrides
-    from morphlm.data.stream import cache_stem, stream_codes_files
+    from morphlm.data.stream import PackedCacheError, cache_stem, require_unpacked, stream_codes_files
     cfg = apply_overrides(ExperimentConfig(), [f'data.pipeline={a.pipeline}']
                           + ([f'frozen.facts={a.facts}'] if a.facts else []) + a.over)
     facts = [f for f in a.facts.split('+') if f] if a.facts else []
@@ -35,6 +35,11 @@ def main():
     for split in ('train', 'validation'):
         stem = cache_stem(a.pipeline, split, None, cfg.surface_spec())
         ids = os.path.join(a.cache_dir, stem + '.npy')
+        try:
+            require_unpacked(a.cache_dir, stem)
+        except PackedCacheError:
+            missing.append(f'{split} stream {stem}, packed on this machine (scripts/data/cache_pack.py unpack)')
+            continue
         if not os.path.exists(ids):
             missing.append(f'{split} ids {stem}')
             continue

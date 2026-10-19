@@ -252,12 +252,15 @@ def t_learns():
 
 @check('existing cache files still resolve')
 def t_cache():
-    from morphlm.data.stream import cache_stem
+    from morphlm.data.stream import PACKED, cache_stem
     cache_dir = 'data/cache'
     if not os.path.isdir(cache_dir):
         return 'skip'
+    # a stream packed on this machine (scripts/data/cache_pack.py) keeps its key
     present = {f[:-4] for f in os.listdir(cache_dir) if f.endswith('.npy')
                and not f.endswith('.codes.npy')}
+    present |= {f[:-4 - len(PACKED)] for f in os.listdir(cache_dir) if f.endswith('.npy' + PACKED)
+                and not f.endswith('.codes.npy' + PACKED)}
     if not present:
         return 'skip'
     expected = {

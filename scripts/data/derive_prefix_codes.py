@@ -130,6 +130,8 @@ def main():
     for split in args.splits:
         ids_stem = cache_stem('bpe', split, None, spec)
         ids_path = os.path.join(args.cache_dir, ids_stem + '.npy')
+        from morphlm.data.stream import require_unpacked
+        require_unpacked(args.cache_dir, ids_stem)      # never a packed stream skipped as missing
         if not os.path.exists(ids_path):
             print(f'  {split}: no cached ids ({ids_stem}) — skipped')
             continue
