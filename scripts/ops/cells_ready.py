@@ -30,7 +30,8 @@ def main():
     from morphlm.data.stream import PackedCacheError, cache_stem, require_unpacked, stream_codes_files
     cfg = apply_overrides(ExperimentConfig(), [f'data.pipeline={a.pipeline}']
                           + ([f'frozen.facts={a.facts}'] if a.facts else []) + a.over)
-    facts = [f for f in a.facts.split('+') if f] if a.facts else []
+    # the facts as the run reads them: `--facts pos,dep` is split on commas, as the CLI splits it
+    facts = list(cfg.frozen.facts)
     missing = []
     for split in ('train', 'validation'):
         stem = cache_stem(a.pipeline, split, None, cfg.surface_spec())

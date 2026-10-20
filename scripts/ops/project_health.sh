@@ -6,7 +6,7 @@
 #
 #   bash scripts/ops/project_health.sh
 
-cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
+cd "$(dirname "${BASH_SOURCE[0]}")/../.." || exit 1      # the project root, from scripts/ops/
 ROOT="$(pwd)"
 
 echo "=============================================="
@@ -80,13 +80,15 @@ done
 # ── 5. does the package import? ──────────────────────────────────────────────
 echo
 echo "[5] Package import"
-python -c "import sys; sys.path.insert(0,'.'); import morphlm; print('  ok      morphlm', morphlm.__version__)" 2>&1 | tail -2
+# the project's interpreter, as the chains find it, when no `python` is on PATH
+PY=$(command -v python || echo "$HOME/miniconda3/envs/morph/bin/python")
+"$PY" -c "import sys; sys.path.insert(0,'.'); import morphlm; print('  ok      morphlm', morphlm.__version__, 'with', sys.executable)" 2>&1 | tail -2
 
 # ── 6. interpreter ───────────────────────────────────────────────────────────
 echo
 echo "[6] Python environment"
-echo "  python:  $(which python)"
-echo "  version: $(python --version 2>&1)"
+echo "  python:  $(command -v python || echo '<not on PATH>')"
+echo "  version: $("$PY" --version 2>&1) ($PY)"
 echo "  conda:   ${CONDA_DEFAULT_ENV:-<none active>}"
 if [ "${CONDA_DEFAULT_ENV:-}" != "morph" ]; then
   echo "  NOTE: the 'morph' env is not active. PyCharm's interpreter is stored"

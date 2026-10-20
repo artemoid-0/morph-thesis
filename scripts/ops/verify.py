@@ -49,20 +49,23 @@ def check(name):
 
 @check('imports')
 def t_imports():
-    import morphlm.config, morphlm.registry                    # noqa
-    import morphlm.features.blocks                             # noqa
-    import morphlm.vocab.morpholex, morphlm.vocab.build        # noqa
-    import morphlm.vocab.entities                              # noqa
-    import morphlm.pipelines.base, morphlm.pipelines.bpe       # noqa
-    import morphlm.pipelines.morpheme                          # noqa
-    import morphlm.pipelines.deterministic                     # noqa
-    import morphlm.pipelines.registry                          # noqa
-    import morphlm.data.stream, morphlm.data.windows           # noqa
-    import morphlm.modeling.embedding                          # noqa
-    import morphlm.modeling.transformer                        # noqa
-    import morphlm.training.loop, morphlm.training.metrics     # noqa
-    import morphlm.eval.buckets, morphlm.eval.probing          # noqa
-    import morphlm.cli                                         # noqa
+    # every module of the package, found, not listed: a module left out of a hand-kept list is
+    # never checked (journey §33.45; the list here had missed eight, morphlm.record among them)
+    import importlib
+    import pkgutil
+    import morphlm
+    broken = []
+    # a package that fails to load is still listed, and its failure is reported below
+    names = ['morphlm'] + [m.name for m in pkgutil.walk_packages(
+        morphlm.__path__, 'morphlm.', onerror=lambda name: None)]
+    for name in names:
+        try:
+            importlib.import_module(name)
+        except Exception as e:
+            broken.append((name, f'{type(e).__name__}: {e}'))
+    if broken:
+        raise ImportError('; '.join(f'{n} ({why})' for n, why in broken))
+    print(f'        {len(names)} modules load')
 
 
 # ── 2. pure-logic suites ──────────────────────────────────────────────────────
@@ -252,8 +255,13 @@ def t_learns():
 
 @check('existing cache files still resolve')
 def t_cache():
+    import dataclasses
+    import glob
+    import json
+    from morphlm.config import DataConfig, ExperimentConfig, SurfaceConfig
     from morphlm.data.stream import PACKED, cache_stem
-    cache_dir = 'data/cache'
+    root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    cache_dir = os.path.join(root, 'data', 'cache')
     if not os.path.isdir(cache_dir):
         return 'skip'
     # a stream packed on this machine (scripts/data/cache_pack.py) keeps its key
@@ -263,16 +271,31 @@ def t_cache():
                 and not f.endswith('.codes.npy' + PACKED)}
     if not present:
         return 'skip'
-    expected = {
-        cache_stem('bpe', 'train', None, ''),
-        cache_stem('bpe', 'validation', None, ''),
-    }
+    # the streams today's cache key gives for every configuration a recorded run trained on, and
+    # the legacy English streams; any of them on disk counts — a machine may hold only the
+    # streams sent to it (journey §33.101)
+    def section(cls, raw):      # a recorded section; a field added since keeps its default
+        known = {f.name for f in dataclasses.fields(cls)}
+        return cls(**{k: v for k, v in raw.items() if k in known})
+
+    expected = {cache_stem('bpe', 'train', None, ''), cache_stem('bpe', 'validation', None, '')}
+    for path in glob.glob(os.path.join(root, 'results', '*', 'config.json')):
+        try:
+            raw = json.load(open(path))
+            # a record without a surface section predates it: the legacy stream, every channel off
+            surface = raw.get('surface', {f.name: False for f in dataclasses.fields(SurfaceConfig)})
+            cfg = ExperimentConfig(data=section(DataConfig, raw.get('data', {})),
+                                   surface=section(SurfaceConfig, surface))
+        except (OSError, ValueError, TypeError):
+            continue
+        for split, cap in (('train', cfg.data.max_articles_train), ('validation', cfg.data.max_articles_val)):
+            expected.add(cache_stem(cfg.data.pipeline, split, cap, cfg.surface_spec()))
     hit = expected & present
     if not hit:
         raise AssertionError(
-            f'no expected stem found. present={sorted(present)} '
-            f'expected among={sorted(expected)}')
-    print(f'        {len(hit)} existing cache stem(s) still valid: {sorted(hit)}')
+            f'no stream on disk resolves from a known configuration. present={sorted(present)[:8]}'
+            f'{" …" if len(present) > 8 else ""} expected among {len(expected)} stems')
+    print(f'        {len(hit)} of {len(present)} cached stream(s) resolve from a recorded configuration')
 
 
 # ── 7. spaCy annotation ───────────────────────────────────────────────────────

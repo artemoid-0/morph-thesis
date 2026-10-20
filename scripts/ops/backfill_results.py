@@ -27,18 +27,9 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 
 
 def rebuild_cfg(cfg_dict):
-    from morphlm.config import (ExperimentConfig, DataConfig, SurfaceConfig,
-                                FrozenConfig, ModelConfig, TrainConfig)
-    fz = dict(cfg_dict['frozen'])
-    fz['facts'] = tuple(fz.get('facts', ()))
-    known = {'data': DataConfig, 'surface': SurfaceConfig,
-             'frozen': FrozenConfig, 'model': ModelConfig, 'train': TrainConfig}
-    kwargs = {}
-    for name, klass in known.items():
-        src = fz if name == 'frozen' else cfg_dict.get(name, {})
-        fields = {f for f in klass.__dataclass_fields__}
-        kwargs[name] = klass(**{k: v for k, v in src.items() if k in fields})
-    return ExperimentConfig(**kwargs)
+    # a config without a `surface` section predates it: the legacy stream, every channel off
+    from morphlm.config import ExperimentConfig
+    return ExperimentConfig.from_dict(cfg_dict)
 
 
 def main():
