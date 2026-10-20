@@ -185,3 +185,44 @@ below; the largest is 0.0034 at 10k, 0.0044 at 20k and 0.0063 at 50k.
 
 **Predictions** (§33.117). P264 and P265 right; P266 half right. The tally is 157 right, 11 half
 right, 89 wrong, 8 never tested and 1 withdrawn, of 266; none pending.
+
+### 33.119 Item 1 prepared: the tokenizer's gain at width 1024
+
+The thesis text's list of 19 October ranks it first (§33.117): does keeping endings apart still help
+beyond 30M parameters? At width 512 the gain was smaller than at width 256. It fell along the law's
+axis, +0.041 at null BPB 1.18 and +0.012 at 0.89, then levelled off at 20k at +0.0102 ± 0.0006
+(1.25%; §33.94–§33.102). Item 1 asks the same at width 1024: the null under BPE 17k and under endings
+apart, ~38M tokens, seeds 0–3, at 10k and at 20k, read on the law's axis as at width 512.
+
+**The fit check** (`scripts/ops/fit_check.py` on the second machine): width 1024 has 85.3M parameters
+(34.9M in the embeddings and head, 50.4M in the core). It peaks at 7.2 GB and runs 4.0 steps a
+second, about 43 minutes per 10k run. Width 512 measures 15.9 minutes there, as its recorded runs
+took.
+
+**The chain** (`scripts/chains/second_2026-10-20.sh`, the first on `scripts/chains/lib/chain_v1.sh`):
+- **Order:** the 10k half first (8 runs, ~5.8 h), then the 20k half (8 runs, ~11.5 h) until END_BY.
+  What END_BY leaves runs on a later night.
+- **Guards:** a run starts only if it can end before END_BY, and finished runs are never run again.
+  A sanity check sits on the first seed's pair.
+- **No twins:** no width-1024 run exists.
+- **The two halves are separate runs.** A 10k run cannot be extended to 20k: its learning rate
+  anneals to its end at 10k, as at every width.
+
+Predictions, before any run (the second machine; width 512 there is item 4's twins, §33.118):
+
+- **P267** (~85%). At 10k, width 1024's tokenizer gain (endings apart's null over BPE 17k's, paired
+  by seed) is positive at every seed.
+- **P268** (~65%). It is smaller than width 512's on the same machine at 10k (+0.0141 ± 0.0016,
+  §33.118) on average: the gain keeps shrinking with size beyond 256.
+- **P269** (~55%). On the law's axis, at every null BPB both widths reach between 0.88 and 1.04,
+  width 1024's gain is within 0.004 of width 512's, on average over seeds. Beyond width 512 the gain
+  would then depend on how far the model has learned, not on its size.
+- **P270** (~70%). Width 1024's BPE 17k null ends its 10k budget at least 0.03 BPB below width
+  512's (0.8794 on average, §33.118).
+- **P271** (~55%). At 20k the gain levels off. Over the budget's last 5,000 steps it changes by less
+  than 0.002 on average, as width 512's did from about step 7,500.
+
+**The sentences these decide** (the text's, §33.117):
+- smaller at 10k and level at 20k (P268 and P271) → *smaller again but lasting*;
+- smaller and still falling at 20k → *it fades*;
+- not smaller → *it holds at 512's level*.

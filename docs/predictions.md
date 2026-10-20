@@ -6,7 +6,7 @@ Each prediction was recorded in the [journey](record/journey/README.md) **before
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 157 right, 11 half right, 89 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn — of 266.
+**Tally:** 157 right, 11 half right, 89 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 5 pending — of 271.
 
 *Key to the tally (added 19 October 2026). Counted half right: P19, P46, P54 — with the eight
 whose outcome begins "half right" or "partly right". Counted right: P33, P172 — right by their
@@ -292,3 +292,8 @@ The wrong ones carried the information:
 | P264 | At width 512, at the lowest common reference BPB, case's gain over the empty slot under endings apart is within 0.001 of BPE 17k's (on the law's axis) | right — +0.0001 ± 0.0004 at 0.88 | §33.117, §33.118 |
 | P265 | At the end of the 10k budget at width 512, case's gains over the empty slot under the two tokenizers differ by less than 0.001 | right — +0.0022 against +0.0024 (−0.0001 ± 0.0003) | §33.117, §33.118 |
 | P266 | At width 512 and 10k the empty slot beats the null by more than 0.001 under endings apart and is within 0.001 of it under BPE 17k | half right — within under BPE 17k (−0.0002); under endings apart level too (−0.0002 ± 0.0001): the null's cost is the 5M model's | §33.117, §33.118 |
+| P267 | At 10k, width 1024's tokenizer gain (endings apart's null over BPE 17k's) is positive at every seed | pending | §33.119 |
+| P268 | At 10k it is smaller than width 512's on the same machine (+0.0141 ± 0.0016) on average | pending | §33.119 |
+| P269 | On the law's axis, at every null BPB both widths reach between 0.88 and 1.04, width 1024's gain is within 0.004 of width 512's | pending | §33.119 |
+| P270 | Width 1024's BPE 17k null ends its 10k budget at least 0.03 BPB below width 512's (0.8794) | pending | §33.119 |
+| P271 | At 20k the gain levels off: over the last 5,000 steps it changes by less than 0.002 on average | pending | §33.119 |

@@ -418,6 +418,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 
 - [33.117 The text's list of 19 October: BLiMP's agreement at eight seeds, the exposure comparison on the law's axis, and item 4 prepared](15_the_list_of_19_october.md#33117-the-texts-list-of-19-october-blimps-agreement-at-eight-seeds-the-exposure-comparison-on-the-laws-axis-and-item-4-prepared)
 - [33.118 Item 4: at 30M parameters case gains alike under both tokenizers, and the null costs nothing](15_the_list_of_19_october.md#33118-item-4-at-30m-parameters-case-gains-alike-under-both-tokenizers-and-the-null-costs-nothing)
+- [33.119 Item 1 prepared: the tokenizer's gain at width 1024](15_the_list_of_19_october.md#33119-item-1-prepared-the-tokenizers-gain-at-width-1024)
 
 ### Appendices
 

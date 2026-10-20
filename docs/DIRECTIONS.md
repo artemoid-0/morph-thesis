@@ -46,7 +46,7 @@ Results committed by about 31 October reach the text; the work is admitted on 4 
 Each item's preparation runs on the CPU while the item before it trains.
 In the items, §3.x and "conclusion n" are the thesis text's sections, not the journey's.
 
-**Running:** nothing; items 1–3 wait for hours.
+**Running** (20 October, the second machine): item 1, width 1024 — the 10k half, then the 20k half until END_BY; what is left runs on a later night (§33.119; P267–P271). Items 2–3 wait for hours.
 
 1. **The tokenizer's gain beyond 30M parameters** (§3.12, §3.3.2, conclusion 2): width 1024, ~38M tokens, both nulls (BPE 17k, endings apart), seeds 0–3, at 10k and at 20k.
    It is compared on the law's axis as at width 512 (`tokenizer_widths.py`), with MultiBLiMP on the 20k models.
