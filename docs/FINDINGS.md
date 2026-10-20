@@ -1,4 +1,4 @@
-# What We Know — 19 October 2026
+# What We Know — 20 October 2026
 
 > **Kind:** claims — what the thesis claims now, each with its numbers, firmness and the journey sections behind it.
 > **Authoritative for:** the claims.
@@ -50,6 +50,12 @@ At width 512 (30M parameters, four times width 128) it is **+0.0125 ± 0.0009 (1
 At the same point of learning it starts above width 256's (+0.041 against +0.038 at null BPB 1.18), then falls as a feature's gain does — below width 256's from 1.11 on, at width 128's level near 0.98 (+0.018), +0.014 at 0.92 — while the smaller widths' leads hold flat.
 At 20k it levels off from about step 7,500 at every seed, at **+0.0102 ± 0.0006 (1.25%, 4/4)**: smaller than at widths 128 and 256, but lasting (§33.94, §33.96, §33.100, §33.102).
 
+**Beyond 30M parameters it is smaller at 10k, and depends on the run.**
+At width 1024 (85M parameters, on a second machine) it is **+0.0067 ± 0.0030 (0.81%, 3/4)** at 10k, half width 512's there (+0.0141 ± 0.0016).
+Two seeds keep width 512's level (+0.0127, +0.0103). At the other two the endings-apart null falls behind in early training, from about step 1,500, and has regained about half of it by the end of the budget (−0.0004, +0.0042; G-81).
+At the same point of learning the lead starts above width 512's (+0.059 against +0.048 at null BPB 1.30) and from 1.04 to 0.88 is 0.007–0.015 below it.
+At 20k one seed so far: +0.0115 (1.50%), level over the last 5,000 steps and at width 512's level at the same null BPB; the other three are queued (§33.120).
+
 These gains are between the two tokenizers' nulls.
 The 5M model's null costs endings apart about 0.002 (below), so at 10k the gain between the empty slots is larger: +0.0203 ± 0.0013, against +0.0175 ± 0.0015 between the nulls on a second machine.
 At width 512 the two references agree (+0.0142, +0.0141), and its gain is the smaller over either (§33.118).
@@ -67,7 +73,7 @@ Exposing more endings elsewhere does not do it: BPE 4k is 1.2 points below BPE 1
 On UberText 2.0's fiction (novels and prose; both tokenizers trained on it) endings apart beats BPE 17k at every seed: **+0.0097 ± 0.0010 BPB (0.8%, 4/4)** at 10k, half its share on Wikipedia, and **+5.3 ± 0.6 points (4/4)** on MultiBLiMP, as much as on Wikipedia or more.
 At full training on four times that text (154M tokens, 50k) it is **+0.0155 ± 0.0010 (1.45%, 4/4)**, flat from step 20,000 — near its share on Wikipedia, so the smaller share belonged to the 10k budget — and +2.3 ± 0.3 points (4/4) on MultiBLiMP, from 88.1% (§33.108, §33.109).
 
-*Two corpora (fiction at 10k, and at full training on a second machine), two corpus sizes and three budgets on Wikipedia, three widths (512 at 20k: seeds 2–3 on a second machine).* (§33.61–§33.68, §33.76, §33.79, §33.86, §33.88, §33.94, §33.96, §33.100, §33.102, §33.108)
+*Two corpora (fiction at 10k, and at full training on a second machine), two corpus sizes and three budgets on Wikipedia, four widths (512 at 20k: seeds 2–3 on a second machine; 1024 on a second machine, at 20k one seed of four).* (§33.61–§33.68, §33.76, §33.79, §33.86, §33.88, §33.94, §33.96, §33.100, §33.102, §33.108, §33.120)
 
 ### Q2: no feature beats its null at the end of training
 
@@ -391,4 +397,4 @@ Each withdrawal was decided by a rule recorded before its result:
 
 Open questions that could change a claim are in [`GAPS.md`](GAPS.md); what runs next, and why, in [`DIRECTIONS.md`](DIRECTIONS.md), "The queue".
 
-Left open, as limitations: whether English part of speech's deficit ever closes (at full training it is half the 20k budget's, at three seeds of four); across model sizes, the half of the width difference that the previous word's tag does not account for (§33.83); and the tokenizer's gain beyond 30M parameters (at 30M it is smaller than at width 256).
+Left open, as limitations: whether English part of speech's deficit ever closes (at full training it is half the 20k budget's, at three seeds of four); across model sizes, the half of the width difference that the previous word's tag does not account for (§33.83); and whether the tokenizer's gain at 85M parameters lasts, and at what level (at 10k it is half width 512's, split by seed; G-81).

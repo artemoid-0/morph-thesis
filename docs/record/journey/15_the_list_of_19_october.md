@@ -7,7 +7,9 @@ better on BLiMP's subject–verb and anaphor agreement at six seeds of eight, on
 agreement at four (§33.117). Read on the law's axis, case gains less where endings are exposed only
 in a middle stretch of training, in models of 5M and 30M parameters (§33.117–§33.118). At 30M
 parameters the same-shape null costs nothing; in the 5M model the tokenizer's gain over the empty
-slots is +0.0203, not +0.0175 (§33.118).
+slots is +0.0203, not +0.0175 (§33.118). At 85M parameters (width 1024) and 10k the tokenizer's gain
+is half width 512's on average, +0.0067 ± 0.0030: two seeds keep width 512's level, two lose it
+early in training (§33.120).
 
 ---
 
@@ -226,3 +228,104 @@ Predictions, before any run (the second machine; width 512 there is item 4's twi
 - smaller at 10k and level at 20k (P268 and P271) → *smaller again but lasting*;
 - smaller and still falling at 20k → *it fades*;
 - not smaller → *it holds at 512's level*.
+
+### 33.120 Item 1's 10k half: at 85M parameters the gain halves on average, because two seeds of four lose it early
+
+The chain of 20 October (§33.119) ran on the second machine from 20:40 to 05:32 EDT: the 10k half (8
+runs of 44 minutes), then the 20k pair of seed 0 (88 minutes each). END_BY then left the 20k pairs of
+seeds 1–3 (6 runs, ~8.8 h) for a later night. No run failed, the sanity check passed in both halves,
+and every run's best step was its last. Width 1024, ~38M tokens, 10k, bits per byte:
+
+| width 1024, 10k | seed 0 | seed 1 | seed 2 | seed 3 | mean |
+|---|---|---|---|---|---|
+| BPE 17k | 0.8222 | 0.8244 | 0.8204 | 0.8233 | 0.8226 |
+| endings apart | 0.8095 | 0.8248 | 0.8162 | 0.8131 | 0.8159 |
+| the gain | +0.0127 | −0.0004 | +0.0042 | +0.0103 | **+0.0067 ± 0.0030 (0.81%, 3/4)** |
+
+On the same machine width 512's gain at 10k is +0.0141 ± 0.0016 (1.61%, 4/4; §33.118). Width
+1024's BPE 17k null ends 0.0568 below width 512's 0.8794 (6.5%), its endings-apart null 0.0494 below
+0.8653. At 20k, seed 0: BPE 17k 0.7700, endings apart 0.7585, **+0.0115 (1.50%)**.
+
+**On the law's axis** (`tokenizer_widths_20261020T131612`; the script's new option `--machine second`
+reads the second machine's records, width 512's twins included, and each seed's own curve gives the
+spread). The lead at the same null BPB, at 10k:
+
+| null BPB | width 512 | width 1024 | width 1024, seeds 0, 1, 2, 3 |
+|---|---|---|---|
+| 1.30 | +0.0483 | +0.0587 ± 0.0013 (4/4) | +0.0616, +0.0597, +0.0571, +0.0561 |
+| 1.18 | +0.0409 | +0.0404 ± 0.0019 (4/4) | +0.0436, +0.0410, +0.0348, +0.0420 |
+| 1.11 | +0.0305 | +0.0276 ± 0.0021 (4/4) | +0.0310, +0.0267, +0.0220, +0.0304 |
+| 1.04 | +0.0226 | +0.0158 ± 0.0030 (4/4) | +0.0209, +0.0130, +0.0086, +0.0205 |
+| 0.98 | +0.0198 | +0.0061 ± 0.0044 (2/4) | +0.0131, −0.0022, −0.0018, +0.0134 |
+| 0.95 | +0.0187 | +0.0041 ± 0.0050 (2/4) | +0.0125, −0.0068, −0.0029, +0.0121 |
+| 0.92 | +0.0162 | +0.0036 ± 0.0050 (2/4) | +0.0125, −0.0082, −0.0014, +0.0113 |
+| 0.89 | +0.0139 | +0.0056 ± 0.0047 (3/4) | +0.0134, −0.0056, +0.0005, +0.0130 |
+| 0.88 | +0.0141 | +0.0054 ± 0.0039 (3/4) | +0.0131, −0.0043, +0.0024, +0.0103 |
+| 0.84 | — | +0.0047 ± 0.0034 (3/4) | +0.0118, −0.0030, +0.0014, +0.0087 |
+
+**Two seeds hold, two fall behind.** At seeds 0 and 3 the lead falls to about +0.012 by step 3,000
+(null BPB ~0.97) and stays between +0.0087 and +0.0136 to the end. At seeds 1 and 2 it falls below zero
+between steps 2,500 and 3,000. Seed 1's reaches −0.0084 at step 4,500 and seed 2's −0.0029 at step
+3,000. Over the rest of the budget they climb back by +0.0080 and +0.0071, still rising at its end
+(by +0.0020 and +0.0018 over the last 1,000 steps).
+
+**The fall is the endings-apart null's.**
+- **Spread:** across seeds that null's BPB spreads over 0.0153 (SD 0.0066), against 0.0040
+  (SD 0.0017) under BPE 17k. At width 512 on the same machine the two spread over 0.0034 and 0.0047.
+- **Seed 1 against seed 0:** the two runs of a seed start from the same initial weights, and both
+  of seed 1's start slower. Its BPE 17k null is behind by up to 0.0203 (step 2,500) and level by step
+  6,000 (0.0014; 0.0022 at the end). Its endings-apart null falls further behind, from 0.0126 at step
+  1,500 to 0.0320 at step 3,500, and makes up only half by the end (0.0153).
+- **Its shape:** no run spiked. Every run's validation BPB fell at every evaluation (every 500
+  steps). Seed 1's endings-apart null fell 0.006 less than seed 0's in each of three evaluations in a
+  row (steps 1,500–3,000), and from step 3,500 it fell faster.
+- **Where:** seed 1's endings-apart model is behind seed 0's on tokens of every frequency, most on
+  the rarest (the records' per-frequency buckets): by 0.109 nats on the rarest sixth of the validation
+  tokens, by 0.012 on the commonest.
+
+What sets two endings-apart runs back is not known from these records (G-81).
+
+**At 20k, seed 0** levels off: +0.0119 at step 15,000 and +0.0115 at the end, between +0.0090 and
++0.0125 over the last 5,000 steps. At the same null BPB its lead is within 0.003 of its 10k run's down
+to 0.84 (+0.0214 and +0.0209 at 1.04, +0.0128 and +0.0125 at 0.95, +0.0092 and +0.0118 at 0.84).
+From 0.86 to 0.82 it is within 0.002 of width 512's 20k runs on the same machine (+0.0109, +0.0092,
++0.0110 against +0.0111, +0.0091, +0.0090).
+
+**Predictions** (§33.119).
+- **P267 wrong:** at seed 1 the gain is −0.0004.
+- **P268 right:** +0.0067 ± 0.0030, against +0.0141 ± 0.0016. The mean is smaller because two seeds
+  lose the lead early; the other two hold width 512's level (+0.0127, +0.0103).
+- **P269 wrong:** from null BPB 1.04 to 0.88 width 1024's lead is 0.007 to 0.015 below width 512's
+  (−0.0068 at 1.04, −0.0147 at 0.95, −0.0088 at 0.88). It starts above it (+0.0104 at 1.30) and is
+  level at 1.18. Seeds 0 and 3 alone come within 0.004 of it at 1.04 and at 0.89–0.88, and are
+  0.004–0.007 below it between.
+- **P270 right:** 0.8226, 0.0568 below 0.8794.
+- **P271 pending:** the 20k half has one seed so far.
+
+**Predictions for the rest of the 20k half** (seeds 1–3, before any of its runs). On this machine a
+20k run shares its 10k run's initial weights, batches and dropout masks, and differs only in the
+learning rate's schedule: at step 500 seed 0's two runs agree to 0.0001.
+- **P272** (~55%). In the 20k runs of seeds 1 and 2 the lead again falls below +0.003 at some
+  evaluation between steps 2,500 and 5,000. If it does not, the fall at 10k was chance within
+  training, not the seed's.
+- **P273** (~50%). At 20k the four seeds' gain is within 0.003 of width 512's at 20k on the same
+  machine (+0.0099 ± 0.0006, seeds 1–3).
+
+**The sentences the 20k half decides** (§33.119's, now that at 10k the gain is smaller):
+- level at 20k and within 0.003 of width 512's (P271, P273) → *by 20k it holds at 30M parameters'
+  level; at 10k two seeds of four had not yet regained it*;
+- level and below → *smaller again but lasting*;
+- still falling → *it fades*.
+
+**What it changes for the thesis.**
+1. **Beyond 30M parameters the gain is smaller at a 10k budget, and depends on the run.** At 85M
+   parameters it is +0.0067 ± 0.0030 (0.81%, 3/4), half width 512's on the same machine. Two seeds
+   keep width 512's level; two lose the gain early in training and regain part of it by the end of the
+   budget. A single run at this width would not tell which.
+2. **Whether it lasts, and at what level, is the 20k half's.** That is 6 runs, ~8.8 h on the second
+   machine. Seed 0 at 20k levels off at +0.0115, width 512's level at the same null BPB.
+3. **Width 1024 is not undertrained at 10k.** Its BPE 17k null ends 6.5% below width 512's, so the
+   smaller mean is not a model that failed to learn.
+
+**Predictions** (this section): P267 and P269 wrong, P268 and P270 right. The tally is 159 right, 11
+half right, 91 wrong, 8 never tested, 1 withdrawn and 3 pending (P271–P273), of 273.

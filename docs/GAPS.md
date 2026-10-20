@@ -14,7 +14,9 @@ The register is empty when no open gap could change a claim stated in FINDINGS.
 
 ## Open — could change a claim
 
-*None since 19 October: no open gap could change a claim stated in FINDINGS (G-78 closed, §33.116).*
+| # | gap | status | cost |
+|---|---|---|---|
+| G-81 | At width 1024 and 10k two of four endings-apart nulls (seeds 1 and 2) fall behind their siblings from about step 1,500 and regain about half by the end of the budget, which takes the tokenizer's gain at those seeds to −0.0004 and +0.0042 (seeds 0 and 3: +0.0127, +0.0103), and its mean to half width 512's. No evaluation shows a spike (every 500 steps): the fall is a slower stretch over steps 1,500–3,000. Not known: whether it is the seed's (its initial weights, batches and dropout masks) or chance within training, and whether the training recipe, the same at every width (a 100-step warm-up, peak learning rate 3e-4), is at fault at this width. It decides whether FINDINGS' "depends on the run" at 85M parameters is the model's or the recipe's. | open (§33.120): the 20k runs of seeds 1–3 repeat their 10k runs' first steps on the same machine, so they show whether the fall recurs (P272) | the 20k half's 6 runs (queued, ~8.8 h on the second machine); finer: seed 1's endings-apart null to step 5,000 with an evaluation every 100 steps (~25 min there), or with a longer warm-up |
 
 The research programme's open questions are in [`DIRECTIONS.md`](DIRECTIONS.md).
 

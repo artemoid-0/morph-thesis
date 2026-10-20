@@ -361,6 +361,7 @@
 | `scripts/analysis/tokenizer_widths.py` | 20261014T094349+0000 | - | 6 rows |
 | `scripts/analysis/tokenizer_widths.py` | 20261014T193329+0000 | - | 7 rows |
 | `scripts/analysis/tokenizer_widths.py` | 20261015T184449+0000 | - | 7 rows |
+| `tokenizer_widths` | 2026-10-20T13:16:12+00:00 | machine=second results=['/home/neko/PycharmProjects/Morph/results'] | conditions, levels |
 | `scripts/data/prepare_ubertext_fiction.py` | 20261011T074342+0000 | - | bytes_written, characters, document_characters, documents, keys_repeated, paragraphs, titled, wrapped |
 | `scripts/data/prepare_ubertext_fiction.py` | 20261016T000257+0000 | - | bytes_written, characters, document_characters, documents, keys_repeated, paragraphs, titled, wrapped |
 | `ukwiki_stats` | 2026-09-28T22:39:28+00:00 | holdout=2000 target_chars=539000000.0 | splits, suggested_fraction |

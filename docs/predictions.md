@@ -6,7 +6,7 @@ Each prediction was recorded in the [journey](record/journey/README.md) **before
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 157 right, 11 half right, 89 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 5 pending — of 271.
+**Tally:** 159 right, 11 half right, 91 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 3 pending — of 273.
 
 *Key to the tally (added 19 October 2026). Counted half right: P19, P46, P54 — with the eight
 whose outcome begins "half right" or "partly right". Counted right: P33, P172 — right by their
@@ -18,7 +18,8 @@ The wrong ones carried the information:
   absence (P11);
 - **the budget:** the training-budget reframing (P61);
 - **the tokenizer:** the tokenizer hypothesis (P119, P120), Unigram's early lead (P130), the wider
-  model's larger tokenizer gain (P135) and its peak at width 256 (P202, P203);
+  model's larger tokenizer gain (P135) and its peak at width 256 (P202, P203), and at width 1024 that it is
+  positive at every seed (P267) and level with width 512's on the law's axis (P269);
 - **case:** where the exposure effect sits (P144–P146), what the sentence's case adds over the word
   form's (P148–P150), and how much of it the tagger's leak is (P164, P166);
 - **inside the models:** what context adds inside the models (P184, P187);
@@ -292,8 +293,10 @@ The wrong ones carried the information:
 | P264 | At width 512, at the lowest common reference BPB, case's gain over the empty slot under endings apart is within 0.001 of BPE 17k's (on the law's axis) | right — +0.0001 ± 0.0004 at 0.88 | §33.117, §33.118 |
 | P265 | At the end of the 10k budget at width 512, case's gains over the empty slot under the two tokenizers differ by less than 0.001 | right — +0.0022 against +0.0024 (−0.0001 ± 0.0003) | §33.117, §33.118 |
 | P266 | At width 512 and 10k the empty slot beats the null by more than 0.001 under endings apart and is within 0.001 of it under BPE 17k | half right — within under BPE 17k (−0.0002); under endings apart level too (−0.0002 ± 0.0001): the null's cost is the 5M model's | §33.117, §33.118 |
-| P267 | At 10k, width 1024's tokenizer gain (endings apart's null over BPE 17k's) is positive at every seed | pending | §33.119 |
-| P268 | At 10k it is smaller than width 512's on the same machine (+0.0141 ± 0.0016) on average | pending | §33.119 |
-| P269 | On the law's axis, at every null BPB both widths reach between 0.88 and 1.04, width 1024's gain is within 0.004 of width 512's | pending | §33.119 |
-| P270 | Width 1024's BPE 17k null ends its 10k budget at least 0.03 BPB below width 512's (0.8794) | pending | §33.119 |
-| P271 | At 20k the gain levels off: over the last 5,000 steps it changes by less than 0.002 on average | pending | §33.119 |
+| P267 | At 10k, width 1024's tokenizer gain (endings apart's null over BPE 17k's) is positive at every seed | wrong — +0.0127, −0.0004, +0.0042, +0.0103 | §33.119, §33.120 |
+| P268 | At 10k it is smaller than width 512's on the same machine (+0.0141 ± 0.0016) on average | right — +0.0067 ± 0.0030 (3/4); two seeds lose the lead early, two hold width 512's level | §33.119, §33.120 |
+| P269 | On the law's axis, at every null BPB both widths reach between 0.88 and 1.04, width 1024's gain is within 0.004 of width 512's | wrong — 0.007 to 0.015 below it (−0.0147 at 0.95) | §33.119, §33.120 |
+| P270 | Width 1024's BPE 17k null ends its 10k budget at least 0.03 BPB below width 512's (0.8794) | right — 0.8226, 0.0568 below | §33.119, §33.120 |
+| P271 | At 20k the gain levels off: over the last 5,000 steps it changes by less than 0.002 on average | pending — seed 0 levels off (+0.0119 to +0.0115); seeds 1–3 to run | §33.119, §33.120 |
+| P272 | In the 20k runs of seeds 1 and 2 at width 1024 the lead again falls below +0.003 at some evaluation between steps 2,500 and 5,000 (the 10k fall is the seed's, not chance) | pending | §33.120 |
+| P273 | At 20k width 1024's gain over four seeds is within 0.003 of width 512's at 20k on the same machine (+0.0099 ± 0.0006) | pending | §33.120 |

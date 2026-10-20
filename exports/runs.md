@@ -177,6 +177,10 @@
 | bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k | 3 | 1.0911 | 101.2970 | 5,043,168 | 8 | 325,632 | 9,999 |
 | bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k_do0 | 0 | 1.0528 | 86.1421 | 5,043,168 | 8 | 325,632 | 9,999 |
 | bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k_do0 | 1 | 1.0543 | 86.6847 | 5,043,168 | 8 | 325,632 | 9,999 |
+| bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k_w1024 | 0 | 0.8222 | 32.4639 | 85,337,312 | 8 | 325,632 | 9,999 |
+| bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k_w1024 | 1 | 0.8244 | 32.7654 | 85,337,312 | 8 | 325,632 | 9,999 |
+| bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k_w1024 | 2 | 0.8204 | 32.2187 | 85,337,312 | 8 | 325,632 | 9,999 |
+| bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k_w1024 | 3 | 0.8233 | 32.6191 | 85,337,312 | 8 | 325,632 | 9,999 |
 | bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k_w256 | 0 | 0.9826 | 64.0025 | 11,795,168 | 8 | 325,632 | 9,999 |
 | bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k_w256 | 1 | 0.9879 | 65.4494 | 11,795,168 | 8 | 325,632 | 9,999 |
 | bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k_w256 | 2 | 0.9850 | 64.6697 | 11,795,168 | 8 | 325,632 | 9,999 |
@@ -189,6 +193,7 @@
 | bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k | 1 | 1.0147 | 73.3182 | 5,043,168 | 8 | 325,632 | 19,999 |
 | bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k | 2 | 1.0132 | 72.8640 | 5,043,168 | 8 | 325,632 | 19,999 |
 | bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k | 3 | 1.0161 | 73.7635 | 5,043,168 | 8 | 325,632 | 19,999 |
+| bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w1024 | 0 | 0.7700 | 26.0309 | 85,337,312 | 8 | 325,632 | 19,999 |
 | bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w256 | 0 | 0.9000 | 45.1183 | 11,795,168 | 8 | 325,632 | 19,999 |
 | bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w256 | 1 | 0.9110 | 47.2652 | 11,795,168 | 8 | 325,632 | 19,999 |
 | bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w256 | 2 | 0.9069 | 46.4621 | 11,795,168 | 8 | 325,632 | 19,999 |
@@ -229,6 +234,10 @@
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k | 1 | 1.0715 | 58.5313 | 5,043,168 | 8 | 363,008 | 9,999 |
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k | 2 | 1.0739 | 59.0770 | 5,043,168 | 8 | 363,008 | 9,999 |
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k | 3 | 1.0722 | 58.6953 | 5,043,168 | 8 | 363,008 | 9,999 |
+| bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k_w1024 | 0 | 0.8095 | 21.6397 | 85,337,312 | 8 | 363,008 | 9,999 |
+| bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k_w1024 | 1 | 0.8248 | 22.9364 | 85,337,312 | 8 | 363,008 | 9,999 |
+| bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k_w1024 | 2 | 0.8162 | 22.1948 | 85,337,312 | 8 | 363,008 | 9,999 |
+| bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k_w1024 | 3 | 0.8131 | 21.9328 | 85,337,312 | 8 | 363,008 | 9,999 |
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k_w256 | 0 | 0.9594 | 38.2400 | 11,795,168 | 8 | 363,008 | 9,999 |
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k_w256 | 1 | 0.9593 | 38.2154 | 11,795,168 | 8 | 363,008 | 9,999 |
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k_w256 | 2 | 0.9605 | 38.3954 | 11,795,168 | 8 | 363,008 | 9,999 |
@@ -241,6 +250,7 @@
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k | 1 | 0.9976 | 44.2066 | 5,043,168 | 8 | 363,008 | 19,999 |
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k | 2 | 0.9978 | 44.2337 | 5,043,168 | 8 | 363,008 | 19,999 |
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k | 3 | 0.9974 | 44.1780 | 5,043,168 | 8 | 363,008 | 19,999 |
+| bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w1024 | 0 | 0.7585 | 17.8298 | 85,337,312 | 8 | 363,008 | 19,999 |
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w256 | 0 | 0.8812 | 28.4131 | 11,795,168 | 8 | 363,008 | 19,999 |
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w256 | 1 | 0.8806 | 28.3449 | 11,795,168 | 8 | 363,008 | 19,999 |
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w256 | 2 | 0.8864 | 28.9804 | 11,795,168 | 8 | 363,008 | 19,999 |

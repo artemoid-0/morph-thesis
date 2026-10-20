@@ -24,7 +24,7 @@ Each direction's answer is stated once, in FINDINGS; the table gives its status 
 | D5 | the rare and novel tail | **closed**, screened at full training; the unseen-word version parked (§33.47) | [the rare tail](FINDINGS.md#no-benefit-in-the-rare-tail) |
 | D6 | the token-independent input | **parked — outside the thesis** (§33.59); G-71 closed (§33.58) | [what the slot did instead](FINDINGS.md#what-the-slot-did-instead-a-token-independent-input) |
 | D7 | tokenization | **answered** at four seeds (§33.61–§33.81); the exposure comparison against both references (§33.110–§33.118) | [Q1 in Ukrainian](FINDINGS.md#q1-in-ukrainian-morphology-inside-bpe); [in English](FINDINGS.md#q1-in-english-morphology-inside-bpe); [the tokenizer and the embedding](FINDINGS.md#morphology-in-the-tokenizer-and-in-the-embedding-ukrainian) |
-| D8 | scale and architecture: wider, deeper, a modern block | width 512 **answered** (§33.94, §33.102, §33.118); width 1024: queue item 1; depth and the RMSNorm and SwiGLU block (built, §33.54) not run | [Q1 in Ukrainian](FINDINGS.md#q1-in-ukrainian-morphology-inside-bpe) ("It peaks there"); [the null at 30M](FINDINGS.md#the-same-shape-null-is-not-neutral) |
+| D8 | scale and architecture: wider, deeper, a modern block | width 512 **answered** (§33.94, §33.102, §33.118); width 1024 at 10k: half width 512's, split by seed (§33.120), its 20k half queue item 1; depth and the RMSNorm and SwiGLU block (built, §33.54) not run | [Q1 in Ukrainian](FINDINGS.md#q1-in-ukrainian-morphology-inside-bpe) ("It peaks there"); [the null at 30M](FINDINGS.md#the-same-shape-null-is-not-neutral) |
 | D9 | a second corpus per language | Ukrainian **answered** with UberText fiction (§33.85, §33.88, §33.108); no English corpus chosen | [Q1 in Ukrainian](FINDINGS.md#q1-in-ukrainian-morphology-inside-bpe) ("And on a second corpus") |
 
 **D3 — is the reliance deficit permanent?**
@@ -41,22 +41,19 @@ Also parked: morphology-factorized embeddings for parameter efficiency (Q1 partl
 
 ## The queue
 
-The thesis text's list of 19 October (§33.117), in its order: each item with the sentence it states for every outcome (journey §33.117) and its cost from the recorded timings (`scripts/ops/run_times.py`).
+The thesis text's list of 19 October (§33.117), in its order, which the text confirmed on 20 October: each item with the sentence it states for every outcome (journey §33.117) and its cost from the recorded timings (`scripts/ops/run_times.py`).
 Results committed by about 31 October reach the text; the work is admitted on 4 November.
 Each item's preparation runs on the CPU while the item before it trains.
 In the items, §3.x and "conclusion n" are the thesis text's sections, not the journey's.
 
-**Running** (20 October, the second machine): item 1, width 1024 — the 10k half, then the 20k half until END_BY; what is left runs on a later night (§33.119; P267–P271). Items 2–3 wait for hours.
+**Running:** nothing. The chain of 20 October ended at 05:32 EDT on the second machine with item 1's 10k half and the 20k pair of seed 0 (§33.120). The rest of item 1 and items 2–3 wait for hours.
 
 1. **The tokenizer's gain beyond 30M parameters** (§3.12, §3.3.2, conclusion 2): width 1024, ~38M tokens, both nulls (BPE 17k, endings apart), seeds 0–3, at 10k and at 20k.
-   It is compared on the law's axis as at width 512 (`tokenizer_widths.py`), with MultiBLiMP on the 20k models.
-   - **Cost:** width 1024 has never run.
-     Scaled from width 512 (~16 min per 10k run on the second machine; each layer's cost four times at twice the width), ~50 min per 10k run and ~100 min per 20k run: 16 runs, **~20 h**, plus 8 MultiBLiMP evaluations (minutes).
-   - **First:** a fit check on the second machine for memory and speed (`scripts/ops/fit_check.py`, minutes).
-   - **Ready:** the data are on the second machine, and no twins are needed (no width-1024 run exists).
-     The nulls suffice as references: at width 512 the null costs nothing (§33.118).
-   - **Fallback** if it does not fit the hours or the date: width 512 at full training (151M, 50k), both nulls, four seeds: 8 runs of ~80 min, **~10.7 h**.
-     BPE 17k's 151M stream is on the second machine; endings apart's is to be checked or sent.
+   The 10k half and seed 0's 20k pair ran on 20 October (§33.120): at 10k the gain is +0.0067 ± 0.0030, half width 512's, because two seeds of four fall behind early (G-81).
+   - **Left:** the 20k pairs of seeds 1–3, 6 runs of 88 min (measured), **~8.8 h**: the same chain started again (`scripts/chains/second_2026-10-20.sh`), which skips the finished runs. Then MultiBLiMP on the 8 models at 20k (minutes).
+   - **It decides** (P271–P273): level at 20k and within 0.003 of width 512's → *by 20k it holds at 30M parameters' level; at 10k two seeds of four had not yet regained it*; level and below → *smaller again but lasting*; still falling → *it fades*.
+     Whether the 10k fall recurs at seeds 1 and 2 (P272) tells the seed's from chance (G-81).
+   - **Fallback** if the hours do not come before the date: the text states the 10k half and seed 0's 20k pair as they are.
 2. **Number and gender as context-aware features** (§3.10, conclusion 7): under BPE 17k and endings apart, ~38M, 10k, seeds 0–3.
    For each feature, the tagged one, its word form and its leak control, each over the null and the empty slot (both already on the second machine): 2 × 3 × 2 × 4 = **48 runs, ~3.4 h**.
    The exposure comparison for both features comes with the same runs.
@@ -69,14 +66,12 @@ In the items, §3.x and "conclusion n" are the thesis text's sections, not the j
      If the null's validation curve stops falling, the fallback is seeds 4–7 at 50k: 8 runs of ~21 min, **~2.8 h**.
 4. **The exposure redundancy at width 512**: answered (§33.118).
 5. **BLiMP's agreement at eight seeds**: answered (§33.117).
+6. **Unigram at width 512**, which the text asked for on 20 October, after item 3: its null, case and empty slot, 12 runs, **~3.2 h**, data on the second machine.
+   Unigram is the one exposing tokenizer whose same-point shortfall is measured at one size only.
+   *It stays:* under Unigram, exposed endings make case partly redundant at both sizes (conclusion 6 gains its Unigram clause).
+   *It goes:* at 30M parameters the redundancy is gone under both exposing tokenizers, and Unigram's shortfall is the 5M model's (§33.118).
 
-In all, items 1–3 take ~29 h of the second machine (~17 h with both fallbacks), plus half a day of the thesis machine's CPU for item 2.
-
-**After item 4, held for the text's ask:** Unigram at width 512 (its null, case and empty slot, 12 runs, ~3.2 h, data on the second machine).
-Unigram is now the one exposing tokenizer whose same-point shortfall is measured at one size only.
-*It stays:* under Unigram, exposed endings make case partly redundant at both sizes.
-*It goes:* at 30M parameters the redundancy is gone under both exposing tokenizers.
-Both outcomes change the sentence, but it follows up an answered question, so it runs only if the text asks (§33.118).
+In all, items 1–3 and 6 take ~21 h of the second machine (~18 h with item 3's fallback), plus half a day of the thesis machine's CPU for item 2.
 
 **Dropped** by the sentence test (every outcome gives the same sentence, or none):
 - more seeds for English morpheme segmentation (the 12–13% gap is about nineteen times the widest seed spread);

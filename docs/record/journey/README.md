@@ -44,7 +44,7 @@ before it; Parts 1–2 why the tokenizer was built as it was.
 | Part 12 | [Full Training, Grammar, and the Leak](12_full_training_and_the_leak.md) | §33.71–§33.82 | The tokenizer's gain at full training and in grammar (MultiBLiMP); what the sentence adds over the word form is the tagger's leak. |
 | Part 13 | [How Far the Gain Travels](13_how_far_the_gain_travels.md) | §33.83–§33.96 | The sentence test; morphology inside the models; the gain in English, on fiction, at widths 256 and 512. |
 | Part 14 | [Two Machines, and a Null That Is Not Neutral](14_two_machines.md) | §33.97–§33.116 | The second machine and its twins; a same-shape null that is not neutral (G-78); English's leak; width 512 and fiction at full training. |
-| Part 15 | [The List of 19 October: Case and the Null at 30M Parameters](15_the_list_of_19_october.md) | §33.117 onward | Open. BLiMP's agreement at eight seeds; exposure on the law's axis; at 30M parameters the null costs nothing. |
+| Part 15 | [The List of 19 October: Case and the Null at 30M Parameters](15_the_list_of_19_october.md) | §33.117 onward | Open. BLiMP's agreement at eight seeds; exposure on the law's axis; at 30M parameters the null costs nothing; at 85M the tokenizer's gain halves at 10k, split by seed. |
 | — | [Appendices](appendices.md) | A, B, C | The decision record; the mapping from an earlier section numbering; the thesis's list of 15 October with its outcome sentences. |
 
 ## By question
@@ -73,6 +73,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [§33.86](13_how_far_the_gain_travels.md#3386-the-wider-models-lead-settles-0022-at-width-256-and-20k), [§33.93–§33.96](13_how_far_the_gain_travels.md#3393-does-the-tokenizers-gain-keep-growing-with-model-size-width-512-prepared-14-october), [§33.97](14_two_machines.md#3397-width-512-at-20k-seed-1-prepared-15-october), [§33.100](14_two_machines.md#33100-width-512-at-20k-seed-1-levelled-off-too-at-00097), [§33.102](14_two_machines.md#33102-the-night-of-16-october-width-512-settles-a-removed-features-deficit-halves-by-50k-and-case-leaves-none) — width 256 settles; width 512 gains less and levels off
 - [§33.85](13_how_far_the_gain_travels.md#3385-how-far-the-tokenizers-gain-travels-english-and-ukrainian-fiction-prepared), [§33.88](13_how_far_the_gain_travels.md#3388-a-second-ukrainian-corpus-fiction-keeps-the-gain-at-half-the-size-in-bits-per-byte-and-in-full-in-grammar), [§33.101–§33.102](14_two_machines.md#33101-a-second-machine-and-the-night-of-16-october-prepared), [§33.108–§33.109](14_two_machines.md#33108-fiction-at-full-training-the-tokenizers-gain-holds-and-reaches-wikipedias-share) — a second corpus, fiction, at 10k and at full training
 - [§33.118](15_the_list_of_19_october.md#33118-item-4-at-30m-parameters-case-gains-alike-under-both-tokenizers-and-the-null-costs-nothing) — over the empty slots the 5M model's figure is conservative
+- [§33.119](15_the_list_of_19_october.md#33119-item-1-prepared-the-tokenizers-gain-at-width-1024), [§33.120](15_the_list_of_19_october.md#33120-item-1s-10k-half-at-85m-parameters-the-gain-halves-on-average-because-two-seeds-of-four-lose-it-early) — beyond 30M parameters: at 85M the gain halves at 10k, split by seed
 
 ### Q2: injected features against a same-shape null
 
@@ -419,6 +420,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [33.117 The text's list of 19 October: BLiMP's agreement at eight seeds, the exposure comparison on the law's axis, and item 4 prepared](15_the_list_of_19_october.md#33117-the-texts-list-of-19-october-blimps-agreement-at-eight-seeds-the-exposure-comparison-on-the-laws-axis-and-item-4-prepared)
 - [33.118 Item 4: at 30M parameters case gains alike under both tokenizers, and the null costs nothing](15_the_list_of_19_october.md#33118-item-4-at-30m-parameters-case-gains-alike-under-both-tokenizers-and-the-null-costs-nothing)
 - [33.119 Item 1 prepared: the tokenizer's gain at width 1024](15_the_list_of_19_october.md#33119-item-1-prepared-the-tokenizers-gain-at-width-1024)
+- [33.120 Item 1's 10k half: at 85M parameters the gain halves on average, because two seeds of four lose it early](15_the_list_of_19_october.md#33120-item-1s-10k-half-at-85m-parameters-the-gain-halves-on-average-because-two-seeds-of-four-lose-it-early)
 
 ### Appendices
 
