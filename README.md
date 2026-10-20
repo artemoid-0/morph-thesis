@@ -6,14 +6,16 @@ model's embedding layer help? A fixed small transformer is trained on English
 varies, and every feature is compared with a **null of identical shape** that
 carries no information.
 
-> **The finding.** Linguistic features help a small language model exactly
-> while it has not yet learned what they encode — early in training, on a
-> short budget, or with too little data to learn it — and add nothing once it
-> has. At full scale, the gains that look like feature gains are architecture.
-> In Ukrainian, morphology placed in the tokenizer — BPE that keeps inflectional
-> endings apart — helps by itself (1.6% in bits per byte at the size tested), and
-> unlike a feature's gain it lasts: it holds at twice the training budget and at
-> full training, and is larger in a model twice as wide (2.4%). Case in the embedding adds on top of it.
+> **The findings** ([`docs/FINDINGS.md`](docs/FINDINGS.md) states each, with its evidence and firmness).
+> Linguistic features in the embedding help a small language model only while it has not yet learned what they encode — early in training, on a short budget, or with too little data to learn it.
+> At the end of training none beats a null of the same shape, in English or Ukrainian; what reading the sentence adds over the word form is mostly not context, and at full training it is the tagger's leak.
+> What first looked like feature gains was the feature slot itself, helping with no information in it.
+> Morphology placed in the tokenizer lasts.
+> In Ukrainian, BPE that never joins a stem to its inflectional ending beats plain BPE by 1.6% in bits per byte at a 10k budget and by 1.75% at full training.
+> The gain peaks at width 256 (2.6%; 1.4% at width 512, 30M parameters), shows in grammar (+4.9 points on MultiBLiMP's subject–verb agreement at full training, +6.8 at width 512), and holds on fiction (1.45% at full training).
+> In English the same kind of tokenizer gains a fifth as much, and that lasts too (0.39% at full training, on the median seed).
+> Case in the embedding adds to the tokenizer's gain only early: against the best model without it, case gains less where endings are exposed at a 10k budget, the two tokenizers are level by 20k, and at full training case adds only the tagger's leak under endings apart, and nothing under BPE 17k.
+> Segmenting English into morphemes instead of BPE loses, by 13.5%.
 
 **Start here: [`docs/README.md`](docs/README.md)** — what to read and in what
 order. The claims, each with its evidence: [`docs/FINDINGS.md`](docs/FINDINGS.md).
@@ -41,7 +43,7 @@ pip install torch datasets tokenizers spacy morfessor pandas numpy openpyxl matp
 python -m spacy download en_core_web_sm
 pip install pymorphy3 pymorphy3-dicts-uk && python -m spacy download uk_core_news_sm   # Ukrainian
 
-python scripts/ops/verify.py --spacy     # 7 checks, incl. the freeze guarantee
+python scripts/ops/verify.py --spacy     # 8 checks, incl. the freeze guarantee
 ```
 
 `data/MorphoLEX_en.xlsx` is hand-curated, external, and **not regenerable** —
