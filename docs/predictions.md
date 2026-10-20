@@ -6,7 +6,7 @@ Each prediction was recorded in the [journey](record/journey/README.md) **before
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 159 right, 11 half right, 91 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 3 pending — of 273.
+**Tally:** 159 right, 11 half right, 91 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 8 pending — of 278.
 
 *Key to the tally (added 19 October 2026). Counted half right: P19, P46, P54 — with the eight
 whose outcome begins "half right" or "partly right". Counted right: P33, P172 — right by their
@@ -300,3 +300,8 @@ The wrong ones carried the information:
 | P271 | At 20k the gain levels off: over the last 5,000 steps it changes by less than 0.002 on average | pending — seed 0 levels off (+0.0119 to +0.0115); seeds 1–3 to run | §33.119, §33.120 |
 | P272 | In the 20k runs of seeds 1 and 2 at width 1024 the lead again falls below +0.003 at some evaluation between steps 2,500 and 5,000 (the 10k fall is the seed's, not chance) | pending | §33.120 |
 | P273 | At 20k width 1024's gain over four seeds is within 0.003 of width 512's at 20k on the same machine (+0.0099 ± 0.0006) | pending | §33.120 |
+| P274 | At width 1024 and 10k, endings apart's models beat BPE 17k's on MultiBLiMP at every seed | pending | §33.121 |
+| P275 | That MultiBLiMP gain is at least width 512's on the same machine at 10k | pending | §33.121 |
+| P276 | The grammatical gain follows the split in bits per byte: seeds 1 and 2 each gain fewer points than seeds 0 and 3 | pending | §33.121 |
+| P277 | A rerun of seed 1's endings-apart null at width 1024, evaluated every 100 steps, repeats the 10k run's evaluations bit for bit (to 1e-6) | pending | §33.121 |
+| P278 | No spike: from step 1,000 to 4,000 that rerun's validation BPB never rises by more than 0.005 between evaluations | pending | §33.121 |

@@ -329,3 +329,37 @@ learning rate's schedule: at step 500 seed 0's two runs agree to 0.0001.
 
 **Predictions** (this section): P267 and P269 wrong, P268 and P270 right. The tally is 159 right, 11
 half right, 91 wrong, 8 never tested, 1 withdrawn and 3 pending (P271–P273), of 273.
+
+### 33.121 MultiBLiMP at width 1024, and a finer look at G-81 (prepared, 20 October)
+
+Two short jobs on the second machine, under an hour together, while the rest of item 1 waits for its
+night:
+- **MultiBLiMP on the eight 10k models** of §33.120 (`scripts/eval/multiblimp_eval.py`). The text
+  asked for it on the 20k models; at 10k it shows whether the grammatical gain follows the split in
+  bits per byte. Width 512's eight 10k nulls on the same machine (item 4's twins) are scored in the
+  same job, so the two widths are compared within one machine. About 30 seconds per eight models
+  there (17 October).
+- **G-81 at 100-step resolution:** seed 1's endings-apart null at width 1024 again, with the 10k
+  run's schedule (`lr_horizon` 10,000) stopped at step 5,000, evaluating every 100 steps, early
+  stopping off (`train.patience=none`). On this machine it shares the 10k run's initial weights,
+  batches and dropout masks, and evaluation draws nothing at random. So it should repeat that run's
+  first 5,000 steps exactly and show the fall's shape between its evaluations. Its label,
+  `…_st5k_w1024`, comes from `max_steps`; it is not a 5k budget. About 27 minutes (132.9 s per 500
+  steps and one evaluation in the 10k run; 50 evaluations).
+
+Predictions, before either job:
+- **P274** (~75%). At width 1024 and 10k, endings apart's models prefer the grammatical sentence
+  more often than BPE 17k's at every seed (4/4).
+- **P275** (~55%). Its mean gain in points is at least width 512's on the same machine at 10k.
+- **P276** (~55%). The grammatical gain follows the split in bits per byte: seeds 1 and 2 each gain
+  fewer points than seeds 0 and 3.
+- **P277** (~80%). The finer run repeats the 10k run bit for bit: its validation BPB at steps 0,
+  500, …, 4,500 equals the 10k run's to 1e-6.
+- **P278** (~75%). No spike: from step 1,000 to 4,000 its validation BPB never rises by more than
+  0.005 from one evaluation to the next.
+
+**What each outcome would say.** If the grammatical gain holds at seeds 1 and 2 (P276 wrong), the
+split is in predicting tokens, not in agreement: «за ~85 млн параметрів граматичний виграш не залежить
+від запуску». If it follows the split, both measures depend on the run. A spike (P278 wrong) points
+G-81 at the training recipe at this width; a smooth, slower stretch points it at the seed or at
+chance, which the rest of the 20k half separates (P272).

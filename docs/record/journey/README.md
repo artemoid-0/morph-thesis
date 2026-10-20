@@ -421,6 +421,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [33.118 Item 4: at 30M parameters case gains alike under both tokenizers, and the null costs nothing](15_the_list_of_19_october.md#33118-item-4-at-30m-parameters-case-gains-alike-under-both-tokenizers-and-the-null-costs-nothing)
 - [33.119 Item 1 prepared: the tokenizer's gain at width 1024](15_the_list_of_19_october.md#33119-item-1-prepared-the-tokenizers-gain-at-width-1024)
 - [33.120 Item 1's 10k half: at 85M parameters the gain halves on average, because two seeds of four lose it early](15_the_list_of_19_october.md#33120-item-1s-10k-half-at-85m-parameters-the-gain-halves-on-average-because-two-seeds-of-four-lose-it-early)
+- [33.121 MultiBLiMP at width 1024, and a finer look at G-81 (prepared, 20 October)](15_the_list_of_19_october.md#33121-multiblimp-at-width-1024-and-a-finer-look-at-g-81-prepared-20-october)
 
 ### Appendices
 
