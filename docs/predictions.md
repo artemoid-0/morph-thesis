@@ -6,7 +6,7 @@ Each prediction was recorded in the [journey](record/journey/README.md) **before
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 159 right, 11 half right, 91 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 8 pending — of 278.
+**Tally:** 161 right, 11 half right, 94 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 3 pending — of 278.
 
 *Key to the tally (added 19 October 2026). Counted half right: P19, P46, P54 — with the eight
 whose outcome begins "half right" or "partly right". Counted right: P33, P172 — right by their
@@ -19,7 +19,9 @@ The wrong ones carried the information:
 - **the budget:** the training-budget reframing (P61);
 - **the tokenizer:** the tokenizer hypothesis (P119, P120), Unigram's early lead (P130), the wider
   model's larger tokenizer gain (P135) and its peak at width 256 (P202, P203), and at width 1024 that it is
-  positive at every seed (P267) and level with width 512's on the law's axis (P269);
+  positive at every seed (P267) and level with width 512's on the law's axis (P269), that its grammatical
+  gain grows past 30M parameters (P275) and follows the split in bits per byte (P276);
+- **the two machines:** that a rerun on the second machine repeats bit for bit (P277);
 - **case:** where the exposure effect sits (P144–P146), what the sentence's case adds over the word
   form's (P148–P150), and how much of it the tagger's leak is (P164, P166);
 - **inside the models:** what context adds inside the models (P184, P187);
@@ -300,8 +302,8 @@ The wrong ones carried the information:
 | P271 | At 20k the gain levels off: over the last 5,000 steps it changes by less than 0.002 on average | pending — seed 0 levels off (+0.0119 to +0.0115); seeds 1–3 to run | §33.119, §33.120 |
 | P272 | In the 20k runs of seeds 1 and 2 at width 1024 the lead again falls below +0.003 at some evaluation between steps 2,500 and 5,000 (the 10k fall is the seed's, not chance) | pending | §33.120 |
 | P273 | At 20k width 1024's gain over four seeds is within 0.003 of width 512's at 20k on the same machine (+0.0099 ± 0.0006) | pending | §33.120 |
-| P274 | At width 1024 and 10k, endings apart's models beat BPE 17k's on MultiBLiMP at every seed | pending | §33.121 |
-| P275 | That MultiBLiMP gain is at least width 512's on the same machine at 10k | pending | §33.121 |
-| P276 | The grammatical gain follows the split in bits per byte: seeds 1 and 2 each gain fewer points than seeds 0 and 3 | pending | §33.121 |
-| P277 | A rerun of seed 1's endings-apart null at width 1024, evaluated every 100 steps, repeats the 10k run's evaluations bit for bit (to 1e-6) | pending | §33.121 |
-| P278 | No spike: from step 1,000 to 4,000 that rerun's validation BPB never rises by more than 0.005 between evaluations | pending | §33.121 |
+| P274 | At width 1024 and 10k, endings apart's models beat BPE 17k's on MultiBLiMP at every seed | right — +5.3 ± 0.4, from +4.6 to +6.3 | §33.121, §33.122 |
+| P275 | That MultiBLiMP gain is at least width 512's on the same machine at 10k | wrong — +5.3 ± 0.4 against +5.9 ± 0.3 | §33.121, §33.122 |
+| P276 | The grammatical gain follows the split in bits per byte: seeds 1 and 2 each gain fewer points than seeds 0 and 3 | wrong — seed 2 gains more than seed 0 (+5.3 against +5.1); seed 1, with no lead in bits per byte, still gains +4.6 | §33.121, §33.122 |
+| P277 | A rerun of seed 1's endings-apart null at width 1024, evaluated every 100 steps, repeats the 10k run's evaluations bit for bit (to 1e-6) | wrong — identical at step 0, then up to 3.2 × 10⁻⁵ BPB apart: close, not bit for bit | §33.121, §33.122 |
+| P278 | No spike: from step 1,000 to 4,000 that rerun's validation BPB never rises by more than 0.005 between evaluations | right — it falls at every evaluation | §33.121, §33.122 |

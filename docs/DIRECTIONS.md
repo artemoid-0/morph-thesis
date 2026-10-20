@@ -50,9 +50,10 @@ In the items, §3.x and "conclusion n" are the thesis text's sections, not the j
 
 1. **The tokenizer's gain beyond 30M parameters** (§3.12, §3.3.2, conclusion 2): width 1024, ~38M tokens, both nulls (BPE 17k, endings apart), seeds 0–3, at 10k and at 20k.
    The 10k half and seed 0's 20k pair ran on 20 October (§33.120): at 10k the gain is +0.0067 ± 0.0030, half width 512's, because two seeds of four fall behind early (G-81).
+   MultiBLiMP at 10k (§33.122): +5.3 ± 0.4 at every seed, no larger than width 512's on the same machine (+5.9 ± 0.3).
    - **Left:** the 20k pairs of seeds 1–3, 6 runs of 88 min (measured), **~8.8 h**: the same chain started again (`scripts/chains/second_2026-10-20.sh`), which skips the finished runs. Then MultiBLiMP on the 8 models at 20k (minutes).
    - **It decides** (P271–P273): level at 20k and within 0.003 of width 512's → *by 20k it holds at 30M parameters' level; at 10k two seeds of four had not yet regained it*; level and below → *smaller again but lasting*; still falling → *it fades*.
-     Whether the 10k fall recurs at seeds 1 and 2 (P272) tells the seed's from chance (G-81).
+     Whether the 10k fall recurs at seeds 1 and 2 under the 20k schedule (P272); on this machine it is the seed's, and no spike (G-81, §33.122).
    - **Fallback** if the hours do not come before the date: the text states the 10k half and seed 0's 20k pair as they are.
 2. **Number and gender as context-aware features** (§3.10, conclusion 7): under BPE 17k and endings apart, ~38M, 10k, seeds 0–3.
    For each feature, the tagged one, its word form and its leak control, each over the null and the empty slot (both already on the second machine): 2 × 3 × 2 × 4 = **48 runs, ~3.4 h**.

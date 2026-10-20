@@ -259,6 +259,7 @@
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w512 | 1 | 0.8038 | 21.1728 | 30,017,760 | 8 | 363,008 | 19,999 |
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w512 | 2 | 0.8046 | 21.2367 | 30,017,760 | 8 | 363,008 | 19,999 |
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w512 | 3 | 0.8040 | 21.1949 | 30,017,760 | 8 | 363,008 | 19,999 |
+| bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st5k_w1024 | 1 | 0.8984 | 30.3283 | 85,337,312 | 8 | 363,008 | 4,999 |
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2 | 0 | 0.9266 | 33.7533 | 5,043,168 | 8 | 363,008 | 49,999 |
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2 | 1 | 0.9286 | 34.0141 | 5,043,168 | 8 | 363,008 | 49,999 |
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2 | 2 | 0.9286 | 34.0175 | 5,043,168 | 8 | 363,008 | 49,500 |

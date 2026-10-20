@@ -9,7 +9,8 @@ in a middle stretch of training, in models of 5M and 30M parameters (§33.117–
 parameters the same-shape null costs nothing; in the 5M model the tokenizer's gain over the empty
 slots is +0.0203, not +0.0175 (§33.118). At 85M parameters (width 1024) and 10k the tokenizer's gain
 is half width 512's on average, +0.0067 ± 0.0030: two seeds keep width 512's level, two lose it
-early in training (§33.120).
+early in training (§33.120). Its grammatical gain holds at every seed (+5.3 ± 0.4 points) and is no larger than
+30M parameters' on the same machine; the two seeds' fall is a slower stretch, no spike (§33.122).
 
 ---
 
@@ -363,3 +364,67 @@ split is in predicting tokens, not in agreement: «за ~85 млн параме�
 від запуску». If it follows the split, both measures depend on the run. A spike (P278 wrong) points
 G-81 at the training recipe at this width; a smooth, slower stretch points it at the seed or at
 chance, which the rest of the 20k half separates (P272).
+
+### 33.122 MultiBLiMP at width 1024: the gain holds at every seed and stops growing; G-81's fall is no spike
+
+The two jobs of §33.121 ran on the second machine on 20 October from 09:37 to 10:04 EDT, 26 minutes
+in all (the log: `logs/second/`, the remote log started at 09:37:46).
+
+**MultiBLiMP at 10k** (`multiblimp_eval_20261020T133750`, width 1024; `…T133839`, width 512's
+twins, item 4's nulls on the same machine). Accuracy over the 2,744 pairs; endings apart's gain over
+BPE 17k in points, paired by seed:
+
+| 10k, the second machine | BPE 17k | endings apart | the gain | seeds 0, 1, 2, 3 |
+|---|---|---|---|---|
+| width 512 | 73.54% | 79.46% | +5.9 ± 0.3 (4/4) | +6.01, +6.09, +6.45, +5.10 |
+| width 1024 | 76.64% | 81.95% | **+5.3 ± 0.4 (4/4)** | +5.07, +4.56, +5.28, +6.34 |
+
+By phenomenon at width 1024: number +5.2 ± 0.8, gender +5.0 ± 0.7, person +5.6 ± 0.3 (4/4 each).
+At width 512 they are +6.2 ± 0.7, +6.6 ± 0.4 and +5.2 ± 0.3.
+- **Grammar does not follow the split in bits per byte.** Seed 1 has no lead in bits per byte
+  (−0.0004) and still gains +4.6 points. Seed 2 (+0.0042) gains +5.3, more than seed 0 (+0.0127,
+  +5.1). G-81's fall is in predicting tokens, most of all rare ones (§33.120), not in agreement.
+- **The grammatical gain stops growing at 30M parameters.** On one machine, width 1024's gain is no
+  larger than width 512's (−0.6 ± 0.5). On the thesis machine it grew from width 128 through 256 to
+  512 (+4.3, +5.3, +6.8).
+- **Between machines, grammar moves more than bits per byte.** Width 512's twins gain 0.89 ± 0.42
+  points less than the thesis machine's models (+5.9 against +6.8), lower at every seed (−0.44,
+  −0.44, −0.55, −2.15).
+  - Their BPE 17k models are within 0.5 points of the thesis machine's at each seed. Their
+    endings-apart models are 0.3 to 1.6 points lower.
+  - In bits per byte the same twins differ by −0.0034 to +0.0014, with no consistent sign (§33.118).
+  - So the widths are compared within one machine here too: against the thesis machine's +6.8,
+    width 1024's +5.3 would have looked like a fall.
+
+**G-81 at 100-step resolution** (run `e50b75e8fdd2`: seed 1's endings-apart null at width 1024, the
+10k run's schedule to step 5,000, evaluated every 100 steps; 24 min 49 s, 3.4 steps a second with
+51 evaluations; `scratch/g81_finer.py` reads it against its 10k run).
+- **The rerun repeats its 10k run closely, but not bit for bit.** At step 0 the two agree exactly
+  (2.608084410). From step 500 they differ by 1.3 × 10⁻⁶, and by at most 3.2 × 10⁻⁵ BPB up to step
+  4,500 (at 2,000). Their single-batch training losses agree to 10⁻³. The code sets no deterministic
+  mode, and the rerun also evaluates five times as often; which of the two moves the arithmetic is
+  not separated. G-69's bit-for-bit reproduction (§33.43) was on the thesis machine, of a run with the
+  same training settings.
+- **No spike.** From step 1,000 to 4,000 the validation BPB falls at every evaluation. Over the
+  stretch where seed 1 falls behind seed 0 (steps 1,500–3,000) it falls by 0.0048 to 0.0143 per 100
+  steps, the drops shrinking on the whole as a run's curve flattens. No single-batch training loss stands more than
+  0.31 nats above the mean of its neighbours (step 4,700; 0.28 at 2,900, 0.21 at 1,500), which is
+  within the batch-to-batch scatter of the whole run.
+- **So the fall is a slower stretch of learning, and on this machine it is the seed's.** Its
+  initial weights, batches and dropout masks repeat it to 3 × 10⁻⁵ BPB, under arithmetic that differs
+  from step 500 on: small numerical noise does not grow into the fall or out of it. Two questions stay
+  open in G-81. Would another dropout draw (a twin on the thesis machine) fall too? Would another
+  recipe at this width (a longer warm-up)?
+
+**Predictions** (§33.121): P274 right; P275, P276 and P277 wrong; P278 right. The tally is 161 right,
+11 half right, 94 wrong, 8 never tested, 1 withdrawn and 3 pending (P271–P273), of 278.
+
+**What it changes for the thesis.**
+1. **At 85M parameters the grammatical gain holds at every seed** (+5.3 ± 0.4 points at 10k), even
+   where the gain in bits per byte is nearly gone. The FINDINGS sentence that the grammatical gain is
+   not the code length's now rests on a split within one cell as well as across widths.
+2. **It stops growing at 30M parameters**: on one machine 85M's gain is no larger than 30M's.
+3. **The method point gains a caveat:** an effect measured on each machine agrees in bits per byte,
+   but the grammatical gain moved by 0.9 points between machines at width 512.
+4. **G-81 is narrowed, not closed:** no instability shows at 100-step resolution, and the fall belongs
+   to the seed on this machine. Whether it belongs to the recipe at this width is still open.

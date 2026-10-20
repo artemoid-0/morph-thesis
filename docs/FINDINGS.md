@@ -53,6 +53,7 @@ At 20k it levels off from about step 7,500 at every seed, at **+0.0102 ± 0.0006
 **Beyond 30M parameters it is smaller at 10k, and depends on the run.**
 At width 1024 (85M parameters, on a second machine) it is **+0.0067 ± 0.0030 (0.81%, 3/4)** at 10k, half width 512's there (+0.0141 ± 0.0016).
 Two seeds keep width 512's level (+0.0127, +0.0103). At the other two the endings-apart null falls behind in early training, from about step 1,500, and has regained about half of it by the end of the budget (−0.0004, +0.0042; G-81).
+The fall is no spike: at 100-step resolution that null's validation BPB falls at every evaluation, and a rerun on the same machine repeats it to 3 × 10⁻⁵, so there it is the seed's (§33.122).
 At the same point of learning the lead starts above width 512's (+0.059 against +0.048 at null BPB 1.30) and from 1.04 to 0.88 is 0.007–0.015 below it.
 At 20k one seed so far: +0.0115 (1.50%), level over the last 5,000 steps and at width 512's level at the same null BPB; the other three are queued (§33.120).
 
@@ -64,16 +65,18 @@ At width 512 the two references agree (+0.0142, +0.0141), and its gain is the sm
 On MultiBLiMP's 2,744 Ukrainian subject–verb agreement pairs the endings-apart models prefer the grammatical sentence more often (4/4 each):
 - full training: 76.3% against 71.4%, **+4.9 ± 0.4 points**, in number, gender and person; +5.0 on pairs of equal token length;
 - ~38M, 10k: 69.0% against 64.8%, +4.3 ± 0.3; 20k: +4.5 ± 0.5;
-- width 256: +5.3 ± 0.3; width 512: **+6.8 ± 0.2** (20k: +5.9 ± 0.2), where the lead in bits per byte is half width 256's.
+- width 256: +5.3 ± 0.3; width 512: **+6.8 ± 0.2** (20k: +5.9 ± 0.2), where the lead in bits per byte is half width 256's;
+- width 1024 (85M parameters, a second machine), 10k: **+5.3 ± 0.4**, from +4.6 to +6.3 at every seed, also at the two where the lead in bits per byte is nearly gone; width 512 on that machine +5.9 ± 0.3.
 
-The grammatical gain grows with the model, and is not the code length's.
+The grammatical gain grows with the model up to 30M parameters, not beyond (on one machine 85M's is no larger than 30M's), and it is not the code length's.
+Between machines it moves more than within one: width 512's twins gain 0.9 ± 0.4 points less than the thesis machine's models, at every seed (§33.122).
 Exposing more endings elsewhere does not do it: BPE 4k is 1.2 points below BPE 17k, Unigram level with it.
 
 **And on a second corpus.**
 On UberText 2.0's fiction (novels and prose; both tokenizers trained on it) endings apart beats BPE 17k at every seed: **+0.0097 ± 0.0010 BPB (0.8%, 4/4)** at 10k, half its share on Wikipedia, and **+5.3 ± 0.6 points (4/4)** on MultiBLiMP, as much as on Wikipedia or more.
 At full training on four times that text (154M tokens, 50k) it is **+0.0155 ± 0.0010 (1.45%, 4/4)**, flat from step 20,000 — near its share on Wikipedia, so the smaller share belonged to the 10k budget — and +2.3 ± 0.3 points (4/4) on MultiBLiMP, from 88.1% (§33.108, §33.109).
 
-*Two corpora (fiction at 10k, and at full training on a second machine), two corpus sizes and three budgets on Wikipedia, four widths (512 at 20k: seeds 2–3 on a second machine; 1024 on a second machine, at 20k one seed of four).* (§33.61–§33.68, §33.76, §33.79, §33.86, §33.88, §33.94, §33.96, §33.100, §33.102, §33.108, §33.120)
+*Two corpora (fiction at 10k, and at full training on a second machine), two corpus sizes and three budgets on Wikipedia, four widths (512 at 20k: seeds 2–3 on a second machine; 1024 on a second machine, at 20k one seed of four).* (§33.61–§33.68, §33.76, §33.79, §33.86, §33.88, §33.94, §33.96, §33.100, §33.102, §33.108, §33.120, §33.122)
 
 ### Q2: no feature beats its null at the end of training
 
@@ -376,7 +379,8 @@ Each is an artifact this project found in its own numbers or pipeline; together 
    The same weights evaluate within 2 × 10⁻⁹ on both machines, and a matrix product, a softmax and a layer norm are bitwise identical; with dropout off, two machines train the same run to within 2 × 10⁻⁸.
    But dropout's masks are drawn on the GPU, differently by kernel layout, so a run repeated on the other machine differs like a dropout draw: −0.0001 ± 0.0001 over 143 pairs, no consistent sign (71 above, 72 below), the largest difference growing with training (0.0034 at 10k, 0.0044 at 20k, 0.0063 at 50k); at width 512 about as much as one seed's run from another's.
    An effect measured within each machine agrees between them (case over the null under eight conditions at 10k, within 0.0011; at 20k +0.0038 and +0.0037; the tokenizer's gain at width 512, +0.0125 ± 0.0009 and +0.0141 ± 0.0016); a single pair at full training does not.
-   Every comparison is made within one machine. (§33.106, §33.107, §33.109, §33.114, §33.118)
+   Grammar agrees less closely: the tokenizer's MultiBLiMP gain at width 512 is +6.8 ± 0.2 on the thesis machine and +5.9 ± 0.3 on the second, lower at every seed.
+   Every comparison is made within one machine. (§33.106, §33.107, §33.109, §33.114, §33.118, §33.122)
 
 ## Withdrawn along the way
 
