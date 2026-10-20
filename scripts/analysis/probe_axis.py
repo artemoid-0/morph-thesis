@@ -8,7 +8,8 @@ function of the null's BPB. A wider model's curve collapses earlier, so BPB is
 not the axis across sizes. This tool tries a probe's accuracy instead: for every
 probed null (a record of scripts/analysis/probe.py in <root>/audits), each
 checkpoint's accuracy at one layer is paired with the feature's gain over the
-null at the same step — averaged over the seeds that both cells share, each run
+null at the same step — averaged over the seeds that both cells share on one
+machine (FINDINGS, method point 11; the others are named and left out), each run
 to its best step — and the conditions are compared at common accuracy levels.
 If the gains agree there, the gain is a function of that knowledge.
 
@@ -38,12 +39,7 @@ import statistics as st
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, ROOT)
-sys.path.insert(0, os.path.join(ROOT, 'scripts', 'analysis'))
-
-
-def load_results(roots):
-    from learning_law import load
-    return load(roots)
+from morphlm import runs  # noqa: E402
 
 
 def load_probes(roots, fact, previous):
@@ -78,19 +74,10 @@ def accuracy_by_step(record, layer):
 
 
 def gain_by_step(R, null, feat):
-    """{step: (null BPB, gain)} averaged over the seeds both cells share, each to its best step."""
-    from learning_law import same_machine
-    seeds = sorted(s for (l, s) in R if l == feat and (null, s) in R and same_machine(R, null, feat, s))
-    pts = {}
-    for s in seeds:
-        ln = {e['step']: e['bits_per_byte'] for e in R[(null, s)]['log'] if e['step'] > 0}
-        lf = {e['step']: e['bits_per_byte'] for e in R[(feat, s)]['log'] if e['step'] > 0}
-        stop = min(R[(null, s)]['best_step'], R[(feat, s)]['best_step'])
-        for x in ln:
-            if x in lf and x <= stop:
-                pts.setdefault(x, []).append((ln[x], ln[x] - lf[x]))
-    return ({x: (st.mean(a for a, _ in v), st.mean(g for _, g in v))
-             for x, v in pts.items() if len(v) == len(seeds)}, seeds)
+    """{step: (null BPB, gain)} averaged over the seeds both cells share on one machine, each to its
+    best step (runs.gain_curve); the seeds; the seeds left out."""
+    pts, seeds, left = runs.gain_curve(R, null, feat)
+    return {x: (b, g) for x, b, g, _ in pts}, seeds, left
 
 
 def at_level(points, level):
@@ -104,10 +91,7 @@ def at_level(points, level):
 
 def at_bpb(points, level):
     """Accuracy where the null's BPB first falls to `level`, interpolated; None if never."""
-    for (a0, b0, _), (a1, b1, _) in zip(points, points[1:]):
-        if b0 > level >= b1:
-            return a0 + (a1 - a0) * (b0 - level) / (b0 - b1)
-    return None
+    return runs.at([(b, a) for a, b, _ in points], level)
 
 
 def width_of(label):
@@ -118,21 +102,6 @@ def width_of(label):
 def budget_of(label):
     m = re.search(r'_st(\d+)k', label)
     return f'{m.group(1)}k' if m else '50k'
-
-
-def load_twins(roots):
-    """{run id: record} — the twin copies (<root>/audits/device_*/<run id>.json). A probed twin of the
-    second machine is found by its id there, its record not being a result.json (journey §33.113)."""
-    out = {}
-    for root in roots:
-        for p in glob.glob(os.path.join(root, 'audits', 'device_*', '*.json')):
-            try:
-                r = json.load(open(p))
-            except (OSError, ValueError):
-                continue
-            if isinstance(r, dict) and 'run_id' in r and 'label' in r and 'log' in r:
-                out.setdefault(r['run_id'], r)
-    return out
 
 
 def name(c):
@@ -200,13 +169,13 @@ def pooled(conds):
 
 
 def mean_se(xs):
-    m = st.mean(xs)
-    return m, (st.stdev(xs) / len(xs) ** 0.5 if len(xs) > 1 else None)
+    s = runs.summary(xs)
+    return s['mean'], s['se']
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument('--roots', nargs='+', default=[os.path.join(ROOT, 'results')])
+    runs.add_results_flag(ap)
     ap.add_argument('--fact', default='pos', help='the probed fact')
     ap.add_argument('--feature', default=None, help="the feature whose gain is paired (default: the probed fact)")
     ap.add_argument('--null', default='mconst', help="the null's fact")
@@ -223,11 +192,12 @@ def main():
     args = ap.parse_args()
     feature = args.feature or args.fact
 
-    R = load_results(args.roots)
-    probes = load_probes(args.roots, args.fact, args.previous)
-    by_id = {r['run_id']: r for r in R.values()}
-    for run, r in load_twins(args.roots).items():
-        by_id.setdefault(run, r)
+    roots = runs.results_of(args)
+    R = runs.load(roots)
+    probes = load_probes(roots, args.fact, args.previous)
+    # a probed twin of the second machine is found by its id among the twin copies, its record not
+    # being a result.json (journey §33.113); a result.json of the same id comes first
+    by_id = runs.by_id(roots, twins=True)
     kind = f"the previous unit's {args.fact}" if args.previous else f"the current word's {args.fact}"
     conds = []
     for run, rec in sorted(probes.items()):
@@ -237,14 +207,15 @@ def main():
         null = res['label']
         feat = null.replace(f'_{args.null}-', f'_{feature}-', 1)
         acc, layers = accuracy_by_step(rec, args.layer)
-        gains, seeds = gain_by_step(R, null, feat)
+        gains, seeds, left = gain_by_step(R, null, feat)
         pts = sorted((s, acc[s], *gains[s]) for s in acc if s in gains)
+        if left:
+            print(f'  {null} against {feat}: {runs.left_out(left)}')
         if len(pts) < 2:
             print(f'  {run} ({null}): fewer than two steps with both a probe and a gain — skipped')
             continue
-        gpu = (res.get('environment') or {}).get('gpu') or ''
         conds.append(dict(run=run, null=null, width=width_of(null), budget=budget_of(null), seed=res['seed'],
-                          machine='second' if '5090' in gpu else 'thesis', seeds=seeds, points=pts, layers=layers))
+                          machine=runs.machine(res) or runs.gpu(res), seeds=seeds, points=pts, layers=layers))
     if not conds:
         sys.exit(f'no probed {args.null} null with {feature} runs beside it — run probe.py'
                  + (' --previous' if args.previous else '') + ' on a checkpointed null first')

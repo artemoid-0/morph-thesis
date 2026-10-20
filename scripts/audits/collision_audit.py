@@ -164,15 +164,15 @@ def main():
     print(f'  MISSING INFORMATION     : {total_bits:,.0f} bits')
     print(f'  BPB CORRECTION (upper bd): {correction:.4f}')
     rec.add('summary', {'occurrences': total_words,
-                        'distinct_sequences': len(groups),
-                        'colliding_groups': len(colliding),
-                        'occurrences_in_collision': in_collision,
+                        'distinct_sequences': len(seq_to_surface),
+                        'colliding_groups': colliding_groups,
+                        'occurrences_in_collision': colliding_occurrences,
                         'bytes': total_bytes,
-                        'missing_information_bits': missing_bits,
+                        'missing_information_bits': total_bits,
                         'bpb_correction_upper_bound': correction})
     rec.add('largest_groups', [
         {'occurrences': n, 'surfaces': dict(c)}
-        for n, c in largest])
+        for n, c in worst[:20]])
     rec.note('correction is an UPPER BOUND: expression is context-free, '
              'while a running model disambiguates from context. Measured '
              'looseness on the inflection channel: 30% (journey C-02).')

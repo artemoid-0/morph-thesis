@@ -40,12 +40,12 @@ Only a per-category breakdown separates them.
 
 import os
 import sys
-import json
 import math
 import argparse
 from collections import defaultdict
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, ROOT)
 
 
 def category_of_ids(cfg, vocab_size):
@@ -73,7 +73,7 @@ def category_of_ids(cfg, vocab_size):
     return labels
 
 
-def analyse(run_id, results_dir='results', lines=None, batches=40):
+def analyse(run_id, results_dir=os.path.join(ROOT, 'results'), lines=None, batches=40):
     import torch
     import torch.nn.functional as F
     from torch.utils.data import DataLoader
@@ -164,7 +164,7 @@ def main():
     ap.add_argument('--run-id')
     ap.add_argument('--all', action='store_true',
                     help='every run under results/')
-    ap.add_argument('--results-dir', default='results')
+    ap.add_argument('--results-dir', default=os.path.join(ROOT, 'results'))
     ap.add_argument('--batches', type=int, default=40,
                     help='validation batches to score (0 = all)')
     args = ap.parse_args()
@@ -188,18 +188,14 @@ def main():
         try:
             out = analyse(rid, args.results_dir, batches=args.batches)
             print_report(*out)
-            cfg, bits, toks, total_bits, total_toks, num_bytes = (
-                out + (None,) * 6)[:6]
+            cfg, bits, toks, total_bits, total_toks, val_ds = out
             rec.add(rid, {
-                'label': getattr(cfg, 'label', lambda: str(cfg))()
-                if cfg is not None else rid,
-                'bits_by_category': {str(k): float(v)
-                                     for k, v in (bits or {}).items()},
-                'tokens_by_category': {str(k): int(v)
-                                       for k, v in (toks or {}).items()},
+                'label': cfg.label(),
+                'bits_by_category': {str(k): float(v) for k, v in bits.items()},
+                'tokens_by_category': {str(k): int(v) for k, v in toks.items()},
                 'total_bits': float(total_bits) if total_bits else None,
                 'total_tokens': int(total_toks) if total_toks else None,
-                'bytes': int(num_bytes) if num_bytes else None,
+                'bytes': int(val_ds.num_bytes),     # the validation split's, of which the tokens scored are a part
             })
         except FileNotFoundError as e:
             print(f'  {rid}: no checkpoint ({e})')

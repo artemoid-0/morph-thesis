@@ -1,34 +1,20 @@
 #!/usr/bin/env python3
 """
-temporal_profile.py — when during training does a feature's gain appear?
+temporal_profile.py — when during training does a feature's gain appear? (journey §32.2)
 
-Every run records validation BPB every 500 steps. Comparing a feature cell
-against the baseline at each step gives the gain as a function of training
-time, at no cost. Three distinct profiles turn out to exist (journey §32):
+Every run records its validation BPB every 500 steps, so a cell's gain over a baseline can be
+read along training at no cost. For every cell whose own baseline — its label with the features
+replaced by `baseline` (export_results.py's rule) — is the one given, paired by seed within one
+machine (FINDINGS, method point 11; a seed whose runs ran on two machines is named and left out),
+this prints the mean gain at the end of training (step 49,999), the share of it reached by 5k and
+10k steps, and the peak; and it classes the profile by the share at 5k: FADES above 200%,
+PLATEAUS above 80%, GROWS below. A cell whose final gain is under 0.002 BPB is not profiled. What
+the three profiles mean, and the caveats that travel with them, are §32.2's. The baseline here is
+the plain one: the same-shape nulls and the learning law (learning_law.py, journey §33) answer the
+question since.
 
-  FADES     the gain peaks early at several times its final value, then shrinks
-            toward zero. Causal word-identity features (mhash, mlemma, mprefix)
-            do this: the model learns the previous word's identity for itself
-            from its tokens, so the feature becomes redundant.
-
-  PLATEAUS  the gain reaches ~100% of its final value within the first 10% of
-            training, overshoots, and holds. Every leaky word-form feature does
-            this: a code that names the unwritten fragments of the current
-            word is a shortcut — a simple, perfectly predictive feature — and
-            shortcut-learning theory says exactly this (Shah et al. 2020; Yang et
-            al. 2024: spurious features dominate the output early).
-            `dep` also plateaus: directly predictive, not leaky. So the plateau
-            means "exploitable immediately", not "leaky" — a lens, not a leak
-            detector. The positional check (lookahead_check.py) and the causal
-            construction remain the decisive tests.
-
-  GROWS     the gain is ~30% of its final value at 5k steps and still rising
-            at 50k. Causal structure (mstruct and both halves) does this:
-            information the model never learns as well on its own, exploitable
-            only once the model is competent.
-
-Frozen features are slow whatever they carry (the projection bottleneck), so
-the profile is read for LEARNED cells only unless stated.
+A run is read when its log holds more than 50 evaluations; of two runs of one cell and seed, the
+later in path order is used. --pairs CELL:BASELINE prints both cells' mean BPB along training.
 
     python scripts/analysis/temporal_profile.py                 # all cells vs baseline
     python scripts/analysis/temporal_profile.py --pairs det_baseline_Spdiwc:bpe_baseline_bpe_17k
@@ -36,24 +22,32 @@ the profile is read for LEARNED cells only unless stated.
 
 import os
 import sys
-import json
-import glob
 import argparse
 import statistics as st
 from collections import defaultdict
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, ROOT)
+from morphlm import runs  # noqa: E402
 
 STEPS = (500, 1000, 2500, 5000, 10000, 20000, 30000, 40000, 49999)
 
 
-def load(results_dir):
+def load(roots):
+    """{label: {seed: record}} — runs whose log holds more than 50 evaluations; of two runs of one
+    cell and seed, the later in path order."""
     by = defaultdict(dict)
-    for p in glob.glob(os.path.join(results_dir, '*', 'result.json')):
-        r = json.load(open(p))
+    for p, r in runs.records(roots):
         if r.get('log') and len(r['log']) > 50:
             by[r['label']][r['seed']] = r
     return by
+
+
+def one_machine(cell, base):
+    """The seeds both cells have, on one machine (runs.pair): (seeds, the seeds left out)."""
+    R = {(k, s): r for k, d in (('base', base), ('cell', cell)) for s, r in d.items()}
+    pairs, left = runs.pair(R, 'base', 'cell')
+    return sorted(pairs), left
 
 
 def bpb_at(r, step):
@@ -63,8 +57,7 @@ def bpb_at(r, step):
     return None
 
 
-def profile(cell, base):
-    seeds = sorted(set(cell) & set(base))
+def profile(cell, base, seeds):
     if not seeds:
         return None
     out = {}
@@ -92,24 +85,18 @@ def profile(cell, base):
             'peak': peak / fin, 'kind': kind, 'curve': out}
 
 
-def own_baseline(label):
-    """Same rule as export_results.own_baseline: features -> 'baseline'."""
-    parts = label.split('_', 2)
-    return '_'.join([parts[0], 'baseline'] + parts[2:])
-
-
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--results-dir', default='results')
+    runs.add_results_flag(ap)
     ap.add_argument('--baseline', default='bpe_baseline_bpe_17k')
     ap.add_argument('--pairs', nargs='*', default=[],
                     help='extra cell:baseline pairs, e.g. for Q1')
     args = ap.parse_args()
 
     from morphlm.record import AuditRecord
-    rec = AuditRecord('temporal_profile', args)
+    rec = AuditRecord('temporal_profile', args, out_dir=runs.AUDITS)
 
-    by = load(args.results_dir)
+    by = load(runs.results_of(args))
     base = by[args.baseline]
     print('=' * 88)
     print(f'TEMPORAL PROFILE — gain over training, against {args.baseline}')
@@ -120,15 +107,19 @@ def main():
         # only cells whose OWN baseline is the one given: a 100k-step cell
         # against the 50k baseline would compare different learning-rate
         # schedules (the rule export_results.own_baseline applies)
-        if 'baseline' in lab or own_baseline(lab) != args.baseline:
+        if 'baseline' in lab or runs.own_baseline(lab) != args.baseline:
             continue
-        pr = profile(by[lab], base)
-        if not pr:
-            continue
-        rows[lab] = pr
-        print(f'  {lab[:42]:42} {pr["final"]:+8.4f} {100*pr["at5k"]:5.0f}% '
-              f'{100*pr["at10k"]:5.0f}% {100*pr["peak"]:5.0f}% {len(pr["seeds"])}  '
-              f'{pr["kind"]}')
+        seeds, left = one_machine(by[lab], base)
+        pr = profile(by[lab], base, seeds)
+        if pr:
+            rows[lab] = pr
+            print(f'  {lab[:42]:42} {pr["final"]:+8.4f} {100*pr["at5k"]:5.0f}% '
+                  f'{100*pr["at10k"]:5.0f}% {100*pr["peak"]:5.0f}% {len(pr["seeds"])}  '
+                  f'{pr["kind"]}')
+        if left:
+            print(f'  {lab[:42]:42} {runs.left_out(left)}')
+            if pr:
+                pr['left_out'] = {str(s): list(m) for s, m in left.items()}
     rec.add('profiles', {k: {kk: vv for kk, vv in v.items() if kk != 'curve'}
                          for k, v in rows.items()})
     rec.add('curves', {k: v['curve'] for k, v in rows.items()})
@@ -136,7 +127,9 @@ def main():
     for pair in args.pairs:
         c, b = pair.split(':')
         cell, bb = by.get(c, {}), by.get(b, {})
-        seeds = sorted(set(cell) & set(bb))
+        seeds, left = one_machine(cell, bb)
+        if left:
+            print(f'\n  {pair}: {runs.left_out(left)}')
         if not seeds:
             print(f'\n  {pair}: no shared seeds')
             continue

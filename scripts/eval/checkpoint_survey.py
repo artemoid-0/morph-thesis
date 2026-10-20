@@ -27,12 +27,13 @@ import sys
 import json
 import argparse
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, ROOT)
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--results-dir', default='results')
+    ap.add_argument('--results-dir', default=os.path.join(ROOT, 'results'))
     ap.add_argument('--no-load', action='store_true',
                     help='inspect metadata only, do not build models')
     args = ap.parse_args()

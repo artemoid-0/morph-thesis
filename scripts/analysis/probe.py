@@ -23,6 +23,11 @@ law's axis should measure.
     python scripts/analysis/probe.py --run RUN_ID --fact pos
     python scripts/analysis/probe.py --run RUN_ID --fact pos --previous
     python scripts/analysis/probe.py --run RUN_ID --fact pos --layers 0 4 --tokens 80000
+    python scripts/analysis/probe.py --run RUN_ID --fact pos --previous --machine second
+
+--machine second probes the second machine's run of that id — a twin, whose
+checkpoints are in results/audits/device_twins_models/<id>/ (a twin shares its
+id with the run it repeats), or a run of its own in results/.
 
 Writes results/audits/probe_<run>_<fact>[prev]_<UTC timestamp>.json — the
 packer collects audits by that timestamp, even for a run packed before — and
@@ -37,28 +42,20 @@ import argparse
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, ROOT)
+from morphlm import runs  # noqa: E402
 
 
 def fit_probe(h, y, train_w, sentinel, n_cls, epochs, dev):
-    """Multinomial logistic regression; held-out accuracy and the majority baseline."""
+    """The linear probe (morphlm.eval.probing.fit_linear) on the even windows' labelled tokens;
+    held-out accuracy on the odd windows', the majority baseline, and the test tokens."""
     import torch
+    from morphlm.eval.probing import fit_linear
     W, L, d = h.shape
     keep = y != sentinel
     tr = keep & train_w[:, None].expand(W, L)
     te = keep & ~train_w[:, None].expand(W, L)
     Xtr, ytr, Xte, yte = h[tr], y[tr], h[te], y[te]
-    mu, sd = Xtr.mean(0), Xtr.std(0) + 1e-6
-    Xtr, Xte = ((Xtr - mu) / sd).to(dev), ((Xte - mu) / sd).to(dev)
-    ytr, yte = ytr.to(dev), yte.to(dev)
-    torch.manual_seed(0)
-    lin = torch.nn.Linear(d, n_cls).to(dev)
-    opt = torch.optim.Adam(lin.parameters(), lr=1e-2, weight_decay=1e-4)
-    for _ in range(epochs):
-        opt.zero_grad()
-        torch.nn.functional.cross_entropy(lin(Xtr), ytr).backward()
-        opt.step()
-    with torch.no_grad():
-        acc = (lin(Xte).argmax(-1) == yte).float().mean().item()
+    acc = (fit_linear(Xtr, ytr, n_cls, epochs, dev)(Xte) == yte).float().mean().item()
     majority = torch.bincount(ytr, minlength=n_cls).argmax()
     return acc, (yte == majority).float().mean().item(), int(te.sum())
 
@@ -89,6 +86,8 @@ def main():
     ap.add_argument('--run', required=True, help='run id (folder under results/)')
     ap.add_argument('--fact', required=True, help='the feature to probe for, e.g. pos or ucase')
     ap.add_argument('--results-dir', default=os.path.join(ROOT, 'results'))
+    ap.add_argument('--machine', choices=('thesis', 'second'), default=None,
+                    help="the run of this id on one machine: the second's twins are among the twin copies")
     ap.add_argument('--layers', nargs='*', type=int, default=None, help='default: every layer')
     ap.add_argument('--tokens', type=int, default=60000, help='validation tokens to use, both halves')
     ap.add_argument('--epochs', type=int, default=300)
@@ -104,12 +103,18 @@ def main():
     from morphlm.features.blocks import build_blocks
 
     dev = 'cuda' if torch.cuda.is_available() else 'cpu'
-    run_dir = os.path.join(args.results_dir, args.run)
+    models = args.results_dir                  # the folder holding the run's folder
+    if args.machine:
+        r = runs.by_id([args.results_dir], machine=args.machine).get(args.run)
+        if r is None:
+            sys.exit(f'no record of {args.run} on the {args.machine} machine under {args.results_dir}')
+        models = os.path.dirname(runs.model_dir(r))
+    run_dir = os.path.join(models, args.run)
     files = sorted(glob.glob(os.path.join(run_dir, 'ckpt', 'step_*.pt')))
     if not files:
         sys.exit(f'no checkpoints in {run_dir}/ckpt — train with MORPHLM_CHECKPOINT_EVERY=N')
     rel = lambda f: os.path.relpath(f, run_dir)
-    _, cfg = load_checkpoint(args.run, args.results_dir, filename=rel(files[0]))
+    _, cfg = load_checkpoint(args.run, models, filename=rel(files[0]))
     cfg_lab = dataclasses.replace(cfg, frozen=dataclasses.replace(
         cfg.frozen, facts=(args.fact,), shuffle_codes=False, role='input'))
     ds_in = make_val_dataset(build_pipeline(cfg, verbose=False), cfg, verbose=False)
@@ -124,7 +129,7 @@ def main():
         X.append(x); C.append(c); Y.append(c2[0])
     X, C, Y = torch.stack(X), torch.stack(C), torch.stack(Y)
     if args.previous:
-        first, _ = load_checkpoint(args.run, args.results_dir, filename=rel(files[0]))
+        first, _ = load_checkpoint(args.run, models, filename=rel(files[0]))
         Y = previous_labels(Y, X, cfg.data.bpe_path, n_cls - 1, model=first)
         del first
     train_w = torch.arange(n_win) % 2 == 0
@@ -134,7 +139,7 @@ def main():
     out = {'run': args.run, 'fact': args.fact, 'previous': bool(args.previous), 'windows': n_win, 'rows': []}
     for f in files:
         step = int(re.search(r'step_(\d+)\.pt$', f).group(1))
-        model, _ = load_checkpoint(args.run, args.results_dir, filename=rel(f))
+        model, _ = load_checkpoint(args.run, models, filename=rel(f))
         model.to(dev).eval()
         per_layer = None
         with torch.no_grad():

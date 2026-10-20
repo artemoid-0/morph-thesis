@@ -51,8 +51,10 @@ import os
 import sys
 import argparse
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, ROOT)
 os.environ.setdefault('MORPHLM_NO_BUILD', '1')
+from morphlm import runs  # noqa: E402
 
 import numpy as np
 
@@ -93,61 +95,23 @@ def classify(prev_ids, tgt_ids, id_to_str):
 
 
 def per_token(run_id, results_dir, batches):
-    """Per-token NLL, with the model fed ONLY its own context facts."""
-    import torch
-    import dataclasses
-    import torch.nn.functional as F
-    from torch.utils.data import DataLoader
-    from morphlm.training.metrics import load_checkpoint
-    from morphlm.training.loop import get_device
-    from morphlm.pipelines.registry import build_pipeline
-    from morphlm.data.windows import make_val_dataset
-    from morphlm.registry import context_facts
-
-    model, cfg = load_checkpoint(run_id, results_dir)
-    device = get_device()
-    model = model.to(device).eval()
-    facts = list(context_facts(cfg.frozen.facts))
-
-    data_cfg = dataclasses.replace(
-        cfg, frozen=dataclasses.replace(cfg.frozen, facts=tuple(facts),
-                                        shuffle_codes=False))
-    pipe = build_pipeline(data_cfg, verbose=False)
-    ds = make_val_dataset(pipe, data_cfg, verbose=False)
-    loaded = list(getattr(ds, 'fact_names', []) or [])
-    if facts and loaded != facts:
-        raise RuntimeError(f'{run_id}: model reads {facts}, loader gave '
-                           f'{loaded} — refusing to score')
-    loader = DataLoader(ds, batch_size=cfg.train.batch_size)
-
-    nll, xs, ys = [], [], []
-    with torch.no_grad():
-        for bi, (x, y, c) in enumerate(loader):
-            if batches and bi >= batches:
-                break
-            cc = c.to(device) if facts else None
-            logits, _ = model(x.to(device), None, codes=cc)
-            v = logits.size(-1)
-            l = F.cross_entropy(logits.reshape(-1, v), y.to(device).reshape(-1),
-                                reduction='none')
-            nll.append(l.cpu().numpy())
-            xs.append(x.reshape(-1).numpy())
-            ys.append(y.reshape(-1).numpy())
-    return (cfg, pipe, np.concatenate(nll), np.concatenate(xs),
-            np.concatenate(ys))
+    """Per-token NLL (float32), with the model fed ONLY its own context facts
+    (morphlm.runs.rescore); and the inputs and targets."""
+    cfg, pipe, _, nll, xs, ys = runs.rescore(run_id, results_dir, batches)
+    return cfg, pipe, nll, xs, ys
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--baseline', required=True)
     ap.add_argument('--treatment', nargs='+', required=True)
-    ap.add_argument('--results-dir', default='results')
+    ap.add_argument('--results-dir', default=runs.RESULTS)
     ap.add_argument('--batches', type=int, default=0,
                     help='validation batches (0 = all)')
     args = ap.parse_args()
 
     from morphlm.record import AuditRecord
-    rec = AuditRecord('lookahead_check', args)
+    rec = AuditRecord('lookahead_check', args, out_dir=runs.AUDITS)
 
     print(f'scoring baseline {args.baseline}...')
     bcfg, pipe, bnll, bx, by = per_token(args.baseline, args.results_dir,

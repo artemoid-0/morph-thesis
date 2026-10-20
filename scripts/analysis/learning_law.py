@@ -14,9 +14,11 @@ reached), and the gain at a common reference point of learning — the number
 that says whether the curves collapse. Draws one panel per feature.
 
     python scripts/analysis/learning_law.py --out exports/figures
-    python scripts/analysis/learning_law.py --roots results unpacked_packs --out exports/figures
+    python scripts/analysis/learning_law.py --results results unpacked_packs --out exports/figures
     python scripts/analysis/learning_law.py --refs 1.30 1.25 1.20 1.15 1.10 --record
 
+The runs of a pair are paired within one machine (FINDINGS, method point 11); a seed whose
+two runs come from two machines is named and left out.
 --refs prints each condition's gain at more points of learning than the panel's own;
 --spread adds, at each of those points, each condition's gain per seed and a permutation
 test: how often the gap between the conditions' means is as large when the seeds' values are
@@ -26,16 +28,19 @@ dealt to the conditions at random — whether the conditions differ by more than
     python scripts/analysis/learning_law.py --refs 1.30 1.25 1.20 1.15 1.10 --spread --record
 """
 import os
-import glob
-import json
+import sys
 import random
 import argparse
-import datetime
 import statistics as st
 
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, ROOT)
+from morphlm import runs                     # noqa: E402
+from morphlm.record import AuditRecord       # noqa: E402
 
 U = lambda f, fr='0.2', x='': f'bpe_{f}-LEARN-CAUSAL_bpe_uk_17k_ukwiki{fr}{x}'
 E = lambda f, x='': f'bpe_{f}-LEARN-CAUSAL_bpe_17k{x}'
@@ -67,46 +72,20 @@ PANELS.append(  # D7: one condition (~38M tokens, 10k steps) under six tokenizer
 COLOURS = ['#c53030', '#dd6b20', '#d69e2e', '#38a169', '#3182ce', '#805ad5', '#2c7a7b']
 
 
-def load(roots):
-    R = {}
-    for root in roots:
-        for p in glob.glob(os.path.join(root, '**', 'result.json'), recursive=True):
-            try:
-                r = json.load(open(p))
-            except (OSError, ValueError):
-                continue
-            R.setdefault((r['label'], r['seed']), r)
-    return R
-
-
-def same_machine(R, a, b, s):
-    """Both cells' runs at this seed come from one GPU (FINDINGS, method point 11): across the two
-    machines a pair differs by dropout's draw as well as by the cells (journey §33.109, §33.113)."""
-    second = lambda r: '5090' in ((r.get('environment') or {}).get('gpu') or '')
-    return second(R[(a, s)]) == second(R[(b, s)])
-
-
 def curve(R, null, feat):
-    """[(null BPB, gain)] averaged over the seeds both cells share, to each run's best step."""
-    seeds = sorted(s for (l, s) in R if l == feat and (null, s) in R and same_machine(R, null, feat, s))
-    pts = {}
-    for s in seeds:
-        ln = {e['step']: e['bits_per_byte'] for e in R[(null, s)]['log'] if e['step'] > 0}
-        lf = {e['step']: e['bits_per_byte'] for e in R[(feat, s)]['log'] if e['step'] > 0}
-        stop = min(R[(null, s)]['best_step'], R[(feat, s)]['best_step'])
-        for x in ln:
-            if x in lf and x <= stop:
-                pts.setdefault(x, []).append((ln[x], ln[x] - lf[x]))
-    out = [(st.mean(a for a, _ in v), st.mean(b for _, b in v)) for x, v in sorted(pts.items()) if len(v) == len(seeds)]
-    return out, len(seeds)
+    """[(null BPB, gain)] averaged over the seeds both cells share on one machine, to each run's
+    best step (runs.gain_curve); the number of seeds; the seeds left out."""
+    pts, seeds, left = runs.gain_curve(R, null, feat)
+    return [(b, g) for _, b, g, _ in pts], len(seeds), left
 
 
 def per_seed(R, null, feat, ref):
     """{seed: gain at `ref`} from each seed's own curve, to its best step."""
     out = {}
-    for s in sorted(s for (l, s) in R if l == feat and (null, s) in R and same_machine(R, null, feat, s)):
-        pts, _ = curve({k: v for k, v in R.items() if k in ((null, s), (feat, s))}, null, feat)
-        g = at(pts, ref)
+    pairs, _ = runs.pair(R, null, feat)
+    for s in pairs:
+        pts, _, _ = curve({(null, s): R[(null, s)], (feat, s): R[(feat, s)]}, null, feat)
+        g = runs.at(pts, ref)
         if g is not None:
             out[s] = g
     return out
@@ -130,14 +109,6 @@ def spread_test(groups, draws=20000, seed=0):
     return observed, hits / draws
 
 
-def at(points, ref):
-    """The gain where the null passes `ref`, interpolated; None if never reached."""
-    for (a0, g0), (a1, g1) in zip(points, points[1:]):
-        if a0 >= ref >= a1 and a0 != a1:
-            return g0 + (g1 - g0) * (a0 - ref) / (a0 - a1)
-    return None
-
-
 def zero(points):
     for (a0, g0), (a1, g1) in zip(points, points[1:]):
         if g0 > 0 >= g1:
@@ -147,15 +118,15 @@ def zero(points):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--roots', nargs='+', default=['results'])
-    ap.add_argument('--out', default='exports/figures')
+    runs.add_results_flag(ap)
+    ap.add_argument('--out', default=os.path.join(ROOT, 'exports', 'figures'))
     ap.add_argument('--refs', nargs='*', type=float, default=[], help='more null BPB points to read each gain at')
     ap.add_argument('--record', action='store_true', help='write the numbers to results/audits/')
     ap.add_argument('--spread', action='store_true', help='per-seed gains at --refs, and the permutation test')
     args = ap.parse_args()
     record = []
     spread = []
-    R = load(args.roots)
+    R = runs.load(runs.results_of(args))
     os.makedirs(args.out, exist_ok=True)
     fig, axes = plt.subplots(1, len(PANELS), figsize=(5.2 * len(PANELS), 4.2))
     for ax, (title, ref, conds) in zip(axes, PANELS):
@@ -164,19 +135,23 @@ def main():
         paired = title.startswith('English, other')       # a feature's 10k curve shares its colour, dashed
         for k, (name, n, f) in enumerate(conds):
             c = COLOURS[k // 3] if paired else COLOURS[k % len(COLOURS)]
-            pts, ns = curve(R, n, f)
+            pts, ns, left = curve(R, n, f)
+            if left:
+                print(f'    {name:32} {runs.left_out(left)}')
             if not pts:
                 continue
-            peak = max(pts, key=lambda p: p[1]); g = at(pts, ref); z = zero(pts)
+            peak = max(pts, key=lambda p: p[1]); g = runs.at(pts, ref); z = zero(pts)
             print(f'    {name:32} {ns:>2} {peak[1]:+10.4f} {peak[0]:8.3f} '
                   f'{(f"{g:+.4f}" if g is not None else "—"):>12} {(f"{z:.3f}" if z else "—"):>8} {pts[-1][1]:+9.4f}')
-            more = {r: at(pts, r) for r in args.refs}
+            more = {r: runs.at(pts, r) for r in args.refs}
             if more:
                 print(f'    {"":32}    at ' + '  '.join(f'{r:.2f} {v:+.4f}' if v is not None else f'{r:.2f} —' for r, v in more.items()))
             record.append({'panel': title, 'condition': name, 'null': n, 'feature': f, 'seeds': ns,
                            'peak': {'gain': peak[1], 'null_bpb': peak[0]}, 'reference': ref, 'gain_at_reference': g,
                            'zero_at': z, 'end': {'gain': pts[-1][1], 'null_bpb': pts[-1][0]},
                            'gain_at': {str(r): v for r, v in more.items()}})
+            if left:
+                record[-1]['left_out'] = {str(s): list(m) for s, m in left.items()}
             ax.plot([a for a, _ in pts], [b for _, b in pts], ('-o', '--o', ':o')[k % 3] if paired else '-o', ms=2.2, lw=1.2, color=c, label=f'{name} (n={ns})')
         ax.axhline(0, color='black', lw=0.7)
         ax.axvline(ref, color='grey', lw=0.6, ls=':')
@@ -208,12 +183,9 @@ def main():
     fig.savefig(path, dpi=170)
     print(f'\n  figure -> {path}')
     if args.record:
-        ts = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S') + '+0000'
-        rec = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-                           'results', 'audits', f'learning_law_{ts}.json')
-        json.dump({'script': 'scripts/analysis/learning_law.py', 'timestamp_utc': ts, 'roots': args.roots,
-                   'refs': args.refs, 'curves': record, 'spread': spread}, open(rec, 'w'), indent=1)
-        print(f'  [record] {rec}')
+        rec = AuditRecord('learning_law', args, out_dir=runs.AUDITS)
+        rec.add('curves', record).add('spread', spread)
+        print(f'  [record] {rec.write(verbose=False)}')
 
 
 if __name__ == '__main__':

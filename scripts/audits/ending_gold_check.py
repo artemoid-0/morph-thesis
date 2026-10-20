@@ -23,7 +23,6 @@ import re
 import sys
 import json
 import argparse
-import datetime
 import collections
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -97,6 +96,7 @@ def main():
     if not present:
         sys.exit('no dictionary found — clone them into external/ (see the docstring)')
     from morphlm.data.endings import EndingRule, RULE
+    from morphlm.record import AuditRecord
     rule = EndingRule()
     record = {'rule': RULE, 'fingerprint': rule.fingerprint(), 'dictionaries': {}}
     for name, path, reader in (('Polyga 2009', a.polyga, polyga_entries), ('Yatsenko 1981', a.yatsenko, yatsenko_entries)):
@@ -120,11 +120,10 @@ def main():
                 print(f'      {e}')
         record['dictionaries'][name] = {'path': os.path.relpath(path, ROOT), **c,
                                         'by_pos': {k: dict(v) for k, v in by_pos.items()}}
-    os.makedirs(a.audit_dir, exist_ok=True)
-    ts = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S') + '+0000'
-    out = os.path.join(a.audit_dir, f'ending_gold_{ts}.json')
-    json.dump(record, open(out, 'w'), indent=1, ensure_ascii=False)
-    print(f'\n  -> {out}')
+    rec = AuditRecord('ending_gold', a, out_dir=a.audit_dir)
+    for k, v in record.items():
+        rec.add(k, v)
+    print(f'\n  -> {rec.write(verbose=False)}')
 
 
 if __name__ == '__main__':

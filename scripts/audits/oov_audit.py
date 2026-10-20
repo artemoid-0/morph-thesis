@@ -42,7 +42,7 @@ from collections import Counter
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 
-def classify_failure(word, pipe):
+def classify_failure(word):
     """Best-effort reason a word reached character fallback."""
     w = word.lower()
     if any(c.isdigit() for c in word):
@@ -126,7 +126,7 @@ def main():
             if n_char and n_char >= len(cats) / 2:
                 char_words += 1
                 char_bytes += nb
-                reasons[classify_failure(str(w), pipe)] += 1
+                reasons[classify_failure(str(w))] += 1
                 examples[str(w)] += 1
 
         processed += 1

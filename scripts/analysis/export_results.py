@@ -15,11 +15,11 @@ WHAT IT PRODUCES
 
 WHY A SCRIPT RATHER THAN COPYING NUMBERS
 ----------------------------------------
-Every table written by hand so far was reconstructed from config plus
-arithmetic, and one of those reconstructions was wrong (the control-asymmetry
-paragraph). Numbers that appear in the thesis should be produced by a program
-reading the run records, so that a re-run regenerates them and a typo cannot
-survive.
+A table written by hand is reconstructed from config plus arithmetic, and one
+such reconstruction was wrong (G-01, journey §23). Numbers that appear in the
+thesis are produced by a program reading the run records, so that a re-run
+regenerates them and a typo cannot survive — and the program is checked too:
+its comparisons were once wrong as well (journey §33.6, G-27).
 
 Handles old runs that predate the provenance fields: missing values are shown
 as `-` rather than guessed at.
@@ -32,27 +32,33 @@ import sys
 import csv
 import glob
 import json
-import math
 import argparse
 from collections import defaultdict
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, ROOT)
+from morphlm import runs as R  # noqa: E402   (`runs` names the list of run records here)
+
+own_baseline = R.own_baseline
 
 
-def load_runs(results_dir):
+def load_runs(results_dirs):
+    """Every run record of the results directories, each with its id, config and whether its
+    model is saved; directories in the order given, runs sorted by id."""
     runs = []
-    for entry in sorted(os.listdir(results_dir)):
-        rp = os.path.join(results_dir, entry, 'result.json')
-        cp = os.path.join(results_dir, entry, 'config.json')
-        if not os.path.exists(rp):
-            continue
-        with open(rp) as f:
-            r = json.load(f)
-        r['_run_id'] = entry
-        r['_config'] = json.load(open(cp)) if os.path.exists(cp) else {}
-        r['_has_checkpoint'] = os.path.exists(
-            os.path.join(results_dir, entry, 'model.pt'))
-        runs.append(r)
+    for results_dir in ([results_dirs] if isinstance(results_dirs, str) else results_dirs):
+        for entry in sorted(os.listdir(results_dir)):
+            rp = os.path.join(results_dir, entry, 'result.json')
+            cp = os.path.join(results_dir, entry, 'config.json')
+            if not os.path.exists(rp):
+                continue
+            with open(rp) as f:
+                r = json.load(f)
+            r['_run_id'] = entry
+            r['_config'] = json.load(open(cp)) if os.path.exists(cp) else {}
+            r['_has_checkpoint'] = os.path.exists(
+                os.path.join(results_dir, entry, 'model.pt'))
+            runs.append(r)
     return runs
 
 
@@ -244,19 +250,6 @@ def _baseline_group(label, cfg):
     return f'{pipe}/{tag}'
 
 
-def own_baseline(label):
-    """
-    The baseline a cell must be compared with: its own label with the feature
-    part replaced by 'baseline'. Non-default training settings are part of
-    every label by construction (config.label), so this is the run identical
-    to the cell except for its features:
-        bpe_mstruct-LEARN-CAUSAL_bpe_17k      -> bpe_baseline_bpe_17k
-        bpe_mstruct_bpe_17k_st10k             -> bpe_baseline_bpe_17k_st10k
-    """
-    parts = label.split('_', 2)
-    return '_'.join([parts[0], 'baseline'] + parts[2:])
-
-
 def write_comparisons(runs, out):
     """
     Every effect against its OWN baseline, PAIRED BY SEED.
@@ -269,14 +262,9 @@ def write_comparisons(runs, out):
     A pair is counted only when both runs come from the same GPU (FINDINGS, method point 11;
     journey §33.113): a seed whose cell and baseline ran on two machines is named and left out.
 
-    Two defects of the earlier version (journey §33.6, GAPS G-27):
-      * the baseline was "the" feature-free cell of a group — whichever came
-        last — and once the learning-rate sweep existed that was a 10k-step
-        sweep run, 0.08 BPB worse than the real baseline;
-      * effects were cell MEAN minus baseline MEAN over different seed sets,
-        judged against the widest seed spread of any cell. Seeds differ by more
-        than most effects, so a cell lacking the baseline's unlucky seed 2
-        looked better by exactly that luck.
+    The two defects of an earlier version — the baseline was whichever feature-free cell came
+    last, and means were compared over different seed sets — are journey §33.6 and G-27;
+    tests/test_config.py encodes both.
     """
     import statistics as st
     by_label = defaultdict(list)
@@ -290,7 +278,7 @@ def write_comparisons(runs, out):
     notes = []
 
     def by_seed(label, v):
-        """{seed: (bits per byte, machine)} — the first run at each seed."""
+        """{seed: record} — the first run at each seed."""
         seen = defaultdict(list)
         for x in v:
             seen[x.get('seed', 0)].append(x)
@@ -299,10 +287,7 @@ def write_comparisons(runs, out):
             if max(b_) - min(b_) > 1e-9:
                 notes.append(f'`{label}` has {len(xs)} runs at seed {s_} that DIFFER '
                              f'by {max(b_) - min(b_):.4f} BPB; the first is used.')
-        return {s_: (xs[0]['bits_per_byte'], machine(xs[0])) for s_, xs in seen.items()}
-
-    def machine(x):      # not g(): this function binds g to a list below
-        return 'second' if '5090' in ((x.get('environment') or {}).get('gpu') or '') else 'thesis'
+        return {s_: xs[0] for s_, xs in seen.items()}
 
     lines = ['# Effects, paired by seed', '',
              'Each effect is **gain = baseline BPB - cell BPB at the same seed** '
@@ -332,14 +317,14 @@ def write_comparisons(runs, out):
                 continue
             base = by_seed(base_label, cells[base_label])
             lines += [f'baseline `{base_label}`, seeds {sorted(base)}: '
-                      + ', '.join(f'{base[k][0]:.4f}' for k in sorted(base)), '',
+                      + ', '.join(f'{base[k]["bits_per_byte"]:.4f}' for k in sorted(base)), '',
                       '| cell | paired seeds | gain per seed | mean gain +/- se | % | agree |',
                       '|---|---|---|---|---|---|']
             for label in members:
                 c = by_seed(label, cells[label])
-                both = sorted(set(c) & set(base))
-                shared = [k for k in both if c[k][1] == base[k][1]]
-                apart = [k for k in both if c[k][1] != base[k][1]]
+                pairs, left = R.pair({**{(base_label, k): x for k, x in base.items()},
+                                      **{(label, k): x for k, x in c.items()}}, base_label, label)
+                shared, apart = sorted(pairs), sorted(left)
                 if apart:
                     notes.append(f'`{label}` against `{base_label}`: seed(s) {apart} left out, '
                                  f'the cell and its baseline ran on two machines.')
@@ -348,16 +333,15 @@ def write_comparisons(runs, out):
                            else 'no seed shared with the baseline')
                     lines.append(f'| {label} | none of {sorted(c)} | - | not comparable: {why} | | |')
                     continue
-                g = [base[k][0] - c[k][0] for k in shared]
-                m = st.mean(g)
-                pct = 100.0 * m / st.mean(base[k][0] for k in shared)
+                g = [base[k]['bits_per_byte'] - c[k]['bits_per_byte'] for k in shared]
+                sm = R.summary(g)
+                m = sm['mean']
+                pct = 100.0 * m / st.mean(base[k]['bits_per_byte'] for k in shared)
                 per = ' '.join(f'{x:+.4f}' for x in g)
                 seeds = ','.join(str(k) for k in shared)
                 if len(g) >= 2:
-                    se = st.stdev(g) / len(g) ** 0.5
-                    agree = max(sum(x > 0 for x in g), sum(x < 0 for x in g))
-                    lines.append(f'| {label} | {seeds} | {per} | {m:+.4f} +/- {se:.4f} | '
-                                 f'{pct:+.2f}% | {agree}/{len(g)} |')
+                    lines.append(f'| {label} | {seeds} | {per} | {m:+.4f} +/- {sm["se"]:.4f} | '
+                                 f'{pct:+.2f}% | {R.agree(g)}/{len(g)} |')
                 else:
                     lines.append(f'| {label} | {seeds} | {per} | {m:+.4f} (n=1: no claim) | '
                                  f'{pct:+.2f}% | - |')
@@ -373,7 +357,7 @@ def write_comparisons(runs, out):
     return n_paired
 
 
-def write_audits(out, audit_dir=os.path.join('results', 'audits')):
+def write_audits(out, audit_dir=R.AUDITS):
     """
     Index the audit records so their numbers reach the paper the same way run
     metrics do — by being read from a file rather than transcribed from a
@@ -395,7 +379,9 @@ def write_audits(out, audit_dir=os.path.join('results', 'audits')):
         a = ' '.join(f'{k}={v}' for k, v in (d.get('args') or {}).items()
                      if v not in (None, '', False, []))
         res = d.get('results') or {}
-        # a record's results are a dict of sections, or a list of rows (tokenizer_widths)
+        # a record's results are a dict of sections (morphlm.record.AuditRecord); records written
+        # by hand before 19 October hold a list of rows there (tokenizer_widths, steps_saved), or
+        # nothing, their sections at the top (learning_law, probe_words, ending_gold)
         what = ', '.join(sorted(res.keys())) if isinstance(res, dict) else f'{len(res)} rows'
         lines.append(f"| `{d.get('script','?')}` | "
                      f"{d.get('timestamp_utc','?')} | {a or '-'} | "
@@ -416,14 +402,15 @@ def write_audits(out, audit_dir=os.path.join('results', 'audits')):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--results-dir', default='results')
-    ap.add_argument('--out', default='exports')
+    R.add_results_flag(ap)
+    ap.add_argument('--out', default=os.path.join(ROOT, 'exports'))
     args = ap.parse_args()
 
     os.makedirs(args.out, exist_ok=True)
-    runs = load_runs(args.results_dir)
+    dirs = R.results_of(args)
+    runs = load_runs(dirs)
     if not runs:
-        print(f'no runs under {args.results_dir}/')
+        print(f'no runs under {", ".join(dirs)}')
         sys.exit(1)
 
     write_runs(runs, args.out)
@@ -432,7 +419,7 @@ def main():
     write_parameters(runs, args.out)
     write_environment(runs, args.out)
     n_paired = write_comparisons(runs, args.out)
-    n_audits = write_audits(args.out)
+    n_audits = write_audits(args.out, os.path.join(dirs[0], 'audits'))
 
     withp = sum(1 for r in runs if r.get('parameters'))
     withe = sum(1 for r in runs if r.get('environment'))

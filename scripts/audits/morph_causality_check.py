@@ -27,7 +27,7 @@ exactly, or the run stops.
 
 --by-type also counts, for part of speech, where its right-context dependence sits: per word
 type, and per class of the type's majority part of speech in the sample — which words a control
-must read from their form to remove it (journey §33.98; DIRECTIONS, the queue's item 2).
+must read from their form to remove it (journey §33.98; the list of 15 October, item 2).
 """
 
 import os

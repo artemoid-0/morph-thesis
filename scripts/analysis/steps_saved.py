@@ -7,7 +7,8 @@ For a feature and its same-shape null at the same seeds, the feature's validatio
 step k is a level the null reaches later, at step k'. Interpolating the null's curve
 linearly between its evaluations gives k'; k' − k is the training the feature saves at
 step k, and (k' − k) / k its share. Computed per seed, then averaged over the seeds both
-cells share — the method of §33.33, which this reproduces for English to the step.
+cells share on one machine (FINDINGS, method point 11) — the method of §33.33, which this
+reproduces for English to the step.
 
 The pairs are the 50k runs of §33.33: English part of speech and inflection against their
 null, and Ukrainian case on 151M tokens against the null constant on every word (G-73).
@@ -17,12 +18,14 @@ A record goes to results/audits/steps_saved_<UTC timestamp>.json.
 """
 import os
 import sys
-import glob
-import json
-import datetime
+import argparse
 import statistics as st
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, ROOT)
+from morphlm import runs                     # noqa: E402
+from morphlm.record import AuditRecord       # noqa: E402
+
 STEPS = (1000, 2000, 5000, 10000)
 PAIRS = (
     ('English part of speech', 'bpe_mconst-LEARN-CAUSAL_bpe_17k', 'bpe_pos-LEARN-CAUSAL_bpe_17k'),
@@ -32,40 +35,34 @@ PAIRS = (
 )
 
 
-def load(root):
-    runs = {}
-    for p in glob.glob(os.path.join(root, '**', 'result.json'), recursive=True):
-        try:
-            r = json.load(open(p))
-        except (OSError, ValueError):
-            continue
-        runs.setdefault((r['label'], r['seed']), (os.path.basename(os.path.dirname(p)), r))
-    return runs
-
-
 def reached(curve, level):
     """The step at which a falling curve {step: BPB} first reaches `level`, interpolated."""
-    xs = sorted(curve)
-    for a, b in zip(xs, xs[1:]):
-        if curve[a] >= level >= curve[b] and curve[a] != curve[b]:
-            return a + (b - a) * (curve[a] - level) / (curve[a] - curve[b])
-    return None
+    return runs.at([(curve[x], x) for x in sorted(curve)], level)
 
 
 def main():
-    runs = load(os.path.join(ROOT, 'results'))
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    runs.add_results_flag(ap)
+    a = ap.parse_args()
+    R = runs.load(runs.results_of(a))
+    run_id = lambda r: os.path.basename(os.path.dirname(r['_path']))
     out = []
     for name, null, feat in PAIRS:
-        seeds = sorted(s for (l, s) in runs if l == feat and (null, s) in runs)
+        pairs, left = runs.pair(R, null, feat)
+        if left:
+            print(f'  {name:24} {runs.left_out(left)}')
+        seeds = sorted(pairs)
         if not seeds:
             sys.exit(f'{name}: no paired runs of {feat} and {null}')
         row = {'feature': name, 'null': null, 'feature_label': feat, 'seeds': seeds,
-               'run_ids': {s: [runs[(null, s)][0], runs[(feat, s)][0]] for s in seeds}, 'at': {}}
+               'run_ids': {s: [run_id(R[(null, s)]), run_id(R[(feat, s)])] for s in seeds}, 'at': {}}
+        if left:
+            row['left_out'] = {str(s): list(m) for s, m in left.items()}
         for k in STEPS:
             per = []
             for s in seeds:
-                n = {e['step']: e['bits_per_byte'] for e in runs[(null, s)][1]['log']}
-                f = {e['step']: e['bits_per_byte'] for e in runs[(feat, s)][1]['log']}
+                n = {e['step']: e['bits_per_byte'] for e in R[(null, s)]['log']}
+                f = {e['step']: e['bits_per_byte'] for e in R[(feat, s)]['log']}
                 x = reached(n, f[k]) if k in f else None
                 per.append(None if x is None else x - k)
             mean = None if None in per else st.mean(per)
@@ -74,11 +71,9 @@ def main():
         print(f'  {name:24} seeds {seeds}  ' + '  '.join(
             f'{k // 1000}k {v["saved_steps"]:5.0f} ({100 * v["share"]:.1f}%)' if v['saved_steps'] is not None
             else f'{k // 1000}k —' for k, v in row['at'].items()))
-    ts = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S') + '+0000'
-    rec = os.path.join(ROOT, 'results', 'audits', f'steps_saved_{ts}.json')
-    json.dump({'script': 'scripts/analysis/steps_saved.py', 'timestamp_utc': ts, 'steps': STEPS,
-               'results': out}, open(rec, 'w'), indent=1)
-    print(f'  [record] {rec}')
+    rec = AuditRecord('steps_saved', a, out_dir=runs.AUDITS)
+    rec.add('steps', STEPS).add('pairs', out)
+    print(f'  [record] {rec.write(verbose=False)}')
 
 
 if __name__ == '__main__':

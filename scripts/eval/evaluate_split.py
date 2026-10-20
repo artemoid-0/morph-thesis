@@ -32,15 +32,15 @@ import json
 import math
 import argparse
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, ROOT)
 
 import numpy as np
 
 
-def score(run_id, results_dir, split, batches=0):
+def score(run_id, results_dir, split):
     """Score one checkpoint on `split`. Returns (cfg, loss, ppl, bpb, tokens)."""
     import torch
-    import dataclasses
     from torch.utils.data import DataLoader
 
     from morphlm.training.metrics import load_checkpoint
@@ -64,9 +64,7 @@ def score(run_id, results_dir, split, batches=0):
 
     total_loss, total_tok = 0.0, 0
     with torch.no_grad():
-        for bi, (x, y, c) in enumerate(loader):
-            if batches and bi >= batches:
-                break
+        for x, y, c in loader:
             x, y = x.to(device), y.to(device)
             cc = c.to(device) if c.numel() else None
             _, loss = model(x, y, codes=cc)
@@ -85,7 +83,7 @@ def main():
     ap.add_argument('--all', action='store_true')
     ap.add_argument('--split', default='test',
                     choices=['test', 'validation'])
-    ap.add_argument('--results-dir', default='results')
+    ap.add_argument('--results-dir', default=os.path.join(ROOT, 'results'))
     ap.add_argument('--out', default=None,
                     help='write a JSON summary here')
     args = ap.parse_args()

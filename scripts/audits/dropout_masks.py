@@ -40,10 +40,11 @@ def main():
     import torch
     import torch.nn.functional as F
     from morphlm.record import AuditRecord
-    from morphlm.config import ModelConfig, TrainConfig
-    rec = AuditRecord('dropout_masks', a)
-    m, tr = ModelConfig(), TrainConfig()
-    B, L, D, H = tr.batch_size, m.seq_len if hasattr(m, 'seq_len') else 256, m.d_model, m.n_heads
+    from morphlm.config import ExperimentConfig
+    rec = AuditRecord('dropout_masks', a, out_dir=os.path.join(ROOT, 'results', 'audits'))
+    cfg = ExperimentConfig()
+    m, tr = cfg.model, cfg.train
+    B, L, D, H = tr.batch_size, cfg.data.seq_len, m.d_model, m.n_heads
     shapes = {'embedding (B, L, D)': (B, L, D), 'attention (B, H, L, L)': (B, H, L, L),
               'feed-forward (B, L, 4D)': (B, L, 4 * D)}
     dev = a.device

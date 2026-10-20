@@ -6,8 +6,8 @@ A model can score well on a minimal-pair paradigm without the knowledge it
 tests. In anaphor gender agreement, a model that simply prefers "herself" to
 "himself" scores the share of items whose GOOD sentence uses "herself" — near
 chance if the paradigm is balanced, far from it if not. The baseline's accuracy
-on that paradigm swings from 47.6% to 67.0% across seeds (journey §33.6), which
-is what arbitrary preferences would do. A feature that nudged the preference
+on that paradigm swings widely across seeds (journey §33.6), which is what
+arbitrary preferences would do. A feature that nudged the preference
 would then look like an agreement gain.
 
 The test: group the items by WHAT CHANGES between the good and the bad sentence
@@ -18,6 +18,9 @@ each group's paired effect separately.
   * A shifted PREFERENCE gains in one direction and LOSES in the reverse one.
 
 Reads a blimp_eval record and its saved per-item margins — nothing is re-scored.
+Seeds are paired within one machine (FINDINGS, method point 11): the machine each
+run ran on is the record's, or, in a record from before 19 October, its run
+record's; a seed whose runs ran on two machines is named and left out.
 
 Scope: the directional test needs paradigms whose changes come in both
 directions (gender, number, determiner-noun). Ellipsis items MOVE a word
@@ -41,8 +44,10 @@ from collections import defaultdict
 
 import numpy as np
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from morphlm import runs as RUNS  # noqa: E402
 
 
 def change(good, bad):
@@ -57,23 +62,42 @@ def change(good, bad):
     return f"{' '.join(gs) or '∅'} > {' '.join(bs) or '∅'}"
 
 
+def machines(blob):
+    """{run id: machine} — as the blimp_eval record names it, or for a record written before it
+    did, from each run's record in the results directory the evaluation read."""
+    a, out = blob.get('args') or {}, {}
+    dirs = a.get('results') or [a.get('results_dir') or 'results']
+    for rid, r in blob['results']['runs'].items():
+        if 'machine' in r:
+            out[rid] = r['machine']
+            continue
+        rec = {}
+        for d in dirs:
+            p = os.path.join(d if os.path.isabs(d) else os.path.join(ROOT, d), rid, 'result.json')
+            if os.path.exists(p):
+                rec = json.load(open(p))
+                break
+        out[rid] = RUNS.machine(rec) or RUNS.gpu(rec)
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--record', help='blimp_eval audit record (default: latest)')
     ap.add_argument('--paradigms', nargs='*',
                     default=['anaphor_gender_agreement', 'anaphor_number_agreement',
                              'ellipsis_n_bar_1', 'ellipsis_n_bar_2'])
-    ap.add_argument('--results-dir', default='results')
+    RUNS.add_results_flag(ap)
     ap.add_argument('--reference', help='label to pair against (default: the record\'s)')
     ap.add_argument('--top', type=int, default=8, help='largest change groups shown')
     args = ap.parse_args()
 
     from blimp_eval import load_pairs
     from morphlm.record import AuditRecord
-    rec_out = AuditRecord('blimp_item_split', args)
+    rec_out = AuditRecord('blimp_item_split', args, out_dir=RUNS.AUDITS)
 
     path = args.record or sorted(glob.glob(os.path.join(
-        args.results_dir, 'audits', 'blimp_eval_*.json')))[-1]
+        RUNS.results_of(args)[0], 'audits', 'blimp_eval_*.json')))[-1]
     blob = json.load(open(path))
     R, a = blob['results'], blob['args']
     items = np.load(path[:-len('.json')] + '_items.npz')
@@ -85,6 +109,15 @@ def main():
     if ref not in by:
         raise SystemExit(f'reference {ref!r} not in this record')
     print(f'  record {os.path.basename(path)}: {len(runs)} checkpoints, reference {ref}')
+    where = machines(blob)
+    apart = {}                      # the seeds at which a cell and the reference ran on two machines
+    for l in by:
+        if l != ref:
+            left = {s: (where[by[ref][s]], where[by[l][s]]) for s in sorted(by[l])
+                    if s in by[ref] and where[by[ref][s]] != where[by[l][s]]}
+            if left:
+                apart[l] = left
+                print(f'  {l} against {ref}: {RUNS.left_out(left)}')
 
     wanted = [p for p in args.paradigms if (owner == p).any()]
     missing = [p for p in args.paradigms if p not in wanted]
@@ -122,10 +155,9 @@ def main():
                 cell = f'{100 * st.mean(accs.values()):5.1f}%'
                 if l != ref:
                     d = [100 * (accs[s] - float((items[by[ref][s]][sel] > 0).mean()))
-                         for s in sorted(accs) if s in by[ref]]
+                         for s in sorted(accs) if s in by[ref] and s not in apart.get(l, {})]
                     if len(d) >= 2:
-                        agree = max(sum(x > 0 for x in d), sum(x < 0 for x in d))
-                        cell += f' {st.mean(d):+5.1f} {agree}/{len(d)}'
+                        cell += f' {RUNS.summary(d)["mean"]:+5.1f} {RUNS.agree(d)}/{len(d)}'
                     elif d:
                         cell += f' {d[0]:+5.1f} n1'
                     out[p][k][l] = d
@@ -138,6 +170,8 @@ def main():
     print('    himself > herself down). Only the first is grammatical knowledge.')
     rec_out.add('record', os.path.basename(path))
     rec_out.add('groups', out)
+    if apart:
+        rec_out.add('left_out', {l: {str(s): list(m) for s, m in v.items()} for l, v in apart.items()})
     rec_out.write()
 
 

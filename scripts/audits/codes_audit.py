@@ -41,14 +41,13 @@ import os
 import sys
 import glob
 import json
-import math
 import argparse
 import datetime
-import dataclasses
 from collections import defaultdict
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, ROOT)
+from morphlm import runs as RUNS  # noqa: E402   (`runs` names the run rows here)
 
 import numpy as np
 
@@ -72,15 +71,10 @@ def when(t):
 
 
 def config_from_dict(d):
-    """An ExperimentConfig from a recorded config.json (fields added since are defaulted)."""
-    from morphlm.config import ExperimentConfig, DataConfig, FrozenConfig, ModelConfig, TrainConfig
-    def make(cls, sub):
-        names = {f.name for f in dataclasses.fields(cls)}
-        return cls(**{k: v for k, v in (sub or {}).items() if k in names})
-    fr = dict(d.get('frozen') or {})
-    fr['facts'] = tuple(fr.get('facts') or ())
-    return ExperimentConfig(data=make(DataConfig, d.get('data')), frozen=make(FrozenConfig, fr),
-                            model=make(ModelConfig, d.get('model')), train=make(TrainConfig, d.get('train')))
+    """An ExperimentConfig from a recorded config.json, all five sections (fields added since are
+    defaulted; a config without `surface` is the legacy stream): ExperimentConfig.from_dict."""
+    from morphlm.config import ExperimentConfig
+    return ExperimentConfig.from_dict(d)
 
 
 class Cache:
@@ -483,12 +477,12 @@ def main():
         print(f'   {"label":56} {"own − as read":>16} {"constant − own":>16}')
 
         def ms(d):
-            if not d:
+            s = RUNS.summary(d)
+            if s is None:
                 return f'{"-":>16}'
-            if len(d) == 1:
+            if s['n'] == 1:
                 return f'{d[0]:+.4f} (1 seed)'.rjust(16)
-            sem = (np.std(d, ddof=1) / math.sqrt(len(d))) if len(d) > 1 else float('nan')
-            return f'{np.mean(d):+.4f} ± {sem:.4f}'.rjust(16)
+            return f'{s["mean"]:+.4f} ± {s["se"]:.4f}'.rjust(16)
         for label, xs in sorted(cells.items()):
             d1 = [x['scores']['own'] - x['scores']['as_read'] for x in xs if x['read'] != x['own']]
             d2 = [x['scores']['constant'] - x['scores']['own'] for x in xs if 'constant' in x['scores']]

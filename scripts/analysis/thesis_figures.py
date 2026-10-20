@@ -20,6 +20,8 @@ controls and contrasts in grey.
 
 A figure is drawn only if every run it is planned to show exists (as in
 demo_figures.py): one that silently dropped points would read as another result.
+Runs are paired by seed within one machine (FINDINGS, method point 11); a seed whose
+runs ran on two machines is named and left out.
 
     python scripts/analysis/thesis_figures.py --out exports/figures
       -> exports/figures/uk/*.png, exports/figures/en/*.png
@@ -32,9 +34,9 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import demo_figures as D          # noqa: E402  load, paired, curve, ms
-import learning_law as L          # noqa: E402  curve (gain against the null's BPB)
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, ROOT)
+from morphlm import runs  # noqa: E402
 
 CM = 1 / 2.54
 WIDTH = 16 * CM
@@ -70,9 +72,11 @@ def step_axis(ax, lang, top):
         lambda v, p: (f'{v / 1000:g}'.replace('.', ',') if lang == 'uk' else f'{v / 1000:g}')))
 
 
-EN, UK, T = D.EN, D.UK, L.T
-U5 = lambda f, x='': UK(f, '0.05', x)
 TOK = lambda f, t, fr='0.05', x='_st10k': f'bpe_{f}-LEARN-CAUSAL_{t}_ukwiki{fr}{x}'
+EN = lambda f: f'bpe_{f}-LEARN-CAUSAL_bpe_17k'
+UK = lambda f, fr='0.2', x='': TOK(f, 'bpe_uk_17k', fr, x)
+T = lambda f, t: TOK(f, t)
+U5 = lambda f, x='': UK(f, '0.05', x)
 
 TXT = {
     'uk': {
@@ -177,19 +181,55 @@ def needs(lang):
     return out
 
 
+_NAMED = set()
+
+
+def named(what, left):
+    """Name the seeds left out of a pairing (runs.pair), once per run of the script."""
+    if left and what not in _NAMED:
+        _NAMED.add(what)
+        print(f'    {what}: {runs.left_out(left)}')
+
+
+def ms(d):
+    """(mean, standard error) over seeds — 0.0 at one seed; (None, None) for none."""
+    s = runs.summary(d, se_one=0.0)
+    return (s['mean'], s['se']) if s else (None, None)
+
+
+def paired(R, base, feat):
+    """Per-seed (base − feature) at the end of training, paired within one machine."""
+    pairs, left = runs.pair(R, base, feat)
+    named(f'{feat} against {base}', left)
+    return [rb['bits_per_byte'] - rf['bits_per_byte'] for rb, rf in pairs.values()]
+
+
+def early(R, base, feat):
+    """Along training: the steps, and the mean gain (base − feature) with its standard error,
+    every evaluation."""
+    pts, _, left = runs.gain_curve(R, base, feat, to_best=False)
+    named(f'{feat} against {base}', left)
+    m, e = [], []
+    for _, _, _, v in pts:
+        mm, ee = ms([g for _, g in v]); m.append(mm); e.append(ee)
+    return [p[0] for p in pts], m, e
+
+
+def law(R, null, feat):
+    """[(null BPB, gain)] averaged over the seeds, to each run's best step (the law's axis); the seeds."""
+    pts, seeds, left = runs.gain_curve(R, null, feat)
+    named(f'{feat} against {null}', left)
+    return [(b, g) for _, b, g, _ in pts], len(seeds)
+
+
 def lead(R, ref, other):
     """Per step: the step, the reference null's BPB, and ref − other (mean, se), over shared seeds."""
-    seeds = sorted(s for (l, s) in R if l == other and (ref, s) in R and D.same_machine(R, ref, other, s))
-    if not seeds:
-        return []
-    logs = {(k, s): {e['step']: e['bits_per_byte'] for e in R[(k, s)]['log'] if e['step'] > 0}
-            for k in (ref, other) for s in seeds}
-    steps = sorted(set.intersection(*[set(v) for v in logs.values()]))
+    pts, seeds, left = runs.gain_curve(R, ref, other, to_best=False)
+    named(f'{other} against {ref}', left)
     out = []
-    for x in steps:
-        d = [logs[(ref, s)][x] - logs[(other, s)][x] for s in seeds]
-        m, e = D.ms(d)
-        out.append((x, sum(logs[(ref, s)][x] for s in seeds) / len(seeds), m, e, len(seeds)))
+    for x, _, _, v in pts:
+        m, e = ms([g for _, g in v])
+        out.append((x, sum(b for b, _ in v) / len(seeds), m, e, len(seeds)))
     return out
 
 
@@ -198,7 +238,10 @@ def letter(ax, ch):
 
 
 def fig_q2_end(R, t, path):
-    rows = [(n, *D.ms(D.paired(R, b, f)), len(D.paired(R, b, f)), c) for n, b, f, c in t['q2']]
+    rows = []
+    for n, b, f, c in t['q2']:
+        d = paired(R, b, f)
+        rows.append((n, *ms(d), len(d), c))
     rows = [r for r in rows if r[1] is not None]
     fig, ax = plt.subplots(figsize=(WIDTH, 8.2 * CM))
     y = list(range(len(rows)))
@@ -221,10 +264,10 @@ def fig_q2_end(R, t, path):
 def fig_early_help(R, t, path):
     fig, ax = plt.subplots(figsize=(WIDTH, 8.5 * CM))
     for k, (name, b, f) in enumerate(t['early']):
-        x, m, e = D.curve(R, b, f)
+        x, m, e = early(R, b, f)
         if not x:
             continue
-        n = len(D.paired(R, b, f))
+        n = len(paired(R, b, f))
         ax.plot(x, m, color=SERIES[k], lw=1.6, label=f'{name}  (n = {n})')
         ax.fill_between(x, [a - s for a, s in zip(m, e)], [a + s for a, s in zip(m, e)], color=SERIES[k], alpha=0.16, lw=0)
     step_axis(ax, t['lang'], 50000)
@@ -245,7 +288,7 @@ def _law(R, t, path, panels, anchors):
     fig.subplots_adjust(left=0.17, right=0.98, top=0.94, bottom=0.45, wspace=0.34)
     for ax, ch, (ref, conds), x0 in zip(axes, t['letters'], panels, anchors):
         for k, (name, n, f) in enumerate(conds):
-            pts, ns = L.curve(R, n, f)
+            pts, ns = law(R, n, f)
             if not pts:
                 continue
             ax.plot([a for a, _ in pts], [b for _, b in pts], '-', lw=1.4, color=SERIES[k], label=f'{name}  (n = {ns})')
@@ -321,11 +364,11 @@ FIGS = {'fig_q2_end': fig_q2_end, 'fig_early_help': fig_early_help, 'fig_law_ukr
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument('--roots', nargs='+', default=['results'])
-    ap.add_argument('--out', default='exports/figures')
+    runs.add_results_flag(ap)
+    ap.add_argument('--out', default=os.path.join(ROOT, 'exports', 'figures'))
     ap.add_argument('--langs', nargs='+', default=['uk', 'en'])
     a = ap.parse_args()
-    R = D.load(a.roots)
+    R = runs.load(runs.results_of(a))
     have = {lab for lab, _ in R}
     for lang in a.langs:
         out = os.path.join(a.out, lang)

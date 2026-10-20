@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 loss_by_kind.py — where a feature's gain sits, by what each predicted token is
-(DIRECTIONS D7, "why exposure helps case"; journey §33.69).
+(FINDINGS, "Case helps by predicting endings"; journey §33.69).
 
 For every tokenizer of one condition, each saved model of the null and of each
 feature is scored again on the validation stream, token by token, exactly as
@@ -21,13 +21,20 @@ endings-apart tokenizer makes):
   non-word         punctuation, digits, line breaks
 
 A feature's gain over its null is counted per kind in bits per byte — the
-kinds add up to the whole gain — paired by seed (mean ± standard error, how many
-seeds positive). Then per word class (cut, uncut, non-word: the same words under
+kinds add up to the whole gain — paired by seed within one machine (mean ±
+standard error, how many seeds positive; FINDINGS, method point 11: a seed whose
+runs ran on two machines is named and left out). Then per word class (cut, uncut, non-word: the same words under
 every tokenizer, as the text is the same) and, against a reference tokenizer, the
 difference between the tokenizers' gains placed in the words it comes from.
 
 A check that could fail: every model's re-scored bits per byte must equal its
 record's within --tol, or the tool stops before reporting anything.
+
+Models are found beside their records. --machine second reads the second
+machine's records and models wherever they are — its own runs in results/, its
+twins' copies in results/audits/device_*/ with their models in
+results/audits/device_twins_models/ (morphlm/runs.py); --machine thesis the
+thesis machine's alone.
 
 --previous (G-38; journey §33.73): what the sentence's case adds over the word
 form's, placed by the word the feature describes. At the position that predicts a
@@ -54,20 +61,20 @@ and over the tokens holding an ending's start, paired by seed.
     python scripts/analysis/loss_by_kind.py --budget _st20k --tokenizers bpe_uk_17k bpeend_uk_17k --facts ucase
     python scripts/analysis/loss_by_kind.py --previous
     python scripts/analysis/loss_by_kind.py --previous --fraction 0.2 --budget '' --tokenizers bpe_uk_17k
+    python scripts/analysis/loss_by_kind.py --machine second --tokenizers bpe_uk_4k bpe_uk_17k --facts mconst@OFF0
 """
 import os
 import sys
 import time
 import argparse
 import dataclasses
-import statistics as st
 
 import numpy as np
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, ROOT)
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 os.environ.setdefault('MORPHLM_NO_BUILD', '1')
+from morphlm import runs as RUNS  # noqa: E402   (`runs` names a tokenizer's run ids here)
 
 KINDS = ('initial-uncut', 'initial-ending', 'initial-stem', 'cont-ending', 'cont-cut-other',
          'cont-uncut', 'non-word')
@@ -81,50 +88,25 @@ PREVIOUS = ('preposition, cases differ', 'preposition, cases agree', 'other word
 
 
 def summary(xs):
-    xs = [x for x in xs if x is not None]
-    if not xs:
-        return None
-    return {'mean': st.mean(xs), 'se': (st.stdev(xs) / len(xs) ** 0.5) if len(xs) > 1 else 0.0,
-            'n': len(xs), 'positive': sum(x > 0 for x in xs), 'values': xs}
+    """morphlm.runs.summary, with a standard error of 0.0 at one seed."""
+    return RUNS.summary(xs, se_one=0.0)
 
 
 def show(s, scale=1.0):
-    return '—' if s is None else f"{s['mean'] * scale:+.4f} ± {s['se'] * scale:.4f} ({s['positive']}/{s['n']})"
+    return RUNS.fmt(s, scale=scale)
 
 
-def score(run_id, results_dir):
-    """Per-target loss (nats) of one saved model on its validation stream, as training evaluated it."""
-    import torch
-    import torch.nn.functional as F
-    from torch.utils.data import DataLoader
-    from morphlm.training.metrics import load_checkpoint
-    from morphlm.training.loop import get_device
-    from morphlm.pipelines.registry import build_pipeline
-    from morphlm.data.windows import make_val_dataset
-    from morphlm.registry import context_facts
+def checkpoint(r):
+    """(run id, results directory) for load_checkpoint: the model beside the run's record."""
+    d = RUNS.model_dir(r)
+    return os.path.basename(d), os.path.dirname(d)
 
-    model, cfg = load_checkpoint(run_id, results_dir)
-    device = get_device()
-    model = model.to(device).eval()
-    facts = list(context_facts(cfg.frozen.facts))
-    data_cfg = dataclasses.replace(cfg, frozen=dataclasses.replace(cfg.frozen, facts=tuple(facts),
-                                                                   shuffle_codes=False))
-    pipe = build_pipeline(data_cfg, verbose=False)
-    ds = make_val_dataset(pipe, data_cfg, verbose=False)
-    loaded = list(getattr(ds, 'fact_names', []) or [])
-    if facts and loaded != facts:
-        raise RuntimeError(f'{run_id}: the model reads {facts}, the loader gave {loaded} — refusing to score')
-    nll = []
-    with torch.no_grad():
-        for x, y, c in DataLoader(ds, batch_size=cfg.train.batch_size):
-            cc = c.to(device) if c.numel() else None
-            logits, _ = model(x.to(device), None, codes=cc)
-            nll.append(F.cross_entropy(logits.reshape(-1, logits.size(-1)), y.to(device).reshape(-1),
-                                       reduction='none').double().cpu().numpy())
-    del model
-    if device == 'cuda':
-        torch.cuda.empty_cache()
-    return cfg, ds, np.concatenate(nll)
+
+def score(r):
+    """Per-target loss (nats, float64) of one saved model on its validation stream, as training
+    evaluated it (morphlm.runs.rescore)."""
+    cfg, _, ds, nll, _, _ = RUNS.rescore(*checkpoint(r))
+    return cfg, ds, nll.astype(np.float64)
 
 
 def classify(ds, bpe_path, rule):
@@ -172,7 +154,7 @@ def classify(ds, bpe_path, rule):
     return kind, counts
 
 
-def previous_classes(null_run, results_dir, stream_sig, facts):
+def previous_classes(null_run, stream_sig, facts):
     """
     The PREVIOUS class of every scored target: the word the feature describes at
     the position that predicts it, read through the model's own boundary rule and
@@ -187,7 +169,7 @@ def previous_classes(null_run, results_dir, stream_sig, facts):
     from morphlm.modeling.embedding import word_runs, causal_shift
     from morphlm.features.blocks import build_blocks, POS_CLASSES
 
-    model, cfg = load_checkpoint(null_run, results_dir)
+    model, cfg = load_checkpoint(*checkpoint(null_run))
     emb = model.embed.cpu()
     if not getattr(emb, 'causal_identity', False):
         raise RuntimeError(f'{null_run}: not a causal model — no shift to read')
@@ -230,11 +212,11 @@ def previous_classes(null_run, results_dir, stream_sig, facts):
 
 
 def main():
-    import learning_law as LL
     from morphlm.data.endings import EndingRule
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument('--roots', nargs='+', default=[os.path.join(ROOT, 'results')])
-    ap.add_argument('--results-dir', default=os.path.join(ROOT, 'results'))
+    RUNS.add_results_flag(ap)
+    ap.add_argument('--machine', choices=('thesis', 'second'), default=None,
+                    help="one machine's records and models (default: every record under --results)")
     ap.add_argument('--corpus', default='ukwiki')
     ap.add_argument('--fraction', default='0.05')
     ap.add_argument('--budget', default='_st10k', help="the label's budget suffix")
@@ -253,7 +235,7 @@ def main():
     a = ap.parse_args()
     t0 = time.time()
 
-    R = LL.load(a.roots)
+    R = RUNS.load(RUNS.results_of(a), machine=a.machine)
     corpus = a.corpus + a.fraction
     def lab(f, t):
         # 'mconst@OFF0' names a switched cell, the switch's suffix after CAUSAL in its label: the null
@@ -265,9 +247,18 @@ def main():
     rec = AuditRecord('loss_by_kind', a, out_dir=a.audit_dir)
     rec.add('ending_rule', rule.fingerprint())
 
-    out, checks = {}, []
+    out, checks, left_out = {}, [], {}
+
+    def one_machine(*cells):
+        """The seeds at which the cells' runs are on one machine; the others are named and noted."""
+        pairs, left = RUNS.pair(R, *cells)
+        if left and ' / '.join(cells) not in left_out:
+            left_out[' / '.join(cells)] = {str(s): list(m) for s, m in left.items()}
+            print(f'  {" / ".join(cells)}: {RUNS.left_out(left)}')
+        return set(pairs)
+
     for t in a.tokenizers:
-        runs = {f: {s: R[(l, s)]['run_id'] for (l, s) in R if l == lab(f, t)} for f in [a.null] + a.facts}
+        runs = {f: {s: R[(l, s)] for (l, s) in R if l == lab(f, t)} for f in [a.null] + a.facts}
         seeds = sorted(runs[a.null])
         if not seeds:
             print(f'  {t}: no null runs under {lab(a.null, t)} — skipped')
@@ -275,11 +266,12 @@ def main():
         bpe_path = os.path.join(ROOT, 'data', f'{t}.json')
         kind, nll, counts, stream = None, {}, None, None
         for f, by_seed in runs.items():
-            for s, rid in sorted(by_seed.items()):
-                if not os.path.exists(os.path.join(a.results_dir, rid, 'model.pt')):
+            for s, r in sorted(by_seed.items()):
+                rid = r['run_id']
+                if not os.path.exists(os.path.join(RUNS.model_dir(r), 'model.pt')):
                     print(f'  {t} {f} seed {s}: no saved model ({rid}) — left out')
                     continue
-                cfg, ds, x = score(rid, a.results_dir)
+                cfg, ds, x = score(r)
                 ids_sig = (len(ds.ids), int(np.asarray(ds.ids[:4096], dtype=np.int64).sum()),
                            int(np.asarray(ds.ids[-4096:], dtype=np.int64).sum()))
                 if stream is None:
@@ -306,8 +298,9 @@ def main():
         res = {'counts': counts, 'target_share': share, 'null_bits_per_target': null_bits, 'facts': {}}
         for f in a.facts:
             per_seed = {}
+            one = one_machine(lab(a.null, t), lab(f, t))
             for s in seeds:
-                if s not in nll.get(f, {}) or s not in nll[a.null]:
+                if s not in nll.get(f, {}) or s not in nll[a.null] or s not in one:
                     continue
                 (xn, sc), (xf, _) = nll[a.null][s], nll[f][s]
                 g = (xn - xf) / np.log(2) / sc                       # bits per byte, per target
@@ -345,13 +338,14 @@ def main():
         if a.previous and a.facts and a.facts[0] in nll:
             # one feature alone: its gain over the null, by the word it describes
             f1, f2 = (a.facts[0], a.facts[1]) if len(a.facts) > 1 and a.facts[1] in nll else (a.facts[0], a.null)
-            pcls, pcounts = previous_classes(runs[a.null][seeds[0]], a.results_dir, stream, a.previous_facts)
+            pcls, pcounts = previous_classes(runs[a.null][seeds[0]], stream, a.previous_facts)
             if len(pcls) != len(kind):
                 raise RuntimeError('the previous-word classes and the target kinds differ in length')
             end_mask = np.isin(kind, [KINDS.index(k) for k in ENDING])
             per_seed = {}
+            one = one_machine(*dict.fromkeys((lab(a.null, t), lab(f1, t), lab(f2, t))))
             for s in seeds:
-                if any(s not in nll.get(f, {}) for f in (a.null, f1, f2)):
+                if any(s not in nll.get(f, {}) for f in (a.null, f1, f2)) or s not in one:
                     continue
                 (xn, sc), (x1, _), (x2, _) = nll[a.null][s], nll[f1][s], nll[f2][s]
                 g1, g2 = (xn - x1) / np.log(2) / sc, (xn - x2) / np.log(2) / sc
@@ -387,7 +381,8 @@ def main():
                 if f not in res['facts'] or f not in out[a.reference]['facts']:
                     continue
                 mine, ref = res['facts'][f]['per_seed'], out[a.reference]['facts'][f]['per_seed']
-                common = sorted(set(mine) & set(ref))
+                one = one_machine(lab(a.null, t), lab(f, t), lab(a.null, a.reference), lab(f, a.reference))
+                common = sorted(set(mine) & set(ref) & one)
                 cls = lambda v, c: sum(v[k] for k in KINDS if WORD_CLASS[k] == c)
                 d = {c: summary([cls(mine[s], c) - cls(ref[s], c) for s in common]) for c in CLASSES}
                 d['total'] = summary([mine[s]['total'] - ref[s]['total'] for s in common])
@@ -402,6 +397,8 @@ def main():
           f'{time.time() - t0:.0f} s')
     rec.add('tokenizers', out)
     rec.add('rescore_checks', checks)
+    if left_out:
+        rec.add('left_out', left_out)
     rec.write()
 
 

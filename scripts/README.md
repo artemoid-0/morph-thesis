@@ -4,6 +4,14 @@
 > `python scripts/data/check_cache.py --help`. **active** = in current use; **historical** =
 > answered its question and is kept so the answer can be reproduced.
 
+Scripts that read run records read them through one module, `morphlm/runs.py`: every record
+under `--results` (default `results/`; `--roots`, `--results-dir` and `--root` are older
+spellings), keyed by cell and seed; with `--machine second`, the second machine's records
+wherever they are — its own runs in `results/`, its twins' copies in `results/audits/device_*/`
+with their models in `results/audits/device_twins_models/`. Runs are paired by seed within one
+machine, and the seeds left out are named (FINDINGS, method point 11). Findings are written by
+`morphlm/record.py` to `results/audits/<script>_<UTC timestamp>.json`.
+
 ## `data/` — build and check caches and derived codes
 
 | script | what it answers | status |
@@ -28,34 +36,37 @@
 
 | script | what it answers | status |
 |---|---|---|
-| `blimp_eval.py` | BLiMP minimal pairs on existing checkpoints, paired by seed. | active |
-| `blimp_item_split.py` | Is a BLiMP gain agreement, or a shifted preference? | active |
-| `multiblimp_eval.py` | MultiBLiMP's Ukrainian subject–verb agreement pairs on saved checkpoints, paired by seed; the scoring path must first reproduce the cached ids and codes of validation paragraphs. | active |
+| `blimp_eval.py` | BLiMP minimal pairs on existing checkpoints, paired by seed; `--machine second` scores the second machine's runs. | active |
+| `blimp_item_split.py` | Is a BLiMP gain agreement, or a shifted preference? From a blimp_eval record's per-item margins. | historical |
+| `multiblimp_eval.py` | MultiBLiMP's Ukrainian subject–verb agreement pairs on saved checkpoints, paired by seed; the scoring path must first reproduce the cached ids and codes of validation paragraphs; `--machine second` scores the second machine's runs. | active |
 | `checkpoint_survey.py` | What is in results/, and which checkpoints still load? | historical |
 | `evaluate_split.py` | Score saved checkpoints on a HELD-OUT split. | historical |
-| `lookahead_check.py` | How much of the word-identity gain is within-word lookahead? | active |
+| `lookahead_check.py` | How much of the word-identity gain is within-word lookahead? | historical |
 | `probe_dep.py` | Is the injected fact ACTUALLY IN the representation? | historical |
 
-## `analysis/` — turn run records into tables, profiles and figures
+## `analysis/` — turn run records into tables, profiles and figures; re-score saved models
+
+Most read the run records only; `probe.py`, `probe_words.py`, `loss_by_kind.py` and
+`compare_buckets.py` load saved models and score them again.
 
 | script | what it answers | status |
 |---|---|---|
 | `compare_buckets.py` | Does context freezing help RARE tokens, or everything? | historical |
-| `demo_figures.py` | The thesis figures, each computed from raw run records. | active |
+| `demo_figures.py` | The figures of `docs/README.md`, each computed from raw run records (the thesis's own are `thesis_figures.py`'s). | active |
 | `device_twins.py` | Do the two machines give the same results? Every run repeated on the other machine, its difference along training, and chosen effects per seed on each machine. | active |
 | `thesis_figures.py` | The thesis's figures in Ukrainian and English (`exports/figures/uk/`, `en/`): no titles, 16 cm at 300 dpi; a figure with planned runs missing is not drawn. | active |
 | `export_results.py` | Turn results/ into thesis material; effects paired by seed within one machine. | active |
 | `exposure_axis.py` | Does case gain less where the tokenizer exposes endings, at the same point of learning? Each tokenizer's gain over the empty slot (or the null) along training, at common reference levels, per width, within one machine; with `--feature empty`, the empty slot's gain over the null instead. | active |
 | `learning_law.py` | A feature's gain against how much its null has learned (D1). | active |
-| `loss_by_kind.py` | Where a feature's gain sits, by what each predicted token is — a word's first token or a later one, holding an inflectional ending or not — re-scoring saved models token by token (each must reproduce its record); the tokenizers' difference by word class; `--previous` places one feature's lead over another — or over the null — by the word the feature describes (G-38, G-77). | active |
+| `loss_by_kind.py` | Where a feature's gain sits, by what each predicted token is — a word's first token or a later one, holding an inflectional ending or not — re-scoring saved models token by token (each must reproduce its record); the tokenizers' difference by word class; `--previous` places one feature's lead over another — or over the null — by the word the feature describes (G-38, G-77); `--machine second` reads the second machine's runs and models. | active |
 | `paired_cells.py` | One cell against another, paired by seed, each pair on one machine. | active |
-| `probe.py` | When a model comes to know a feature: a linear probe over checkpoints (D2); `--previous` probes for what a causal feature carries, the previous unit's class. | active |
+| `probe.py` | When a model comes to know a feature: a linear probe over checkpoints (D2); `--previous` probes for what a causal feature carries, the previous unit's class; `--machine second` probes a second machine's twin by its id. | active |
 | `probe_axis.py` | Does a probe's accuracy line model widths up on the law? Pairs each probed null's accuracy with the feature's gain at the same steps (D2); with several probed seeds, compares at each and on their averaged accuracy, finding a second machine's probed twins by id. | active |
 | `probe_words.py` | What a model builds for itself: a linear probe reads each word's case, number and gender in context from final checkpoints, at the word's last token (`--after N`: N units later), with case split by whether the form alone decides it; cells paired by seed (journey §33.84). | active |
 | `steps_saved.py` | What a feature's early help is worth in training steps. | historical |
 | `tokenizer_table.py` | D7's table from the run records: each feature's gain under each tokenizer, paired by seed; tokenizers against a reference (null against null — at the end and along training — and gain against gain); gains at a step and at matched null BPB, per seed. | active |
 | `tokenizer_widths.py` | The tokenizer's lead across model widths, at matched null BPB (D8). | active |
-| `temporal_profile.py` | When during training does a feature's gain appear? | active |
+| `temporal_profile.py` | When during training does a feature's gain appear, against the plain baseline (journey §32.2)? Superseded by `learning_law.py`'s same-shape nulls. | historical |
 
 ## `audits/` — one question each — most answered and kept to reproduce the answer
 
@@ -82,11 +93,11 @@
 | script | what it answers | status |
 |---|---|---|
 | `backfill_results.py` | Recover the derivable provenance for runs that predate it. | historical |
-| `refresh_exports.sh` | Bring `exports/` up to date with `results/`: every table and figure; run after every chain and every result. | active |
+| `refresh_exports.sh` | Bring `exports/` up to date with `results/`: every table and figure; run after every chain and every result. Every step runs; `exports/REFRESHED.txt` is written only when every step succeeded and every file was redrawn (or is on the script's `NOT_DRAWN` list), otherwise it prints "exports/ NOT refreshed", names the failed steps and stale files, and exits 1. | active |
 | `chain_status.sh` | Where every chain stands, in one command — and the runs finished in the last day, flagging duplicate seeds; changes nothing. | active |
 | `cells_ready.py` | Does this machine hold every cache a run needs? A chain's readiness guard. | active |
 | `check_claims.py` | Verify every number in the documents against results/. | active |
-| `check_docs.py` | Keep the documents honest: links, names, citations, kinds, numbers. | active |
+| `check_docs.py` | Keep the documents honest: links, names, citations, kinds, numbers; the journey's part ranges, the results record's § citations, cited record names and run ids, the predictions tally, and that every script is in an index. | active |
 | `fit_check.py` | Will a model fit, and how long will its run take? Measured, over a grid of sizes. | active |
 | `project_health.sh` | Diagnose a PyCharm project that shows no files. | historical |
 | `quarantine.py` | Move invalid runs out of results/, keeping the record. | active |
@@ -96,11 +107,12 @@
 | `slim_codes.py` | One fact of a stream's codes in a file of its own, for a machine that holds only what its runs read. | active |
 | `smoke_model.py` | Build each cell's REAL model and push one batch through it. | active |
 | `tagger_record.py` | Which spaCy tagger, at which version, tagged each corpus's caches? From the installed packages and the earliest evidence of each corpus's caches (G-74). | active |
-| `verify.py` | Run this first, before spending GPU time. | active |
+| `verify.py` | Run this first, before spending GPU time: every module of `morphlm/` (found, not listed), every suite in `tests/`, the model's guarantees, and whether the cached streams resolve from the recorded configurations. | active |
 
 ## `chains/` — night and day chains
 
 Each chain is a dated record of what ran, and stays runnable. Index: [`chains/README.md`](chains/README.md).
+`chains/lib/chain_v1.sh` is the body a chain written after 19 October sources instead of copying it: the preamble with the guard and the log, the helpers, one seed-piece runner (twin, sanity and pair checks), the wait for a training run, and the PLAN and STOP ending. A version is frozen once a dated chain sources it; a change goes into the next version, beside it. `tests/test_chainlib.py` drives it with the stub `python`.
 
 ## `rehearsal/` — testing a chain before it runs
 
@@ -109,4 +121,5 @@ the chain scripts' rehearsals (`scripts/chains/README.md`). `make_toy_data.py`
 writes a toy WikiText, `make_toy_ukwiki.py` a toy Ukrainian Wikipedia from the UD_Ukrainian-IU
 treebank's real sentences; the stand-in `datasets` package serves both, and any other corpus from
 `$REHEARSAL_DATA`. A rehearsal runs from a copy of the code in a folder under `scratch/`, never in
-`data/cache/` or `results/`.
+`data/cache/` or `results/`. `tests/test_chainlib.py` drives the chain library with this stub, in a
+temporary project.

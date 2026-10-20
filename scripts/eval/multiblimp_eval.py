@@ -30,10 +30,16 @@ this path, and must reproduce the cached token ids and every cached code exactly
 
 Accuracy and the mean log-probability margin (nats by which the grammatical sentence
 is preferred) are reported over all pairs and per phenomenon; each cell is paired by
-seed with a reference cell. Per-item margins are saved beside the audit record.
+seed with a reference cell, within one machine (FINDINGS, method point 11: a seed whose
+runs ran on two machines is named and left out). Per-item margins are saved beside the
+audit record.
 
     python scripts/eval/multiblimp_eval.py --labels 'bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2' 'bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2'
     python scripts/eval/multiblimp_eval.py --labels '*_ukwiki0.05_st10k' --device cpu --threads 4
+    python scripts/eval/multiblimp_eval.py --labels '*_ukwiki0.05_st10k' --machine second
+
+--machine second scores the second machine's runs, its twins' models included
+(results/audits/device_twins_models/; morphlm/runs.py).
 """
 import os
 import sys
@@ -50,6 +56,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 os.environ.setdefault('MORPHLM_NO_BUILD', '1')
+from morphlm import runs as R  # noqa: E402   (`runs` names the run ids scored here)
+from blimp_eval import encode, locate, score, self_check  # noqa: E402   (beside this script)
 
 DATA = os.path.join(ROOT, 'external', 'multiblimp', 'ukr', 'data.tsv')
 PHENOMENA = {'SV-#': 'number', 'SV-G': 'gender', 'SV-P': 'person'}
@@ -86,15 +94,6 @@ class Encoder:
             raise RuntimeError(f'a newline encodes to {len(nl)} tokens; the scorer skips exactly one')
         return data_cfg, pipe, blocks, nl[0]
 
-    @staticmethod
-    def _encode(pipe, blocks, text):
-        if not blocks:
-            return list(pipe.encode_ids(text)), []
-        toks = pipe.encode(text)
-        ids = [t['token_id'] for t in toks]
-        return ids, [list(b.codes_for(ids, toks)) if hasattr(b, 'codes_for') else [b.code(t) for t in toks]
-                     for b in blocks]
-
     def check(self, cfg, facts, k):
         """The first k paragraphs of the validation stream, re-encoded by this path, must
         reproduce the cached ids and codes exactly."""
@@ -116,7 +115,7 @@ class Encoder:
             for i in set(span.tolist()) - raw.keys():
                 raw[i] = bytes(dec[ch] for ch in (tok.id_to_token(i) or '') if ch in dec)
             text = b''.join(raw[i] for i in span.tolist()).decode('utf-8')
-            got_ids, got_codes = self._encode(pipe, blocks, text)
+            got_ids, got_codes = encode(pipe, blocks, text)
             if got_ids != span.tolist():
                 mism.append((done, 'ids'))
             else:
@@ -138,7 +137,7 @@ class Encoder:
         t0 = time.time()
         seqs, codes = [], []
         for s in sentences:
-            ids, cs = self._encode(pipe, blocks, s)
+            ids, cs = encode(pipe, blocks, s)
             seqs.append([nl] + ids)
             codes.append([[b.n_classes - 1] + c for b, c in zip(blocks, cs)] if blocks else None)
         nones = [b.n_classes - 1 for b in blocks]
@@ -149,11 +148,12 @@ class Encoder:
 
 
 def main():
-    from blimp_eval import score, self_check, select
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--labels', nargs='+', required=True, help='glob patterns of run labels (valid runs only)')
     ap.add_argument('--reference', help="label to pair against (default: the first label's runs)")
-    ap.add_argument('--results-dir', default=os.path.join(ROOT, 'results'))
+    R.add_results_flag(ap)
+    ap.add_argument('--machine', choices=('thesis', 'second'), default=None,
+                    help="one machine's runs, found among its records (the second's twins too)")
     ap.add_argument('--data', default=DATA)
     ap.add_argument('--check', type=int, default=40, help='validation paragraphs re-encoded per configuration')
     ap.add_argument('--device', default=None, help='cpu while a chain holds the GPU')
@@ -175,7 +175,7 @@ def main():
     if a.threads:
         torch.set_num_threads(a.threads)
     device = a.device or get_device()
-    rec = AuditRecord('multiblimp_eval', a)
+    rec = AuditRecord('multiblimp_eval', a, out_dir=R.AUDITS)
 
     rows = load_pairs(a.data)
     if a.limit:
@@ -183,10 +183,10 @@ def main():
     good, bad = [r['sen'] for r in rows], [r['wrong_sen'] for r in rows]
     phen = np.array([PHENOMENA[r['phenomenon']] for r in rows])
     n = len(rows)
-    runs = []
-    for pat in a.labels:
-        runs += [r for r in select([pat], a.results_dir) if r not in runs]
-    runs = [r for r in runs if os.path.exists(os.path.join(a.results_dir, r, 'model.pt'))]
+    where = {}
+    for pat in a.labels:                 # in the order of the patterns
+        where.update({k: v for k, v in locate([], [pat], R.results_of(a), a.machine).items() if k not in where})
+    runs = [r for r in where if os.path.exists(os.path.join(where[r][0], r, 'model.pt'))]
     if not runs:
         raise SystemExit('no checkpoints matched')
     print(f'  {n:,} pairs ({", ".join(f"{k} {int((phen == k).sum())}" for k in PHENOMENA.values())}); '
@@ -196,7 +196,7 @@ def main():
     per_run, items = {}, {}
     for rid in runs:
         t0 = time.time()
-        model, cfg = load_checkpoint(rid, a.results_dir)
+        model, cfg = load_checkpoint(rid, where[rid][0])
         model = model.to(device).eval()
         facts = list(context_facts(cfg.frozen.facts))
         ck = (cfg.data.bpe_path, tuple(facts), cfg.data.corpus, cfg.data.corpus_fraction)
@@ -214,8 +214,9 @@ def main():
         acc['all'] = float((margin > 0).mean())
         mar = {p: float(margin[phen == p].mean()) for p in PHENOMENA.values()}
         mar['all'] = float(margin.mean())
-        per_run[rid] = {'label': cfg.label(), 'seed': cfg.train.seed, 'accuracy': acc, 'margin': mar,
-                        'batch_check_max_diff': worst}
+        per_run[rid] = {'label': cfg.label(), 'seed': cfg.train.seed,
+                        'machine': R.machine(where[rid][1]) or R.gpu(where[rid][1]),
+                        'accuracy': acc, 'margin': mar, 'batch_check_max_diff': worst}
         items[rid] = margin.astype(np.float32)
         print(f'  {rid}  {cfg.label()}  seed {cfg.train.seed}: accuracy {100 * acc["all"]:.1f}% '
               f'(number {100 * acc["number"]:.1f}, gender {100 * acc["gender"]:.1f}, '
@@ -242,6 +243,15 @@ def main():
         by[r['label']].setdefault(r['seed'], rid)
     ref = a.reference or per_run[runs[0]]['label']
     labels = [ref] + sorted(l for l in by if l != ref)
+    # pairs within one machine (morphlm.runs.pair); the seeds left out are named once
+    scored = {(l, s): where[rid][1] for l, d in by.items() for s, rid in d.items()}
+    paired, left_out = {}, {}
+    for l in labels[1:]:
+        ab, left = R.pair(scored, ref, l)
+        paired[l] = set(ab)
+        if left:
+            left_out[l] = {str(s): list(m) for s, m in left.items()}
+            print(f'  {l} against {ref}: {R.left_out(left)}')
     keys = ['all'] + list(PHENOMENA.values()) + (['same length'] if a.by_length else [])
     summary = {}
     print(f'\n  MultiBLiMP, Ukrainian — accuracy, mean over seeds; paired by seed against {ref}: '
@@ -254,13 +264,15 @@ def main():
             m = st.mean(per_run[by[l][s]]['accuracy'][k] for s in seeds)
             cell, entry = f'{100 * m:5.1f}%', {'accuracy': m, 'seeds': seeds}
             if l != ref:
-                shared = [s for s in seeds if s in by[ref]]
+                shared = [s for s in seeds if s in by[ref] and s in paired[l]]
                 d = [100 * (per_run[by[l][s]]['accuracy'][k] - per_run[by[ref][s]]['accuracy'][k]) for s in shared]
                 dm = [per_run[by[l][s]]['margin'][k] - per_run[by[ref][s]]['margin'][k] for s in shared]
                 if len(d) >= 2:
-                    agree = max(sum(x > 0 for x in d), sum(x < 0 for x in d))
-                    cell += f' {st.mean(d):+.1f}±{st.stdev(d) / len(d) ** 0.5:.1f} {agree}/{len(d)}'
+                    sm = R.summary(d)
+                    cell += f' {sm["mean"]:+.1f}±{sm["se"]:.1f} {R.agree(d)}/{len(d)}'
                 entry.update(paired_seeds=shared, paired_acc_diff=d, paired_margin_diff=dm)
+                if l in left_out:
+                    entry['left_out'] = left_out[l]
             summary[l][k] = entry
             row += f'{cell:>24}'
         print(row)
@@ -268,9 +280,7 @@ def main():
     rec.add('reference', ref)
     rec.add('summary', summary)
     rec.add('checked_paragraphs', {f'{os.path.basename(k[0])} {list(k[1])} {k[2]}{k[3]}': v for k, v in checked.items()})
-    path = rec.write()
-    base = path[:-5] if isinstance(path, str) and path.endswith('.json') else \
-        os.path.join(a.results_dir, 'audits', f'multiblimp_{int(time.time())}')
+    base = rec.write()[:-len('.json')]
     np.savez_compressed(base + '_items.npz', phenomenon=phen, **items)
     print(f'  [items] {base}_items.npz')
 

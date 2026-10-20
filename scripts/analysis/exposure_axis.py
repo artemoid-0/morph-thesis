@@ -4,8 +4,8 @@ exposure_axis.py — does case gain less where the tokenizer exposes endings, at
 learning? (journey §33.113, §33.116–§33.118)
 
 Against the best model without the feature, case at ~38M tokens and 10k steps gains less under
-endings apart than under BPE 17k (+0.0022 against +0.0038 at width 128), and by 20k the two are
-level. A wider model learns faster per step, so a step is not the same point of learning at two
+endings apart than under BPE 17k (journey §33.113), and by 20k the two are level (§33.116). A wider
+model learns faster per step, so a step is not the same point of learning at two
 widths. Here each tokenizer's gain is read along training against its reference's bits per byte —
 the law's axis — and the two tokenizers are compared at common levels, per width, within one
 machine (FINDINGS, method point 11).
@@ -21,18 +21,17 @@ training; journey §33.118).
     python scripts/analysis/exposure_axis.py --widths 128 --reference null --levels 1.15 1.10 1.05
     python scripts/analysis/exposure_axis.py --widths 128 512 --feature empty --reference null
 
-Records: the second machine's by default (its twins are read from results/audits/device_*/), as
-device_twins.py reads them. Written to results/audits/exposure_axis_<time>.json.
+Records: the second machine's by default, its twin copies included (results/audits/device_*/),
+as `morphlm.runs.load(machine=...)` reads them; --machine thesis for the thesis machine's.
+Written to results/audits/exposure_axis_<time>.json.
 """
 import os
 import sys
-import math
 import argparse
-import statistics as st
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, ROOT)
-sys.path.insert(0, os.path.join(ROOT, 'scripts', 'analysis'))
+from morphlm import runs  # noqa: E402
 
 NAMES = {'bpe_uk_17k': 'BPE 17k', 'bpeend_uk_17k': 'endings apart', 'unigram_uk_17k': 'Unigram 17k',
          'bpe_uk_4k': 'BPE 4k', 'bpe_uk_8k': 'BPE 8k', 'bpe_uk_32k': 'BPE 32k'}
@@ -43,51 +42,28 @@ def label(fact, tok, budget, width, off=False):
             + ('' if width == 128 else f'_w{width}'))
 
 
-def curve(r):
-    return {e['step']: e['bits_per_byte'] for e in r.get('log', []) if e.get('step', 0) > 0}
-
-
-def per_seed_curves(recs, machine, ref_label, case_label, budget):
-    """{seed: [(reference BPB, gain)]} along training, each pair to the earlier of its best steps."""
-    from device_twins import one
+def per_seed_curves(R, ref_label, case_label):
+    """{seed: [(reference BPB, gain)]} along training, each pair to the earlier of its best steps,
+    the points sorted by the reference's BPB (R: one machine's records)."""
     out = {}
-    for s in range(16):
-        a = recs.get((ref_label, s, budget), {}).get(machine)
-        b = recs.get((case_label, s, budget), {}).get(machine)
-        if not a or not b:
-            continue
-        ra, rb = one(a)[0], one(b)[0]
-        ca, cb = curve(ra), curve(rb)
-        stop = min(ra.get('best_step') or budget, rb.get('best_step') or budget)
-        pts = sorted(((ca[x], ca[x] - cb[x]) for x in ca if x in cb and x <= stop), reverse=True)
+    pairs, _ = runs.pair(R, ref_label, case_label)
+    for s, (ra, rb) in pairs.items():
+        pts, _, _ = runs.gain_curve({(ref_label, s): ra, (case_label, s): rb}, ref_label, case_label)
+        pts = sorted(((b, g) for _, b, g, _ in pts), reverse=True)
         if len(pts) >= 2:
             out[s] = {'points': pts, 'end': ra['bits_per_byte'] - rb['bits_per_byte'],
                       'runs': [ra['run_id'], rb['run_id']]}
     return out
 
 
-def at(points, level):
-    """The gain where the reference's BPB falls to `level`, interpolated; None outside the curve."""
-    for (b0, g0), (b1, g1) in zip(points, points[1:]):
-        if b0 >= level >= b1:
-            t = (b0 - level) / (b0 - b1) if b0 > b1 else 0.0
-            return g0 + t * (g1 - g0)
-    return None
-
-
 def mse(xs):
-    xs = [x for x in xs if x is not None]
-    if not xs:
-        return None, None, 0, 0
-    m = st.mean(xs)
-    se = st.stdev(xs) / math.sqrt(len(xs)) if len(xs) > 1 else None
-    return m, se, sum(x > 0 for x in xs), len(xs)
+    """(mean, se — None at one seed, seeds positive, seeds), as this script's records hold it."""
+    s = runs.summary(xs)
+    return (s['mean'], s['se'], s['positive'], s['n']) if s else (None, None, 0, 0)
 
 
 def fmt(m, se, pos, n):
-    if m is None:
-        return '—'
-    return f'{m:+.4f}' + (f' ± {se:.4f}' if se is not None else '') + f' ({pos}/{n})'
+    return runs.fmt(None if m is None else {'mean': m, 'se': se, 'positive': pos, 'n': n})
 
 
 def main():
@@ -103,14 +79,13 @@ def main():
     ap.add_argument('--tokenizers', nargs='+', default=['bpeend_uk_17k'],
                     help='each compared with --against at common levels')
     ap.add_argument('--against', default='bpe_uk_17k', help='the tokenizer that hides endings')
-    ap.add_argument('--root', default=ROOT)
+    runs.add_results_flag(ap, root=True)
     a = ap.parse_args()
     if a.feature == 'empty' and a.reference != 'null':
         ap.error('--feature empty is read over the null: add --reference null')
-    from device_twins import load
     from morphlm.record import AuditRecord
-    recs = load(a.root)
-    rec = AuditRecord('exposure_axis', a, out_dir=os.path.join(a.root, 'results', 'audits'))
+    R = runs.load(runs.results_of(a), machine=a.machine)
+    rec = AuditRecord('exposure_axis', a, out_dir=os.path.join(a.root, 'results', 'audits') if a.root else runs.AUDITS)
     out = {}
     for w in a.widths:
         for tok in a.tokenizers:
@@ -119,7 +94,7 @@ def main():
             for t in pair:
                 ref = label('mconst', t, a.budget, w, off=(a.reference == 'empty'))
                 feat = label('mconst', t, a.budget, w, off=True) if a.feature == 'empty' else label('ucase', t, a.budget, w)
-                cur[t] = per_seed_curves(recs, a.machine, ref, feat, a.budget)
+                cur[t] = per_seed_curves(R, ref, feat)
             seeds = sorted(set(cur[a.against]) & set(cur[tok]))
             what = 'the empty slot' if a.feature == 'empty' else 'case'
             print(f'\n  width {w}, {a.budget // 1000}k, {what} over the {"empty slot" if a.reference == "empty" else "null"}: '
@@ -133,8 +108,8 @@ def main():
             rows = []
             print(f'    {"reference BPB":>13}  {NAMES.get(a.against, a.against):>24}  {NAMES.get(tok, tok):>24}  {"difference (redundancy)":>28}')
             for v in levels:
-                gb = {s: at(cur[a.against][s]['points'], v) for s in seeds}
-                ge = {s: at(cur[tok][s]['points'], v) for s in seeds}
+                gb = {s: runs.at(cur[a.against][s]['points'], v) for s in seeds}
+                ge = {s: runs.at(cur[tok][s]['points'], v) for s in seeds}
                 d = [gb[s] - ge[s] for s in seeds if gb[s] is not None and ge[s] is not None]
                 r = {'level': v, 'against': mse(list(gb.values())), 'tokenizer': mse(list(ge.values())), 'redundancy': mse(d)}
                 rows.append(r)

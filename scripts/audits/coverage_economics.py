@@ -48,7 +48,8 @@ import math
 import argparse
 from collections import Counter
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, ROOT)
 
 import numpy as np
 
@@ -205,7 +206,7 @@ def main():
     ap.add_argument('--bpe-path', default='data/bpe_bytelevel.json')
     ap.add_argument('--morph-run', help='checkpoint id for part 2')
     ap.add_argument('--bpe-run', help='checkpoint id for part 2')
-    ap.add_argument('--results-dir', default='results')
+    ap.add_argument('--results-dir', default=os.path.join(ROOT, 'results'))
     ap.add_argument('--freq-edges', default='',
                     help='comma-separated frequency band edges, e.g. '
                          '1,3,10,20,30,50,100,inf. The default bands jump '
@@ -397,17 +398,16 @@ def main():
 
     bytes_by_cls = region_byte_total
 
-    if args.bpe_run:
+    _cp = os.path.join(args.results_dir, args.bpe_run, 'config.json')
+    if os.path.exists(_cp):
         import json as _json
-        _cp = os.path.join(args.results_dir, args.bpe_run, 'config.json')
-        if os.path.exists(_cp):
-            _want = _json.load(open(_cp))['data']['bpe_path']
-            if os.path.basename(_want) != os.path.basename(args.bpe_path):
-                raise SystemExit(
-                    f'--bpe-path is {args.bpe_path} but run {args.bpe_run} was '
-                    f'trained with {_want}. Scoring one tokenizer\'s stream '
-                    f'with another model is silently meaningless; pass '
-                    f'--bpe-path {_want}')
+        _want = _json.load(open(_cp))['data']['bpe_path']
+        if os.path.basename(_want) != os.path.basename(args.bpe_path):
+            raise SystemExit(
+                f'--bpe-path is {args.bpe_path} but run {args.bpe_run} was '
+                f'trained with {_want}. Scoring one tokenizer\'s stream '
+                f'with another model is silently meaningless; pass '
+                f'--bpe-path {_want}')
 
     print()
     print(f'scoring {args.pipeline} ({args.morph_run})...')
@@ -625,11 +625,10 @@ def main():
             hi = FREQ_EDGES[k + 1]
             label = f'freq < {"inf" if hi == float("inf") else format(int(hi), ",")}'
         share = 100.0 * morph_bytes / clean_bytes if clean_bytes else 0.0
-        mark = ''
         if best is None or bpb < best[1]:
             best = (label, bpb, k)
         print(f'  {label:>22} {share:9.1f}% {bpb:12.4f} '
-              f'{bpb - pure_bpe:+12.4f}{mark}')
+              f'{bpb - pure_bpe:+12.4f}')
     print('  ' + '-' * 62)
     print(f'  {"pure morph":>22} {100.0:9.1f}% {pure_morph:12.4f} '
           f'{pure_morph - pure_bpe:+12.4f}')

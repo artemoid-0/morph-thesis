@@ -10,8 +10,8 @@ between seeds.
 
 Every record is read — `results/*/result.json` and the twin copies in `results/audits/device_*/`
 — classed by the GPU its environment names (a record naming none is the thesis machine's, from
-before records named it), and keyed by (label, seed, steps). A key with a record on each machine
-is a twin pair.
+before records named it), and keyed by (label, seed, steps): `morphlm.runs.load_by_key`. A key
+with a record on each machine is a twin pair.
 
 Reported:
   pairs     the difference at the end (second machine minus thesis machine, bits per byte at the
@@ -28,8 +28,6 @@ Reported:
 """
 import os
 import sys
-import glob
-import json
 import math
 import argparse
 import statistics as st
@@ -37,6 +35,7 @@ from collections import defaultdict
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, ROOT)
+from morphlm import runs  # noqa: E402
 
 UKE = 'bpeend_uk_17k_ukwiki0.05_st20k'
 UKB = 'bpe_uk_17k_ukwiki0.05_st20k'
@@ -100,25 +99,10 @@ for _w in ('', '_w512'):
                         f'bpe_{_a}_{UKE10}{_w}', f'bpe_{_a}_{UKB10}{_w}', 10000))
 
 
-def machine(r):
-    gpu = (r.get('environment') or {}).get('gpu') or ''
-    if '5090' in gpu:
-        return 'second'
-    if '4060' in gpu or not gpu:
-        return 'thesis'
-    return None
-
-
-def curve(r):
-    return {e['step']: e['bits_per_byte'] for e in r.get('log', []) if e.get('step', 0) > 0}
-
-
 def mse(xs):
-    if not xs:
-        return None
-    m = st.mean(xs)
-    se = st.stdev(xs) / math.sqrt(len(xs)) if len(xs) > 1 else None
-    return m, se
+    """(mean, standard error — None at one value), or None for no values."""
+    s = runs.summary(xs)
+    return (s['mean'], s['se']) if s else None
 
 
 def fmt(x, nd=5):
@@ -133,25 +117,6 @@ def sign_p(k, n):
     return min(1.0, 2 * tail)
 
 
-def load(root):
-    paths = glob.glob(os.path.join(root, 'results', '*', 'result.json')) + \
-        glob.glob(os.path.join(root, 'results', 'audits', 'device_*', '*.json'))
-    recs = defaultdict(lambda: defaultdict(list))
-    for p in sorted(paths):
-        try:
-            r = json.load(open(p))
-        except Exception:
-            continue
-        if not isinstance(r, dict) or 'label' not in r or 'log' not in r or 'bits_per_byte' not in r:
-            continue
-        m = machine(r)
-        if m is None:
-            continue
-        key = (r['label'], r['seed'], r.get('max_steps'))
-        recs[key][m].append((p, r))
-    return recs
-
-
 def one(rs):
     """One record per machine and key; repeats that differ are kept for the repeat table."""
     first = rs[0][1]
@@ -160,12 +125,14 @@ def one(rs):
 
 
 def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument('--root', default=ROOT)
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    runs.add_results_flag(ap, root=True)
     a = ap.parse_args()
     from morphlm.record import AuditRecord
-    rec = AuditRecord('device_twins', a, out_dir=os.path.join(a.root, 'results', 'audits'))
-    recs = load(a.root)
+    where = runs.results_of(a)
+    base = os.path.dirname(os.path.abspath(where[0]))      # paths in the record are relative to it
+    rec = AuditRecord('device_twins', a, out_dir=os.path.join(base, 'results', 'audits') if a.root else runs.AUDITS)
+    recs = runs.load_by_key(where)
 
     pairs, repeats = [], []
     for key, by in sorted(recs.items()):
@@ -175,12 +142,12 @@ def main():
                 for p, r in differ:
                     repeats.append({'label': key[0], 'seed': key[1], 'steps': key[2], 'machine': m,
                                     'first': first['bits_per_byte'], 'repeat': r['bits_per_byte'],
-                                    'difference': r['bits_per_byte'] - first['bits_per_byte'], 'path': os.path.relpath(p, a.root)})
+                                    'difference': r['bits_per_byte'] - first['bits_per_byte'], 'path': os.path.relpath(p, base)})
         if not by.get('thesis') or not by.get('second'):
             continue
         t, _ = one(by['thesis'])
         s, _ = one(by['second'])
-        ct, cs = curve(t), curve(s)
+        ct, cs = runs.curve(t), runs.curve(s)
         steps = sorted(set(ct) & set(cs))
         d = {k: cs[k] - ct[k] for k in steps}
         past = lambda lim: next((k for k in steps if abs(d[k]) > lim), None)
@@ -249,11 +216,10 @@ def main():
         row = {'effect': name, 'A': la, 'B': lb, 'steps': steps, 'per_machine': {}, 'per_seed_difference': {}}
         per = {}
         for m in ('thesis', 'second'):
-            vals = {}
-            for s in range(16):
-                ka, kb = recs.get((la, s, steps), {}), recs.get((lb, s, steps), {})
-                if ka.get(m) and kb.get(m):
-                    vals[s] = one(kb[m])[0]['bits_per_byte'] - one(ka[m])[0]['bits_per_byte']
+            # each machine's runs of the two cells, paired by seed (runs.pair): every pair on one machine
+            on_m = {(l, s): one(by[m])[0] for (l, s, n), by in recs.items() if n == steps and l in (la, lb) and by.get(m)}
+            ab, _ = runs.pair(on_m, la, lb)
+            vals = {s: rb['bits_per_byte'] - ra['bits_per_byte'] for s, (ra, rb) in ab.items()}
             per[m] = vals
             if vals:
                 mm, se = mse(list(vals.values()))

@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 """
 probe_words.py — what a language model builds for itself: a word's grammar in
-context, read from its hidden states (DIRECTIONS, "The queue", 1; journey §33.84).
+context, read from its hidden states (journey §33.83, §33.84).
 
 WHY
 ---
-The thesis injected morphology into the input and watched it fade as the model
-learned. This asks the other side of the title: does a model build context-aware
+The other side of the title (journey §33.84): does a model build context-aware
 morphological representations itself, and does a tokenizer that keeps endings
 apart make them better? It reads models whose input carries no morphology (the
 same-shape nulls), so whatever a probe finds, the model built.
@@ -20,9 +19,8 @@ whole validation split:
     seen, nothing after it. Word ends come from the model's own tables, as its
     causal shift finds them; a window's last token is left out (its word may
     go on in the next window);
-  * a linear probe (multinomial logistic regression on standardised states, as
-    probe.py fits it) trained on the words of even windows and tested on those
-    of odd windows;
+  * a linear probe (morphlm.eval.probing.fit_linear, as probe.py fits it)
+    trained on the words of even windows and tested on those of odd windows;
   * labels: the tagger's UD features in context (ucase, unumber, ugender, ...),
     as the caches hold them; words a feature does not apply to (its 'none'
     class) are left out of that feature's probe.
@@ -40,7 +38,9 @@ beside the probe's, and each subset's majority class (from the training words)
 as its floor.
 
 Cells are paired by seed with a reference cell: seeds share initial weights
-between tokenizers of one vocabulary size, and both read the same text.
+between tokenizers of one vocabulary size, and both read the same text. A pair is
+counted only when both runs ran on one machine (FINDINGS, method point 11); a seed
+whose runs ran on two is named and left out. --machine reads one machine's runs.
 
 `--after N` reads each word's labels from the state at the last token of the
 unit N later (a word or punctuation run, in the same window). The tagger's
@@ -55,35 +55,13 @@ Writes results/audits/probe_words_<UTC timestamp>.json.
 """
 import os
 import sys
-import json
 import argparse
-import datetime
 import dataclasses
-import statistics as st
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, ROOT)
-sys.path.insert(0, os.path.join(ROOT, 'scripts', 'eval'))
-
-
-def fit_linear(Xtr, ytr, n_cls, epochs, dev):
-    """probe.py's probe — standardised states, multinomial logistic regression,
-    Adam, seed 0 — returning a predictor instead of one accuracy."""
-    import torch
-    mu, sd = Xtr.mean(0), Xtr.std(0) + 1e-6
-    Xs, ys = ((Xtr - mu) / sd).to(dev), ytr.to(dev)
-    torch.manual_seed(0)
-    lin = torch.nn.Linear(Xtr.shape[1], n_cls).to(dev)
-    opt = torch.optim.Adam(lin.parameters(), lr=1e-2, weight_decay=1e-4)
-    for _ in range(epochs):
-        opt.zero_grad()
-        torch.nn.functional.cross_entropy(lin(Xs), ys).backward()
-        opt.step()
-
-    def predict(X):
-        with torch.no_grad():
-            return lin(((X - mu) / sd).to(dev)).argmax(-1).cpu()
-    return predict
+from morphlm import runs                         # noqa: E402
+from morphlm.record import AuditRecord           # noqa: E402
 
 
 def word_ends(model, ids):
@@ -100,24 +78,26 @@ def word_ends(model, ids):
     return last          # the window's last position stays False
 
 
-def load_runs(patterns, results_dir):
-    from blimp_eval import select
+def load_runs(patterns, roots, machine=None):
+    """[(label, seed, run id, record)] — the valid runs matching the patterns (runs.select) whose
+    model is saved, sorted."""
     out = []
-    for rid in select(patterns, results_dir):
-        r = json.load(open(os.path.join(results_dir, rid, 'result.json')))
-        if os.path.exists(os.path.join(results_dir, rid, 'model.pt')):
-            out.append((r['label'], r['seed'], rid))
-    return sorted(out)
+    for r in runs.select(patterns, roots, machine=machine):
+        if os.path.exists(os.path.join(runs.model_dir(r), 'model.pt')):
+            out.append((r['label'], r['seed'], r['run_id'], r))
+    return sorted(out, key=lambda x: x[:3])
 
 
-def probe_run(rid, results_dir, facts, split_fact, max_windows, epochs, dev, after=0):
+def probe_run(r, facts, split_fact, max_windows, epochs, dev, after=0):
     import torch
+    from morphlm.eval.probing import fit_linear
     from morphlm.training.metrics import load_checkpoint
     from morphlm.pipelines.registry import build_pipeline
     from morphlm.data.windows import make_val_dataset
     from morphlm.features.blocks import build_blocks
 
-    model, cfg = load_checkpoint(rid, results_dir)
+    rid, d = r['run_id'], runs.model_dir(r)
+    model, cfg = load_checkpoint(os.path.basename(d), os.path.dirname(d))
     model.eval()
     ds_in = make_val_dataset(build_pipeline(cfg, verbose=False), cfg, verbose=False)
     lab = {}
@@ -194,10 +174,9 @@ def probe_run(rid, results_dir, facts, split_fact, max_windows, epochs, dev, aft
 
 
 def ms(v):
-    v = [x for x in v if x is not None]
-    if not v:
-        return None
-    return (st.mean(v), st.stdev(v) / len(v) ** .5 if len(v) > 1 else 0.0, sum(x > 0 for x in v), len(v))
+    """(mean, se — 0.0 at one seed, seeds positive, seeds) over the values that are not None."""
+    s = runs.summary(v, se_one=0.0)
+    return (s['mean'], s['se'], s['positive'], s['n']) if s else None
 
 
 def main():
@@ -206,7 +185,8 @@ def main():
     ap.add_argument('--reference', default=None, help='the cell the others are paired with (default: the first)')
     ap.add_argument('--facts', nargs='+', default=['ucase', 'unumber', 'ugender'])
     ap.add_argument('--split-fact', default='ucaselex', help="the form's fact that splits case's words ('' for none)")
-    ap.add_argument('--results-dir', default=os.path.join(ROOT, 'results'))
+    runs.add_results_flag(ap)
+    ap.add_argument('--machine', choices=('thesis', 'second'), default=None, help="one machine's runs only")
     ap.add_argument('--windows', type=int, default=0, help='validation windows per run (0: all)')
     ap.add_argument('--after', type=int, default=0,
                     help="read a word's labels from the state this many units later (0: at the word's last token)")
@@ -218,18 +198,19 @@ def main():
 
     import torch
     torch.set_num_threads(args.threads)
-    runs = load_runs(args.labels, args.results_dir)
-    if not runs:
+    found = load_runs(args.labels, runs.results_of(args), args.machine)
+    if not found:
         sys.exit('no runs match ' + ' '.join(args.labels))
-    cells = sorted({r[0] for r in runs}, key=lambda c: [i for i, p in enumerate(args.labels)
-                                                        if __import__('fnmatch').fnmatch(c, p)][0])
+    cells = sorted({r[0] for r in found}, key=lambda c: [i for i, p in enumerate(args.labels)
+                                                         if __import__('fnmatch').fnmatch(c, p)][0])
     ref = args.reference or cells[0]
-    print(f'  {len(runs)} run(s) in {len(cells)} cell(s); facts {args.facts}; device {args.device}')
-    out = {'args': vars(args), 'runs': []}
-    for label, seed, rid in runs:
-        n_win, rows = probe_run(rid, args.results_dir, args.facts, args.split_fact or None,
+    print(f'  {len(found)} run(s) in {len(cells)} cell(s); facts {args.facts}; device {args.device}')
+    out = {'runs': []}
+    for label, seed, rid, r in found:
+        n_win, rows = probe_run(r, args.facts, args.split_fact or None,
                                 args.windows, args.epochs, args.device, args.after)
-        out['runs'].append({'run': rid, 'label': label, 'seed': seed, 'windows': n_win, 'rows': rows})
+        out['runs'].append({'run': rid, 'label': label, 'seed': seed, 'machine': runs.machine(r) or runs.gpu(r),
+                            'windows': n_win, 'rows': rows})
         line = []
         for f in args.facts:
             r = [x for x in rows if x['fact'] == f]
@@ -248,6 +229,15 @@ def main():
         by.setdefault(run['label'], {})[run['seed']] = run
     summ = {}
     print()
+    record = {rid: r for _, _, rid, r in found}
+    R = {(cell, s): record[run['run']] for cell, seeds in by.items() for s, run in seeds.items()}
+    paired = {}
+    for cell in cells:
+        if cell != ref and ref in by:
+            pairs, left = runs.pair(R, ref, cell)
+            paired[cell] = set(pairs)
+            if left:
+                print(f'  {cell} against {ref}: {runs.left_out(left)}')
     for f in args.facts:
         groups = ['all', 'agrees', 'context', 'unseen'] if (f == 'ucase' and args.split_fact) else ['all']
         print(f'  {f} — accuracy at each run\'s best layer, mean over seeds; paired by seed with {ref} (points, mean ± se, positive/seeds)')
@@ -263,7 +253,8 @@ def main():
                 d = ''
                 if cell != ref and ref in by:
                     pv = [100 * (best(seeds[s], f)['accuracy'][g] - best(by[ref][s], f)['accuracy'][g])
-                          for s in seeds if s in by[ref] and best(seeds[s], f)['accuracy'][g] is not None]
+                          for s in seeds if s in by[ref] and s in paired[cell]
+                          and best(seeds[s], f)['accuracy'][g] is not None]
                     pm = ms(pv)
                     if pm:
                         cs[g]['paired'] = {'mean': pm[0], 'se': pm[1], 'positive': pm[2], 'n': pm[3], 'values': pv}
@@ -282,12 +273,9 @@ def main():
             print('        by layer: ' + '  '.join(f'L{l} {100 * v:.1f}' for l, v in per_layer.items()))
             summ.setdefault(f, {})[cell] = cs
         print()
-    out['summary'] = summ
-    os.makedirs(args.audit_dir, exist_ok=True)
-    ts = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S') + '+0000'
-    path = os.path.join(args.audit_dir, f'probe_words_{ts}.json')
-    json.dump(out, open(path, 'w'), indent=1)
-    print(f'  [record] {path}')
+    rec = AuditRecord('probe_words', args, out_dir=args.audit_dir)
+    rec.add('runs', out['runs']).add('summary', summ)
+    print(f'  [record] {rec.write(verbose=False)}')
 
 
 if __name__ == '__main__':

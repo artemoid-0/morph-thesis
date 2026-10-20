@@ -39,7 +39,6 @@ as measured and this concern is closed. Run it before writing any Q1 claim.
 
 import os
 import sys
-import math
 import argparse
 from collections import Counter
 

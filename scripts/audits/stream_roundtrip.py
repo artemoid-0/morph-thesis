@@ -6,7 +6,7 @@ text, byte for byte? (journey §33.65)
 Bits per byte compares tokenizers fairly only if each scores the same text: a
 stream that silently dropped or altered characters would have less to predict
 over the same byte count, and look better than it is. BPE that keeps endings
-apart reaches 0.0174 BPB below plain BPE at the same size; before that is
+apart scores below plain BPE at the same size (journey §33.65); before that is
 believed, its stream must be the same text as the others'.
 
 For each tokenizer with a cache of the condition, this decodes the cached ids of

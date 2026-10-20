@@ -16,58 +16,42 @@ results/audits/paired_cells_<timestamp>.json.
 """
 import os
 import sys
-import glob
-import json
-import math
 import argparse
-import statistics as st
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, ROOT)
+from morphlm import runs  # noqa: E402
+
+GPU = {'thesis': '4060', 'second': '5090'}       # how this script's records name the machines
 
 
-def machine(r):
-    gpu = (r.get('environment') or {}).get('gpu') or ''
-    return '5090' if '5090' in gpu else ('4060' if ('4060' in gpu or not gpu) else gpu)
-
-
-def load(results):
-    runs = {}
-    for p in glob.glob(os.path.join(results, '*', 'result.json')):
-        try:
-            r = json.load(open(p))
-        except Exception:
-            continue
-        if 'label' in r and 'seed' in r and 'bits_per_byte' in r:
-            runs.setdefault((r['label'], r['seed']), r)
-    return runs
+def machine(where):
+    """A machine (runs.pair's left-out entries, or a record) by its GPU, as this script's records name it."""
+    if isinstance(where, dict):
+        where = runs.machine(where) or runs.gpu(where)
+    return GPU.get(where, where)
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--pair', nargs=3, action='append', required=True, metavar=('NAME', 'A', 'B'))
     ap.add_argument('--seeds', nargs='*', type=int, default=None, help='default: every seed both cells have')
-    ap.add_argument('--results-dir', default=os.path.join(ROOT, 'results'))
+    runs.add_results_flag(ap)
     a = ap.parse_args()
     from morphlm.record import AuditRecord
-    rec = AuditRecord('paired_cells', a)
-    runs = load(a.results_dir)
+    rec = AuditRecord('paired_cells', a, out_dir=runs.AUDITS)
+    R = runs.load(runs.results_of(a), keep=lambda r: 'seed' in r and 'bits_per_byte' in r)
     out = []
     for name, la, lb in a.pair:
-        seeds = sorted({s for (l, s) in runs if l == la} & {s for (l, s) in runs if l == lb})
-        if a.seeds is not None:
-            seeds = [s for s in seeds if s in a.seeds]
-        per, skipped = {}, {}
-        for s in seeds:
-            ra, rb = runs[(la, s)], runs[(lb, s)]
-            if machine(ra) != machine(rb):
-                skipped[s] = [machine(ra), machine(rb)]
-                continue
-            per[s] = {'effect': rb['bits_per_byte'] - ra['bits_per_byte'], 'A': ra['bits_per_byte'],
-                      'B': rb['bits_per_byte'], 'machine': machine(ra), 'runs': [ra['run_id'], rb['run_id']]}
+        pairs, left = runs.pair(R, la, lb)
+        keep = lambda s: a.seeds is None or s in a.seeds
+        per = {s: {'effect': rb['bits_per_byte'] - ra['bits_per_byte'], 'A': ra['bits_per_byte'],
+                   'B': rb['bits_per_byte'], 'machine': machine(ra), 'runs': [ra['run_id'], rb['run_id']]}
+               for s, (ra, rb) in pairs.items() if keep(s)}
+        skipped = {s: [machine(m) for m in ms] for s, ms in left.items() if keep(s)}
         xs = [v['effect'] for v in per.values()]
-        m = st.mean(xs) if xs else None
-        se = st.stdev(xs) / math.sqrt(len(xs)) if len(xs) > 1 else None
+        sm = runs.summary(xs)
+        m, se = (sm['mean'], sm['se']) if sm else (None, None)
         row = {'name': name, 'A': la, 'B': lb, 'seeds': per, 'mean': m, 'se': se,
                'positive': sum(x > 0 for x in xs), 'n': len(xs), 'skipped_across_machines': skipped}
         out.append(row)

@@ -4,7 +4,7 @@ verify_channels.py — assert that a surface-channel ablation did what it says.
 
 WHY THIS EXISTS
 ---------------
-PAPER_REVISION.md §8 records the standing risk: alignment logic is the recurring
+docs/record/bugs.md records the standing risk: alignment logic is the recurring
 failure mode in this codebase, three of the fixed bugs were caught by numbers
 that were *impossible* rather than merely surprising, and C-01/C-02 change what
 the preprocessor emits — which is upstream of alignment.

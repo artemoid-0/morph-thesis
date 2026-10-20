@@ -1,69 +1,56 @@
 #!/usr/bin/env python3
 """
-demo_figures.py — the thesis figures, each computed from raw run records.
+demo_figures.py — the figures of docs/README.md, each computed from raw run records.
+(The thesis's own figures are thesis_figures.py's, journey §33.80.)
 
-Reads every result.json under the given roots (default: results/), keeps one
-record per (label, seed), and draws:
+Reads every result.json under the given results directories (default: results/),
+keeps one record per (label, seed), and draws:
 
   fig1_q2_end.png        each feature against its same-shape null, end of training
   fig2_early_help.png    feature minus null over training: the early help and its fade
   fig3_budget.png        case's gain against train tokens and training length
   fig4_architecture.png  the slot over the plain baseline, and the position test
 
-Every comparison is paired by seed; bars are mean ± standard error over seeds.
-Positive = the feature (or the slot) is better, in bits per byte.
+Every comparison is paired by seed within one machine (FINDINGS, method point 11;
+a seed whose runs ran on two machines is named and left out); bars are mean ±
+standard error over seeds. Positive = the feature (or the slot) is better, in bits
+per byte.
 
     python scripts/analysis/demo_figures.py --out exports/figures
 """
 import os
-import glob
-import json
+import sys
 import argparse
-import statistics as st
 
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, ROOT)
+from morphlm import runs  # noqa: E402
 
 EN = lambda f: f'bpe_{f}-LEARN-CAUSAL_bpe_17k'
 UK = lambda f, fr='0.2', steps='': f'bpe_{f}-LEARN-CAUSAL_bpe_uk_17k_ukwiki{fr}{steps}'
 EN_BASE = 'bpe_baseline_bpe_17k'
 UK_BASE = lambda fr='0.2', steps='': f'bpe_baseline_bpe_uk_17k_ukwiki{fr}{steps}'
 TOKENS = {'0.002': 1.51e6, '0.01': 7.66e6, '0.05': 37.8e6, '0.2': 151.1e6}
-from learning_law import same_machine  # noqa: E402  pairs within one machine (this script's folder is on the path)
 BLUE, ORANGE, GREY, GREEN, RED = '#2b6cb0', '#dd6b20', '#718096', '#2f855a', '#c53030'
 
 
-def load(roots):
-    R = {}
-    for root in roots:
-        for p in glob.glob(os.path.join(root, '**', 'result.json'), recursive=True):
-            try:
-                r = json.load(open(p))
-            except (OSError, ValueError):
-                continue
-            R.setdefault((r['label'], r['seed']), r)
-    return R
-
-
-def paired(R, base, feat, at=None):
-    """Per-seed (base - feature) in bits per byte; at=a step reads the log."""
-    out = []
-    for (lab, s) in sorted(R):
-        if lab != feat or (base, s) not in R or not same_machine(R, base, feat, s):
-            continue
-        if at is None:
-            out.append(R[(base, s)]['bits_per_byte'] - R[(feat, s)]['bits_per_byte'])
-        else:
-            lb = {e['step']: e['bits_per_byte'] for e in R[(base, s)]['log']}
-            lf = {e['step']: e['bits_per_byte'] for e in R[(feat, s)]['log']}
-            if at in lb and at in lf:
-                out.append(lb[at] - lf[at])
-    return out
+def paired(R, base, feat, what=None):
+    """Per-seed (base − feature) in bits per byte at the end of training, the seeds paired within
+    one machine; the seeds left out are named under `what`."""
+    pairs, left = runs.pair(R, base, feat)
+    if left and what:
+        print(f'    {what}: {runs.left_out(left)}')
+    return [rb['bits_per_byte'] - rf['bits_per_byte'] for rb, rf in pairs.values()]
 
 
 def ms(d):
-    return (st.mean(d), st.stdev(d) / len(d) ** .5 if len(d) > 1 else 0.0) if d else (None, None)
+    """(mean, standard error) over seeds — 0.0 at one seed; (None, None) for none."""
+    s = runs.summary(d, se_one=0.0)
+    return (s['mean'], s['se']) if s else (None, None)
 
 
 # Every run a figure is planned to show. A figure with any of them missing is NOT
@@ -98,7 +85,10 @@ def fig1(R, out):
             ('English: inflection', EN('mconst'), EN('mfeatlex'), BLUE),
             ('Ukrainian: case (tagger)', UK('mconst'), UK('ucase'), ORANGE),
             ('Ukrainian: case (word form only)', UK('mconst'), UK('ucaselex'), ORANGE)]
-    vals = [(name, *ms(paired(R, b, f)), len(paired(R, b, f)), c) for name, b, f, c in rows]
+    vals = []
+    for name, b, f, c in rows:
+        d = paired(R, b, f, f'fig1, {name}')
+        vals.append((name, *ms(d), len(d), c))
     vals = [v for v in vals if v[1] is not None]
     fig, ax = plt.subplots(figsize=(7.5, 4.2))
     y = range(len(vals))
@@ -113,15 +103,13 @@ def fig1(R, out):
 
 
 def curve(R, base, feat):
-    seeds = sorted(s for (l, s) in R if l == feat and (base, s) in R and same_machine(R, base, feat, s))
-    if not seeds:
-        return [], [], []
-    steps = sorted(set.intersection(*[{e['step'] for e in R[(k, s)]['log']} for k in (base, feat) for s in seeds]))
-    steps = [x for x in steps if x > 0]
+    """Along training: the steps, and the mean gain (base − feature) with its standard error over
+    the seeds paired within one machine, every evaluation (not cut at the best step)."""
+    pts, _, _ = runs.gain_curve(R, base, feat, to_best=False)
     m, e = [], []
-    for x in steps:
-        mm, ee = ms(paired(R, base, feat, at=x)); m.append(mm); e.append(ee)
-    return steps, m, e
+    for _, _, _, v in pts:
+        mm, ee = ms([g for _, g in v]); m.append(mm); e.append(ee)
+    return [p[0] for p in pts], m, e
 
 
 def fig2(R, out):
@@ -132,7 +120,7 @@ def fig2(R, out):
         x, m, e = curve(R, b, f)
         if not x:
             continue
-        n = len(paired(R, b, f))
+        n = len(paired(R, b, f, f'fig2, {name}'))
         ax.plot(x, m, color=c, lw=1.6, label=f'{name} (n={n})')
         ax.fill_between(x, [a - s for a, s in zip(m, e)], [a + s for a, s in zip(m, e)], color=c, alpha=0.18, lw=0)
     ax.set_xscale('log'); ax.set_xlabel('training step', fontsize=9)
@@ -147,7 +135,7 @@ def fig3(R, out):
                            ('case (word form only), 10k steps', 'ucaselex', '#f6ad55', 's')):
         xs, ys, es = [], [], []
         for fr, tok in TOKENS.items():
-            m, e = ms(paired(R, UK('mconst', fr, '_st10k'), UK(f, fr, '_st10k')))
+            m, e = ms(paired(R, UK('mconst', fr, '_st10k'), UK(f, fr, '_st10k'), f'fig3, {kind}, {fr}'))
             if m is not None:
                 xs.append(tok); ys.append(m); es.append(e)
         if xs:
@@ -155,7 +143,7 @@ def fig3(R, out):
     # longer training on the SAME 151M tokens: drawn at 151M, not offset —
     # an offset on a log axis would read as a larger corpus
     for steps, mk, txt in (('_st20k', 'D', '20k steps'), ('', '*', '50k steps')):
-        m, e = ms(paired(R, UK('mconst', '0.2', steps), UK('ucase', '0.2', steps)))
+        m, e = ms(paired(R, UK('mconst', '0.2', steps), UK('ucase', '0.2', steps), f'fig3, {txt}'))
         if m is not None:
             ax.errorbar([TOKENS['0.2']], [m], yerr=[e], color=RED, marker=mk, ms=10 if mk == '*' else 6,
                         capsize=3, ls='none', label=f'case (tagger), the same 151M tokens, {txt}')
@@ -174,14 +162,20 @@ def fig4(R, out):
             ('Ukrainian\n(full, 50k)', UK_BASE(), UK('mconst'), ORANGE),
             ('Ukrainian\n7.6M, 10k', UK_BASE('0.01', '_st10k'), UK('mconst', '0.01', '_st10k'), ORANGE),
             ('Ukrainian\n1.5M, 10k', UK_BASE('0.002', '_st10k'), UK('mconst', '0.002', '_st10k'), ORANGE)]
-    v = [(n, *ms(paired(R, x, y)), len(paired(R, x, y)), c) for n, x, y, c in rows]
+    v = []
+    for n, x, y, c in rows:
+        d = paired(R, x, y, 'fig4, ' + n.replace('\n', ' '))
+        v.append((n, *ms(d), len(d), c))
     v = [r for r in v if r[1] is not None]
     a.bar(range(len(v)), [r[1] for r in v], yerr=[r[2] for r in v], color=[r[4] for r in v], alpha=0.85, capsize=3)
     a.set_xticks(range(len(v))); a.set_xticklabels([f'{r[0]}\n(n={r[3]})' for r in v], fontsize=7)
     style(a, 'Reserving 8 input dims (no information)\nbeats the plain baseline', 'gain over the plain baseline (bits per byte)')
     rows = [('no position\nin the slot', EN('mzero'), EN('mzeronopos')),
             ('position only\nin the slot', EN('mzero'), EN('mzeroposonly'))]
-    v = [(n, *ms(paired(R, x, y)), len(paired(R, x, y))) for n, x, y in rows]
+    v = []
+    for n, x, y in rows:
+        d = paired(R, x, y, 'fig4, ' + n.replace('\n', ' '))
+        v.append((n, *ms(d), len(d)))
     v = [r for r in v if r[1] is not None]
     b.bar(range(len(v)), [r[1] for r in v], yerr=[r[2] for r in v], color=GREY, alpha=0.85, capsize=3)
     b.set_xticks(range(len(v))); b.set_xticklabels([f'{r[0]}\n(n={r[3]})' for r in v], fontsize=7)
@@ -191,11 +185,11 @@ def fig4(R, out):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--roots', nargs='+', default=['results'])
-    ap.add_argument('--out', default='exports/figures')
+    runs.add_results_flag(ap)
+    ap.add_argument('--out', default=os.path.join(ROOT, 'exports', 'figures'))
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
-    R = load(args.roots)
+    R = runs.load(runs.results_of(args))
     print(f'  {len(R)} run records')
     incomplete = 0
     for f, name in ((fig1, 'fig1_q2_end.png'), (fig2, 'fig2_early_help.png'),
