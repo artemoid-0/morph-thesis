@@ -31,17 +31,23 @@ artifacts.
 Verification: **P** = checked against the paper's text or an abstract quoted
 in a secondary source; **V** = design detail still to verify in the paper. The
 full texts of Alexandrescu & Kirchhoff, Sennrich & Haddow, Vania & Lopez and
-Nzeyimana & Niyongabo Rubungo were read on 15 October 2026; no **V** remains.
+Nzeyimana & Niyongabo Rubungo, read on 15 October 2026, settled every **V**: the total
+input width is not fixed in Alexandrescu & Kirchhoff and fixed in Vania & Lopez and in
+Sennrich & Haddow; no audited work ran a random-feature control; Vania & Lopez's gold
+analyses are UD v1.3's human annotations, made in sentence context. Each work's design and
+reported numbers, with the sections they come from, are registered in
+[`related_work.md`](related_work.md), section 2; the table keeps what the four conditions
+turn on.
 
 | work | task | how features enter | C3 causal | C4 form | null / shuffle control | reported gain | what our findings imply |
 |---|---|---|---|---|---|---|---|
 | Alexandrescu & Kirchhoff (2006), factored neural LMs | LM; Egyptian Colloquial Arabic and Turkish | the factors of the previous n−1 words, each selecting its own row of size d (32–64), concatenated; plain words predicted (§2, §4–§5) (P) | **causal as built; exposed for Turkish**: its factors come from text disambiguated by Hakkani-Tür et al. (2002), which scores trigrams over the sentence, so a context word's analysis may depend on the words after it, the predicted word among them (§6); the Arabic factors come from the LDC ECA lexicon (P) | **exposed: width not fixed** — every factor adds its own row (P) | none: their "NULL" is an OOV strategy, zero vectors for unknown factors (§5), not a control (P) | perplexity gains | ancestor of our Q2; the missing null is the gap our §33.11 found |
-| Botha & Blunsom (2014), compositional morphology (CLBL++) | LM, log-bilinear | **additive**: word vector plus morpheme vectors | fine: morphemes of already-seen context words | exposed: our additive null gained in a transformer (§33.14); untested for LBL | none reported; compared with the same model without morphemes | 2–6% perplexity on large data, **largest on Czech and Russian** (P) | the strongest positive result in the set, and their own rare-word test (gains shrink when singletons are excluded) is evidence of information, not form |
-| Sennrich & Haddow (2016), linguistic input features for NMT | MT (source side) | **concatenated, total width fixed at 500**: words 350, small features ~10; the word embedding shrinks to make room (§4, Table 1) (P) | not applicable (encoder input) | **exactly our carved-slot form** | none: contrastive runs, each adding one feature to the baseline (Table 3) (P) | perplexity, BLEU and chrF3 improve; BLEU +1.5 German→English, +0.6 English→German, +1.0 English→Romanian (Tables 2, 4) (P) | the design our §33.11 showed can gain without information; whether an RNN encoder shows the effect is unknown — a same-shape null is the missing control |
+| Botha & Blunsom (2014), compositional morphology (CLBL++) | LM, log-bilinear | **additive**: word vector plus morpheme vectors | fine: morphemes of already-seen context words | exposed: our additive null gained in a transformer (§33.14); untested for LBL | none reported; compared with the same model without morphemes | perplexity gains, **largest on Czech and Russian** (P) | the strongest positive result in the set, and their own rare-word test (gains shrink when singletons are excluded) is evidence of information, not form |
+| Sennrich & Haddow (2016), linguistic input features for NMT | MT (source side) | **concatenated, total width fixed at 500**: words 350, small features ~10; the word embedding shrinks to make room (§4, Table 1) (P) | not applicable (encoder input) | **exactly our carved-slot form** | none: contrastive runs, each adding one feature to the baseline (Table 3) (P) | perplexity, BLEU and chrF3 improve in all three language pairs (Tables 2, 4) (P) | the design our §33.11 showed can gain without information; whether an RNN encoder shows the effect is unknown — a same-shape null is the missing control |
 | Vania & Lopez (2017), characters vs morphology | LM predicting whole words (the 5,000 most frequent and UNK; §3.3, §4.1) | context words represented from **gold** morphological analyses (oracle; the lemma and each feature a unit) vs characters, trigrams, BPE and Morfessor — segments change how context words are represented, not what is predicted, so they are not morphology in the tokenizer (P) | **exposed**: the gold analyses are UD v1.3's human annotations for Czech and Russian, made in sentence context (§4, §5.1), the leak §33.3 measured (7–8% of English tags); Arabic's MADAMIRA analyses are disambiguated in context too (§5.2, footnote 4) (P) | fixed: word, character and morph vectors are all 200-dimensional (§4.1) (P) | none (P) | oracle analyses beat all character models by a wide margin (P) | the oracle margin may partly be right-context information; a prefix-disambiguated oracle would bound it |
-| Nzeyimana & Niyongabo Rubungo (2022), KinyaBERT | masked LM (encoder) | two-tier: a 4-layer transformer over POS, stem, affix and affix-set embeddings per word (P) | not applicable (bidirectional encoder) | **exposed at scale**: architecture and information change together | none: the baselines are a BPE BERT on the same corpus (same position encoding, batch size and steps), a morpheme-sequence BERT and XLM-R; the STEM→STEM ablation drops the morphology encoder, changing architecture and information together (§3.4, Table 6) (P) | +2% F1 NER, +4.3% average on machine-translated GLUE; in the ablation affixes help QNLI and SST-2, not NER or NEWS (P) | the gain may be the architecture; the null would feed random analyses through the same two tiers |
+| Nzeyimana & Niyongabo Rubungo (2022), KinyaBERT | masked LM (encoder) | two-tier: a 4-layer transformer over POS, stem, affix and affix-set embeddings per word (P) | not applicable (bidirectional encoder) | **exposed at scale**: architecture and information change together | none: the baselines are a BPE BERT on the same corpus (same position encoding, batch size and steps), a morpheme-sequence BERT and XLM-R; the STEM→STEM ablation drops the morphology encoder, changing architecture and information together (§3.4, Table 6) (P) | NER and machine-translated GLUE improve; in the ablation affixes help QNLI and SST-2, not NER or NEWS (P) | the gain may be the architecture; the null would feed random analyses through the same two tiers |
 | MorphPiece (2023), Hou et al. (2023), Bostrom & Durrett (2020), FLOTA (2022) | tokenization (Q1) | no features: different segmentations | not applicable | not applicable | — | see `docs/reference/literature_analysis.md` | C1 and C2 are the relevant conditions; none reports an information-fairness audit (`docs/reference/literature_analysis.md`, Part 2) |
-| **This project** | LM, BPE, 5M | carved slot and additive, learned and frozen | causal shift; lexical variants; right-context measured | **same-shape null in every family; initialization-matched** | yes: shuffles, nulls, zero and flat slots | **none survives the null** | |
+| **This project** | LM; English and Ukrainian; BPE, Unigram and BPE with endings apart; widths 64–512, up to 30M parameters (most cells 5M) | carved slot and additive, learned and frozen | causal shift; lexical variants; right-context measured | **same-shape null in every family; initialization-matched** | yes: shuffles, nulls, zero and flat slots | **none survives the null** | |
 
 ## What the audit says
 
@@ -60,13 +66,7 @@ Nzeyimana & Niyongabo Rubungo were read on 15 October 2026; no **V** remains.
    Czech and Russian (Botha & Blunsom), Finnish and Turkish (Hou et al., Q1),
    Kinyarwanda (KinyaBERT) — and are small or absent for English, matching our
    own English null. That is the case for Ukrainian (`docs/reference/ukrainian_pipeline.md`):
-   the hypothesis has its best chance in a fusional Slavic language, and it can
-   now be tested with all four conditions in place from the start.
-
-## Read before citing (15 October 2026)
-
-The full texts settled every **V** cell:
-- total input width: not fixed in Alexandrescu & Kirchhoff, fixed in Vania & Lopez and in
-  Sennrich & Haddow;
-- no audited work ran a random-feature control;
-- Vania & Lopez's gold analyses are UD v1.3's human annotations, made in sentence context.
+   the hypothesis has its best chance in a fusional Slavic language. It has since been
+   tested there with all four conditions in place from the start — the features from
+   journey §33.20, morphology in the tokenizer from journey §33.61; what was found is in
+   `docs/FINDINGS.md`.

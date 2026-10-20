@@ -2,13 +2,18 @@
 
 > **Kind:** reference — how the Ukrainian data and features are built now;
 > rewritten when that changes. **Authoritative for:** the corpus, tokenizer,
-> word rule, features and checks behind every Ukrainian run. How each piece was
-> found and fixed is in the journey (Part 9).
+> word rule, features and checks behind the Ukrainian Wikipedia runs under BPE 17k
+> (`bpe_uk_17k`). The other Ukrainian conditions — five more tokenizers, and UberText
+> fiction — are built by the same tools and rules: [`conditions.md`](conditions.md). How
+> each piece was found and fixed is in the journey: the path in §33.17–§33.18, the word rule
+> and the paragraphs in §33.21–§33.22, lexicons, derived codes and the constant null in
+> §33.53–§33.58, the tagger's record in §33.63–§33.65.
 
 ## Corpus
 
 - **Source:** `wikimedia/wikipedia`, configuration `20231101.uk` — 1,294,720
-  articles, 2,689M characters. Selected with `data.corpus=ukwiki`.
+  articles, whose train split holds 2,689M characters (`ukwiki_stats_20260928T223928`).
+  Selected with `data.corpus=ukwiki`.
 - **Split by a hash of the title:** one article in 2,000 to validation (598
   articles, 1.1M characters — WikiText-103's validation size), one in 2,000 to
   test, the rest to train. `data.corpus_holdout` sets the 2,000.
@@ -46,8 +51,10 @@
 - **Annotation:** spaCy `uk_core_news_sm` — the morphologizer and parser; the
   NER and the lemmatizer are skipped for non-English models (identical codes,
   about 4× faster). 99.76% of train tokens aligned. Version 3.8.0 tagged every
-  Ukrainian cache: installed on 28 September, before the first, and never
-  reinstalled (`scripts/ops/tagger_record.py`, G-74).
+  Ukrainian Wikipedia cache: installed on 28 September, before the first, and never
+  reinstalled (`scripts/ops/tagger_record.py`, its record of 7 October; G-74). The
+  fiction caches came later (11 October; at 0.4 on the second machine, 16 October), and
+  each of their cache checks and runs records `uk_core_news_sm` 3.8.0 as installed.
 - **Universal Dependencies blocks,** each padded to 8 classes so a feature cell
   and its null share their parameter shapes: `ucase`, `ugender`, `unumber`,
   `uperson`, `utense`, `uaspect`, `uanimacy`, plus `dep` and `pos`. Requesting
@@ -60,7 +67,11 @@
   - `ucaselex`, each word form's majority case — checked with `--verify`
     against nine words whose case is unambiguous. Majority and in-context case
     agree for 89.74% of occurrences. For a little-data stream,
-    `--lexicon-fraction 0.2` takes the lexicon from the full corpus.
+    `--lexicon-fraction 0.2` takes the lexicon from the full corpus;
+  - `ucaseprep`, the control for the tagger's right-context leak (G-38) — case in context
+    everywhere but at prepositions, the word types whose majority part of speech in train
+    is ADP, which carry their form's majority case — `--fact ucase --out-fact ucaseprep
+    --recode-pos ADP --keep ucase` (journey §33.73–§33.74).
 
 ## Checks
 

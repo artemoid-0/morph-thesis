@@ -7,13 +7,23 @@
 > the tools came about is in the journey (§33.53).
 
 A **condition** is the data a run trains on: a corpus, the share of its training
-documents used (`data.corpus_fraction`), and a tokenizer (`data.bpe_path`). Until
-6 October every claim rested on two conditions — WikiText-103 with `bpe_17k`,
-Ukrainian Wikipedia with `bpe_uk_17k` — and the tools below make any other a few
-commands away; with them D7 added five tokenizers on Ukrainian Wikipedia at 0.05
-(BPE at 4k, 8k and 32k, Unigram at 17k, and BPE 17k with endings apart; journey
-§33.58–§33.65). The two original conditions are unchanged by the tools: their
-streams, caches and labels are byte-identical.
+documents used (`data.corpus_fraction`), and a tokenizer (`data.bpe_path`). The tools
+below make any condition a few commands away. The two the work began with — WikiText-103
+with `bpe_17k`, Ukrainian Wikipedia with `bpe_uk_17k` — are unchanged by them: their
+streams, caches and labels are byte-identical. The conditions runs use:
+
+- **WikiText-103** under BPE 17k, and under BPE 17k with endings apart (`bpeend_17k`;
+  journey §33.85); `unigram_17k` is Q1's second tokenizer family (results §5.20).
+- **Ukrainian Wikipedia** under BPE 17k at fractions 0.002, 0.01, 0.05 and 0.2; at 0.05
+  also BPE 4k, 8k and 32k, Unigram 17k and BPE 17k with endings apart (D7; journey
+  §33.58–§33.65), the last also at 0.2 (journey §33.68).
+- **UberText fiction** under `bpe_ukf_17k` and `bpeend_ukf_17k`, at fractions 0.1 and 0.4
+  (journey §33.85, §33.102).
+
+**A stream can be kept packed.** A machine that no longer trains from a stream may keep its
+arrays compressed (`scripts/data/cache_pack.py`; each checked by SHA-256 before its original
+goes to the trash). Nothing reads or rebuilds a packed stream: `morphlm/data/stream.py` stops
+any run or script that needs one and names the command that unpacks it.
 
 ## Corpora
 
@@ -66,8 +76,9 @@ from `$REHEARSAL_DATA/<dataset>[__<config>]/<split>.jsonl`.
   as `morphlm.cli build bpe` (`morphlm/data/tokenization.py`): ByteLevel, lossless,
   checked by round trip.
 - **Named** `<algorithm>_<code>_<k>k` — `bpe_17k` and `unigram_17k` for WikiText,
-  `bpe_uk_8k` for Ukrainian. The name is in every cache key and run label built
-  from the tokenizer, so **a tokenizer is never overwritten**; the tool refuses.
+  `bpe_uk_8k` for Ukrainian Wikipedia, `bpe_ukf_17k` for UberText fiction. The name is
+  in every cache key and run label built from the tokenizer, so **a tokenizer is never
+  overwritten**; the tool refuses.
   This matters most for Unigram, whose training is not deterministic: two
   trainings give the same pieces with scores differing by up to 0.02, so the
   saved file is the artifact.
@@ -76,15 +87,18 @@ from `$REHEARSAL_DATA/<dataset>[__<config>]/<split>.jsonl`.
   recipe: corpus, fraction, algorithm, size, training rows, the file's sha256.
 - **Opened** only through `tokenization.load_tokenizer` (a test finds no other
   door).
-- **`bpe-endings`** (Ukrainian; `bpeend_uk_<k>k`): BPE that never joins a stem to
-  its ending. The rule (`morphlm/data/endings.py`) reads the word alone —
-  pymorphy3's readings of the form, the lemma minus its citation ending as the
-  stem — and marks every cut; training text and encoded text are both marked, so
-  every ending is its own token or tokens. The sidecar carries the rule and its
-  fingerprint (the code's constants, pymorphy3 and its dictionary, probe cuts);
-  `load_tokenizer` refuses the tokenizer on a machine that would cut differently.
-  `scripts/audits/ending_gold_check.py` checks the rule's cuts against two
-  morpheme dictionaries (journey §33.61).
+- **`bpe-endings`** (`bpeend_uk_<k>k`, `bpeend_ukf_<k>k`, and `bpeend_<k>k` on
+  WikiText-103): BPE that never joins a stem to its ending, by the rule of the corpus's
+  language (`morphlm/data/endings.py`). Each rule reads the word alone, and cuts only where
+  every reading of the form gives the same cut. The Ukrainian rule (`uk_endings_v1`) takes
+  pymorphy3's readings of the form, the lemma minus its citation ending as the stem; the
+  English one (`en_endings_v1`) the readings spaCy's English rule lemmatizer gives a noun,
+  verb or adjective, the stem being what the form shares with the lemma (journey §33.85).
+  Training text and encoded text are both marked, so every ending is its own token or
+  tokens. The sidecar carries the rule and its fingerprint (the code's constants, the
+  dictionary or the lemmatizer's tables, probe cuts); `load_tokenizer` refuses the
+  tokenizer on a machine that would cut differently. `scripts/audits/ending_gold_check.py`
+  checks the Ukrainian rule's cuts against two morpheme dictionaries (journey §33.61).
 
 **What a tokenizer does to words** is measured, on held-out text with spaCy's
 words —
@@ -96,9 +110,10 @@ exposure**: among inflected words (lemma differs from form and shares a prefix
 with it), how often a token boundary falls exactly between stem and ending
 (школ|и, студент|ам, teacher|s), and how often the ending is a token by itself;
 for all inflected words and for the case-bearing ones (nouns, proper nouns,
-adjectives). For Ukrainian, also at the ending rule's cut (`cut|`), which sees
-citation forms and places `книгами` at `книг|ами` rather than the common
-prefix's `книга|ми`. One record per call in `results/audits/`.
+adjectives). For Ukrainian and English, also at the cut of the language's ending
+rule (`cut|`), which in Ukrainian sees citation forms and places `книгами` at
+`книг|ами` rather than the common prefix's `книга|ми`. One record per call in
+`results/audits/`.
 
 ## Preparing a condition
 

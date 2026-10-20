@@ -12,15 +12,18 @@
 ### 1.1 Environment
 
 - Python 3.10 (conda env `morph`)
-- `torch` (CUDA), `datasets`, `tokenizers`, `spacy` + `en_core_web_sm`,
+- `torch` (CUDA), `datasets`, `tokenizers`, `spacy` + `en_core_web_sm` and
+  `uk_core_news_sm`, `pymorphy3` with its Ukrainian dictionary (the Ukrainian ending rule),
   `morfessor`, `pandas`, `numpy`, `openpyxl`
-- Training on a single CUDA GPU; ~14–18.5 optimizer steps/second depending on
-  vocabulary size and whether context codes are loaded
+- Training on a single CUDA GPU; on the RTX 4060 ~14–18.5 optimizer steps/second at width
+  128, depending on vocabulary size and whether context codes are loaded
 - Two machines, each training on one GPU: an RTX 4060 Laptop GPU (8 GB; every run until 15 October)
   and, from 16 October, an RTX 5090 Laptop GPU (24 GB), the same software (torch 2.11, CUDA 13.0,
   everything in fp32). Each record names its GPU (`environment.gpu`). The same weights evaluate alike
   on both; a run repeated on the other machine differs like a dropout draw, so every comparison is
-  made within one machine (journey §33.101, §33.106)
+  made within one machine (journey §33.101, §33.106). The RTX 5090 is about 2.8 times faster: a
+  width-128 run of 10k steps takes 245 seconds alone, and three at once 787 seconds each, so runs
+  go one at a time (journey §33.101)
 
 ### 1.2 Data assets
 
@@ -32,6 +35,16 @@
 | `data/bpe_tokenizer.json` | legacy, Whitespace pre-tokenizer, vocab 10,000 | RETIRED — not lossless |
 | `data/bpe_bytelevel.json` | `cli build bpe`, ByteLevel, vocab 10,000 | lossless |
 | `data/bpe_17k.json` | `cli build bpe --bpe-vocab 17151`, ByteLevel | **parameter-matched baseline** |
+| `data/unigram_17k.json` | `cli build bpe --algorithm unigram --bpe-vocab 17151`, ByteLevel: Q1's second tokenizer family (results §5.20) | 17,151 |
+| `data/bpeend_17k.json` | `scripts/data/train_tokenizer.py --algorithm bpe-endings`, WikiText-103's train split, rule `en_endings_v1` | 17,000 |
+| `data/bpe_uk_17k.json` | `cli build bpe --bpe-vocab 17000`, Ukrainian Wikipedia at 0.2 | 17,000 |
+| `data/bpe_uk_4k.json`, `data/bpe_uk_8k.json`, `data/bpe_uk_32k.json` | `scripts/data/train_tokenizer.py`, Ukrainian Wikipedia at 0.2 | 4,000; 8,000; 32,000 |
+| `data/unigram_uk_17k.json` | `scripts/data/train_tokenizer.py --algorithm unigram`, Ukrainian Wikipedia at 0.2 | 17,000 |
+| `data/bpeend_uk_17k.json` | `scripts/data/train_tokenizer.py --algorithm bpe-endings`, Ukrainian Wikipedia at 0.2, rule `uk_endings_v1` | 17,000 |
+| `data/bpe_ukf_17k.json`, `data/bpeend_ukf_17k.json` | `scripts/data/train_tokenizer.py`, plain and `bpe-endings`, UberText fiction at 0.4 | 17,000 each |
+
+Every tokenizer but the first four has a sidecar `<name>.meta.json` with its word rule and,
+for those trained by `train_tokenizer.py`, its recipe ([`conditions.md`](conditions.md)).
 
 ### 1.3 Final vocabulary composition (17,151 entries, 12 categories)
 
@@ -62,7 +75,7 @@ WikiText-103-raw-v1 via HuggingFace `datasets`.
 | train | 535,800,393 | ~1,164,000 non-blank non-header lines |
 | validation | 1,136,862 | ~2,000 lines |
 
-Token counts differ per pipeline (see §1).
+Token counts differ per pipeline (see [results §3](../record/results.md#3-complete-run-inventory)).
 
 ---
 
@@ -108,6 +121,7 @@ variants never join the standard cells:
 | `model.position` | `learned`, `rope` — rotary, nothing added at the input | `_rope` | §33.47 |
 | `model.norm` | `layernorm`, `rmsnorm` — a gain, no mean subtraction or shift | `_rmsnorm` | §33.54 |
 | `model.mlp` | `gelu`, `swiglu` — gated, hidden 8d/3 (344 at d=128), the same weight count | `_swiglu` | §33.54 |
+| `model.dropout` | any; 0 switches it off — its masks are drawn on the GPU, differently on each GPU model | `_do<p>`, e.g. `_do0` | §33.105 |
 
 With all three of rope, rmsnorm and swiglu the block is LLaMA-style (biases kept).
 RMSNorm draws no random number, so at the same seed it starts from exactly the
@@ -162,14 +176,14 @@ Each is measured, not speculative.
 | limitation | magnitude | status |
 |---|---|---|
 | `dep` is an ORACLE feature (full-sentence parse) | −3.75% loss with lookahead vs −2.98% for `mroot` without | ~80% of the effect survives without lookahead |
-| single seed on most cells | baseline spread 0.0005, treatment 0.0090 BPB | replicated only for baseline and best Level-2 cell |
+| few seeds per cell | four for almost every claim's cells (Q1's morpheme arms two); eight for English with endings apart at full training; five for the probes | effects reported as a paired mean ± standard error with the count of seeds of the same sign (results §0, "Noise"); some cells' later seeds ran on the second machine, each compared within its machine (§1.1) |
 | no downstream task evaluation | — | every comparable paper has one |
 | residual collisions | 0.0008 BPB | dialectal, homograph, entity-span whitespace |
 | entity vocabulary coverage | 77.5% of OOV is capitalised | built on 6k articles, `freq≥10` single-word gate |
 | frozen projection separability | max cosine 0.878 at 16 dims | inherent to 16k classes in 16 dims |
 | no convergence at the ceiling | all runs still improving at 50k | fixed-compute comparison, not converged |
-| English only | — | literature shows English is the weakest case |
-| model scale | 3.4–5.2M params | MorphPiece uses 117M, Hou et al. 132–979M |
+| two languages | English (WikiText-103); Ukrainian (Wikipedia, and UberText fiction) | the literature finds morphology's gains largest in morphologically rich languages; Ukrainian is the test of that |
+| model scale | widths 64–512, 1,819,168 to 30,017,760 parameters; most cells width 128, about 5M | MorphPiece uses 117M, Hou et al. 132–979M |
 
 ---
 

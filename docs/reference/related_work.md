@@ -117,7 +117,7 @@ Language Models*, arXiv:2307.07262 (v2, 2024; v1, 2023, titled *MorphPiece: Movi
 away from Statistical Language Representation*); no venue — "under review".
 **F** (`literature_analysis.md`).
 - A MorphyNet-derived table of 134,943 words plus BPE fallback (50,006 tokens);
-  GPT-2-size models beat GPT-2 on Penn Treebank token perplexity (61.9 → 38.3),
+  GPT-2-size models beat GPT-2 on Penn Treebank token perplexity (61.859 → 38.251; 61.9 → 38.3 rounded),
   LAMBADA, GLUE and MTEB; 17% more tokens than BPE; token perplexity across
   vocabularies acknowledged as not comparable.
 - *Used:* Q1's closest comparison; the design choices adopted in `literature_analysis.md`.

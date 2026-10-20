@@ -1,7 +1,7 @@
 # Literature Analysis — Where This Project Sits
 
 > **Kind:** reference — the related work in plain terms, compared with this project; an appendix
-> holds the literature's reference numbers.
+> (§8) points to the home of each reference number from the literature.
 
 *Every finding from other work, with its reference and how it was checked, is registered in
 `docs/reference/related_work.md`; this document is the deep comparison for Q1.*
@@ -386,44 +386,20 @@ single configuration change, and it needs no cache rebuild.
 
 ## References
 
-- Jabbar, H. (2023). *MorphPiece: A Linguistic Tokenizer for Large Language Models.* arXiv:2307.07262
-- Hou, J., Katinskaia, A., Vu, A-D., Yangarber, R. (2023). *Effects of sub-word segmentation on performance of transformer language models.* EMNLP 2023, 7413–7425; arXiv:2305.05480
-- Bostrom, K., Durrett, G. (2020). *Byte Pair Encoding is Suboptimal for Language Model Pretraining.* Findings of EMNLP 2020, 4617–4624
-- Hofmann, V., Schütze, H., Pierrehumbert, J. (2022). *An Embarrassingly Simple Method to Mitigate Undesirable Properties of Pretrained Language Model Tokenizers.* ACL 2022 (Short), 385–393
-- Alexandrescu, A., Kirchhoff, K. (2006). *Factored Neural Language Models.* NAACL-HLT 2006
-- Sennrich, R., Haddow, B. (2016). *Linguistic Input Features Improve Neural Machine Translation.* WMT 2016
-- Batsuren, K., Bella, G., Giunchiglia, F. (2021). *MorphyNet: a large multilingual database of derivational and inflectional morphology.* SIGMORPHON 2021
-- Cotterell, R., Mielke, S.J., Eisner, J., Roark, B. (2018). *Are all languages equally hard to language-model?* NAACL-HLT 2018
+Every work cited here, with its full bibliographic data checked against the publisher, is in
+[`related_work.md`](related_work.md).
 
 ---
 
-*Appendix, formerly `results_reference.md` §8 (section number kept): the reference
-numbers from the literature that our results are compared with.*
+*Appendix, formerly `results_reference.md` §8 (section number kept): where the reference
+numbers from the literature that our results are compared with are kept.*
 
 ## 8. Literature reference numbers
 
-Full analysis in `docs/reference/literature_analysis.md`. Numbers most likely to be cited:
-
-**Hou et al. (2023), GPT perplexity — the key comparison**
-
-| language | BPE | morphological | outcome |
-|---|---|---|---|
-| English, vocab 151k | 19.82 | Morfessor **20.05** | BPE wins |
-| English, vocab 107k | 17.92 | StateMorph-pruned 17.55 | morph wins 2% |
-| Finnish, vocab 78k | 23.69 | StateMorph-pruned **16.65** | morph wins **30%** |
-| Turkish, vocab 60k | 12.93 | StateMorph-pruned 10.67 | morph wins 17% |
-
-**MorphPiece (Jabbar, 2023)**: MorphyNet 346,340 words → 134,943 entries after
-freq≥5 trim; 18,304 morpheme tokens + 32,000 BPE = 50,006 vocabulary; GPT-2 Base
-117M on OpenWebText; Penn Treebank ppl 61.859 → 38.251; **17% more tokens than
-BPE**, listed as a limitation.
-
-**Calibration reference points (journey §13)**: word-level WikiText-103 SOTA
-Transformer-XL 18.3 test ppl (Dai et al. 2019) — **not comparable to our
-numbers**, different unit. GPT-2 zero-shot on WikiText-103: 37.50 (117M), 17.48
-(1.5B); on WikiText-2, 29.41 and 18.34 (Radford et al. 2019, Table 3). *Corrected 7
-October 2026: this line once gave ≈29 and ≈16 as WikiText-103 figures — a
-WikiText-2 number and a sliding-window GPT-2 Large one (`related_work.md`, section 4).*
+Each number once here has one home: Hou et al. in Part 1 B; MorphPiece in Part 1 A, its Penn
+Treebank perplexities to three decimals in [`related_work.md`](related_work.md), section 1;
+GPT-2 and Transformer-XL in [`related_work.md`](related_work.md), section 4, with the
+correction of 7 October 2026 in its section 6.
 
 ---
 

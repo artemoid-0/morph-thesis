@@ -2,16 +2,27 @@
 
 > **Kind:** record — every prediction, written down before its result, with its outcome.
 
-Each prediction was recorded in `docs/record/journey/README.md` **before** its result
+Each prediction was recorded in the [journey](record/journey/README.md) **before** its result
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 157 right, 11 half right, 89 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn — of 266. The wrong ones carried
-the information: the null's gain (P18), the shuffled control (P15), the
-leak's absence (P11), the training-budget reframing (P61), the tokenizer
-hypothesis (P119, P120), Unigram's early lead (P130), the wider model's larger
-tokenizer gain (P135) and its peak at width 256 (P202, P203), where the exposure effect sits (P144–P146), and what the sentence's case adds
-over the word form's (P148–P150), and how much of it the tagger's leak is (P164, P166), and what context adds inside the models (P184, P187), and that the null's slot helps under BPE (P252, P256), on a word's later tokens (P262).
+**Tally:** 157 right, 11 half right, 89 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn — of 266.
+
+*Key to the tally (added 19 October 2026). Counted half right: P19, P46, P54 — with the eight
+whose outcome begins "half right" or "partly right". Counted right: P33, P172 — right by their
+letter. Counted wrong: every outcome that begins "wrong", "badly wrong" or "narrowly wrong".
+Never tested: deferred P12, P16, P20; parked P91, P92; dropped P161, P162, P163.*
+
+The wrong ones carried the information:
+- **the null and the controls:** the null's gain (P18), the shuffled control (P15), the leak's
+  absence (P11);
+- **the budget:** the training-budget reframing (P61);
+- **the tokenizer:** the tokenizer hypothesis (P119, P120), Unigram's early lead (P130), the wider
+  model's larger tokenizer gain (P135) and its peak at width 256 (P202, P203);
+- **case:** where the exposure effect sits (P144–P146), what the sentence's case adds over the word
+  form's (P148–P150), and how much of it the tagger's leak is (P164, P166);
+- **inside the models:** what context adds inside the models (P184, P187);
+- **the null's slot:** that it helps under BPE (P252, P256), on a word's later tokens (P262).
 
 | # | prediction | outcome | journey |
 |---|---|---|---|
@@ -26,7 +37,7 @@ over the word form's (P148–P150), and how much of it the tagger's leak is (P16
 | P9 | Inflection's gain grows during training, like structure's | wrong — it fades | §33.6 |
 | P10 | The structure headline replicates at seed 3 | right | §33.6 |
 | P11 | Strictly causal part of speech keeps 50–80% of the tagger version's gain | wrong — 90%: no measurable leak | §33.9 |
-| P12 | Structure plus part of speech beats both alone | not tested | §33.6 |
+| P12 | Structure plus part of speech beats both alone | not tested *(deferred)* | §33.6 |
 | P13 | Structure's anaphor gain appears in both directions of change (agreement) | wrong — a preference | §33.8 |
 | P14 | Part of speech gains more on word-continuation targets than structure | wrong — reversed | §33.9 |
 | P15 | Structure shuffled across words keeps under a third of structure's gain | wrong — all of it | §33.9 |
