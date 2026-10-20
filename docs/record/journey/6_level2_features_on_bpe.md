@@ -8,6 +8,13 @@
 experiment neither of them tested: use the tokenizer that wins, and spend the
 morphology somewhere else.*
 
+**Established at the time:** morphological features on a BPE model cut bits per byte by 4.44% (§23);
+a random word hash beat the morphological root, so word identity, not morphology, carried the effect
+(§27); lemma grouping kept most of that identity and root grouping a tenth (§29). §30 found most of
+these gains to be within-word lookahead. Beside them: held-out evaluation (§26), the legibility
+probe (§25, narrowed in §26.6), and an audit that found three of the project's own published numbers
+wrong (§28).
+
 ---
 
 ## 23. Level 2 — Morphology as Features on a BPE-Tokenized Model

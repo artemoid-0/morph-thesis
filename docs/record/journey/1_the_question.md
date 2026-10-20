@@ -6,6 +6,12 @@
 linguistics says is knowable at each scope. This part is design only; nothing
 was built yet.*
 
+**Established** (design only): the intervention point is the embedding layer, with the transformer
+held identical in every comparison (§1); an embedding split into frozen linguistic facts and trained
+dimensions, whose rationale §15 and §21 later revised (§2); what the preprocessor reads need not be
+the unit it emits, so sentence context can be frozen at the word (§3); morpheme-level units with
+named entities atomic, judged by perplexity and probing (§4).
+
 ---
 
 ## 1. The Starting Point and the Intervention Point

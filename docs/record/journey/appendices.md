@@ -1,6 +1,6 @@
 # Research journey — Appendices
 
-> **Kind:** record — append-only; corrections are annotated in place, never silently rewritten. **Covers:** A, B. [index](README.md)
+> **Kind:** record — append-only; corrections are annotated in place, never silently rewritten. **Covers:** A, B, C. [index](README.md)
 
 ## Appendix A — Decision Record
 
@@ -158,3 +158,35 @@ result was an artifact of its own measurement, building the instruments to prove
 it, turning those instruments on the claims that survived, and finally turning
 them on the paper itself — where they found three more unaudited numbers. That
 last step is not an embarrassment. It is the argument.*
+
+## Appendix C — The thesis's list of 15 October and its outcome sentences
+
+*Moved verbatim from `docs/DIRECTIONS.md` ("The queue", as at commit `dd1357d`) on 20 October 2026, when DIRECTIONS was cut to the open queue. It was the only home of each item's outcome sentences. Every item is done or dropped: journey §33.98–§33.116. The section numbers in it are the thesis text's.*
+
+| # | candidate | each outcome's sentence | GPU | ready |
+|---|---|---|---|---|
+| 1 | **Width 512 at 20k, seeds 1–3** (§3.3.2; conclusion 2) | *Settles near +0.011 at four seeds:* the gain does not fade with learning at any of the three widths. *Keeps falling:* at 30M parameters the tokenizer's gain fades with learning, as a feature's does | — | **done** (§33.102): +0.0102 ± 0.0006, 4/4; MultiBLiMP at seeds 2–3 prepared |
+| 2 | **English part of speech without the right-context leak**, over the null, 10k and 20k, four seeds — every word tagged from its left context alone, since in English the leak is spread over thousands of words (§33.99; the thesis's §3.10, conclusion 7) | *Leak-free ≈ word form:* in both languages what a context-aware feature adds over the lexical one is mostly not context. *Leak-free clearly above the word form:* for English part of speech the sentence's context adds information of its own; for Ukrainian case it does not | ~2.3 h | its codes built and checked (§33.102); a piece on the thesis machine, where its comparisons are |
+| 3 | **Fiction at full training**: both fiction nulls at fraction 0.4 (~133M tokens), 50k, seeds 0–3 (§3.3.3; conclusion 2) | *Holds:* on both corpora the gain does not fade with training. *Fades:* on fiction the tokenizer's gain belongs to short training | ~3.5 h on the second machine | prepared again (§33.103): its data stopped on a paragraph past spaCy's limit, fixed (§33.102) |
+| 4a | **Part of speech switched off early at 50k**, four seeds (§3.8; conclusion 5) | *The deficit persists:* the model relies on the feature at full training too. *It closes:* at full training the model makes up the removed feature; the reliance is temporary | — | **done** (§33.102): +0.0019 ± 0.0011, 3/4 |
+| 4b | **Ukrainian case switched off mid-training**, under endings apart at 20k (+0.0038) or on a small corpus | *A deficit:* in both languages. *None:* the deficit belongs to a strong feature, not to features in general | — | **done** (§33.102): no deficit, −0.0008 ± 0.0006 |
+| 5 | **The one-seed probes at more seeds**: after removal, with the auxiliary target, across widths (§3.7, §3.8) | *They agree:* the qualifiers go, and §3.7's share is stated with its spread. *They disagree:* the sentence says how far the seeds differ | ~6–9 h, and probing on the CPU | no: re-runs with checkpoints along training |
+| 6 | **English at full training, seeds 4–7** of both tokenizers (§3.3.6; conclusion 1) | *7/8 or more:* at full training, at 7 of 8 seeds. *Fewer:* at full training the English gain is within the seed spread, and conclusion 1 loses its full-training clause | — | **done** (§33.102): 7/8, median +0.0053; BLiMP at seeds 4–7 prepared |
+| 7 | **The leak at full training under BPE 17k**: `ucaseprep` at 151M, 50k, four seeds (§3.10; conclusion 7) | *All of the lead (+0.0006 ± 0.0004) is leak:* under both tokenizers. *Some is not:* under BPE 17k part of the lead is context | ~3.7 h | no: its codes at 0.2 under BPE 17k (CPU, under an hour) |
+| 8 | **The two-seed rows at 50k**: frequency band and part of speech from the word form, seeds 2–3 (§3.5; conclusion 4) | *Still within 0.002:* the sentence stands on four seeds for every row. *Either exceeds it:* the claim names the exception | ~3.7 h | a piece |
+
+About 50 hours of GPU in all: five or six long chains. The section numbers are the thesis's.
+
+**Not requested by the thesis** (every outcome gives the same sentence, or none): more seeds for
+English morpheme segmentation (the 12–13% gap is about nineteen times the widest seed spread); the
+shape effect by language; the law across model sizes, until there is a hypothesis for the half the
+previous word's tag leaves open.
+
+**Dropped by the sentence test:**
+- **Why fiction's share of bits per byte is half Wikipedia's** (§33.88). The thesis states the
+  size on each corpus, and no outcome changes a claim.
+- **Case and its controls on fiction.** Morphology in the embedding is answered (§33.83).
+
+**Dependencies.** None between the items. 2, 3, 4b, 5 and 7 need preparation first — a design,
+or a build on the CPU — which can overlap the item before. Each item's predictions are recorded when it is
+launched.

@@ -2,6 +2,17 @@
 
 > **Kind:** record — append-only; corrections are annotated in place, never silently rewritten. **Covers:** §33.1–§33.19. [← Part 7](7_the_causal_reckoning.md) · [index](README.md) · [Part 9 →](9_ukrainian_and_learning.md)
 
+**Established:** against a null of the same shape — the feature's slot with every word given one
+class — no injected feature adds information: structure gains +0.0004 ± 0.0005, and the 0.85%
+headline was the slot's (§33.9–§33.11, §33.15–§33.16). Part-of-speech tags depend on the words that
+follow for 7–8% of words (§33.3, §33.6); BLiMP's anaphor gain was a learned preference (§33.8). The
+slot's own effect, about 0.7% over the plain baseline, came by two routes, a clean position channel
+or a vector added to every input (§33.12, §33.14, §33.19; re-read in §33.49–§33.52), and the
+baseline is four times more sensitive to its random start (§33.16). The case for Ukrainian, and its
+path built (§33.17–§33.18). §33 runs on through Parts 9–15.
+
+---
+
 ## 33. The Agreement Test
 
 *§33 kept the title of its first subsections; it grew into the whole controlled programme, continued in [Part 9](9_ukrainian_and_learning.md).*

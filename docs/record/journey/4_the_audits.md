@@ -11,6 +11,14 @@ the Part II comparison was invalid. The headline result reverses sign here.*
 checking whether two tokenizers are being compared fairly, which the published
 literature does not do.*
 
+**Established:** as coded, the frozen embedding carried almost nothing (§14); a fact that is a
+function of the token id is parameter tying, not information, so the injection moved to a context
+fact, dependency role (§15). Bits per byte compares tokenizers only when both streams are
+collision-free and cover the same bytes (§17). Made information-fair, morpheme segmentation went
+from 6.3% better than BPE to 9.7% worse, while frozen dependency role gained 4.5%, an upper bound
+since its parser reads the whole sentence (§18). The deficit lies in coverage and in decomposing
+frequent words (§19).
+
 ---
 
 ## 14. The Frozen Embedding Audit

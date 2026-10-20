@@ -8,6 +8,13 @@ changed the conclusions — the literature showed the negative result was
 expected for English, and the controls refuted the project's own headline
 mechanism while leaving its effect intact.*
 
+**Established:** the literature already held Q1's English negative, while an information-fairness
+audit and a shuffled-feature control were unoccupied (§20). With vocabularies matched the gap
+widened, BPE ahead by 13.5% (§21.1); a learned dependency-role table beat a frozen one, refuting the
+claim that freezing beats learning, though freezing kept about three quarters of the gain
+(§21.2–§21.4). English BPE is hard to beat, and the project turned from competing with it to
+cooperating: BPE for segmentation, morphology as features (§22).
+
 ---
 
 ## 20. Literature Grounding — Who Has Done This Already

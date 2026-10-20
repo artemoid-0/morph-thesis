@@ -13,6 +13,13 @@ conclusion. The design decisions remain sound and are the reason the later,
 valid comparison was possible at all — but no number in this part should be
 quoted as a result.*
 
+**Established:** a vocabulary whose validity comes from its source, MorphoLex, not from frequency
+(§5); named entities split by their structure (§6); the format-B bug, which had silently dropped the
+prefixes of the 4,941 entries written that way (§7); that Morfessor adds essentially nothing over a
+deterministic pipeline, and the method of turning an uncertain design choice into a comparison (§8);
+compound splitting (§9). The first comparison's apparent 6.31% lead over BPE was an artifact of
+streams that did not carry the same information (§10; Part 4).
+
 ---
 
 ## 5. The Vocabulary: Why Frequency Is the Wrong Criterion

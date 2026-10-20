@@ -2,6 +2,15 @@
 
 > **Kind:** record — append-only; corrections are annotated in place, never silently rewritten. **Covers:** §30–§32. [← Part 6](6_level2_features_on_bpe.md) · [index](README.md) · [Part 8 →](8_the_controlled_programme.md)
 
+**Established:** a word-level feature attached to every BPE fragment of its word reveals the
+fragments still to come — form features put 86–97% of their gain on those continuations — and
+shifted to the previous word it is causal; most of the headline was lookahead (§30). Causally,
+morphological structure carried the gain and word identity added nothing (§31), 0.89% at three seeds
+(§31.7). The records showed structure's gain growing through training and morpheme tokenization
+learning more slowly than BPE (§32). §33.11 later found structure's gain to be the feature slot's.
+
+---
+
 ## 30. The Lookahead in Word-Form Features
 
 §29 closed with the identity-precision curve and a thesis claim resting on it:

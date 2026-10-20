@@ -7,6 +7,11 @@ standard: it is the microscope, not the object of study. This part also settles
 the metric question, which turned out to carry more weight than anything else
 in the document.*
 
+**Established:** frozen facts concatenated to trained dimensions, with the open design questions
+turned into a phased comparison (§11); bits per byte as the metric across tokenizers, and a small
+fixed transformer as the instrument (§12); calibration on the full corpus placed the BPE baseline at
+1.438 bits per byte, learning well with headroom left (§13).
+
 ---
 
 ## 11. Designing the Frozen Embedding Layer
