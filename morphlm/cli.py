@@ -4,7 +4,6 @@ cli.py — entry point.
     python -m morphlm.cli run --pipeline morph --facts dep
     python -m morphlm.cli run --pipeline bpe -o train.seed=1
     python -m morphlm.cli cache --pipeline morph        # build cache only
-    python -m morphlm.cli report
     python -m morphlm.cli inspect --pipeline morph --facts dep
     python -m morphlm.cli build entities
     python -m morphlm.cli build vocab
@@ -18,7 +17,7 @@ from __future__ import annotations
 import argparse
 import dataclasses
 
-from .config import ExperimentConfig, DataConfig, FrozenConfig, apply_overrides
+from .config import ExperimentConfig, apply_overrides
 
 
 def _base_config(args) -> ExperimentConfig:
@@ -40,9 +39,7 @@ def cmd_run(args):
     from .training.metrics import save_result, save_checkpoint
 
     cfg = _base_config(args)
-    out = train_cell(cfg, verbose=True)
-    model, log, best = out[0], out[1], out[2]
-    meta = out[3] if len(out) > 3 else None
+    model, log, best, meta = train_cell(cfg, verbose=True)
     path = save_result(cfg, log, best, meta=meta)
     if not args.no_checkpoint:
         ck = save_checkpoint(cfg, model)
@@ -51,20 +48,6 @@ def cmd_run(args):
     print(f'\n[saved] {path}')
     print(f'  {cfg.describe()}: ppl {best["perplexity"]:.2f} | '
           f'bpb {best["bits_per_byte"]:.4f} | best step {best["step"]}')
-
-    if args.buckets:
-        from .eval.buckets import (token_frequencies, bucketed_perplexity,
-                                   print_buckets)
-        from .data.windows import make_datasets
-        from .pipelines.registry import build_pipeline
-        from .training.loop import get_device
-        from torch.utils.data import DataLoader
-        pipeline = build_pipeline(cfg, verbose=False)
-        train_ds, val_ds = make_datasets(pipeline, cfg, verbose=False)
-        loader = DataLoader(val_ds, batch_size=cfg.train.batch_size)
-        freqs = token_frequencies(train_ds)
-        rows = bucketed_perplexity(model, loader, freqs, get_device())
-        print_buckets(rows, cfg.label())
 
 
 def cmd_cache(args):
@@ -85,11 +68,6 @@ def cmd_cache(args):
         for split in splits:
             build_stream(pipeline, cfg, split=split, verbose=True)
     print('cache ready.')
-
-
-def cmd_report(args):
-    from .training.metrics import report
-    report(regime=args.regime)
 
 
 def cmd_inspect(args):
@@ -173,8 +151,6 @@ def build_parser():
 
     r = sub.add_parser('run', help='train one cell')
     add_common(r)
-    r.add_argument('--buckets', action='store_true',
-                   help='also report per-frequency-bucket perplexity')
     r.add_argument('--no-checkpoint', action='store_true',
                    help='skip saving model weights (~14MB per run)')
     r.set_defaults(func=cmd_run)
@@ -188,19 +164,6 @@ def build_parser():
     i = sub.add_parser('inspect', help='show the frozen layout, train nothing')
     add_common(i)
     i.set_defaults(func=cmd_inspect)
-
-    ex = sub.add_parser('export', help='write thesis-ready tables to a folder')
-    ex.add_argument('--out', default='paper')
-    ex.add_argument('--results-dir', default='results')
-    ex.set_defaults(func=lambda a: __import__('subprocess').run(
-        [__import__('sys').executable, 'scripts/analysis/export_results.py',
-         '--out', a.out, '--results-dir', a.results_dir]))
-
-    rep = sub.add_parser('report', help='comparison table from saved results')
-    rep.add_argument('--regime', choices=['lossless', 'partial', 'legacy'],
-                     help='restrict to one encoding regime; results from '
-                          'different regimes are not comparable')
-    rep.set_defaults(func=cmd_report)
 
     b = sub.add_parser('build', help='build data assets')
     b.add_argument('what', choices=['entities', 'vocab', 'bpe', 'all'])

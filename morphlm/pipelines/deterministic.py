@@ -3,9 +3,10 @@ deterministic.py — Pipeline 3: morpheme-based, no Morfessor.
 
 Segmentation priority:
     entity vocab -> function words -> MorphoLex -> prefix strip
-    -> compound split -> character fallback
+    -> compound split -> last resort (`_fallback`: characters)
 
-Every output is either linguistically grounded or honestly unknown.
+Every output is either linguistically grounded or honestly unknown. The
+morpheme pipeline (morpheme.py) is this one with Morfessor as its last resort.
 """
 
 from __future__ import annotations
@@ -19,20 +20,28 @@ from ..vocab.morpholex import (
 class DeterministicPipeline(BasePreprocessor):
 
     def __init__(self, vocab_df, morpholex_path,
-                 spacy_model='en_core_web_sm', stamp='all',
-                 surface=None, verbose=True):
+                 spacy_model='en_core_web_sm', surface=None, verbose=True):
         super().__init__(vocab_df, morpholex_path, spacy_model,
-                         stamp=stamp, surface=surface, verbose=verbose)
+                         surface=surface, verbose=verbose)
         if verbose:
             print('  Loading MorphoLex...')
         self.morpholex = build_morpholex_lookup(morpholex_path)
         if verbose:
             print(f'  {len(self.morpholex)} words loaded')
-        _, prefixes, _ = extract_morpheme_sets(morpholex_path)
+        _, prefixes, suffixes = extract_morpheme_sets(morpholex_path)
         self.known_prefixes = prefixes
+        self.known_suffixes = suffixes
         self._sorted_prefixes = sorted(prefixes, key=len, reverse=True)
+        self._prepare_fallback(verbose)
         if verbose:
             print('  Ready.')
+
+    def _prepare_fallback(self, verbose):
+        """Whatever the last resort needs; characters need nothing."""
+
+    def _fallback(self, w):
+        """The last resort, for a lowercased word nothing else segments."""
+        return [(ch, 'char') for ch in w]
 
     def _prefix_strip(self, word):
         for prefix in self._sorted_prefixes:
@@ -59,4 +68,4 @@ class DeterministicPipeline(BasePreprocessor):
         compound = compound_split(w, self.morpholex, self.function_words)
         if compound:
             return compound
-        return [(ch, 'char') for ch in w]
+        return self._fallback(w)

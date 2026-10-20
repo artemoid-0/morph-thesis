@@ -261,6 +261,11 @@ def build_model(cfg, verbose=True):
     from .embedding import HybridEmbedding
 
     vocab_df, bpe_size = pipeline_vocab(cfg)
+    # Four rows for special tokens, for every pipeline — deliberate; never "fix"
+    # it. BPE's vocabulary already holds its specials at ids 0-3, so its four
+    # extra rows are never read, and they keep BPE-17k at 17,151 + 4 = 17,155
+    # rows, the morpheme vocabulary's count. Every run's parameter count and
+    # initial weights depend on it.
     num_special = 4
     if vocab_df is not None:
         vocab_size = len(vocab_df) + num_special

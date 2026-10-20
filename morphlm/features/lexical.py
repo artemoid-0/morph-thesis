@@ -57,15 +57,12 @@ def word_rule_for(bpe_path):
     English result. 'decoded' — classify the token's decoded bytes; needed for
     Cyrillic, whose letters are two UTF-8 bytes that ByteLevel maps partly to
     non-letters (the symbol rule calls 77% of Cyrillic tokens non-alphabetic).
-    The rule is read from a metadata file written beside the tokenizer when it
-    is trained; with none, 'symbol'. It travels with the tokenizer, so no
-    command can forget it.
+    The rule is read from the sidecar written beside the tokenizer when it is
+    trained (`tokenization.tokenizer_meta`); with none, 'symbol'. It travels
+    with the tokenizer, so no command can forget it.
     """
-    import json as _json
-    meta = (bpe_path[:-5] if bpe_path.endswith('.json') else bpe_path) + '.meta.json'
-    if os.path.exists(meta):
-        return _json.load(open(meta)).get('word_rule', 'symbol')
-    return 'symbol'
+    from ..data.tokenization import tokenizer_meta
+    return tokenizer_meta(bpe_path).get('word_rule', 'symbol')
 
 
 def _lead_is_letter(b0, b1=None):
@@ -260,12 +257,12 @@ def lookup(keys, lexicon, none_code):
     return np.where(found, lex_codes[i], none_code).astype(np.int16)
 
 
-def lexical_codes(ids, contextual_codes, lexicon, tables, none_code):
+def lexical_codes(ids, lexicon, tables, none_code):
     """
-    Replace each word's contextual code with its lexicon entry. Positions
-    outside words get `none_code`; words absent from the lexicon get
-    `none_code` too — never their contextual code, which would readmit the
-    right-context information the lexicon exists to remove.
+    Each word's lexicon entry, at every position of the word. Positions outside
+    words get `none_code`; words absent from the lexicon get `none_code` too —
+    never their contextual code, which would readmit the right-context
+    information the lexicon exists to remove.
     """
     wid, key, _ = word_spans(ids, tables)
     out = lookup(key, lexicon, none_code)

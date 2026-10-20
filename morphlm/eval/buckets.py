@@ -1,20 +1,11 @@
 """
 buckets.py — per-frequency-bucket perplexity.
 
-WHY THIS MATTERS FOR THE THESIS
--------------------------------
-The mechanism by which static freezing could help is SAMPLE EFFICIENCY for rare
-tokens: a root seen three times gets almost no gradient signal, so its trained
-row is noise, while its frozen category flag is correct from step zero.
-
-That predicts an effect concentrated in the TAIL, not in the aggregate. A
-single corpus-wide perplexity number averages the tail away — which is very
-likely why 2.6 bits spread over 23 dimensions looked so unpromising when
-measured as 'does overall perplexity drop'.
-
-Reporting perplexity per frequency bucket turns an aggregate null result into a
-real mechanistic finding: 'frozen flags help rare tokens by X% and leave
-frequent tokens unchanged' survives even when the headline number does not move.
+The mechanism by which freezing could help is SAMPLE EFFICIENCY for rare
+tokens: a token seen rarely gets little gradient signal, so its trained row is
+noise, while a frozen fact about it is correct from step zero. That predicts an
+effect concentrated in the TAIL, which one corpus-wide number averages away;
+per bucket it shows (journey §18, "The mechanism is the predicted one").
 """
 
 from __future__ import annotations
@@ -72,11 +63,23 @@ def adaptive_edges(freqs, val_ids, n_buckets=6):
     return tuple(edges)
 
 
-def token_frequencies(train_ds):
-    """Count how often each token id appears in the training stream."""
+def token_frequencies(train_ds, chunk=1 << 24):
+    """
+    How often each token id appears in the training stream: a Counter of the ids
+    that occur. Counted in chunks with np.bincount — a Counter over the stream as
+    a Python list held ~4 GB at 150M tokens.
+    """
     ids = np.asarray(train_ds.ids)
-    counts = Counter(ids.tolist())
-    return counts
+    counts = np.zeros(0, dtype=np.int64)
+    for i in range(0, len(ids), chunk):
+        part = np.bincount(np.asarray(ids[i:i + chunk], dtype=np.int64))
+        if len(part) > len(counts):
+            part[:len(counts)] += counts
+            counts = part
+        else:
+            counts[:len(part)] += part
+    seen = np.flatnonzero(counts)
+    return Counter(dict(zip(seen.tolist(), counts[seen].tolist())))
 
 
 def bucket_of(count, edges=DEFAULT_EDGES):
@@ -87,10 +90,12 @@ def bucket_of(count, edges=DEFAULT_EDGES):
 
 
 @torch.no_grad()
-def bucketed_perplexity(model, loader, freqs, device, edges=DEFAULT_EDGES):
+def bucketed_perplexity(model, loader, freqs, device, edges=DEFAULT_EDGES,
+                        max_batches=None):
     """
     Per-bucket mean loss over the validation set, bucketed by TARGET token
     training frequency. Returns list of dicts with count / mean_loss / ppl.
+    `max_batches` scores only the loader's first batches (None or 0: all).
     """
     model.eval()
     n_buckets = len(edges) - 1
@@ -104,7 +109,9 @@ def bucketed_perplexity(model, loader, freqs, device, edges=DEFAULT_EDGES):
         lut[tid] = bucket_of(c, edges)
 
     import torch.nn.functional as F
-    for x, y, c in loader:
+    for bi, (x, y, c) in enumerate(loader):
+        if max_batches and bi >= max_batches:
+            break
         x, y = x.to(device), y.to(device)
         c = c.to(device) if c.numel() else None
         logits, _ = model(x, y, codes=c)
@@ -132,11 +139,3 @@ def bucketed_perplexity(model, loader, freqs, device, edges=DEFAULT_EDGES):
                     'tokens': tok_count[k], 'mean_loss': ml,
                     'perplexity': math.exp(ml)})
     return out
-
-
-def print_buckets(rows, label=''):
-    print(f'\n--- per-frequency-bucket perplexity {label} ---')
-    print(f'{"train freq":>14} {"val tokens":>12} {"ppl":>10}')
-    for r in rows:
-        ppl = f'{r["perplexity"]:.2f}' if r['perplexity'] else '-'
-        print(f'{r["range"]:>14} {r["tokens"]:12,} {ppl:>10}')

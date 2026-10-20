@@ -1,31 +1,14 @@
 """
 morph_analysis.py — word-level morphological facts, for attaching to ANY tokenizer.
 
-WHY THIS EXISTS
----------------
-Q1 established that morpheme segmentation loses to BPE in English: BPE emits
-~1.18 tokens for 88% of words and has already absorbed English's eight
-productive inflectional affixes. Q2 established that injecting linguistic facts
-into the embedding helps by 6.4%.
+Morphology as FEATURES rather than segmentation (journey §22.4-§23): keep the
+BPE tokens, and tell the model what morphological structure the underlying word
+has — BPE cannot know that `recon`, `fig` and `uring` belong to one word whose
+root is `configure`. Nothing here changes the token stream.
 
-The synthesis is to stop using morphology for SEGMENTATION and use it for
-FEATURES: keep BPE tokens, and tell the model what morphological structure the
-underlying word has. BPE cannot know that `recon`, `fig` and `uring` belong to
-one word whose root is `configure` — its merges are frequency-driven, not
-lexical.
-
-Nothing here changes the token stream. These are input-side codes only; the
-model still predicts BPE tokens, so the losslessness machinery of section 17 is
-irrelevant to this path.
-
-NO LOOKAHEAD
-------------
-Unlike `dep`, which comes from a full-sentence parse and therefore leaks
-information about tokens not yet predicted (section 21.6), the morphological
-analysis of a word depends only on that word. A root is knowable from the
-characters already emitted. So these facts are causally available in a way the
-dependency role is not — which makes them a cleaner claim, and a partial answer
-to whether the Q2 gain was an oracle artifact.
+These facts depend on the word alone, not on the sentence — but each names the
+WHOLE word at every fragment of it, so they are causal only shifted to the
+previous word (`frozen.causal_identity`; journey §30).
 
 WHAT IS EXTRACTED, per word
 ---------------------------
@@ -63,12 +46,9 @@ class WordAnalyser:
     """
     Wraps the deterministic morpheme segmenter so any pipeline can ask
     'what is the morphology of this word?' without adopting its tokenization.
-
-    Deliberately built on DeterministicPipeline rather than MorphemePipeline:
-    section 8 found Morfessor contributes nothing beyond the deterministic
-    path, and every subsequent comparison has confirmed it (det matched or beat
-    morph in 41 of 41 tail evaluations). Using det also avoids training a
-    Morfessor model on every cache build.
+    Deterministic rather than Morfessor: Morfessor added nothing (det matched or
+    beat morph in 41 of 41 tail evaluations, journey §8), and is not trained on
+    every cache build.
     """
 
     def __init__(self, vocab_df, morpholex_path, spacy_model='en_core_web_sm',
@@ -76,19 +56,10 @@ class WordAnalyser:
         from ..pipelines.deterministic import DeterministicPipeline
         self._pipe = DeterministicPipeline(
             vocab_df, morpholex_path, spacy_model=spacy_model, verbose=verbose)
-        # Stable, deterministic lexical-identity inventory.
-        # Order MUST NOT drift between cache build and model build, or codes
-        # stored in the cache would decode to different roots.
-        #
-        # ENTITIES ARE INCLUDED, and that is a measured decision. A preflight
-        # over 300 validation lines found 39.1% of BPE tokens sitting in words
-        # for which no root was returned — largely named entities, which the
-        # segmenter treats as atomic and which therefore fell to the 'none'
-        # sentinel. But an entity's lexical identity IS itself: `london` is its
-        # own lemma. Excluding them threw away information for a large share of
-        # Wikipedia tokens, so entity surface forms now occupy root classes of
-        # their own. Genuinely unanalysable words still fall to 'none', which
-        # is honest.
+        # Stable, deterministic lexical-identity inventory: its order MUST NOT
+        # drift between cache build and model build, or cached codes would
+        # decode to different roots. Entities are roots of their own (`london`
+        # is its own lemma; journey §23.2); unanalysable words fall to 'none'.
         roots = sorted(str(t) for t, c in
                        zip(vocab_df['token'], vocab_df['category'])
                        if c == 'root')
@@ -110,27 +81,16 @@ class WordAnalyser:
 
     def lemma_code(self, lemma) -> int:
         """
-        LEXICAL IDENTITY AT THE INFLECTIONAL LEVEL — the linguistic middle term.
+        LEXICAL IDENTITY AT THE INFLECTIONAL LEVEL — the linguistic middle term
+        (journey §29.1). Three features share one inventory and width, and
+        differ ONLY in what they merge:
 
-        Three features now share one 16,365-class inventory and one 16-dim
-        width, differing ONLY in what they merge:
+            mroot   morphological families   running/runner/ran, beautiful -> beauty
+            mlemma  inflectional variants    running -> run, cats -> cat
+            mhash   nothing (random)         running with telephone
 
-            mroot   merges morphological families    running/runner/ran, and
-                                                     also beautiful -> beauty
-            mlemma  merges inflectional variants     running -> run, cats -> cat,
-                                                     but beautiful stays put
-            mhash   merges nothing (random)          running with telephone
-
-        Section 27.3 found mroot loses to mhash because it collapses
-        DISTRIBUTIONALLY SIMILAR words that context cannot separate. Lemma
-        collapses strictly less than root — it keeps derivational families
-        apart — so if that mechanism is right, lemma should sit above root.
-        Whether it also beats random grouping is the open question, and it is
-        the difference between a thesis whose best feature is linguistic and
-        one whose best feature is a hash.
-
-        Hashed into the same inventory so cardinality, width and projection
-        path are identical by construction; only the grouping differs.
+        Hashed into the same inventory, so cardinality, width and projection
+        path are identical by construction.
         """
         if not lemma:
             return self._none_root
@@ -140,29 +100,13 @@ class WordAnalyser:
     def hash_code(self, word) -> int:
         """
         MATCHED-CARDINALITY RANDOM GROUPING — the control that separates
-        morphology from word identity.
+        morphology from word identity (journey §27.1). Each surface word hashed
+        into the SAME inventory size: every fragment of a word still shares one
+        code (word identity kept), while related words no longer do (morphological
+        grouping destroyed). The shuffled control destroys both at once.
 
-        `mroot` supplies two things at once: every BPE fragment of a word gets
-        the same code (WORD IDENTITY, which BPE's frequency-driven merges
-        genuinely lack), and morphologically related words share a code
-        (MORPHOLOGICAL RELATEDNESS). The thesis claims the second; without a
-        control the experiment cannot distinguish it from the first.
-
-        This assigns each surface word a code by hashing it into the SAME
-        inventory size. Per-word consistency is preserved — every fragment of a
-        word still gets one code — while morphological grouping is destroyed.
-
-            mroot ~= mhash              -> the gain is word identity, and the
-                                           morphology claim fails
-            mroot > mhash > shuffled    -> morphology contributes beyond word
-                                           identity, and the gap between them
-                                           IS the morphological effect
-
-        The shuffled control cannot do this job: it permutes codes within a
-        window, destroying word identity and morphology together.
-
-        md5 rather than Python's hash() because the latter is salted per process
-        and would change between the cache build and any later run.
+        md5 rather than Python's hash(), which is salted per process and would
+        change between the cache build and any later run.
         """
         if not word:
             return self._none_root

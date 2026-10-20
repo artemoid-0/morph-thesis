@@ -1,10 +1,9 @@
 """
 morpholex.py — MorphoLex parsing.
 
-Ported verbatim from the previous common.py. This code is STABLE and validated
-(the format-B fix in particular took real debugging: 4,941 of ~70k entries put
-the prefix INSIDE the opening brace, and missing that silently dropped prefixes
-from thousands of words). Do not "improve" it without a regression test.
+STABLE and validated: the format-B fix (4,941 entries with the prefix inside the
+opening brace, bugs.md #1, journey §7) and the multi-root fix took real
+debugging. Do not "improve" it without a regression test.
 """
 
 from __future__ import annotations
@@ -13,8 +12,6 @@ import os
 import re
 import warnings
 import pandas as pd
-
-warnings.filterwarnings('ignore')
 
 
 ARTICLES = {'the', 'a', 'an'}
@@ -58,15 +55,8 @@ def parse_morpholex_segm(s):
     """
     Parse a MorphoLex segmentation string into (morphemes, roles).
     Handles format A (<un<{(happy)}) and format B ({<re<(search)}>er>).
-
-    MULTI-ROOT FIX: roots are collected with findall, not search. MorphoLex
-    writes compounds with several parenthesized roots — {(high)(way)},
-    {(touch)(down)}>s>, {(book)(keep)}>er> — and taking only the first
-    silently discarded the rest, so `highway` parsed as `high` and
-    `touchdowns` as `touch`. Same family as the format-B bug of section 7:
-    a regex that matched one instance of something that occurs many times.
-    Found by the reconstruction audit, which showed those words could not be
-    rebuilt from their own token streams.
+    Roots are collected with findall: compounds hold several — {(high)(way)},
+    {(touch)(down)}>s> — and the first alone lost the rest (bugs.md #2, §17).
     """
     roots = re.findall(r'\(([a-zA-Z]+)\)', s)
 
@@ -105,22 +95,11 @@ _SHEET_CACHE = {}
 
 def _read_sheets(path, use_disk_cache=True, verbose=True):
     """
-    Parse the MorphoLex workbook into one DataFrame.
-
-    CACHED AT TWO LEVELS, because openpyxl parsing ~70k rows is slow enough to
-    look like a hang, and every pipeline construction needs this data TWICE
-    (build_morpholex_lookup + extract_morpheme_sets). Previously that meant two
-    full parses on every single run.
-
-      1. in-process dict  -> the second call in the same run is free
-      2. on-disk pickle   -> every subsequent run is fast
-
-    The disk cache is keyed on the workbook's (mtime, size), so editing the
-    xlsx invalidates it automatically. Any failure to read or write the cache
-    falls back to parsing — the cache can never be the reason something breaks.
-
-    Callers immediately slice columns (which copies in pandas), so handing back
-    the cached frame is safe.
+    Parse the MorphoLex workbook into one DataFrame, cached in-process and on
+    disk (a pickle keyed on the workbook's mtime and size): parsing ~70k rows
+    is slow, and every pipeline needs the data twice (journey §16). Any failure
+    to read or write the cache falls back to parsing. Callers slice columns,
+    which copies, so handing back the cached frame is safe.
     """
     key = os.path.abspath(path)
     if key in _SHEET_CACHE:
@@ -143,17 +122,21 @@ def _read_sheets(path, use_disk_cache=True, verbose=True):
     if verbose:
         print(f'  parsing {os.path.basename(path)} (slow, cached afterwards)...')
 
-    xl = pd.ExcelFile(path)
-    sheets = [s for s in xl.sheet_names
-              if s != 'Presentation' and not s.startswith('All')]
-    dfs = []
-    for sheet in sheets:
-        try:
-            df = pd.read_excel(path, sheet_name=sheet)
-            if 'Word' in df.columns:
-                dfs.append(df)
-        except Exception:
-            pass
+    # openpyxl warns about the workbook's styles on every sheet; only this read
+    # is silenced, not the process
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore')
+        xl = pd.ExcelFile(path)
+        sheets = [s for s in xl.sheet_names
+                  if s != 'Presentation' and not s.startswith('All')]
+        dfs = []
+        for sheet in sheets:
+            try:
+                df = pd.read_excel(path, sheet_name=sheet)
+                if 'Word' in df.columns:
+                    dfs.append(df)
+            except Exception:
+                pass
     df = pd.concat(dfs, ignore_index=True)
 
     if use_disk_cache:

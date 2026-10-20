@@ -124,8 +124,9 @@ def test_codes_are_not_borrowed_across_token_streams():
     sb = cache_stem('det', 'train', None, b.surface_spec())
     assert sa != sb, 'different surface configs must not share an ids stem'
 
-    src = open(os.path.join(os.path.dirname(os.path.dirname(
-        os.path.abspath(__file__))), 'morphlm', 'data', 'stream.py')).read()
+    here = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'morphlm', 'data')
+    # the loader (stream.py) and the codes discovery it calls (cache_files.py, since the split)
+    src = ''.join(open(os.path.join(here, f)).read() for f in ('stream.py', 'cache_files.py'))
     # the guard lives in stream_codes_files since G-72, which the loader calls
     # with the token count of the ids stream it reads
     assert "cm.get('num_tokens') != num_tokens" in src and \

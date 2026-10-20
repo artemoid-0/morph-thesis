@@ -1,17 +1,11 @@
 """
 record.py — make every analysis script write its numbers to a file.
 
-WHY THIS EXISTS
----------------
-Training runs write `result.json` with full provenance. The analysis scripts —
-coverage, collision, OOV, category bits, bucket comparisons, the legibility
-probe, channel verification — printed a table and exited. Every number they
-produced existed only in a terminal scrollback.
-
-Several of those numbers are quoted in the paper. `PAPER_REVISION.md` treats
-transcription as a risk in its own right, and the project has already had one
-figure (the alpha-coverage row) survive for weeks because nobody could
-re-derive it without re-running the script.
+Training runs write `result.json` with full provenance; the analysis scripts
+once printed a table and exited, so their numbers lived only in a terminal's
+scrollback. Several are quoted in the thesis, and transcription is a risk of its
+own: one figure (the alpha-coverage row) survived for weeks because nobody
+could re-derive it without re-running the script.
 
 Records land in `results/audits/<script>_<timestamp>.json` and carry the same
 environment block as a training run, so an audit is as reproducible as a cell.

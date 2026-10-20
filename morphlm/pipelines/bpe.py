@@ -1,29 +1,13 @@
 """
 bpe.py — Pipeline 1: BPE baseline, the anchor cell.
 
-NEW CAPABILITY: context alignment.
-----------------------------------
-A BPE token sits inside some word, and that word has a dependency role and a
-POS tag. Aligning BPE tokens to spaCy tokens by CHARACTER OFFSET lets the BPE
-pipeline carry the same context facts as the morpheme pipelines.
+CONTEXT ALIGNMENT. A BPE token sits inside some word, and that word has a
+dependency role, a POS tag, a morphology. Aligning BPE tokens to spaCy tokens by
+CHARACTER OFFSET lets BPE carry the context facts too, so injection can be
+tested independently of segmentation (journey §15, "The structural payoff").
 
-That matters structurally: it decouples the thesis's two legs. Previously only
-morpheme pipelines could be frozen, so 'does segmentation help' and 'does
-injection help' were entangled. With BPE+context the matrix becomes
-
-                no-freeze   static-freeze   context-freeze
-        bpe         y             -               y
-        morph       y             y               y
-        det         y             y               y
-
-so injection can be tested independently of segmentation, and the interaction
-(does linguistic freezing help MORE when the units are already linguistic?)
-becomes a question you can actually answer.
-
-COST NOTE: unlike morph/det — which already run the full spaCy pipeline for
-NER and simply discard tagger/parser output — BPE pays a genuinely new spaCy
-pass when context facts are requested. With no context facts requested, spaCy
-is never loaded and this pipeline behaves exactly as before.
+Unlike morph/det, which parse with spaCy anyway, BPE pays a new spaCy pass when
+context facts are requested; with none requested spaCy is never loaded.
 """
 
 from __future__ import annotations
@@ -31,20 +15,18 @@ from __future__ import annotations
 from ..features.inflection import inflection_of, agreement_of
 
 
+#: The context annotations a BPE token carries, in token-dict order: the spaCy
+#: parse's (entity_label, dep, pos, minfl, magr, mfeat, udfeats) and the
+#: WordAnalyser's (mroot, mhash, mlemma, mstruct, mrole).
+ANNOTATED = ('entity_label', 'dep', 'pos', 'mroot', 'mhash', 'mlemma', 'mstruct',
+             'mrole', 'minfl', 'magr', 'mfeat', 'udfeats')
+
+
 def _first_annotated(arr, start, end):
     """
-    First annotated character inside a token's span.
-
-    CRITICAL, and the source of a bug that would have silently voided every
-    BPE + context-fact experiment: ByteLevel folds the preceding space INTO the
-    following token, so a word-initial token spans " cat" and its START OFFSET
-    lands on whitespace, which no spaCy token covers. Indexing by start offset
-    therefore returned None for every word-initial token — 78% of the BPE
-    stream (211,300 of 270,848, measured in category_bits). Scanning the span
-    fixes it: 17% -> 100% alignment on a synthetic sentence.
-
-    Same class of error as the region-attribution bug in coverage_economics
-    (journey section 19). Alignment logic is the default suspect here.
+    First annotated character in a token's span. Scans the span: ByteLevel
+    folds the preceding space into word-initial tokens, whose start offset is
+    whitespace (bugs.md #14, journey §23).
     """
     if arr is None:
         return None
@@ -60,15 +42,17 @@ class BPEPipeline:
 
     def __init__(self, tokenizer_path=None, vocab_size=10000,
                  spacy_model='en_core_web_sm', want_context=False,
-                 analyser=None, verbose=True):
+                 analyser=None, analyser_factory=None, verbose=True):
         from tokenizers import Tokenizer
 
         self.vocab_size = vocab_size
         self.want_context = want_context
         # WordAnalyser, present only when morphological facts are wanted.
         # This is what lets a BPE-tokenized model receive morphology WITHOUT
-        # adopting morphological segmentation — the Level-2 design.
-        self.analyser = analyser
+        # adopting morphological segmentation — the Level-2 design. Given as a
+        # factory, it is built on first use (`analyser`).
+        self._analyser = analyser
+        self._analyser_factory = analyser_factory
         self._spacy_model = spacy_model
         self._nlp = None
         self.align_ok = 0
@@ -99,28 +83,15 @@ class BPEPipeline:
         Train a subword tokenizer.
 
         algorithm='bpe'      greedy pairwise merges, the GPT-2 standard.
+        algorithm='unigram'  prunes a large seed vocabulary by likelihood; its
+            units align more closely with morphology (Bostrom & Durrett, 2020),
+            so it is the third arm of Q1 (journey §20).
 
-        algorithm='unigram'  a probabilistic model that prunes a large seed
-            vocabulary by likelihood. Bostrom & Durrett (2020) found Unigram
-            recovers subword units aligning more closely with morphology than
-            BPE's greedy merging, and matching or beating it downstream. It is
-            the natural third arm: if the morpheme pipeline also loses to
-            Unigram, the Q1 result is not an artifact of one particular
-            statistical tokenizer, which is the obvious objection to a
-            two-arm comparison.
-
-        pre_tokenizer='bytelevel'  (default, GPT-2 standard)
-            LOSSLESS: whitespace is folded into the following token as a Ġ
-            prefix, so decode(encode(text)) == text exactly. Required for BPB to
-            be a genuine compression rate comparable to published numbers.
-
-        pre_tokenizer='whitespace'  (the original choice)
-            Splits on word/non-word boundaries and DISCARDS whitespace, so it cannot
-            reconstruct the input. Kept only to reproduce the legacy anchor.
-
-        The coverage audit showed whitespace is 18.8% of corpus bytes. Both the
-        old BPE and the old morpheme pipelines dropped it, so it never biased
-        Q1 — but it meant neither BPB was a real compression rate.
+        pre_tokenizer='bytelevel'  (default) LOSSLESS: whitespace is folded into
+            the following token as a Ġ prefix, so decode(encode(text)) == text
+            and BPB is a true compression rate (journey §17).
+        pre_tokenizer='whitespace' discards whitespace; kept only to reproduce
+            the legacy anchor.
 
         presplit — an `endings.EndingRule`: `texts` arrive marked at every
         stem|ending cut, and the pre-tokenizer splits on the mark and removes it
@@ -209,6 +180,14 @@ class BPEPipeline:
     # ── context alignment ─────────────────────────────────────────────────────
 
     @property
+    def analyser(self):
+        """The WordAnalyser, built by its factory the first time it is read; None without one."""
+        if self._analyser is None and self._analyser_factory is not None:
+            self._analyser = self._analyser_factory()
+            self._analyser_factory = None
+        return self._analyser
+
+    @property
     def nlp(self):
         if self._nlp is None:
             import spacy
@@ -229,76 +208,54 @@ class BPEPipeline:
 
     def _char_annotation_map(self, text):
         """
-        Build a per-character lookup: char index -> (dep, pos, ent_label).
+        Per character, the annotation of the spaCy word covering it, for every
+        key in ANNOTATED: {key: [value or None for each character]}.
 
         Character-level rather than token-level because BPE boundaries do not
-        respect word boundaries; a BPE token's start offset is enough to find
-        the word containing it.
+        respect word boundaries; `encode` reads each token's span from it.
         """
         doc = self.nlp(text)
         n = len(text)
-        deps = [None] * n
-        poss = [None] * n
-        ents = [None] * n
-        mroot = [None] * n
-        mhash = [None] * n
-        mlemma = [None] * n
-        mstruct = [None] * n
-        mrole = [None] * n
-        minfl = [None] * n
-        magr = [None] * n
-        mfeat = [None] * n
-        udf = [None] * n
+        ann = {key: [None] * n for key in ANNOTATED}
+        analyser = self.analyser
         for tok in doc:
             start, end = tok.idx, tok.idx + len(tok.text)
-            label = tok.ent_type_ if tok.ent_type_ else None
-            # INFLECTION of the word (Number=Plur, Tense=Past, ...), read from
-            # spaCy's morphologizer on the parse the pipeline already runs. The
-            # classifier is the one the morpheme tokenizer uses for its own
-            # inflection tokens (features/inflection.py); here it becomes a
-            # word-level context fact for the BPE model — G-28, journey §32.
-            infl = inflection_of(tok)
-            # agreement (Number, Person) and the full UD bundle, for alphabetic
-            # words only — the same coverage as the other morphological facts
-            agr = agreement_of(tok) if tok.is_alpha else None
-            feats = (str(tok.morph) or None) if tok.is_alpha else None
-            # every UD feature by name, for the language-neutral blocks (ucase...)
-            ud = (tok.morph.to_dict() or None) if tok.is_alpha else None
-            for c in range(start, min(end, n)):
-                deps[c] = tok.dep_
-                poss[c] = tok.pos_
-                ents[c] = label
-                minfl[c] = infl
-                magr[c] = agr
-                mfeat[c] = feats
-                udf[c] = ud
-            if self.analyser is None or not tok.is_alpha:
-                continue
-            root, struct, regions = self.analyser.analyse(tok.text)
-            rcode = self.analyser.root_code(root)
-            hcode = self.analyser.hash_code(tok.text)
-            lcode = self.analyser.lemma_code(tok.lemma_)
-            for c in range(start, min(end, n)):
-                mroot[c] = rcode
-                mhash[c] = hcode
-                mlemma[c] = lcode
-                mstruct[c] = struct
+            alpha = tok.is_alpha
+            word = {
+                'dep': tok.dep_,
+                'pos': tok.pos_,
+                'entity_label': tok.ent_type_ if tok.ent_type_ else None,
+                # INFLECTION of the word (Number=Plur, Tense=Past, ...): the
+                # classifier of the morpheme tokenizer's inflection tokens, as a
+                # word-level context fact (G-28, journey §32)
+                'minfl': inflection_of(tok),
+                # agreement (Number, Person), the full UD bundle and every UD
+                # feature by name (ucase...), for alphabetic words only — the
+                # coverage of the other morphological facts
+                'magr': agreement_of(tok) if alpha else None,
+                'mfeat': (str(tok.morph) or None) if alpha else None,
+                'udfeats': (tok.morph.to_dict() or None) if alpha else None,
+            }
+            regions = ()
+            if analyser is not None and alpha:
+                root, word['mstruct'], regions = analyser.analyse(tok.text)
+                word['mroot'] = analyser.root_code(root)
+                word['mhash'] = analyser.hash_code(tok.text)
+                word['mlemma'] = analyser.lemma_code(tok.lemma_)
+            for key, value in word.items():
+                column = ann[key]
+                for c in range(start, min(end, n)):
+                    column[c] = value
             for a, b, role in regions:
                 for c in range(start + a, min(start + b, n)):
-                    mrole[c] = role
-        return (deps, poss, ents, mroot, mhash, mlemma, mstruct, mrole,
-                minfl, magr, mfeat, udf)
+                    ann['mrole'][c] = role
+        return ann
 
     # ── encoding ──────────────────────────────────────────────────────────────
 
     def encode(self, text):
         encoding = self.tokenizer.encode(text)
-
-        deps = poss = ents = mroot = mhash = mlemma = mstruct = mrole = minfl = \
-            magr = mfeat = udf = None
-        if self.want_context:
-            (deps, poss, ents, mroot, mhash, mlemma,
-             mstruct, mrole, minfl, magr, mfeat, udf) = self._char_annotation_map(text)
+        ann = self._char_annotation_map(text) if self.want_context else None
 
         result = []
         # read once: a tokenizers.Encoding builds a new list on every `.offsets`,
@@ -307,45 +264,19 @@ class BPEPipeline:
         offsets = encoding.offsets
         for idx, (token, token_id) in enumerate(
                 zip(encoding.tokens, encoding.ids)):
-            dep = pos = ent = None
-            mr = mh = ml = ms = mrl = mi = ma = mf = uf = None
-            if self.want_context:
+            t = {'token_id': token_id, 'token': token, 'category': 'bpe',
+                 'role': 'bpe', 'entity_label': None, 'word': token}
+            if ann is None:
+                t.update(dict.fromkeys(ANNOTATED))
+            else:
                 start, end = offsets[idx]
-                dep = _first_annotated(deps, start, end)
-                pos = _first_annotated(poss, start, end)
-                ent = _first_annotated(ents, start, end)
-                mr = _first_annotated(mroot, start, end)
-                mh = _first_annotated(mhash, start, end)
-                ml = _first_annotated(mlemma, start, end)
-                ms = _first_annotated(mstruct, start, end)
-                mrl = _first_annotated(mrole, start, end)
-                mi = _first_annotated(minfl, start, end)
-                ma = _first_annotated(magr, start, end)
-                mf = _first_annotated(mfeat, start, end)
-                uf = _first_annotated(udf, start, end)
-                if dep is None:
+                for key in ANNOTATED:
+                    t[key] = _first_annotated(ann[key], start, end)
+                if t['dep'] is None:
                     self.align_fail += 1
                 else:
                     self.align_ok += 1
-            result.append({
-                'token_id': token_id,
-                'token': token,
-                'category': 'bpe',
-                'role': 'bpe',
-                'entity_label': ent,
-                'word': token,
-                'dep': dep,
-                'pos': pos,
-                'mroot': mr,
-                'mhash': mh,
-                'mlemma': ml,
-                'mstruct': ms,
-                'mrole': mrl,
-                'minfl': mi,
-                'magr': ma,
-                'mfeat': mf,
-                'udfeats': uf,
-            })
+            result.append(t)
         return result
 
     def encode_ids(self, text):
@@ -355,14 +286,6 @@ class BPEPipeline:
         """Fraction of BPE tokens successfully aligned to a spaCy token."""
         total = self.align_ok + self.align_fail
         return (self.align_ok / total) if total else None
-
-    def pretty_print(self, text):
-        units = self.encode(text)
-        print(f'Input: {text}')
-        print('  ' + ' | '.join(u['token'] for u in units))
-        if self.want_context:
-            print('  deps: ' + ' | '.join(str(u['dep'] or '-') for u in units))
-        print()
 
     def vocab_size_actual(self):
         return self.tokenizer.get_vocab_size()

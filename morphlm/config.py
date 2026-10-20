@@ -1,18 +1,15 @@
 """
 config.py — the single source of truth for every knob.
 
-Design rules (learned the hard way):
-  * ONE default per knob. The old codebase had max_steps defaulting to 2000,
-    40000 and 50000 in three different places, which is how a learning-rate
-    schedule confound stayed invisible for a whole calibration run.
-  * max_steps and lr_horizon are SEPARATE. In the old code a single field did
-    both jobs, so two cells run to different lengths had different learning
-    rates at the same step and were not comparable. Now the cosine schedule is
-    pinned by lr_horizon while max_steps only decides when to stop.
+Design rules (journey §16):
+  * ONE default per knob: max_steps once had three, which hid a learning-rate
+    confound for a whole calibration run.
+  * max_steps and lr_horizon are SEPARATE: the cosine schedule is pinned by
+    lr_horizon, max_steps only decides when to stop (bugs.md #4).
   * Every config is hashable. run_id = hash(config), so results never collide
     and every number is traceable to what produced it.
-  * data_key() hashes ONLY the fields that affect the token stream, so changing
-    lr or seed never invalidates a multi-hour spaCy cache.
+  * The cache keys (`surface_spec`, `FrozenConfig.spec`) hold ONLY what changes
+    the token stream, so lr or seed never invalidates a multi-hour spaCy cache.
 """
 
 from __future__ import annotations
@@ -49,57 +46,27 @@ class FrozenConfig:
     Which facts get frozen into the embedding.
 
     facts = () is the baseline control (T = 0, a plain trained embedding).
+    Fact names resolve through registry.FACT_BLOCKS; each block declares its
+    cardinality and whether it is static (a function of the token id) or
+    context-sourced (per position, which a static table cannot represent). A
+    block exists only if requested, so a dead dimension cannot recur (bugs.md #3).
 
-    Fact names are resolved through registry.FACT_BLOCKS. Each block declares
-    its own cardinality and whether it is sourced from the vocabulary (static,
-    a function of token id) or from per-position annotation (context-dependent,
-    a fact a static lookup table provably cannot represent).
-
-    Blocks only exist if requested, so the dead-dimension bug of the previous
-    design (12 of 23 columns constant) cannot recur by construction.
-
-    trainable selects between the two conditions the thesis compares:
-
-        False  factor table is a fixed identity matrix; the linguistic signal
-               is GUARANTEED and no gradient can reshape it. Thesis condition.
-        True   factor table is an nn.Embedding of identical shape; the model
-               may reshape the factor space. This is Factored Neural Language
-               Models (Alexandrescu & Kirchhoff, 2006), the direct ancestor of
-               this architecture and the baseline a reviewer will ask for.
-
-    Both occupy the same T dimensions and index the same codes, so the only
-    variable is whether the signal is fixed or negotiable.
-
-    scale exists because that claim was NOT initially true. A frozen one-hot
-    has L2 norm 1.0, while the trained 120-dim slice initialises at std 0.02
-    and so has norm ~0.22, and the positional embedding ~0.23. The frozen
-    factor therefore entered the residual stream ~4.6x louder than the entire
-    trained embedding, and pre-norm LayerNorm then squashed everything else. A
-    LEARNED table initialises at std 0.02 and is balanced by construction, and
-    can additionally adjust its own magnitude during training.
-
-    So a naive frozen-vs-learned comparison confounds TRAINABILITY with SCALE.
-    Setting scale to ~0.22 matches the frozen factor to the trained slice and
-    isolates trainability properly. Run both before drawing a conclusion.
-
-    shuffle_codes is the ABLATION CONTROL for context facts. It permutes the
-    per-position codes within each window, preserving their exact distribution
-    while destroying their alignment to the tokens. The frozen block keeps the
-    same width and the model keeps the same parameter count, so the ONLY thing
-    removed is the linguistic content.
-
-        dep beats baseline           -> could be information, could be an
-                                        artifact of having 8 frozen dims
-        shuffled dep beats baseline  -> it was the artifact
-        shuffled dep ~= baseline     -> the gain really is the linguistics
-
-    Without this control a positive Q2 result cannot distinguish 'guaranteed
-    linguistic facts help' from 'any fixed structured input helps'.
+    trainable   False: a fixed identity table, the GUARANTEED signal — the thesis
+                condition. True: an nn.Embedding of the same shape, the factored
+                LM baseline (Alexandrescu & Kirchhoff, 2006). Same T dims, same
+                codes: only fixed-or-negotiable differs (embedding.py).
+    scale       the frozen factor's magnitude: a one-hot entered the residual
+                stream ~4.6x louder than the trained slice, confounding
+                trainability with scale; ~0.22 matches them (bugs.md #13, §21.3).
+    shuffle_codes  the ABLATION CONTROL for context facts: codes permuted within
+                each window — same distribution, width and parameter count, the
+                alignment to the tokens gone. Separates "the linguistic content
+                helps" from "any fixed structured input helps" (journey §18).
     """
     facts: Tuple[str, ...] = ()
     dep_granularity: str = 'coarse'     # coarse | fine  (one-line switch)
     amplify: int = 1                    # Lever 2: tile the frozen block
-    shuffle_codes: bool = False         # ABLATION CONTROL — see below
+    shuffle_codes: bool = False         # ABLATION CONTROL — see above
     trainable: bool = False             # False = frozen (thesis condition)
                                         # True  = learned (2006 FNLM baseline)
     scale: float = 1.0                  # magnitude of the frozen factor
@@ -145,55 +112,25 @@ class FrozenConfig:
                 parts.append(name)
         return '+'.join(parts)
 
-    def morph_facts(self):
-        """Requested facts that need the morphological analyser."""
-        return tuple(f for f in self.facts if f in ('mroot', 'mstruct', 'mrole'))
-
 
 @dataclass(frozen=True)
 class SurfaceConfig:
     """
-    How the pipeline encodes content that is not morphological.
+    How the morpheme pipelines encode content that is not morphological: one
+    flag per information channel the audits measured (journey §17, "The six
+    channels"; bugs.md #9), so each one's cost can be ABLATED. Defaults are
+    all-on, i.e. information-preserving; all-off is the legacy stream.
 
-    Every field here corresponds to a measured information channel from the
-    audits (journey section 17). They are flags rather than hardcoded fixes so
-    each channel's contribution can be ABLATED and reported separately — the
-    audits told us the channels exist; ablation tells us what each one costs.
-
-    Defaults are all-on, i.e. information-preserving.
-
-      emit_punctuation / emit_digits
-          The old encode loop began `if not spacy_tok.is_alpha: continue`, so
-          the morpheme pipelines emitted NOTHING for punctuation, digits or
-          symbols. Measured at 5.32% of corpus bytes that BPE encodes and morph
-          did not, while BPB divided both by the same denominator. This was the
-          single largest bias and it was ASYMMETRIC between the two arms of Q1.
-
-      emit_inflection
-          MorphoLex stores lemmas, so `cat` and `cats` both mapped to [cat] —
-          a genuine collision. Measured cost 0.0440 BPB. Emitting explicit
-          inflectional morphemes removes the collision and is linguistically
-          more correct: section 3 already classifies inflection as morphology.
-
-      emit_case
-          _make_token lowercased every morpheme, so 'The' and 'the' produced
-          the same token. BPE preserves case, making this another ASYMMETRIC
-          loss. Restored with a marker token before capitalised words rather
-          than by doubling the vocabulary with capitalised variants.
-
-      emit_whitespace
-          Whitespace is 18.8% of corpus bytes and BOTH pipelines dropped it, so
-          it never biased Q1 — but it means neither BPB was a real compression
-          rate or comparable to any published figure. With this on (and BPE
-          retrained with a ByteLevel pre-tokenizer) both become genuinely
-          lossless.
-
-          NOTE the encoding schemes differ in EFFICIENCY: morph emits a
-          separate boundary token per word, while ByteLevel BPE folds the space
-          into the following token. Both encode the same information, so BPB is
-          fair, but morph pays more tokens for it. Run with emit_whitespace off
-          for the cleanest segmentation-only comparison, and on for the
-          literature-comparable compression rate. Two questions, one flag.
+      emit_punctuation / emit_digits   dropped by the old loop: 5.32% of corpus
+          bytes BPE encoded and morph did not, an ASYMMETRIC bias in Q1
+      emit_inflection   MorphoLex stores lemmas, so `cats` collided with `cat`
+          (0.0440 BPB); explicit inflection tokens remove the collision
+      emit_case         a <cap>/<upper> marker before a word, rather than
+          capitalised variants doubling the vocabulary
+      emit_whitespace   18.8% of bytes, dropped by BOTH pipelines: on, both
+          BPBs are true compression rates. Morph pays a token per gap where
+          ByteLevel BPE folds the space into the next token, so off is the
+          cleaner segmentation-only comparison
     """
     emit_punctuation: bool = True
     emit_digits: bool = True
@@ -266,6 +203,28 @@ class ExperimentConfig:
     def to_dict(self) -> dict:
         return asdict(self)
 
+    @classmethod
+    def from_dict(cls, d: dict) -> 'ExperimentConfig':
+        """
+        The config a recorded dict describes — a run's config.json, a checkpoint's
+        'config' — with all five sections. A field the dict lacks was added after
+        it was written and takes its default, which is what the run did before the
+        field existed. The one exception is `surface`: a dict without it predates
+        SurfaceConfig, and its stream was the legacy one, every channel off (the
+        all-off spec is the historical cache key). An unknown field raises.
+        """
+        surface = d.get('surface')
+        if surface is None:
+            surface = {f.name: False for f in fields(SurfaceConfig)}
+        frozen = dict(d.get('frozen') or {})
+        if 'facts' in frozen:
+            frozen['facts'] = tuple(frozen['facts'])
+        return cls(data=DataConfig(**(d.get('data') or {})),
+                   surface=SurfaceConfig(**surface),
+                   frozen=FrozenConfig(**frozen),
+                   model=ModelConfig(**(d.get('model') or {})),
+                   train=TrainConfig(**(d.get('train') or {})))
+
     def run_id(self) -> str:
         """Short stable hash of the WHOLE config. Results land in results/<run_id>/."""
         blob = json.dumps(self.to_dict(), sort_keys=True, default=str)
@@ -337,13 +296,10 @@ class ExperimentConfig:
         elif sfc.startswith('tok:'):
             tag = '_' + sfc[4:]
 
-        # NON-DEFAULT TRAINING HYPERPARAMETERS MUST APPEAR IN THE LABEL.
-        # export_results.py computes the seed-noise floor by grouping runs on
-        # their label. A learning-rate sweep leaves the label unchanged, so five
-        # different learning rates would be read as five seeds of one cell and
-        # would fabricate a noise floor several times the real one — silently
-        # weakening every effect in the project. Defaults produce no suffix, so
-        # existing labels are untouched.
+        # NON-DEFAULT TRAINING HYPERPARAMETERS MUST APPEAR IN THE LABEL: runs are
+        # grouped into cells by label, so an unlabelled lr sweep would be read
+        # as seeds of one cell and fabricate a noise floor. Defaults add
+        # nothing, so existing labels are untouched.
         tag = tag.split('|')[0]              # the corpus part is added cleanly below
         corpus = getattr(self.data, 'corpus', 'wikitext103')
         if corpus != 'wikitext103':
@@ -395,11 +351,26 @@ class ExperimentConfig:
         if len(set(self.frozen.facts)) != len(self.frozen.facts):
             raise ValueError(f'duplicate facts in {self.frozen.facts}')
         from .data.corpora import get_corpus
-        get_corpus(getattr(self.data, 'corpus', 'wikitext103'))    # unknown names fail here
-        for field, allowed in (('position', ('learned', 'rope')), ('norm', ('layernorm', 'rmsnorm')),
-                               ('mlp', ('gelu', 'swiglu'))):
-            if getattr(self.model, field) not in allowed:
-                raise ValueError(f'model.{field} must be one of {allowed}, not {getattr(self.model, field)!r}')
+        corpus = getattr(self.data, 'corpus', 'wikitext103')
+        get_corpus(corpus)                                          # unknown names fail here
+        if self.data.pipeline != 'bpe' and corpus != 'wikitext103':
+            # the morpheme segmenters are English (MorphoLEX), and their cache
+            # key carries no corpus: the stream would share the English files
+            raise ValueError(f'data.pipeline={self.data.pipeline!r} reads English only; '
+                             f'data.corpus={corpus!r} needs data.pipeline=bpe')
+        for section, field, allowed in (
+                ('model', 'position', ('learned', 'rope')), ('model', 'norm', ('layernorm', 'rmsnorm')),
+                ('model', 'mlp', ('gelu', 'swiglu')),
+                ('frozen', 'role', ('input', 'target')), ('frozen', 'inject', ('concat', 'add')),
+                ('frozen', 'struct_keep', ('all', 'morphology', 'names')),      # embedding.keep_struct
+                ('frozen', 'dep_granularity', ('coarse', 'fine'))):             # blocks.DependencyBlock
+            value = getattr(getattr(self, section), field)
+            if value not in allowed:
+                raise ValueError(f'{section}.{field} must be one of {allowed}, not {value!r}')
+        if self.frozen.struct_keep != 'all' and 'mstruct' not in self.frozen.facts:
+            # keep_struct acts on the mstruct block alone: without it the cell is
+            # the plain one under another label
+            raise ValueError(f'frozen.struct_keep={self.frozen.struct_keep!r} needs the mstruct fact')
         if self.model.d_model % self.model.n_heads:
             raise ValueError('d_model must be divisible by n_heads')
         if self.train.lr_horizon < self.train.max_steps:
@@ -421,21 +392,21 @@ class ExperimentConfig:
 
 # ── override plumbing ─────────────────────────────────────────────────────────
 
+_TRUE = ('1', 'true', 'yes', 'on')
+_FALSE = ('0', 'false', 'no', 'off')
+
+
 def _coerce(value: str, target_type):
-    """Turn a CLI string into the type the dataclass field expects."""
-    origin = getattr(target_type, '__origin__', None)
-    # Optional[X] -> X
-    if origin is not None and type(None) in getattr(target_type, '__args__', ()):
-        if value.lower() in ('none', 'null', ''):
-            return None
-        inner = [a for a in target_type.__args__ if a is not type(None)][0]
-        return _coerce(value, inner)
-    if origin is tuple or target_type is tuple or origin is Tuple:
-        if value.strip() == '':
-            return ()
+    """Turn a CLI string into the type the dataclass field expects (apply_overrides
+    resolves the field's type first: tuple, bool, int, float or str)."""
+    if target_type is tuple:
         return tuple(v.strip() for v in value.split(',') if v.strip())
     if target_type is bool:
-        return value.lower() in ('1', 'true', 'yes', 'on')
+        if value.lower() in _TRUE:
+            return True
+        if value.lower() in _FALSE:
+            return False
+        raise ValueError(f'{value!r} is not a boolean; use one of {_TRUE + _FALSE}')
     if target_type is int:
         return int(value)
     if target_type is float:

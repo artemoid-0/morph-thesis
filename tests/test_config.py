@@ -225,9 +225,9 @@ def test_export_pairs_each_cell_with_its_own_baseline():
     ]
     for r in runs:
         r['_config'] = {'data': {'pipeline': 'bpe', 'bpe_path': 'data/bpe_17k.json'}}
-    d = tempfile.mkdtemp()
-    ex.write_comparisons(runs, d)
-    text = open(os.path.join(d, 'comparisons.md')).read()
+    with tempfile.TemporaryDirectory() as d:
+        ex.write_comparisons(runs, d)
+        text = open(os.path.join(d, 'comparisons.md')).read()
     row = [l for l in text.splitlines() if l.startswith('| bpe_x-LEARN_bpe_17k ')][0]
     assert 'baseline `bpe_baseline_bpe_17k`' in text, 'must use the cell\'s own baseline'
     # paired: +0.0020 at both seeds; the unpaired mean difference would be +0.0053
@@ -323,6 +323,136 @@ def test_fit_check_measures_a_model():
         reg.pipeline_vocab = real
     assert parts['trainable_total'] > 0 and t_step > 0 and run_s >= 100 * t_step, (parts, t_step, run_s)
     print('  fit check measures a model OK')
+
+
+def _refused(overrides, expect=ValueError):
+    """True when the overrides, or the config they make, are refused."""
+    try:
+        apply_overrides(ExperimentConfig(), overrides).validate()
+    except expect:
+        return True
+    return False
+
+
+def test_morpheme_pipelines_are_english_only():
+    """
+    det and morph segment with MorphoLEX, and their cache key carries no corpus:
+    on another corpus they would read and write the English stream's files under
+    a Ukrainian label. Only BPE takes a corpus.
+    """
+    for pipe in ('det', 'morph'):
+        assert _refused([f'data.pipeline={pipe}', 'data.corpus=ukwiki']), pipe
+        assert not _refused([f'data.pipeline={pipe}'])
+    assert not _refused(['data.pipeline=bpe', 'data.corpus=ukwiki'])
+    print('  det/morph refuse a non-English corpus OK')
+
+
+def test_overrides_refuse_unknown_values():
+    """
+    A misspelt boolean used to become False (`=ture`), and a misspelt role,
+    injection, struct_keep or granularity went through: a role typo silently
+    joined the input cell. Each is refused now; the spellings in use still work.
+    """
+    def coerced(raw):
+        return apply_overrides(ExperimentConfig(), [f'frozen.trainable={raw}']).frozen.trainable
+    for raw, want in (('true', True), ('false', False), ('1', True), ('0', False), ('yes', True),
+                      ('no', False), ('on', True), ('off', False), ('True', True), ('FALSE', False)):
+        assert coerced(raw) is want, raw
+    for raw in ('ture', '', 'flase', '2'):
+        try:
+            coerced(raw)
+            raise AssertionError(f'{raw!r} must be refused')
+        except ValueError:
+            pass
+    for bad in (['frozen.role=targets'], ['frozen.inject=sum'], ['frozen.struct_keep=morph'],
+                ['frozen.dep_granularity=medium'],
+                ['frozen.struct_keep=names', 'frozen.facts=pos'],     # keep_struct acts on mstruct only
+                ['frozen.struct_keep=morphology']):
+        assert _refused(['data.pipeline=bpe'] + bad), bad
+    for good in (['frozen.role=target', 'frozen.facts=pos'], ['frozen.inject=add'],
+                 ['frozen.struct_keep=names', 'frozen.facts=mstruct'], ['frozen.dep_granularity=fine']):
+        assert not _refused(['data.pipeline=bpe'] + good), good
+    print('  unknown booleans and enumerated values refused OK')
+
+
+def _records():
+    """(run id, stored config, result label or None) for every results/<run id>/config.json."""
+    import json, glob
+    root = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'results')
+    out = []
+    for p in sorted(glob.glob(os.path.join(root, '*', 'config.json'))):
+        rid = os.path.basename(os.path.dirname(p))
+        label = None
+        rp = os.path.join(os.path.dirname(p), 'result.json')
+        if os.path.exists(rp):
+            label = json.load(open(rp)).get('label')
+        out.append((rid, json.load(open(p)), label))
+    return out
+
+
+def test_recorded_configs_rebuild():
+    """
+    The regression net for config identity. Every recorded config rebuilt by
+    `ExperimentConfig.from_dict` names its cell exactly as its record does, keeps
+    every stored value, and passes `validate()` — so no recorded run is refused
+    by a newer check. Its stored dict still hashes to its directory (the run id
+    rule is unchanged), and `run_id()` reproduces the directory for every config
+    that holds all of today's fields; one written before a field existed hashes
+    without it, so its rebuilt id differs, and that is history, not a fault.
+    """
+    import json, hashlib
+    from dataclasses import fields
+    recs = _records()
+    if not recs:
+        print('  (skipped: no results/*/config.json)')
+        return
+    current = {s: {f.name for f in fields(getattr(ExperimentConfig(), s))}
+               for s in ('data', 'surface', 'frozen', 'model', 'train')}
+    complete = reproduced = labelled = 0
+    for rid, d, label in recs:
+        cfg = ExperimentConfig.from_dict(d)
+        if label is not None:
+            assert cfg.label() == label, (rid, label, cfg.label())
+            labelled += 1
+        back = json.loads(json.dumps(cfg.to_dict(), default=str))
+        for section, values in d.items():
+            for k, v in values.items():
+                assert back[section][k] == v, (rid, section, k)
+        cfg.validate()
+        stored = hashlib.md5(json.dumps(d, sort_keys=True, default=str).encode()).hexdigest()[:12]
+        assert stored == rid, (rid, stored)
+        if all(set(d.get(s, {})) == names for s, names in current.items()):
+            complete += 1
+            assert cfg.run_id() == rid, rid
+        reproduced += cfg.run_id() == rid
+    assert reproduced == complete, (reproduced, complete)
+    print(f'  {len(recs)} recorded configs rebuild: {labelled} labels match their records, '
+          f'all validate; run_id() reproduces {reproduced} directories (every config holding '
+          f'all of today\'s fields; the other {len(recs) - reproduced} predate a field) OK')
+
+
+def test_from_dict_reads_old_and_new_dicts():
+    """
+    A dict without `surface` predates SurfaceConfig: its stream was the legacy
+    one, every channel off (results.md: 7b28f2074be6 is that cell). Fields added
+    since take their defaults; an unknown field is refused.
+    """
+    cfg = apply_overrides(ExperimentConfig(), ['data.pipeline=det', 'surface.emit_whitespace=false',
+                                               'frozen.facts=dep,pos', 'model.position=rope'])
+    assert ExperimentConfig.from_dict(cfg.to_dict()) == cfg
+    assert ExperimentConfig.from_dict(cfg.to_dict()).label() == 'det_dep+pos_Spdi-c_rope'
+    old = cfg.to_dict()
+    del old['surface']
+    del old['model']['position']
+    legacy = ExperimentConfig.from_dict(old)
+    assert legacy.surface.spec() == '' and legacy.label() == 'det_dep+pos'
+    assert legacy.model.position == 'learned'
+    try:
+        ExperimentConfig.from_dict({**cfg.to_dict(), 'train': {'seed': 0, 'no_such_field': 1}})
+        raise AssertionError('an unknown field must be refused')
+    except TypeError:
+        pass
+    print('  from_dict: legacy surface, defaults for new fields, unknown fields refused OK')
 
 
 if __name__ == '__main__':

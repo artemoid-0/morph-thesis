@@ -1,18 +1,17 @@
 """
 morpheme.py — Pipeline 2: morpheme-based with Morfessor fallback.
 
-Identical to the deterministic pipeline except for the last resort: instead of
-falling straight to characters, Morfessor segments the word and ONLY known
-affixes are accepted. Root-position guesses are never trusted, which is what
-stops biden -> bi[prefix] + den[root] (journey section 8).
+The deterministic pipeline with another last resort: instead of falling
+straight to characters, Morfessor segments the word and ONLY known affixes are
+accepted — a segment in root position falls to characters (journey §8).
+
+`biden` is still bi[prefix] + den[root], by prefix stripping, before any last
+resort: a wrong parse kept deliberately (journey §8).
 """
 
 from __future__ import annotations
 
-from .base import BasePreprocessor
-from ..vocab.morpholex import (
-    build_morpholex_lookup, extract_morpheme_sets, compound_split,
-)
+from .deterministic import DeterministicPipeline
 
 VOWELS = set('aeiou')
 CONS = set('bcdfghjklmnpqrstvwxyz')
@@ -68,59 +67,25 @@ def _morfessor_segment(word, model, known_prefixes, known_suffixes):
     return result
 
 
-class MorphemePipeline(BasePreprocessor):
+class MorphemePipeline(DeterministicPipeline):
 
     def __init__(self, vocab_df, morpholex_path, morfessor_seed_words=None,
-                 spacy_model='en_core_web_sm', stamp='all',
-                 surface=None, verbose=True):
-        super().__init__(vocab_df, morpholex_path, spacy_model,
-                         stamp=stamp, surface=surface, verbose=verbose)
-        if verbose:
-            print('  Loading MorphoLex...')
-        self.morpholex = build_morpholex_lookup(morpholex_path)
-        if verbose:
-            print(f'  {len(self.morpholex)} words loaded')
+                 spacy_model='en_core_web_sm', surface=None, verbose=True):
+        self._seed_words = morfessor_seed_words
+        super().__init__(vocab_df, morpholex_path, spacy_model=spacy_model,
+                         surface=surface, verbose=verbose)
 
-        _, prefixes, suffixes = extract_morpheme_sets(morpholex_path)
-        self.known_prefixes = prefixes
-        self.known_suffixes = suffixes
-        self._sorted_prefixes = sorted(prefixes, key=len, reverse=True)
-
+    def _prepare_fallback(self, verbose):
+        """Train Morfessor on MorphoLex's first 3,000 words (or the seed words given)."""
         import morfessor
-        seed = morfessor_seed_words or list(self.morpholex.keys())[:3000]
+        seed = self._seed_words or list(self.morpholex.keys())[:3000]
         if verbose:
             print('  Training Morfessor...')
         model = morfessor.BaselineModel()
         model.load_data([(1, w) for w in seed])
         model.train_batch()
         self.morfessor = model
-        if verbose:
-            print('  Ready.')
 
-    def _prefix_strip(self, word):
-        for prefix in self._sorted_prefixes:
-            if word.startswith(prefix) and len(word) > len(prefix) + 2:
-                remainder = word[len(prefix):]
-                if remainder in self.morpholex:
-                    entry = self.morpholex[remainder]
-                    return ([(prefix, 'prefix')]
-                            + list(zip(entry['morphemes'], entry['roles'])))
-        return None
-
-    def _segment_word(self, word):
-        w = word.lower()
-        if w in self.entity_tokens:
-            return [(w, 'entity')]
-        if w in self.function_words:
-            return [(w, 'root')]
-        if w in self.morpholex:
-            e = self.morpholex[w]
-            return list(zip(e['morphemes'], e['roles']))
-        stripped = self._prefix_strip(w)
-        if stripped:
-            return stripped
-        compound = compound_split(w, self.morpholex, self.function_words)
-        if compound:
-            return compound
+    def _fallback(self, w):
         return _morfessor_segment(w, self.morfessor,
                                   self.known_prefixes, self.known_suffixes)

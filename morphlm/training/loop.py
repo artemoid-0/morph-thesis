@@ -1,26 +1,10 @@
 """
 loop.py — train one cell.
 
-TWO CORRECTNESS FIXES OVER THE PREVIOUS VERSION
------------------------------------------------
-1. SEEDING. There was none anywhere. Runs were not reproducible, and — worse —
-   the expected effect size for the freezing comparison is small, so a single
-   unseeded run per cell cannot distinguish a real 1-3% difference from
-   initialization noise. Seeding is step one; multiple seeds per cell is the
-   actual answer for effect-size confidence, and `train.seed` makes that a
-   one-flag sweep.
-
-   Note that seeding every cell identically does NOT give matched
-   initialization across cells: different vocabulary sizes draw different
-   numbers of random values. Same seed buys reproducibility, not variance
-   control.
-
-2. LR HORIZON. The cosine schedule used to be parameterized by max_steps, so
-   two cells run to different lengths had different learning rates at the same
-   step and were not comparable — the 40k calibration run and a 50k matrix cell
-   were silently different experiments. Now the schedule is pinned by
-   lr_horizon while max_steps only decides when to stop, so cells of different
-   length remain comparable by construction.
+Seeded (`train.seed`), with the cosine schedule pinned by `lr_horizon` while
+`max_steps` only decides when to stop (bugs.md #4-#5, journey §16). The same
+seed buys reproducibility, not matched initialization: vocabularies of
+different sizes draw different numbers of random values.
 
 Reported result is always BEST-val, never last-val: WikiText-103 is a
 documented overfitter, and the minimum must not be contaminated by what happens
@@ -82,10 +66,10 @@ def evaluate(model, loader, val_ds, device):
 
 def train_cell(cfg, verbose=True):
     """
-    Train one experiment cell. Returns (model, log, best).
+    Train one experiment cell. Returns (model, log, best, meta).
 
     `best` is the eval dict at minimum validation loss — the number reported
-    for this cell.
+    for this cell; `meta` is the run's provenance, for result.json.
     """
     cfg.validate()
     set_seed(cfg.train.seed)
@@ -241,13 +225,9 @@ def train_cell(cfg, verbose=True):
               f'({prog.rate(step):.1f} steps/s)')
 
     # ── provenance: everything a thesis table will need, captured NOW ─────────
-    #
-    # Wrapped defensively AS A WHOLE. Provenance is valuable but it is not the
-    # result: a metadata bug must never cost an hour of GPU time. An earlier
-    # version had an ImportError in frozen_detail that would have crashed here,
-    # after 50,000 steps, at save time. Each field is captured independently so
-    # one failure does not take the others with it, and failures are RECORDED
-    # in the output rather than swallowed.
+    # Provenance is not the result, so a metadata bug must never cost the run
+    # (an ImportError here once would have, after 50,000 steps: test_config).
+    # Each field is captured on its own, and a failure is RECORDED, not swallowed.
     meta = {}
     from ..provenance import (environment, parameter_breakdown, frozen_detail,
                               data_stats, convergence, tokenizer_record)

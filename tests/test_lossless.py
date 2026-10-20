@@ -336,6 +336,22 @@ def test_tokenizer_names_and_ending_exposure():
     print('  tokenizer names and the ending-exposure measure OK')
 
 
+def test_morpholex_leaves_warnings_alone():
+    """
+    Importing the MorphoLEX reader once silenced every warning in the process
+    (`warnings.filterwarnings('ignore')` at import). Only the workbook read is
+    silenced now; the process's filters are untouched.
+    """
+    import warnings
+    import importlib
+    before = list(warnings.filters)
+    import morphlm.vocab.morpholex as M
+    importlib.reload(M)
+    assert warnings.filters == before, 'importing morpholex changed the warning filters'
+    assert not any(f[0] == 'ignore' and f[1] is None and f[2] is Warning for f in warnings.filters)
+    print('  MorphoLEX reader leaves the warning filters alone OK')
+
+
 if __name__ == '__main__':
     # Every test_ function defined in this file, in order: a test cannot be
     # written and then left out of a hand-kept list (journey §33.45).

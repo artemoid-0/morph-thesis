@@ -1,36 +1,16 @@
 """
 inflection.py — explicit inflectional morphemes.
 
-THE PROBLEM THIS SOLVES
------------------------
 MorphoLex stores lemmas, so the morpheme pipelines mapped `cat` and `cats` to
-the same token sequence [cat]. Two different texts, one stream: information
-provably destroyed. `collision_audit.py` measured the cost at 0.0440 BPB, with
-2,064 colliding groups covering 28.5% of word occurrences — almost all of them
-inflectional paradigms:
+the same tokens: a collision the audit measured at 0.0440 BPB, almost entirely
+inflectional paradigms (journey §17, "Audit 2 — collisions"). Emitting the
+inflection as its own token removes it, and is linguistically right: inflectional
+morphemes are morphemes (journey §3). spaCy computes `token.morph` on every
+parse anyway, so reading it costs nothing.
 
-    {include:40, included:88, includes:18, including:140}
-    {year:120, years:108}
-    {make:49, made:123, makes:8, making:23}
-
-Emitting the inflection as its own token removes the collision. It is also
-LINGUISTICALLY MORE CORRECT, not a workaround: journey section 3 already
-classifies inflectional morphemes as morphemes. The pipeline never emitted them
-only because its source database is derivational.
-
-FREE RIDE
----------
-spacy.load() enables the tagger and attribute_ruler by default, so
-`token.morph` (Number=Plur, Tense=Past, ...) is already computed on every parse
-the pipeline performs. Reading it costs nothing extra.
-
-REDUNDANCY GUARD
-----------------
-Some MorphoLex analyses already carry the inflection as a suffix — journey
-section 8 records `happiest -> happy + est`. Emitting <SUP> on top would waste
-a token, which unfairly inflates morph's token count. `_already_marked` skips
-the inflection token when the final morpheme is exactly the expected surface
-suffix.
+Some MorphoLex analyses already end in the inflection's surface suffix
+(`happiest` -> happy + est); `already_marked` then skips the token, which would
+only inflate morph's token count.
 """
 
 from __future__ import annotations
@@ -134,8 +114,8 @@ def already_marked(infl, morphemes):
     return last in _EXPECTED_SUFFIX.get(infl, ())
 
 
-#: Trailing differences that a single inflection marker can explain.
-#: Longest first so 'ing' is tried before 'g', 'est' before 'es'/'s'.
+#: Trailing differences that a single inflection marker can explain. Each is
+#: compared with the whole trailing difference, so their order does not matter.
 _RESIDUE_SUFFIXES = (
     ("'s", '<poss>'),
     ('ing', '<prog>'),
@@ -152,23 +132,13 @@ _RESIDUE_SUFFIXES = (
 
 def residue_marker(concat, surface):
     """
-    Explain a TRAILING difference between the morphemes and the surface.
-
-    Needed because spaCy's POS tags hide real inflection:
-
-        gaming    tagged NOUN  -> no Tense feature at all
-        seasoned  tagged ADJ   -> no Tense feature at all
-        news      root 'new'   -> no feature could ever see this
-
-    All three collided with their base form in the audit. Deriving the marker
-    from the surface STRING instead of from features is deterministic, so
-    distinct surfaces get distinct markers and injectivity is guaranteed.
-
-    Only TRAILING differences are marked. Internal orthographic variation
-    (beauty+ful -> "beautyful" vs "beautiful") is deliberately left alone: it
-    does not collide with anything, so it needs no repair, and marking it would
-    cost a token for no information gain. That distinction is the whole reason
-    the collision audit supersedes the reconstruction audit.
+    Explain a TRAILING difference between the morphemes and the surface — the
+    inflection spaCy's tags hide: `gaming` (NOUN), `seasoned` (ADJ), `news`
+    (root `new`), each of which collided with its base form (journey §17).
+    Read from the surface string, so distinct surfaces get distinct markers.
+    Internal orthographic variation (beauty+ful -> "beautiful") is left alone:
+    it collides with nothing, and marking it would cost a token for no
+    information.
     """
     if not concat or not surface or surface == concat:
         return None

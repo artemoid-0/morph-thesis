@@ -1,5 +1,5 @@
 """
-morphlm — Context-Aware Embeddings for Tokenizer-Free Language Models.
+morphlm — Context-Aware Morphological Embeddings for Language Models.
 
 Layout (grouped by rate of change):
     config.py      dataclass tree — one default per knob

@@ -1,5 +1,5 @@
 """
-build.py — the six-layer vocabulary.
+build.py — the morpheme pipelines' vocabulary, in twelve layers.
 
 Layer 1  prefixes    MorphoLex, no frequency threshold
 Layer 2  suffixes    MorphoLex, no frequency threshold
@@ -10,10 +10,11 @@ Layer 5  entities    SPLIT threshold: multi-word (contains '_') freq>=3,
                      common-word misclassifications, which is a structural
                      observation rather than a heuristic (journey section 6).
 Layer 6  characters  a-z, never deduplicated, guarantees 100% coverage
+Layers 7-12          punctuation, digits, inflection, whitespace, case, bytes:
+                     the information-preserving layers (journey §17), below
 
-Change from the previous version: `entity_label` is carried through to the
-vocabulary CSV when the entity source provides it, so the 'etype' fact block
-has real content. Non-entity rows get 'none'.
+Entity rows carry spaCy's `entity_label` where the entity source has it, so
+the `etype` block has content; every other row gets 'none'.
 """
 
 from __future__ import annotations
@@ -25,21 +26,16 @@ from .morpholex import (
 )
 from ..features.inflection import INFLECTION_TOKENS
 
-#: Layer 7 — ASCII punctuation and symbols. Previously dropped entirely, which
-#: the coverage audit measured at 15,207 of 422,168 validation bytes (3.6%)
-#: that BPE encoded and the morpheme pipelines did not.
+#: Layer 7 — ASCII punctuation and symbols, and Layer 8 — digits, one per
+#: character so arbitrary numbers work: once dropped, 15,207 and 8,098 of
+#: 422,168 validation bytes (results.md §4.3).
 PUNCTUATION = tuple('!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~')
 
-#: Layer 8 — digits, emitted one per character so arbitrary numbers work.
-#: Measured at a further 8,098 bytes (1.9%) previously dropped.
 DIGITS = tuple('0123456789')
 
-#: Layer 12 — UTF-8 byte fallback. Any character absent from every other layer
-#: is emitted as its raw bytes, which makes the encoding total: no input can
-#: reach UNK, so no two distinct inputs can collide there. The collision audit
-#: found en-dash, em-dash, degree and pound signs all mapping to UNK together
-#: (645 occurrences, ~60% of the residual correction). ASCII-only punctuation
-#: was always going to be whack-a-mole; this closes the class.
+#: Layer 12 — UTF-8 byte fallback: any character absent from every other layer
+#: is emitted as its bytes, so no input reaches UNK, where en-dash, em-dash,
+#: degree and pound once collided (bugs.md #10, journey §17).
 BYTE_FALLBACK = tuple(f'<b{i:02x}>' for i in range(256))
 
 #: Layer 11 — case markers. Restores capitalisation without doubling the
@@ -47,9 +43,8 @@ BYTE_FALLBACK = tuple(f'<b{i:02x}>' for i in range(256))
 #: which would badly worsen the parameter asymmetry against BPE).
 CASE_MARKERS = ('<cap>', '<upper>')
 
-#: Layer 10 — whitespace. Dropped by BOTH pipelines before, so never a Q1 bias,
-#: but 18.8% of corpus bytes, which is why neither BPB was a true compression
-#: rate. <sp> is a single space; runs emit repeated tokens.
+#: Layer 10 — whitespace, 18.8% of corpus bytes (journey §17). <sp> is a single
+#: space; runs emit repeated tokens.
 WHITESPACE = ('<sp>', '<nl>', '<tab>')
 
 
@@ -162,13 +157,3 @@ def load_vocab(path):
     else:
         df['entity_label'] = df['entity_label'].replace('', 'none')
     return df
-
-
-def has_entity_labels(vocab_df) -> bool:
-    """True if any entity row carries a real (non-'none') label."""
-    if 'entity_label' not in vocab_df.columns:
-        return False
-    ent = vocab_df[vocab_df['category'] == 'entity']
-    if ent.empty:
-        return False
-    return bool((ent['entity_label'].fillna('none') != 'none').any())

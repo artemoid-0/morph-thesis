@@ -7,18 +7,9 @@ Concatenate-and-chop over the cached stream; document boundaries ignored
 Each item is (input_ids, target_ids, codes) where codes is
 [n_context_facts, seq_len] or an empty tensor when no context facts are used.
 
-ARCHITECTURAL NOTE
-------------------
-Journey section 12 decided "the dataset emits integer IDs only; the model owns
-the embedding" — the reasoning being that the embedding's trained part carries
-gradients, and backpropagating into the dataloader would be wrong.
-
-That reasoning does not extend to frozen metadata. Frozen facts have NO
-gradients — that is their defining property. So the dataset can emit small
-integer codes alongside the ids with no gradient problem at all, and the
-principle is preserved: this remains a pure int-in/int-out machine. The earlier
-design mistook the rule for a constraint and, in doing so, lost the ability to
-express context-dependent facts.
+The model owns the embedding and the dataset emits integers only (journey §12):
+the embedding's trained part has gradients. The codes are integers too, with no
+gradients, so the dataset still stays a pure int-in/int-out machine.
 """
 
 from __future__ import annotations

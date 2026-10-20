@@ -73,7 +73,8 @@ PROBES = ('книгами', 'книга', 'книзі', 'важливих', 'з�
           'людей', 'дітьми', 'одновірці', 'поїздці', 'батькова', 'імені', 'знищити', 'краю')
 
 
-def _lcp(a, b):
+def common_prefix(a: str, b: str) -> int:
+    """How many leading characters two strings share."""
     n = 0
     for x, y in zip(a, b):
         if x != y:
@@ -102,7 +103,7 @@ class EndingRule:
             if lemma.endswith(e) and len(lemma) - len(e) >= MIN_STEM:
                 stem = lemma[:-len(e)]
                 break
-        k = _lcp(key, stem)
+        k = common_prefix(key, stem)
         if k < MIN_STEM or not (1 <= len(key) - k <= MAX_END):
             return 0
         if not (key[k - 1].isalpha() and key[k].isalpha()):
@@ -196,9 +197,6 @@ class EndingTokenizer:
         where = [p + i for i, p in enumerate(cuts)]            # the marks' indices in `marked`
         back = lambda o: o - bisect.bisect_left(where, o)
         return Encoding(list(enc.ids), list(enc.tokens), [(back(a), back(b)) for a, b in enc.offsets])
-
-    def encode_batch(self, texts):
-        return [self.encode(t) for t in texts]
 
     def decode(self, ids, **kw):
         return self.inner.decode(ids, **kw)
@@ -296,7 +294,7 @@ class EnglishEndingRule:
         if k is None:
             cuts = set()
             for lemma in self.readings(key):
-                c = _lcp(key, lemma) if lemma != key else 0
+                c = common_prefix(key, lemma) if lemma != key else 0
                 cuts.add(c if c >= MIN_STEM and 1 <= len(key) - c <= MAX_END else 0)
             k = cuts.pop() if len(cuts) == 1 else 0
             self._cache[key] = k

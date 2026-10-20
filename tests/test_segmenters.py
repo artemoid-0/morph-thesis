@@ -1,0 +1,398 @@
+"""
+Segmentation goldens: the deterministic and the morpheme pipelines' segmentation of
+318 words, recorded from the code as it stood before the two segmenters were merged
+(the morpheme pipeline became the deterministic one with Morfessor as its last resort).
+
+The words come from WikiText-103's validation text and cover every branch of the
+segmenter: named entities, function words, MorphoLEX words, prefix stripping,
+compound splitting, and the last resort — characters for `det`, Morfessor for
+`morph`. Morfessor trains with Python's `random`, so the morpheme pipeline is built
+after `random.seed(0)`, as a training run builds it after seeding. A changed
+segmentation changes the token stream of every morph and det run, and the cached
+streams they were trained on.
+
+Encoding: `un-` a prefix, `-ness` a suffix, `happy` a root, `@london` an entity,
+`a.` a character; the second string is the morpheme pipeline's where it differs.
+"""
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+VOCAB = os.path.join(ROOT, 'data', 'our_final_vocab.csv')
+MORPHOLEX = os.path.join(ROOT, 'data', 'MorphoLEX_en.xlsx')
+
+GOLDEN = {
+    'Sydney': ('@sydney', None),
+    'James': ('@james', None),
+    'Buddhist': ('@buddhist', None),
+    'Egyptian': ('@egyptian', None),
+    'Poland': ('@poland', None),
+    'Slayer': ('@slayer', None),
+    'India': ('@india', None),
+    'German': ('@german', None),
+    'America': ('@america', None),
+    'Jupiter': ('@jupiter', None),
+    'Carter': ('@carter', None),
+    'Africa': ('@africa', None),
+    'Smith': ('@smith', None),
+    'Indian': ('@indian', None),
+    'Norway': ('@norway', None),
+    'Wheeler': ('@wheeler', None),
+    'Germans': ('@germans', None),
+    'Spain': ('@spain', None),
+    'Italy': ('@italy', None),
+    'Belfast': ('@belfast', None),
+    'Belgium': ('@belgium', None),
+    'Mediterranean': ('@mediterranean', None),
+    'French': ('@french', None),
+    'Europe': ('@europe', None),
+    'Oxford': ('@oxford', None),
+    'Watson': ('@watson', None),
+    'Corey': ('@corey', None),
+    'Montreal': ('@montreal', None),
+    'Jewish': ('@jewish', None),
+    'Allied': ('@allied', None),
+    'just': ('just', None),
+    'than': ('than', None),
+    'We': ('we', None),
+    'The': ('the', None),
+    'My': ('my', None),
+    'most': ('most', None),
+    'During': ('during', None),
+    'while': ('while', None),
+    'about': ('about', None),
+    'other': ('other', None),
+    'Any': ('any', None),
+    'neither': ('neither', None),
+    'although': ('although', None),
+    'AN': ('an', None),
+    'to': ('to', None),
+    'With': ('with', None),
+    'Up': ('up', None),
+    'for': ('for', None),
+    'my': ('my', None),
+    'this': ('this', None),
+    'would': ('would', None),
+    'it': ('it', None),
+    'Though': ('though', None),
+    'up': ('up', None),
+    'So': ('so', None),
+    'musicians': ('music -ian', None),
+    'Indeed': ('indeed', None),
+    'platforms': ('platform', None),
+    'reconciliation': ('re- concile -ion', None),
+    'Marshall': ('marshall', None),
+    'girl': ('girl', None),
+    'filming': ('film', None),
+    'Edward': ('edward', None),
+    'Working': ('work', None),
+    'scholar': ('school -ar', None),
+    'Tag': ('tag', None),
+    'cried': ('cry', None),
+    'Congratulations': ('congratulate -ion', None),
+    'visitors': ('visit -or', None),
+    'communism': ('commune -ism', None),
+    'briefing': ('brief', None),
+    'member': ('member', None),
+    'acid': ('acid', None),
+    'Cigars': ('cigar', None),
+    'meeting': ('meet', None),
+    'skirted': ('skirt', None),
+    'remodeling': ('re- model', None),
+    'wishes': ('wish', None),
+    'aboard': ('aboard', None),
+    'decreased': ('de- crease', None),
+    'varieties': ('vary -ity', None),
+    'rigging': ('rigg', None),
+    'rebuilding': ('re- build', None),
+    'agreeing': ('agree', None),
+    'Immigrant': ('in- migr -ant', None),
+    'canals': ('canal', None),
+    'Beer': ('beer', None),
+    'impact': ('impact', None),
+    'directors': ('direct -or', None),
+    'portray': ('portray', None),
+    'Phil': ('philo', None),
+    'surgical': ('surg -ic -al', None),
+    'taking': ('take', None),
+    'merge': ('merge', None),
+    'lived': ('live', None),
+    'appreciable': ('a- preci -able', None),
+    'houses': ('house', None),
+    'Dolphin': ('dolphin', None),
+    'grounds': ('ground', None),
+    'blamed': ('blame', None),
+    'Sampson': ('samp sono', None),
+    'class': ('class', None),
+    'gather': ('gather', None),
+    'years': ('year', None),
+    'Heavy': ('heavy', None),
+    'car': ('car', None),
+    'orthography': ('ortho graph -y', None),
+    'Paula': ('paula', None),
+    'boat': ('boat', None),
+    'related': ('relate', None),
+    'tun': ('tun', None),
+    'tattle': ('tattle', None),
+    'loud': ('loud', None),
+    'chambers': ('chamber', None),
+    'Sharp': ('sharp', None),
+    'ambition': ('ambit -ion', None),
+    'sacrifice': ('sacro -fice', None),
+    'narrows': ('narrow', None),
+    'curlew': ('curlew', None),
+    'affinities': ('affinity', None),
+    'usual': ('usual', None),
+    'screenings': ('screen', None),
+    'Concerts': ('concert', None),
+    'cause': ('cause', None),
+    'Claus': ('claus', None),
+    'redesignated': ('re- design -ate', None),
+    'republished': ('re- publish', None),
+    'anticlimactic': ('anti- climactic', None),
+    'uptempo': ('up- tempo', None),
+    'subtext': ('sub- text', None),
+    'megabit': ('mega- bit', None),
+    'Halfmoon': ('half- moon', None),
+    'subunit': ('sub- un -it', None),
+    'uncelebrated': ('un- celebr -ate', None),
+    'pentacyclic': ('penta- cycle -ic', None),
+    'Dumars': ('du- mars', None),
+    'inkings': ('in- king', None),
+    'overdubbed': ('over- dub', None),
+    'USAC': ('u- sac', None),
+    'mistreatment': ('mis- treat -ment', None),
+    'Multinational': ('multi- nation -al', None),
+    'rediscovered': ('re- discover', None),
+    'Seago': ('se- ago', None),
+    'Purdue': ('pur- due', None),
+    'concurrency': ('con- currency', None),
+    'Online': ('on- line', None),
+    'Deakin': ('de- akin', None),
+    'Alena': ('a- lena', None),
+    'conformer': ('con- former', None),
+    'unrestored': ('un- restore', None),
+    'Eline': ('e- line', None),
+    'SoCal': ('so- cal', None),
+    'Unforced': ('un- force', None),
+    'Reinventing': ('re- in- vent', None),
+    'Overview': ('over- view', None),
+    'Internet': ('inter- net', None),
+    'Omar': ('o- mar', None),
+    'reorganised': ('re- organ -ize', None),
+    'bicyclic': ('bi- cycle -ic', None),
+    'tricolors': ('tri- color', None),
+    'reassembly': ('re- a- semble -y', None),
+    'Megamind': ('mega- mind', None),
+    'Midtown': ('mid- town', None),
+    'Mackinder': ('mac- kind -er', None),
+    'multimedia': ('multi- media', None),
+    'overstabilize': ('over- stable -ize', None),
+    'Ajaw': ('a- jaw', None),
+    'onboard': ('on- board', None),
+    'Dunham': ('dun- ham', None),
+    'rerelease': ('re- release', None),
+    'superpowers': ('super- power', None),
+    'renumbering': ('re- number', None),
+    'restart': ('re- start', None),
+    'conrotatory': ('con- rotate -ory', None),
+    'Supermarine': ('super- marine', None),
+    'Caleta': ('cal eta', None),
+    'Ballcourt': ('ball court', None),
+    'TenMatt': ('ten matt', None),
+    'ComingSoon': ('come soon', None),
+    'treeline': ('tree line', None),
+    'GameTap': ('game tap', None),
+    'Christchurch': ('christ church', None),
+    'Bellecourt': ('belle court', None),
+    'Fortuna': ('for tuna', None),
+    'cation': ('cat ion', None),
+    'greenways': ('green way', None),
+    'Heatherwick': ('heather wick', None),
+    'Caulfield': ('caul field', None),
+    'roofcomb': ('roof comb', None),
+    'groomsmen': ('groom men', None),
+    'producerStuart': ('pro- duct -er stuart', None),
+    'bloodletting': ('blood let', None),
+    'taoban': ('tao ban', None),
+    'Stepford': ('step ford', None),
+    'paratroop': ('para troop', None),
+    'redshirt': ('red shirt', None),
+    'coursework': ('course work', None),
+    'Pusan': ('pus an', None),
+    'Hubbard': ('hub bard', None),
+    'chinlocks': ('china lock', None),
+    'Maryang': ('mar yang', None),
+    'Wadsworth': ('wad worth', None),
+    'Ironwood': ('iron wood', None),
+    'endzone': ('end zone', None),
+    'Justus': ('just us', None),
+    'Stowmarket': ('stow market', None),
+    'ranching': ('ran ching', None),
+    'showrunner': ('show run -er', None),
+    'TenJosh': ('ten josh', None),
+    'swamplands': ('swamp land', None),
+    'Dunedin': ('dune din', None),
+    'Elmwood': ('elm wood', None),
+    'Beatles': ('beat les', None),
+    'tailwinded': ('tail wind', None),
+    'Northwood': ('north wood', None),
+    'Lofton': ('loft on', None),
+    'Swansea': ('swan sea', None),
+    'StokerNew': ('stoke -er new', None),
+    'Paramore': ('para more', None),
+    'Goldstein': ('gold stein', None),
+    'MeridianJohn': ('meridian john', None),
+    'mudslides': ('mud slide', None),
+    'Newhart': ('new hart', None),
+    'Carlton': ('carl ton', None),
+    'Yorkshiremen': ('yorkshire men', None),
+    'Stambaugh': ('s. t. a. m. b. a. u. g. h.', None),
+    'Yazathingyan': ('y. a. z. a. t. h. i. n. g. y. a. n.', 'y. a. z. a. -th i. n. g. y. a. n.'),
+    'Dabao': ('d. a. b. a. o.', None),
+    'granitic': ('g. r. a. n. i. t. i. c.', 'g. r. -an i. t. i. c.'),
+    'honoree': ('h. o. n. o. r. e. e.', 'h. o. n. -or e. e.'),
+    'Bouhy': ('b. o. u. h. y.', None),
+    'Lambaness': ('l. a. m. b. a. n. e. s. s.', 'l. a. m. b. -an -es s.'),
+    'Aubrey': ('a. u. b. r. e. y.', None),
+    'Arqueolog': ('a. r. q. u. e. o. l. o. g.', None),
+    'mete': ('m. e. t. e.', None),
+    'Cousy': ('c. o. u. s. y.', 'co- u. s. y.'),
+    'Rhodie': ('r. h. o. d. i. e.', 'r. h. o. d. -ie'),
+    'Tsunaakira': ('t. s. u. n. a. a. k. i. r. a.', None),
+    'Fremont': ('f. r. e. m. o. n. t.', 'f. r. e. m. -on t.'),
+    'Sanhican': ('s. a. n. h. i. c. a. n.', 's. a. n. h. i. c. -an'),
+    'Lonergan': ('l. o. n. e. r. g. a. n.', 'l. -on -er g. a. n.'),
+    'Pontian': ('p. o. n. t. i. a. n.', 'p. -on t. y. -an'),
+    'Suffolk': ('s. u. f. f. o. l. k.', 'su- f. f. o. l. k.'),
+    'popularised': ('p. o. p. u. l. a. r. i. s. e. d.', 'p. o. p. u. l. a. r. i. s. e. e. d.'),
+    'BCOF': ('b. c. o. f.', None),
+    'Kakashi': ('k. a. k. a. s. h. i.', 'k. a. k. -as h. i.'),
+    'globalization': ('g. l. o. b. a. l. i. z. a. t. i. o. n.', 'g. l. o. b. a. l. i. z. a. t. e. -ion'),
+    'RNLI': ('r. n. l. i.', None),
+    'barbettes': ('b. a. r. b. e. t. t. e. s.', None),
+    'mycelium': ('m. y. c. e. l. i. u. m.', 'm. y. c. e. l. y. -um'),
+    'Heinemann': ('h. e. i. n. e. m. a. n. n.', 'h. e. y. n. e. m. a. n. n.'),
+    'Macau': ('m. a. c. a. u.', None),
+    'crocata': ('c. r. o. c. a. t. a.', None),
+    'neutralising': ('n. e. u. t. r. a. l. i. s. i. n. g.', 'n. e. u. t. r. -al -is i. n. g.'),
+    'awiil': ('a. w. i. i. l.', None),
+    'Llwyd': ('l. l. w. y. d.', None),
+    'Foxx': ('f. o. x. x.', None),
+    'Konohagakure': ('k. o. n. o. h. a. g. a. k. u. r. e.', None),
+    'Nauru': ('n. a. u. r. u.', None),
+    'Shropshire': ('s. h. r. o. p. s. h. i. r. e.', None),
+    'Tecumseh': ('t. e. c. u. m. s. e. h.', None),
+    'M': ('m.', None),
+    'bikers': ('b. i. k. e. r. s.', None),
+    'Naruto': ('n. a. r. u. t. o.', 'n. a. r. u. t. e. o.'),
+    'progeria': ('p. r. o. g. e. r. i. a.', None),
+    'gaffkaemia': ('g. a. f. f. k. a. e. m. i. a.', None),
+    'MSU': ('m. s. u.', None),
+    'Schultz': ('s. c. h. u. l. t. z.', None),
+    'Zachry': ('z. a. c. h. r. y.', None),
+    'Euros': ('e. u. r. o. s.', None),
+    'HardawayAll': ('h. a. r. d. a. w. a. y. a. l. l.', None),
+    'Barbies': ('b. a. r. b. i. e. s.', None),
+    'kaftan': ('k. a. f. t. a. n.', 'k. a. f. t. -an'),
+    'Weiji': ('w. e. i. j. i.', None),
+    'Mannheim': ('m. a. n. n. h. e. i. m.', None),
+    'Fuyu': ('f. u. y. u.', None),
+    'professionalisation': ('p. r. o. f. e. s. s. i. o. n. a. l. i. s. a. t. i. o. n.', 'p. r. o. f. e. s. s. i. o. n. a. l. i. s. a. t. e. -ion'),
+    'Coquina': ('c. o. q. u. i. n. a.', 'co- q. u. y. n. a.'),
+    'Toma': ('t. o. m. a.', 't. o. m. e. a.'),
+    'Malleson': ('m. a. l. l. e. s. o. n.', 'm. -al l. e. s. e. -on'),
+    'ATG': ('a. t. g.', None),
+    'shouldn': ('s. h. o. u. l. d. n.', None),
+    'Monta': ('m. o. n. t. a.', 'm. -on t. a.'),
+    'Seeger': ('s. e. e. g. e. r.', 'se- e. g. -er'),
+    'Mendez': ('m. e. n. d. e. z.', None),
+    'ctor': ('c. t. o. r.', None),
+    'Yune': ('y. u. n. e.', None),
+    'Tlaloc': ('t. l. a. l. o. c.', 't. l. -al o. c.'),
+    'Rajneeshees': ('r. a. j. n. e. e. s. h. e. e. s.', 'r. a. j. n. e. e. s. h. e. -es'),
+    'WalesOnline': ('w. a. l. e. s. o. n. l. i. n. e.', 'w. a. l. e. -es -on l. i. n. e.'),
+    'Edmundsbury': ('e. d. m. u. n. d. s. b. u. r. y.', 'ed- m. u. n. d. s. b. u. r. y.'),
+    'Hari': ('h. a. r. i.', None),
+    'inclinatus': ('i. n. c. l. i. n. a. t. u. s.', None),
+    'ooh': ('o. o. h.', None),
+    'Raine': ('r. a. i. n. e.', None),
+    'Micropolitan': ('m. i. c. r. o. p. o. l. i. t. a. n.', None),
+    'Magnus': ('m. a. g. n. u. s.', 'm. a. g. n. -us'),
+    'Amatillo': ('a. m. a. t. i. l. l. o.', None),
+    'Hangard': ('h. a. n. g. a. r. d.', None),
+    'phylum': ('p. h. y. l. u. m.', 'p. h. y. l. -um'),
+    'Biden': ('bi- den', None),
+    'startup': ('start up', None),
+    'Running': ('run', None),
+    'unhappiness': ('un- happy -ness', None),
+    'reconfiguring': ('r. e. c. o. n. f. i. g. u. r. i. n. g.', 'r. e. c. o. n. f. i. g. u. r. e. i. n. g.'),
+    'antidisestablishment': ('anti- dis- establish -ment', None),
+    'shipping': ('ship', None),
+    'gaming': ('game', None),
+    'news': ('new', None),
+    'happiest': ('happy -est', None),
+    'touchdowns': ('touch down', None),
+    'highway': ('high way', None),
+    'a': ('a', None),
+    'I': ('i', None),
+    'x': ('x.', None),
+    'ox': ('ox', None),
+    'NATO': ('nato', None),
+    'McDonald': ('m. c. d. o. n. a. l. d.', 'm. c. d. -on -al d.'),
+}
+
+
+def _encode(seg):
+    marks = {'prefix': '{}-', 'suffix': '-{}', 'root': '{}', 'entity': '@{}', 'char': '{}.'}
+    return ' '.join(marks.get(r, '{}/' + r).format(m) for m, r in seg)
+
+
+def _pipelines():
+    """Both segmenters over the real vocabulary and MorphoLEX, or None when the assets are absent."""
+    if not (os.path.exists(VOCAB) and os.path.exists(MORPHOLEX)):
+        return None
+    import io, random, contextlib
+    from morphlm.vocab.build import load_vocab
+    from morphlm.pipelines.deterministic import DeterministicPipeline
+    from morphlm.pipelines.morpheme import MorphemePipeline
+    vocab = load_vocab(VOCAB)
+    cwd = os.getcwd()
+    os.chdir(ROOT)                      # the MorphoLEX sheet cache lives under data/cache
+    try:
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            det = DeterministicPipeline(vocab, MORPHOLEX, verbose=False)
+            random.seed(0)
+            morph = MorphemePipeline(vocab, MORPHOLEX, verbose=False)
+    finally:
+        os.chdir(cwd)
+    return det, morph
+
+
+def test_segmentations_unchanged():
+    """Both segmenters reproduce every recorded segmentation."""
+    pipes = _pipelines()
+    if pipes is None:
+        print('  (skipped: vocabulary or MorphoLEX not present)')
+        return
+    det, morph = pipes
+    bad = []
+    for word, (want_det, want_morph) in GOLDEN.items():
+        got_det, got_morph = _encode(det._segment_word(word)), _encode(morph._segment_word(word))
+        if got_det != want_det:
+            bad.append(('det', word, want_det, got_det))
+        if got_morph != (want_morph or want_det):
+            bad.append(('morph', word, want_morph or want_det, got_morph))
+    assert not bad, f'{len(bad)} segmentations changed, e.g. {bad[:5]}'
+    differ = sum(1 for _, m in GOLDEN.values() if m is not None)
+    print(f'  {len(GOLDEN)} words segmented as recorded ({differ} differ between det and morph) OK')
+
+
+if __name__ == '__main__':
+    # Every test_ function defined in this file, in order: a test cannot be
+    # written and then left out of a hand-kept list (journey §33.45).
+    import inspect
+    for _name, _fn in list(globals().items()):
+        if _name.startswith('test_') and inspect.isfunction(_fn) and _fn.__module__ == __name__:
+            _fn()
+    print('test_segmenters: PASS')

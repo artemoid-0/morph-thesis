@@ -985,6 +985,321 @@ def test_rmsnorm_and_swiglu():
     print('  RMSNorm and SwiGLU: labels, matched start, weight count, causal, refusals OK')
 
 
+def _toy_tokenizer(d, text, rule='decoded'):
+    """A small ByteLevel BPE trained on `text`, saved in `d` with its word rule."""
+    import json
+    from tokenizers import Tokenizer, models, trainers, pre_tokenizers, decoders
+    tok = Tokenizer(models.BPE())
+    tok.pre_tokenizer = pre_tokenizers.ByteLevel(add_prefix_space=False)
+    tok.decoder = decoders.ByteLevel()
+    tok.train_from_iterator([text] * 20, trainers.BpeTrainer(
+        vocab_size=300, initial_alphabet=pre_tokenizers.ByteLevel.alphabet(), show_progress=False))
+    path = os.path.join(d, 'bpe_t.json')
+    tok.save(path)
+    json.dump({'word_rule': rule}, open(os.path.join(d, 'bpe_t.meta.json'), 'w'))
+    return tok, path
+
+
+#: every derived fact and the exact message its block refuses per-token coding with
+DERIVATIONS = {
+    'mfeatlex': 'mfeatlex is derived per WORD, not per token: run scripts/data/derive_lexical_codes.py '
+                'after the cache holds mfeat. Building it token by token would fill the cache with empty codes.',
+    'poslex': 'poslex is derived per WORD, not per token: run scripts/data/derive_lexical_codes.py --fact pos '
+              'after the cache holds pos.',
+    'mstructshuf': 'mstructshuf is derived per WORD: run scripts/data/derive_lexical_codes.py --fact mstruct '
+                   '--out-fact mstructshuf --shuffle-types 0',
+    'ucaselex': 'ucaselex is derived per WORD, not per token: run scripts/data/derive_lexical_codes.py '
+                '--fact ucase --out-fact ucaselex --corpus ukwiki',
+    'ucaseprep': 'ucaseprep is derived per WORD, not per token: run scripts/data/derive_lexical_codes.py '
+                 '--fact ucase --out-fact ucaseprep --recode-pos ADP --keep ucase --corpus ukwiki',
+    'poscausal': 'poscausal is derived from the text by a causal tagger, not per token: run '
+                 'scripts/data/derive_causal_pos.py first',
+    'mprefix': 'mprefix codes are derived from the cached token stream, not built by the pipeline. Run '
+               'scripts/data/derive_prefix_codes.py first, or the cache would be filled with empty codes.',
+    **{f: f'{f} is derived per WORD, not per token: run scripts/data/derive_lexical_codes.py with --out-fact {f}'
+       for f in ('mconst', 'mconst16', 'mconst32', 'mconst64', 'mzero', 'mzeronopos', 'mzeroposonly',
+                 'mflat', 'mfreq', 'posshuf')},
+}
+
+
+def test_derived_blocks_share_one_refusal():
+    """
+    Every derived fact refuses per-token coding with its own message, which its
+    class also gives without an instance (`derivation`, read by the cache when
+    no file holds the fact). Exactly the lexical ones code new text
+    (`codes_for`: the BLiMP scripts dispatch on it); the other three do not.
+    """
+    from morphlm.registry import get_fact, all_facts
+    from morphlm.features.controls import DerivedCodesMixin, LexicalLookupMixin
+    derived = {n for n, c in all_facts().items() if issubclass(c, DerivedCodesMixin)}
+    assert derived == set(DERIVATIONS), derived ^ set(DERIVATIONS)
+    for name, msg in DERIVATIONS.items():
+        cls = get_fact(name)
+        assert cls.derivation() == msg, name
+        b = cls(apply_overrides(ExperimentConfig(), ['data.pipeline=bpe', f'frozen.facts={name}']))
+        try:
+            b.code({'mstruct': 'simple', 'pos': 'NOUN', 'mfeat': 'Number=Plur'})
+            raise AssertionError(f'{name} must refuse per-token coding')
+        except RuntimeError as e:
+            assert str(e) == msg, (name, str(e))
+        lexical = issubclass(cls, LexicalLookupMixin)
+        assert hasattr(b, 'codes_for') == lexical, name
+        assert lexical == (name not in ('ucaseprep', 'poscausal', 'mprefix')), name
+    print(f'  {len(DERIVATIONS)} derived facts refuse with their own message; lexical ones code new text OK')
+
+
+def test_lexical_variants_read_their_lexicon():
+    """
+    mfeatlex, poslex and mstructshuf code new text through the lexicon saved
+    under their source fact (mfeat, pos) or their own name: every word its
+    lexicon entry, unseen words and non-words `none` — never a per-token value.
+    """
+    import tempfile
+    import numpy as np
+    from morphlm.features.lexical import tokenizer_tables, word_spans, lexicon_path, save_lexicon
+    from morphlm.features.controls import LexicalLookupMixin
+    text = 'The cat sat on the mat, and the dog ran far away!'
+    with tempfile.TemporaryDirectory() as d:
+        tok, path = _toy_tokenizer(d, text)
+        ids = np.array(tok.encode(text).ids, dtype=np.int64)
+        wid, key, starts = word_spans(ids, tokenizer_tables(path))
+        words = sorted({int(k) for k in key[wid >= 0]})
+        known = words[:-2]                              # the last two words stay unseen
+        for fact, lexicon in (('mfeatlex', 'mfeat'), ('poslex', 'pos'), ('mstructshuf', 'mstructshuf')):
+            lex_keys = np.array(known, dtype=np.uint64)
+            lex_codes = (np.arange(len(known)) % 5).astype(np.int16)
+            save_lexicon(lexicon_path(path, lexicon, d), (lex_keys, lex_codes, np.ones(len(known))), {})
+            b, = build_blocks(apply_overrides(ExperimentConfig(), [
+                'data.pipeline=bpe', f'data.bpe_path={path}', f'data.cache_dir={d}', f'frozen.facts={fact}']))
+            assert isinstance(b, LexicalLookupMixin) and b.lexicon_name == lexicon, fact
+            got = np.array(b.codes_for(ids.tolist(), [{'mfeat': 'Number=Plur', 'pos': 'NOUN'}] * len(ids)))
+            none = b.n_classes - 1
+            want = np.full(len(ids), none)
+            for i in range(len(ids)):
+                if wid[i] >= 0 and int(key[i]) in known:
+                    want[i] = lex_codes[known.index(int(key[i]))]
+            assert got.tolist() == want.tolist(), fact
+            assert (got[wid < 0] == none).all() and (got == none).sum() > (wid < 0).sum(), fact
+    print('  mfeatlex, poslex, mstructshuf code new text from their lexicons OK')
+
+
+def test_unbuilt_fact_names_its_derivation():
+    """
+    A fact no codes file of the stream holds, and the pipeline never builds,
+    stops the loader with the fact's own derivation — before either path. It
+    used to say "delete it and rebuild": deleting a multi-hour build, after
+    which the run died at `build_facts.index`.
+    """
+    import json, tempfile
+    import numpy as np
+    from morphlm.data.stream import build_stream, cache_stem, codes_spec, facts_to_build
+    old = os.environ.get('MORPHLM_NO_BUILD')
+    os.environ['MORPHLM_NO_BUILD'] = '1'
+    n = 24
+    try:
+        with tempfile.TemporaryDirectory() as d:
+            def cfg(facts, pipeline='bpe'):
+                return apply_overrides(ExperimentConfig(), [f'data.pipeline={pipeline}', 'data.bpe_path=data/bpe_17k.json',
+                                                            f'data.cache_dir={d}', f'frozen.facts={facts}'])
+            def fails(c, split='validation'):
+                try:
+                    build_stream(None, c, split, verbose=False)
+                except RuntimeError as e:
+                    return str(e)
+                raise AssertionError('expected a refusal')
+            c = cfg('mstruct')
+            ids = cache_stem('bpe', 'validation', None, c.surface_spec())
+            np.save(os.path.join(d, ids + '.npy'), np.zeros(n, dtype=np.int32))
+            json.dump({'num_tokens': n, 'num_bytes': n, 'num_chars': n, 'num_articles': 1},
+                      open(os.path.join(d, ids + '.json'), 'w'))
+            built = list(facts_to_build(c))
+            stem = cache_stem('bpe', 'validation', None, f'{c.surface_spec()}|{codes_spec(built, "coarse")}')
+            np.save(os.path.join(d, stem + '.codes.npy'), np.ones((len(built), n), dtype=np.int16))
+            json.dump({'fact_names': built, 'dep_granularity': 'coarse', 'num_tokens': n},
+                      open(os.path.join(d, stem + '.codes.json'), 'w'))
+            assert build_stream(None, c, 'validation', verbose=False)['codes'] is not None
+            for fact in ('mconst', 'mprefix', 'poslex'):
+                msg = fails(cfg(fact))
+                assert DERIVATIONS[fact] in msg and 'rebuild' not in msg, msg
+            assert DERIVATIONS['mconst'] in fails(cfg('mconst'), 'train'), 'no ids yet: still the derivation'
+            assert 'not among the facts the bpe pipeline builds' in fails(cfg('ucase'))
+            # once derived for this stream, the fact is read
+            np.save(os.path.join(d, ids + '_prefix.codes.npy'), np.full((1, n), 5, dtype=np.int16))
+            json.dump({'fact_names': ['mprefix'], 'dep_granularity': 'coarse', 'num_tokens': n},
+                      open(os.path.join(d, ids + '_prefix.codes.json'), 'w'))
+            assert int(np.asarray(build_stream(None, cfg('mprefix'), 'validation', verbose=False)['codes'])[0, 0]) == 5
+    finally:
+        if old is None:
+            os.environ.pop('MORPHLM_NO_BUILD', None)
+        else:
+            os.environ['MORPHLM_NO_BUILD'] = old
+    print('  a fact no file holds names its derivation, before either path OK')
+
+
+def test_split_modules_keep_every_name():
+    """
+    blocks.py was split into inventories.py and controls.py, and stream.py's file
+    handling into cache_files.py. Every name stays importable where it was, as
+    the same object; every fact is registered whichever module is imported first.
+    """
+    import subprocess
+    from morphlm.features import blocks, controls, inventories
+    from morphlm.data import stream, cache_files
+    from morphlm.registry import all_facts
+    for name in ('DEP_COARSE_MAP', 'DEP_COARSE_CLASSES', 'POS_CLASSES', 'MORPH_BUNDLES', 'ENTITY_CLASSES'):
+        assert getattr(blocks, name) is getattr(inventories, name), name
+    for name in ('LexicalLookupMixin', 'DerivedCodesMixin', 'MorphConstBlock', 'MorphZeroBlock', 'MorphFlatBlock',
+                 'FrequencyBandBlock', 'PosShuffledBlock', 'MorphStructShuffledBlock', 'MorphFeatureLexicalBlock',
+                 'PosLexicalBlock', 'UCaseLexicalBlock', 'UCasePrepositionFormBlock', 'PosCausalBlock',
+                 'MorphPrefixBlock'):
+        assert getattr(blocks, name) is getattr(controls, name), name
+    for name in ('PACKED', 'PackedCacheError', 'cache_stem', 'codes_spec', 'codes_owner', 'stream_files',
+                 'require_unpacked', 'stream_codes_files', '_atomic_save_npy', '_atomic_write_json'):
+        assert getattr(stream, name) is getattr(cache_files, name), name
+    assert stream._atomic_save_npy is cache_files.atomic_save_npy
+    assert stream._atomic_write_json is cache_files.atomic_write_json
+    facts = sorted(all_facts())
+    assert facts == ['cat', 'dep', 'ectx', 'etype', 'magr', 'mconst', 'mconst16', 'mconst32', 'mconst64', 'mfeat',
+                     'mfeatlex', 'mflat', 'mfreq', 'mhash', 'minfl', 'mlemma', 'mprefix', 'mrole', 'mroot', 'mstruct',
+                     'mstructshuf', 'mzero', 'mzeronopos', 'mzeroposonly', 'pos', 'poscausal', 'poslex', 'posshuf',
+                     'uanimacy', 'uaspect', 'ucase', 'ucaselex', 'ucaseprep', 'ugender', 'unumber', 'uperson',
+                     'utense'], facts                   # the 37 registered before the split
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    for first in ('morphlm.features.controls', 'morphlm.features.blocks', 'morphlm.registry'):
+        code = (f'import {first}; from morphlm.registry import all_facts; '
+                f'from morphlm.features.blocks import MorphConstBlock, POS_CLASSES; '
+                f'print(",".join(sorted(all_facts())))')
+        out = subprocess.run([sys.executable, '-B', '-c', code], capture_output=True, text=True, cwd=root)
+        assert out.returncode == 0, out.stderr[-1500:]
+        assert out.stdout.strip().split(',') == facts, first
+    print(f'  split modules keep every name; {len(facts)} facts registered in any import order OK')
+
+
+class _FakeMorph:
+    def __init__(self, feats):
+        self.feats = feats
+
+    def get(self, k):
+        v = self.feats.get(k)
+        return [v] if v else []
+
+    def to_dict(self):
+        return dict(self.feats)
+
+    def __str__(self):
+        return '|'.join(f'{k}={v}' for k, v in sorted(self.feats.items()))
+
+
+class _FakeTok:
+    def __init__(self, text, idx, dep, pos, ent='', **feats):
+        self.text, self.idx, self.dep_, self.pos_, self.ent_type_ = text, idx, dep, pos, ent
+        self.lemma_ = text.lower()
+        self.morph = _FakeMorph(feats)
+
+    @property
+    def is_alpha(self):
+        return self.text.isalpha()
+
+
+class _FakeAnalyser:
+    def __init__(self):
+        self.calls = 0
+
+    def analyse(self, word):
+        self.calls += 1
+        return word[:2], 'suffixed', [(0, 1, 'prefix'), (1, len(word), 'root')]
+
+    def root_code(self, root):
+        return len(root)
+
+    def hash_code(self, word):
+        return 100 + len(word)
+
+    def lemma_code(self, lemma):
+        return 200 + len(lemma)
+
+
+def test_bpe_tokens_carry_their_words_annotations():
+    """
+    Each BPE token carries the annotation of the first annotated character in
+    its span, for every context fact (ANNOTATED, one keyed loop), in the token
+    dict's fixed key order; the morphological ones only from the analyser, which
+    is built on first use. Checked on a parse with known values.
+    """
+    import tempfile
+    from morphlm.pipelines.bpe import BPEPipeline, ANNOTATED
+    text = 'Cats sat, Paris slept.'
+    doc = [_FakeTok('Cats', 0, 'nsubj', 'NOUN', Number='Plur'), _FakeTok('sat', 5, 'ROOT', 'VERB', Tense='Past'),
+           _FakeTok(',', 8, 'punct', 'PUNCT'), _FakeTok('Paris', 10, 'nsubj', 'PROPN', ent='GPE', Number='Sing'),
+           _FakeTok('slept', 16, 'conj', 'VERB', Tense='Past'), _FakeTok('.', 21, 'punct', 'PUNCT')]
+    words = {t.idx: t for t in doc}
+    with tempfile.TemporaryDirectory() as d:
+        _, path = _toy_tokenizer(d, text, rule='symbol')
+        built = []
+        def factory():
+            built.append(_FakeAnalyser())
+            return built[-1]
+        pipe = BPEPipeline(path, want_context=True, analyser_factory=factory, verbose=False)
+        assert not built, 'the analyser is built on first use, not with the pipeline'
+        pipe._nlp = lambda t: doc
+        toks = pipe.encode(text)
+        offsets = pipe.tokenizer.encode(text).offsets
+        plain = BPEPipeline(path, verbose=False).encode(text)
+    assert len(built) == 1 and pipe.analyser is built[0], 'built once, then kept'
+    keys = ['token_id', 'token', 'category', 'role', 'entity_label', 'word', 'dep', 'pos', 'mroot', 'mhash',
+            'mlemma', 'mstruct', 'mrole', 'minfl', 'magr', 'mfeat', 'udfeats']
+    assert all(list(t) == keys for t in toks) and set(ANNOTATED) <= set(keys)
+    for t, (a, b) in zip(toks, offsets):
+        first = next((c for c in range(a, b) if any(w.idx <= c < w.idx + len(w.text) for w in doc)), None)
+        if first is None:
+            assert all(t[k] is None for k in ANNOTATED), t
+            continue
+        w = next(w for w in doc if w.idx <= first < w.idx + len(w.text))
+        assert (t['dep'], t['pos'], t['entity_label']) == (w.dep_, w.pos_, w.ent_type_ or None), t
+        if w.is_alpha:
+            assert t['mstruct'] == 'suffixed' and t['mroot'] == 2 and t['mhash'] == 100 + len(w.text), t
+            assert t['mrole'] == ('prefix' if first == w.idx else 'root'), t
+            assert t['udfeats'] == w.morph.to_dict() and t['mfeat'] == (str(w.morph) or None), t
+        else:
+            assert t['mstruct'] is None and t['mroot'] is None and t['udfeats'] is None, t
+    assert pipe.alignment_rate() == 1.0
+    assert all(list(t) == keys and all(t[k] is None for k in ANNOTATED) for t in plain), 'no context: all None'
+    print('  BPE tokens carry their words\' annotations, analyser built on first use OK')
+
+
+def test_bucket_counts_and_batch_limit():
+    """
+    token_frequencies counts with np.bincount and gives exactly the Counter it
+    always gave; bucketed_perplexity scores all batches, or the first
+    `max_batches` (the post-hoc comparison's budget).
+    """
+    from collections import Counter
+    from types import SimpleNamespace
+    import torch
+    from morphlm.eval.buckets import token_frequencies, bucketed_perplexity
+    rng = np.random.default_rng(0)
+    for n, hi, chunk in ((0, 4, 4), (1, 4, 4), (1000, 50, 7), (5000, 3000, 1 << 24)):
+        ids = rng.integers(0, hi, n).astype(np.int32)
+        if n > 1:
+            ids[-1] = hi + 3                             # a larger id in the last chunk
+        got = token_frequencies(SimpleNamespace(ids=ids), chunk=chunk)
+        assert got == Counter(ids.tolist()) and all(type(k) is int and type(v) is int for k, v in got.items())
+
+    class Uniform(torch.nn.Module):
+        def forward(self, x, y, codes=None):
+            return torch.zeros(*x.shape, 10), None
+    batches = [(torch.randint(0, 10, (2, 4)), torch.randint(0, 10, (2, 4)), torch.zeros(0, 4)) for _ in range(5)]
+    freqs = token_frequencies(SimpleNamespace(ids=rng.integers(0, 10, 500)))
+    edges = (0, 40, 60, float('inf'))
+    tokens = lambda rows: sum(r['tokens'] for r in rows)
+    assert tokens(bucketed_perplexity(Uniform(), batches, freqs, 'cpu', edges=edges)) == 40
+    assert tokens(bucketed_perplexity(Uniform(), batches, freqs, 'cpu', edges=edges, max_batches=2)) == 16
+    assert tokens(bucketed_perplexity(Uniform(), batches, freqs, 'cpu', edges=edges, max_batches=0)) == 40
+    rows = bucketed_perplexity(Uniform(), batches, freqs, 'cpu', edges=edges)
+    assert all(r['perplexity'] is None or abs(r['perplexity'] - 10) < 1e-4 for r in rows)
+    print('  bucket counts equal the Counter; batch limit honoured OK')
+
+
 if __name__ == '__main__':
     # Every test_ function defined in this file, in order: a test cannot be
     # written and then left out of a hand-kept list (journey §33.45).

@@ -4,56 +4,53 @@ stream.py — tokenize once, cache, memory-map.
 TWO CACHE FILES, KEYED SEPARATELY
 ---------------------------------
 The token ids for a pipeline do not depend on which frozen facts you requested;
-only the annotation codes do. Keying both on one combined string meant the
-baseline, `--facts dep` and `--facts pos` each triggered a full independent
-spaCy pass over the corpus — three passes where one suffices.
+only the annotation codes do, so the two are keyed apart and one spaCy pass
+serves every fact request:
 
-    ids   key = pipeline|split|max_articles                  (historical format)
-    codes key = pipeline|split|max_articles|ctx:<gran>:<facts>
+    ids   key = pipeline|split|max_articles[|surface spec]
+    codes key = pipeline|split|max_articles[|surface spec]|ctx:<gran>:<facts>
 
-The ids key is byte-identical to the pre-refactor scheme, which is a
-REQUIREMENT: existing caches must stay valid.
+The surface spec (`ExperimentConfig.surface_spec`) is empty for the original
+BPE tokenizer and the legacy morpheme streams, whose keys are therefore the
+historical ones, byte for byte — a REQUIREMENT: existing caches must stay valid.
 
     bpe|train|None       -> 99bc1462ce   (bpe_train_None_99bc1462ce)
     bpe|validation|None  -> e483bcd459
 
 FREE-RIDE ANNOTATION
 --------------------
-The morpheme pipelines call spacy.load(), which enables tagger, parser AND ner
-by default — they have always parsed dependencies and discarded them. So for
-those pipelines we compute ALL context facts on whichever pass happens first,
-even when the current config asked for none. The marginal cost is reading two
-attributes off an already-parsed token; the saving is every later pass.
-
-BPE is different: it uses no spaCy at all, so annotating it is a genuinely new
-cost and happens only when the config asks for it.
+The morpheme pipelines parse with spaCy anyway, so they compute ALL their
+context facts on whichever pass happens first, even when the config asked for
+none. BPE uses no spaCy for its ids, so it annotates only when a context fact is
+requested — and then builds every fact it can, so one pass serves every later
+request (`facts_to_build`).
 
 STALENESS
 ---------
 The codes key includes the dependency granularity and the fact list, so
 changing either yields a different file. Changing lr or seed changes neither
 key, so training knobs can never invalidate a multi-hour pass.
+
+The files themselves — names, which codes files describe a stream, packing,
+atomic writes — are cache_files.py's; every name is re-exported here.
 """
 
 from __future__ import annotations
 
 import os
 import json
-import hashlib
 
 import numpy as np
 
-CACHE_DIR = 'data/cache'
+from .cache_files import (PACKED, PackedCacheError, cache_stem, codes_owner,  # noqa: F401
+                          codes_spec, require_unpacked, stream_codes_files, stream_files,
+                          atomic_save_npy, atomic_write_json, _atomic_save_npy, _atomic_write_json)
 
-#: Context facts a pipeline can actually produce, BY PIPELINE.
-#:
-#: This must be per-pipeline, not global. The morpheme pipelines' encode() sets
-#: dep/pos/entity_label from the spaCy parse but never sets mroot/mstruct/mrole
-#: — those come from the WordAnalyser, which only the BPE pipeline carries.
-#: A global list meant `facts_to_build('morph')` asked for three facts morph
-#: cannot produce, which (a) changed the morph codes cache key, silently
-#: invalidating a 4-hour cache, and (b) would have spent another 4 hours
-#: producing three all-`none` rows.
+#: Context facts a pipeline can actually produce, BY PIPELINE: the morpheme
+#: pipelines' encode() sets dep/pos/entity_label from the spaCy parse, but the
+#: morphological facts come from the WordAnalyser, which only the BPE pipeline
+#: carries. Asking morph for them would change its codes key and build rows of
+#: `none` (tests/test_cache_keys.py, test_facts_to_build_is_per_pipeline).
 PIPELINE_CONTEXT_FACTS = {
     'morph': ('dep', 'pos', 'ectx'),
     'det':   ('dep', 'pos', 'ectx'),
@@ -88,13 +85,8 @@ def load_corpus(cfg, split):
 
     wikitext103 — exactly the historical call, so every English stream is
     unchanged; it refuses a fraction, since its cache key carries none. Every
-    other corpus is served by its spec (`corpora.rows`): ukwiki — Ukrainian
-    Wikipedia (the `wikimedia/wikipedia` dump, which has only a train split) —
-    has its articles assigned to a split by a hash of their title (1 in
-    `corpus_holdout` to validation, 1 to test, the rest to train — 2000 puts
-    validation near WikiText-103's size), train sub-sampled by a second hash to
-    `corpus_fraction`, and each article served as its paragraphs, like
-    WikiText's lines.
+    other corpus is served by its spec (`corpora.rows`: hash splits, the train
+    fraction, paragraphs as rows; ukwiki's in docs/reference/ukrainian_pipeline.md).
     """
     from .corpora import get_corpus, rows
     corpus = getattr(cfg.data, 'corpus', 'wikitext103')
@@ -114,150 +106,6 @@ def load_corpus(cfg, split):
 SPACY_NATIVE = ('morph', 'det')
 
 
-def cache_stem(pipeline_name, split, max_articles, feature_spec=''):
-    """
-    Stable filename stem. With an empty feature_spec this reproduces the
-    historical format byte for byte — a REQUIREMENT, not a nicety.
-    """
-    raw = f'{pipeline_name}|{split}|{max_articles}'
-    if feature_spec:
-        raw += f'|{feature_spec}'
-    h = hashlib.md5(raw.encode()).hexdigest()[:10]
-    return f'{pipeline_name}_{split}_{max_articles}_{h}'
-
-
-def codes_spec(fact_names, dep_granularity):
-    """Canonical spec string for a set of context facts."""
-    if not fact_names:
-        return ''
-    return f'ctx:{dep_granularity}:{"+".join(sorted(fact_names))}'
-
-
-def codes_owner(basename, prefix):
-    """
-    What a codes file's name says about where it came from (G-72).
-
-    A cache build writes `<prefix><hash>.codes.json`, keyed on the facts it
-    built; a derivation (derive_lexical_codes, derive_prefix_codes) writes
-    `<ids stem>_<name>.codes.json`, named for the ids stream it was derived for.
-    Returns ('build', None), ('derived', <ids stem>), or (None, None) for a name
-    of neither form (no tool writes one).
-    """
-    name = basename[:-len('.codes.json')] if basename.endswith('.codes.json') else basename
-    if not name.startswith(prefix):
-        return None, None
-    rest = name[len(prefix):]
-    h, tail = rest[:10], rest[10:]
-    if len(h) != 10 or any(c not in '0123456789abcdef' for c in h):
-        return None, None
-    if not tail:
-        return 'build', None
-    if tail.startswith('_'):
-        return 'derived', prefix + h
-    return None, None
-
-
-#: A machine may keep a stream packed: every array of it — its ids and each codes
-#: file that describes them — as `<name>.npy.zst` beside the sidecar `.json`, made
-#: and checked by scripts/data/cache_pack.py, the whole stream at once. Nothing
-#: reads a packed array and nothing rebuilds one: whatever needs a packed stream
-#: stops and names it. A cache that holds no packed file behaves as it always did.
-PACKED = '.zst'
-
-
-class PackedCacheError(RuntimeError):
-    """A stream that is needed is packed on this machine (scripts/data/cache_pack.py)."""
-
-
-def stream_files(cache_dir, ids_stem, packed=False):
-    """
-    The arrays of the stream `ids_stem`: its ids and every codes file that
-    describes it, by the rule of stream_codes_files (a file derived for it, or
-    a build file with its token count). Those on disk unpacked, or with
-    packed=True those packed; each path is given as its `.npy` name.
-    """
-    import glob as _glob
-    sfx = '.npy' + (PACKED if packed else '')
-    prefix = ids_stem[:-10]
-    ids_npy = os.path.join(cache_dir, ids_stem + '.npy')
-    out = [ids_npy] if os.path.exists(ids_npy[:-4] + sfx) else []
-    try:
-        with open(os.path.join(cache_dir, ids_stem + '.json')) as f:
-            num_tokens = json.load(f).get('num_tokens')
-    except (OSError, ValueError):
-        num_tokens = None
-    for cand in sorted(_glob.glob(os.path.join(cache_dir, prefix + '*.codes.json'))):
-        kind, owner = codes_owner(os.path.basename(cand), prefix)
-        if kind == 'derived' and owner != ids_stem:
-            continue
-        try:
-            with open(cand) as f:
-                if json.load(f).get('num_tokens') != num_tokens:
-                    continue
-        except (OSError, ValueError):
-            continue
-        npy = cand[:-len('.json')] + '.npy'
-        if os.path.exists(npy[:-4] + sfx):
-            out.append(npy)
-    return out
-
-
-def require_unpacked(cache_dir, ids_stem):
-    """Stop when the stream `ids_stem` is packed on this machine, in whole or in
-    part: an array packed and not also unpacked is never read, and never rebuilt."""
-    held = sorted(set(stream_files(cache_dir, ids_stem, packed=True)) - set(stream_files(cache_dir, ids_stem)))
-    if held:
-        raise PackedCacheError(
-            f'{ids_stem} is packed on this machine ({len(held)} of its arrays), so nothing reads or '
-            f'rebuilds it. Unpack the stream first: python scripts/data/cache_pack.py unpack {ids_stem}')
-
-
-def stream_codes_files(cache_dir, pipeline, split, max_articles, ids_stem, num_tokens):
-    """
-    Every codes file that describes the ids stream `ids_stem`, sorted by name:
-    the build files with its token count, and the files derived FOR IT.
-    Returns [(json path, npy path, meta)].
-
-    CODES ARE TIED TO A TOKEN STREAM. A codes array is one value per token of a
-    specific ids array, so a matching fact list is not enough: codes built for
-    a different surface configuration describe different tokens entirely. The
-    token count is the guard against that (found by scripts/data/cache_index.py
-    --plan, which reported a whitespace-off cell as able to reuse the
-    punctuation-off codes).
-
-    THE TOKEN COUNT IS NOT ENOUGH EITHER (G-72). A corpus's validation split is
-    the same text at every corpus fraction, so ukwiki's 0.01 and 0.2 validation
-    streams are the same tokens under two stems. Built codes — spaCy's tags of
-    those tokens — are then the same too, and may be shared. Derived codes are
-    not: a word-form lexicon comes from the fraction's own train split, so the
-    null and the lexical facts differ in which words are unseen, and a kept row
-    is whatever its source file held. Matched by token count and read in name
-    order, every ukwiki run of the null from 1 October, at any fraction, was
-    scored on the 0.01 fraction's validation codes. A derived file is read only
-    by the stream it was derived for. A name of neither form keeps the
-    token-count rule.
-    """
-    import glob as _glob
-    require_unpacked(cache_dir, ids_stem)
-    prefix = f'{pipeline}_{split}_{max_articles}_'
-    out = []
-    for cand in sorted(_glob.glob(os.path.join(cache_dir, prefix + '*.codes.json'))):
-        kind, owner = codes_owner(os.path.basename(cand), prefix)
-        if kind == 'derived' and owner != ids_stem:
-            continue
-        try:
-            with open(cand) as f:
-                cm = json.load(f)
-        except Exception:
-            continue
-        if cm.get('num_tokens') != num_tokens:
-            continue
-        npy = cand[:-len('.json')] + '.npy'
-        if os.path.exists(npy):
-            out.append((cand, npy, cm))
-    return out
-
-
 def facts_to_build(cfg):
     """
     Which context facts this pass should COMPUTE (not necessarily use).
@@ -265,13 +113,11 @@ def facts_to_build(cfg):
     spaCy-native pipelines compute everything, because the parse is already
     paid for.
 
-    BPE now does the same AS SOON AS ANY context fact is requested. Its pass is
+    BPE does the same AS SOON AS ANY context fact is requested. Its pass is
     genuinely new — spaCy plus, for morphological facts, MorphoLex — so it is
-    expensive, but it is expensive ONCE. Computing only the requested fact would
-    mean a fresh multi-hour pass for every new BPE experiment, and each pass
-    would write a different codes file. Building all of them together is the
-    single decision that keeps the Level-2 experiment programme to one cache
-    build.
+    expensive, but it is expensive ONCE: computing only the requested fact would
+    mean a fresh multi-hour pass, and another codes file, for every new BPE
+    experiment.
     """
     from ..registry import context_facts
     requested = context_facts(cfg.frozen.facts)
@@ -283,21 +129,27 @@ def facts_to_build(cfg):
     return available if requested else ()
 
 
+def unbuilt_fact_message(name, pipeline, build_facts):
+    """
+    Why a codes file must already hold `name`: a derived fact's block names the
+    script that derives it (controls.DerivedCodesMixin); any other fact is one
+    this pipeline does not build here.
+    """
+    from ..registry import get_fact
+    how = getattr(get_fact(name), 'derivation', None)
+    if how is not None:
+        return how()
+    return (f'{name} is not among the facts the {pipeline} pipeline builds here '
+            f'({", ".join(build_facts) or "none"}).')
+
+
 def cache_blocks(cfg, names):
     """
-    Fact blocks that produce codes AS THE CACHE STORES THEM.
-
-    The cache is built once, at the full inventory, and every run reads it;
-    coarsening (`frozen.root_classes`) is applied at MODEL time, by
-    `embedding.fold_codes`, from that full range. But a coarsened block's own
-    `index()` also folds. Built from a coarsened run's config, a cache would
-    store FOLDED codes under a key that does not mention coarsening — poisoning
-    it for every later run — and new text scored that way (BLiMP) would be
-    folded twice, turning `none` into class 0. `root_classes` is the one config
-    field that changes code values without entering the cache key
-    (`dep_granularity` does too, but it is recorded and checked on reuse).
-    Everything that produces codes for a model therefore builds its blocks
-    here, with coarsening off.
+    Fact blocks that produce codes AS THE CACHE STORES THEM: at the full
+    inventory, coarsening off. The model folds cached codes itself
+    (`embedding.fold_codes`); a coarsened block's own `index()` would fold them
+    at build time too, under a key that does not mention coarsening — poisoning
+    the shared cache, and folding new text's codes (BLiMP) twice (G-39).
     """
     import dataclasses
     from ..registry import get_fact
@@ -306,33 +158,10 @@ def cache_blocks(cfg, names):
     return [get_fact(name)(full) for name in names]
 
 
-def _atomic_save_npy(path, arr):
-    """
-    Write an array so that no reader ever sees a partial file.
-
-    Cached arrays are memory-mapped by running jobs (np.load mmap_mode='r').
-    np.save on the live path truncates the file first, and a job reading it at
-    that moment can die with SIGBUS or read zeros. Writing to a temporary name
-    and renaming is atomic on one filesystem: a job that already mapped the old
-    file keeps the old inode intact, and any later reader sees the new file
-    complete. This is what makes it safe to build a cache while training.
-    """
-    tmp = path[:-4] + '.tmp.npy' if path.endswith('.npy') else path + '.tmp.npy'
-    np.save(tmp, arr)
-    os.replace(tmp, path)
-
-
-def _atomic_write_json(path, obj):
-    tmp = path + '.tmp'
-    with open(tmp, 'w') as f:
-        json.dump(obj, f, indent=2)
-    os.replace(tmp, path)
-
-
 def build_stream(pipeline, cfg, split='train', max_articles=None,
                  verbose=True):
     """
-    Tokenize a WikiText-103 split and cache it.
+    Tokenize a split of the configured corpus and cache it.
 
     Returns a dict with:
         ids        np.memmap int32  [num_tokens]
@@ -340,7 +169,7 @@ def build_stream(pipeline, cfg, split='train', max_articles=None,
         fact_names list[str]        requested facts, in code-row order
         num_tokens, num_bytes, num_chars, num_articles
     """
-    from ..registry import context_facts, get_fact
+    from ..registry import context_facts
 
     cache_dir = cfg.data.cache_dir
     os.makedirs(cache_dir, exist_ok=True)
@@ -366,12 +195,10 @@ def build_stream(pipeline, cfg, split='train', max_articles=None,
     codes_npy = os.path.join(cache_dir, codes_stem + '.codes.npy')
     codes_meta_path = os.path.join(cache_dir, codes_stem + '.codes.json')
 
-    # If the exact key misses, look for ANY codes file for this
-    # (pipeline, split, cap) that already CONTAINS the requested facts at the
-    # right granularity. The stored fact list is what matters, not the
-    # filename: without this, extending the fact inventory silently orphans
-    # every cache built before the change, and a 4-hour rebuild starts with no
-    # warning. Filename-keyed lookup is brittle; content-keyed lookup is not.
+    # If the exact key misses, any codes file of this stream that already HOLDS
+    # the requested facts at the right granularity is read instead: the stored
+    # fact list decides, not the filename, or extending the fact inventory
+    # would orphan every cache built before it (G-16).
     ids_meta_tokens = None
     if os.path.exists(ids_meta):
         try:
@@ -380,18 +207,26 @@ def build_stream(pipeline, cfg, split='train', max_articles=None,
         except Exception:
             pass
 
-    # Does the file at the exact key actually SATISFY this request?
-    #
-    # `codes_stem` is keyed on facts_to_build — the free-ride list a pipeline
-    # produces in one pass — not on what the cell asked for. So a cell can ask
-    # for a fact that is NOT on that list (`mprefix` is derived from the token
-    # stream afterwards, never built by the pipeline) and the stem still
-    # resolves to an existing file that predates it. The file exists, so reuse
-    # was skipped, and the run died reporting that its own cache lacked a fact
-    # it was never going to contain.
-    #
-    # Reuse must therefore be attempted whenever the exact file does not
-    # satisfy the request, not merely when it is absent.
+    # The codes files that describe THIS stream at this granularity: the same
+    # token count, and a derived file only if it was derived for this ids stem
+    # (G-72). A fact the pipeline does not build — derived after the build, or
+    # not this pipeline's — is read from one of them or from nowhere: no build
+    # path would ever produce it, so say how it is made before taking either.
+    described = []
+    if requested and ids_meta_tokens is not None:
+        described = [(cand, npy, cm) for cand, npy, cm in stream_codes_files(
+            cache_dir, cfg.data.pipeline, split, max_articles, ids_stem, ids_meta_tokens)
+            if cm.get('dep_granularity') == gran]
+    held = {f for _, _, cm in described for f in cm.get('fact_names', [])}
+    for f in requested:
+        if f not in build_facts and f not in held:
+            raise RuntimeError(f'no codes file of {ids_stem} holds {f!r}. '
+                               + unbuilt_fact_message(f, cfg.data.pipeline, build_facts))
+
+    # `codes_stem` is keyed on the facts the pass BUILDS, not on what the cell
+    # asked for, so the exact file may exist without SATISFYING the request (a
+    # derived fact is never in it): reuse is tried whenever it does not satisfy,
+    # not merely when it is absent (journey §30.8).
     exact_ok = False
     if os.path.exists(codes_npy) and os.path.exists(codes_meta_path):
         try:
@@ -404,12 +239,7 @@ def build_stream(pipeline, cfg, split='train', max_articles=None,
     # reuse is only possible when the ids stream this cell needs already
     # exists; otherwise there is nothing for borrowed codes to align to
     if requested and ids_meta_tokens is not None and not exact_ok:
-        # only files that describe THIS stream: the same token count, and a
-        # derived file only if it was derived for this ids stem (G-72)
-        for cand, npy, cm in stream_codes_files(cache_dir, cfg.data.pipeline, split,
-                                                max_articles, ids_stem, ids_meta_tokens):
-            if cm.get('dep_granularity') != gran:
-                continue
+        for cand, npy, cm in described:
             if not set(requested).issubset(set(cm.get('fact_names', []))):
                 continue
             if verbose:
@@ -565,7 +395,7 @@ def build_stream(pipeline, cfg, split='train', max_articles=None,
         if verbose:
             print(f'  ids unchanged ({arr.shape[0]:,} tokens) — not rewritten')
     else:
-        _atomic_save_npy(ids_npy, arr)
+        atomic_save_npy(ids_npy, arr)
 
     meta = {
         'pipeline': cfg.data.pipeline,
@@ -585,7 +415,7 @@ def build_stream(pipeline, cfg, split='train', max_articles=None,
         if verbose:
             print(f'  context alignment rate: {rate:.3%}')
     if not os.path.exists(ids_meta):
-        _atomic_write_json(ids_meta, meta)
+        atomic_write_json(ids_meta, meta)
 
     codes_arr = None
     if blocks:
@@ -598,8 +428,8 @@ def build_stream(pipeline, cfg, split='train', max_articles=None,
             codes_arr[bi] = np.frombuffer(col, dtype=np.int16)
         # data first, metadata last: a concurrent run's content-based reuse
         # only considers a codes file once its json exists
-        _atomic_save_npy(codes_npy, codes_arr)
-        _atomic_write_json(codes_meta_path,
+        atomic_save_npy(codes_npy, codes_arr)
+        atomic_write_json(codes_meta_path,
                            {'fact_names': build_facts,
                             'dep_granularity': gran,
                             'num_tokens': int(arr.shape[0])})

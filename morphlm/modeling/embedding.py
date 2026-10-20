@@ -1,33 +1,17 @@
 """
 embedding.py — the hybrid frozen/trained embedding.
 
-Produces  [ factor dims (T) | trained dims (N - T) ]  by CONCATENATION.
-Addition was rejected because it lets the trained part learn to cancel the
-injected signal, defeating the premise of guaranteed presence (journey §11).
+Produces [ factor dims (T) | trained dims (N - T) ] by CONCATENATION, the
+default (`frozen.inject='concat'`): journey §11 chose it because a trained part
+ADDED to the signal can learn to cancel it. `inject='add'` gives each fact a
+full-width learned table added to a full-width token embedding — no carved
+slot, so a feature's effect over the baseline is its information alone (§33.13).
 
-FROZEN vs LEARNED FACTORS — the comparison this module now supports
--------------------------------------------------------------------
-Factored Neural Language Models (Alexandrescu & Kirchhoff, 2006) are the direct
-ancestor of this design: a word is represented as a set of features, each with
-its own embedding, concatenated into the input vector. That architecture is
-nineteen years old and well established.
-
-The one thing it does NOT do is FREEZE those feature embeddings — and that is
-this project's actual claim. To test it, both modes must be available and
-exactly comparable, which is what the `frozen.trainable` flag provides:
-
-    trainable=False   factor table is a fixed identity matrix (a registered
-                      buffer). The factor contributes a one-hot pattern that no
-                      gradient can alter. This is the thesis condition.
-
-    trainable=True    factor table is an nn.Embedding of the same shape. The
-                      model may reshape the factor space freely. This is the
-                      2006 baseline.
-
-Both index the SAME per-position codes and occupy the SAME T dimensions, so the
-comparison isolates exactly one variable: whether the linguistic signal is
-guaranteed or negotiable. The learned mode adds only n_classes x dim parameters
-per block (64 for coarse dependency), so parameter counts stay within 0.01%.
+FROZEN vs LEARNED (`frozen.trainable`): a fixed identity table — the thesis
+condition, a one-hot no gradient can alter — or an nn.Embedding of the same
+shape, the Factored Neural Language Model baseline (Alexandrescu & Kirchhoff,
+2006; journey §20, §21.2). Both index the same codes in the same T dims, so
+the comparison isolates whether the signal is guaranteed or negotiable.
 
 HOW A CODE IS OBTAINED
 ----------------------
@@ -37,13 +21,8 @@ HOW A CODE IS OBTAINED
 The static path uses an int lookup buffer rather than a precomputed one-hot
 matrix, so that frozen and learned modes share one indexing path.
 
-WHY THE POPULATION CHECK EXISTS
--------------------------------
-The previous design built a fixed [vocab_size, 23] matrix in which 12 columns
-were constant and 5 were a deterministic function of another block: 23
-dimensions carrying one 6-way categorical. It passed every per-token test and
-failed only when the population was examined. `assert_blocks_informative` is
-that check, and it raises rather than warns.
+`assert_blocks_informative` refuses a constant factor column: the old 23-dim
+layout had 12 and passed every per-token test (bugs.md #3, journey §14).
 """
 
 from __future__ import annotations
@@ -53,6 +32,8 @@ import os
 import torch
 import torch.nn as nn
 
+from ..features.lexical import FRAGMENT_STEPS
+
 
 def word_runs(is_start):
     """
@@ -61,14 +42,9 @@ def word_runs(is_start):
     `src[i]` is the last position of the previous run; `start[i] == 0` marks
     positions with no previous run inside the window.
 
-    BOUNDARIES ARE SUPPLIED, NOT INFERRED. Earlier versions derived them from
-    "where the code changes", which silently required the reference fact to be
-    constant across a word. That held for `mlemma` and broke for `mprefix`,
-    which varies fragment by fragment on purpose: every position became its own
-    run, the shift moved back one TOKEN rather than one word, and inside a word
-    it handed back the current word's own structure — the exact leak it exists
-    to remove. Third bug of this family; boundaries now come from the
-    tokenizer, which knows them.
+    Boundaries come from the tokenizer (`_word_starts`), never from where the
+    codes change: that needs a fact constant across a word, and `mprefix` is
+    not — the shift moved back one token and leaked (journey §30.8).
     """
     B, L = is_start.shape
     idx = torch.arange(L, device=is_start.device).unsqueeze(0).expand(B, L)
@@ -84,21 +60,11 @@ def causal_shift(code, src, start, sentinel):
     """
     Replace each position's code with the PREVIOUS word's code.
 
-    WHY. A cached code names the WHOLE word containing its position. For
-    `reconfiguring` split recon/fig/uring, the input at `recon` already names
-    the whole word and so reveals the fragments still to come — 86-97% of the
-    gain from word-form features sat on exactly those positions (journey §30).
-    That information does not exist during generation.
-
-    WHAT IS AVAILABLE. At any position the current word is unfinished, and we
-    cannot even tell whether the next token continues it. The most recent word
-    known to be complete is the one BEFORE it, whose end was observed when the
-    current word began.
-
-    APPLIED TO EVERY PER-WORD FACT, not just identity. An earlier version gated
-    on an attribute only the root-family blocks carried, so `mstruct` — equally
-    a per-word form feature, and 92% leak on its own — was left untouched. The
-    run it produced was reported as a causal measurement and was not one.
+    A cached code names the WHOLE word containing its position, so at `recon`
+    of recon/fig/uring it reveals fragments still to come — where 86-97% of the
+    word-form features' gain sat (journey §30). The most recent word known to be
+    complete is the one BEFORE the current one. Applied to every per-word fact:
+    gated on the identity blocks alone, `mstruct` was left leaking (§30.5).
     """
     out = torch.gather(code, 1, src)
     return torch.where(start == 0, torch.full_like(out, sentinel), out)
@@ -106,27 +72,15 @@ def causal_shift(code, src, start, sentinel):
 
 def keep_struct(code, mode):
     """
-    Collapse part of `mstruct` into its `simple` class, at model time.
+    Collapse part of `mstruct` into its `simple` class, at model time (G-25:
+    is its gain morphology, or name status? journey §31.7).
 
-    G-25. `mstruct` carries the whole causal effect (journey §31), but its eight
-    classes describe two different things:
-
-        morphology    simple, prefixed, suffixed, both, compound
-        name status   entity, unanalysed    (unanalysed is 77.5% capitalised)
-        other         none
-
-    "Morphological structure helps" is the right claim only if the gain
-    survives without the name classes. So:
-
-        mode='morphology'  entity, unanalysed          -> simple
+        mode='morphology'  entity, unanalysed                 -> simple
         mode='names'       prefixed, suffixed, both, compound -> simple
 
-    Each cell removes one kind of information and keeps the other; together they
-    say which one carries the 0.0092. Done at model time, like coarsening, so no
-    cache rebuild — and applied AFTER the causal shift, so it acts on the
-    previous word's class, which is what the model actually receives.
-
-    Indices follow STRUCT_CLASSES:
+    Each removes one kind of information and keeps the other; `none` stays in
+    both. Applied after the causal shift, so it acts on the previous word's
+    class, which is what the model receives. Indices follow STRUCT_CLASSES:
         0 simple  1 prefixed  2 suffixed  3 both  4 compound
         5 entity  6 unanalysed  7 none
     """
@@ -143,26 +97,10 @@ def keep_struct(code, mode):
 
 def fold_codes(code, block):
     """
-    Map CACHED codes onto this block's class inventory.
-
-    THE BUG THIS REPLACES. Coarsening was implemented inside `FactBlock.index()`,
-    which runs when the cache is BUILT. But the cache is built once, at the full
-    inventory, and the model reads the stored codes directly — it never calls
-    `index()`. The model applied `.clamp(0, n_classes - 1)` instead, which does
-    not fold: it maps every code at or above the ceiling onto ONE class.
-
-    At k=512 that put 96.9% of all words into a single class. The whole
-    cardinality sweep therefore measured "what fraction of words keep any
-    identity at all", not "how precisely is a word identified". Its plateau and
-    its sharp rise were artifacts of that, not properties of the language.
-
-    A test verified that coarsening did not change the cache spec — which was
-    true — and never checked what codes reached the model. The claim felt
-    closed because a check passed; the check tested the wrong property.
-
-    Folding is now applied here, at model time, from the range the cache was
-    actually built with, and the `none` sentinel is preserved rather than folded
-    into class 0.
+    Fold cached codes into this block's coarsened inventory at model time, from
+    the range the cache was built with (`n_full`), keeping `none` as the
+    sentinel. Folding at build time with a model-side clamp put 96.9% of words
+    in one class at k=512 (journey §29.4; results_invalid/coarsen_clamp).
     """
     coarsen = getattr(block, 'coarsen', 0)
     if not coarsen:
@@ -260,17 +198,11 @@ class HybridEmbedding(nn.Module):
             self.register_buffer(f'static_codes_{i}', torch.from_numpy(codes))
 
         # ── factor tables: buffer (frozen) or Embedding (learned) ─────────────
-        #
-        # Three cases, and the third is new:
         #   learned                      -> nn.Embedding(n_classes, dim)
         #   frozen, dim == n_classes     -> identity, i.e. a one-hot
-        #   frozen, dim <  n_classes     -> FIXED RANDOM PROJECTION
-        #
-        # The third exists because root identity has ~15k classes and cannot
-        # one-hot into 16 dims. A fixed random matrix gives every class a
-        # distinct, unchanging vector with no parameters and no sparse-gradient
-        # problem — journey section 11's Lever 3, unbuilt until now. Seeded so
-        # the projection is reproducible across runs.
+        #   frozen, dim <  n_classes     -> FIXED RANDOM PROJECTION: root identity
+        #       has ~15k classes and cannot one-hot into 16 dims; a seeded random
+        #       matrix gives every class a distinct, unchanging vector (§11, Lever 3)
         self.factor_tables = nn.ModuleList()
         for i, block in enumerate(self.blocks):
             if self.trainable_factors:
@@ -399,7 +331,7 @@ class HybridEmbedding(nn.Module):
             # lexical.resolve_fragments, on the batch: a fragment takes the
             # class of the position before it; position 0 keeps its own
             frag = frag_tab[ids]
-            for _ in range(3):
+            for _ in range(FRAGMENT_STEPS):
                 prev = torch.cat([alpha[:, :1], alpha[:, :-1]], dim=1)
                 alpha = torch.where(frag, prev, alpha)
         prev_alpha = torch.cat(

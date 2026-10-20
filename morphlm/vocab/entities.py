@@ -1,18 +1,12 @@
 """
 entities.py — named entity extraction and the spaCy NER wrapper.
 
-THE FIX IN THIS MODULE
-----------------------
-The old entity_vocab.csv had columns `entity,count` only — the spaCy label was
-computed and then thrown away. That single omission is why the old 12-dim
-entity block in the frozen embedding was constant across all 16,757 vocabulary
-rows: there was no label to put in it.
-
-extract_entities() now records the majority label per surface form, so the
-vocabulary carries `entity_label` and the 'etype' fact block has something real
-to encode. Backward compatible: a CSV without the column still loads, the label
-comes back as 'none', and config validation will refuse to build 'etype' from
-a vocabulary that lacks it rather than silently emitting a constant block.
+extract_entities() records the majority spaCy label per surface form, so the
+vocabulary carries `entity_label` and the `etype` block has something to
+encode: the old entity_vocab.csv kept `entity,count` only, which left the old
+12-dim entity block constant (journey §14). A CSV without the column still
+loads, every label 'none' — and a model built with `etype` from it is refused
+(`embedding.assert_blocks_informative`: a constant block).
 """
 
 from __future__ import annotations
@@ -26,12 +20,9 @@ from .morpholex import ARTICLES, KEEP_ENTITIES
 
 class NERTagger:
     """
-    Lazy-loading spaCy wrapper.
-
-    NOTE ON COST: spacy.load() enables tagger, parser AND ner by default, so
-    the morpheme pipelines have ALWAYS been paying for dependency parsing and
-    discarding the result. Context facts (dep/pos) are therefore close to free
-    for morph/det — only the BPE+context cell pays a genuinely new spaCy cost.
+    Lazy-loading spaCy wrapper. spacy.load() enables tagger, parser and NER, so
+    context facts (dep/pos) come free with the morpheme pipelines' parse
+    (journey §16).
     """
 
     def __init__(self, model='en_core_web_sm'):

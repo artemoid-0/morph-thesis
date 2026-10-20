@@ -55,9 +55,14 @@ def standard_name(corpus: str, algorithm: str, vocab: int) -> str:
     return '_'.join(p for p in (NAME_OF.get(algorithm, algorithm), code, k) if p)
 
 
+def sidecar_path(path: str) -> str:
+    """Where a tokenizer's sidecar lives: `<stem>.meta.json` beside it."""
+    return (path[:-5] if path.endswith('.json') else path) + '.meta.json'
+
+
 def tokenizer_meta(path: str) -> dict:
     """The sidecar `<stem>.meta.json` beside a tokenizer, or {} if it has none."""
-    meta = (path[:-5] if path.endswith('.json') else path) + '.meta.json'
+    meta = sidecar_path(path)
     if os.path.exists(meta):
         with open(meta) as f:
             return json.load(f)
@@ -149,7 +154,7 @@ def train_tokenizer(cfg, vocab, out, algorithm='bpe', pre_tokenizer='bytelevel',
     bpe = BPEPipeline(tokenizer_path=None, vocab_size=vocab, verbose=True)
     bpe.train(counted(), save_path=out, pre_tokenizer=pre_tokenizer,
               algorithm='bpe' if rule is not None else algorithm, presplit=rule)
-    meta_path = (out[:-5] if out.endswith('.json') else out) + '.meta.json'
+    meta_path = sidecar_path(out)
     meta = None
     if sidecar == 'full':
         meta = {'word_rule': spec.word_rule, 'corpus': corpus,
@@ -174,15 +179,6 @@ def train_tokenizer(cfg, vocab, out, algorithm='bpe', pre_tokenizer='bytelevel',
     return counter['texts']
 
 
-def _common_prefix(a: str, b: str) -> int:
-    n = 0
-    for x, y in zip(a, b):
-        if x != y:
-            break
-        n += 1
-    return n
-
-
 CASE_BEARING = ('NOUN', 'PROPN', 'ADJ')
 
 
@@ -193,7 +189,7 @@ def tokenizer_stats(tok_path, texts, nlp):
     """
     tok = load_tokenizer(tok_path)
     rule = None
-    from .endings import RULES, RULE_OF_LANGUAGE
+    from .endings import RULES, RULE_OF_LANGUAGE, common_prefix
     if getattr(nlp, 'lang', '') in RULE_OF_LANGUAGE:
         rule = RULES[RULE_OF_LANGUAGE[nlp.lang]]()
     chars = tokens = words = split = toks_in_split = 0
@@ -223,7 +219,7 @@ def tokenizer_stats(tok_path, texts, nlp):
                         cut[kk][1] += (ws + k) in starts
                         cut[kk][2] += (ws + k, we) in exact
             form, lemma = w.text.lower(), w.lemma_.lower()
-            p = _common_prefix(form, lemma)
+            p = common_prefix(form, lemma)
             if form == lemma or p == 0 or p >= len(form):
                 continue
             hit = (ws + p) in starts

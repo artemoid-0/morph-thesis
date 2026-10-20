@@ -1,20 +1,11 @@
 """
 provenance.py — everything about a run that cannot be recovered later.
 
-WHY THIS EXISTS
----------------
-`result.json` recorded the headline metrics and the evaluation log, and nothing
-else. Every table written so far — parameter counts, tokens-per-byte, wall
-clock, effect-to-noise ratios — was reconstructed BY HAND from the config plus
-arithmetic, repeatedly, and one of those reconstructions (the control-asymmetry
-paragraph, R-01) turned out to be wrong.
-
-Three of the categories below are **unrecoverable once the run is over**:
-library versions, GPU model, and wall-clock timing. A reproducibility appendix
-written six months from now cannot invent them.
-
-The rule adopted here: **if a number will appear in the thesis, the run that
-produced it should have written it down.**
+The rule: if a number will appear in the thesis, the run that produced it
+writes it down — parameter splits, corpus statistics, convergence — rather
+than a table rebuilding it by hand, as tables once did (and once got wrong).
+Three are unrecoverable once the run is over: library versions, the GPU
+model, and wall-clock timing.
 """
 
 from __future__ import annotations
@@ -112,13 +103,10 @@ def parameter_breakdown(model, cfg):
         'output_head': head,
         'positional': pos,
         'auxiliary_head': aux,
-        # AMBIGUITY RESOLVED EXPLICITLY. `transformer_core` counts the blocks
-        # and the final LayerNorm only (793,344 at the standard configuration).
-        # `transformer_core_with_positional` adds the 256x128 learned position
-        # table (826,112). Two project documents previously quoted these two
-        # figures for the same quantity, differing by exactly 32,768. Both were
-        # defensible; neither said which it meant. Reporting both under
-        # unambiguous names removes the choice.
+        # Both, under unambiguous names: the blocks and final norm alone
+        # (793,344 at the standard configuration), and with the 256x128 learned
+        # position table (826,112) — two documents once quoted one figure each
+        # for the same quantity (docs/reference/apparatus.md)
         'transformer_core': core,
         'transformer_core_with_positional': core + pos,
         'vocab_size': model.vocab_size,
@@ -130,28 +118,17 @@ def parameter_breakdown(model, cfg):
     }
 
 
-#: Bumped whenever the MEANING of a coarsened run changes without its config
-#: changing. Version 1 folded codes at cache-build time only, and the model
-#: clamped instead — collapsing up to 99.8% of words into one class. Version 2
-#: folds at model time. Because the config is identical, the run_id is too, so
-#: the version is the only way to tell a valid coarsened run from an invalid one.
+#: Bumped when the MEANING of a coarsened run changes without its config (so its
+#: run_id): 1 folded at cache build and the model clamped, collapsing up to
+#: 99.8% of words into one class; 2 folds at model time (journey §29.4).
 COARSEN_SEMANTICS = 2
 
-#: Bumped when the MEANING of a causal run changes without its config changing.
-#: Version 1 applied the shift only to blocks descended from MorphRootBlock, so
-#: `mstruct` — equally a per-word form feature — was left leaking, and the run
-#: was reported as a causal measurement when it was not. Version 2 applies it to
-#: every per-word fact, with word boundaries taken from the highest-cardinality
-#: one. The config is identical either way, so the run_id is too: this version
-#: is the only thing distinguishing a valid causal run from an invalid one.
-#:
-#: Version 3: word boundaries come from the TOKENIZER. Versions 1 and 2 inferred
-#: them from "where the code changes", which required the reference fact to be
-#: constant across a word — true for mlemma, false for mprefix. A v2 run is not
-#: merely suspect, it is unreproducible: the boundary rule lives in the model's
-#: forward pass, so re-scoring a v2 checkpoint under v3 code evaluates it under
-#: boundaries it never trained with. a0abed930f58 moved from 0.0266 to 0.0194
-#: nats/token that way, on an unchanged checkpoint.
+#: Bumped when the MEANING of a causal run changes without its config changing
+#: (so with its run_id): the version is the only thing telling a valid causal run
+#: from an invalid one. 1: only the identity blocks were shifted, `mstruct` left
+#: leaking (journey §30.5). 2: every per-word fact, boundaries inferred from where
+#: the codes change. 3: boundaries from the TOKENIZER — a v2 checkpoint re-scored
+#: under v3 sees boundaries it never trained with (journey §30.8).
 CAUSAL_SEMANTICS = 3
 
 
@@ -230,21 +207,6 @@ def convergence(log, max_steps, thresholds=(2.0, 1.8, 1.6, 1.5, 1.45, 1.40)):
                                    if e['bits_per_byte'] <= t), None)
                      for t in thresholds},
     }
-
-
-def cache_provenance(cfg, split_metas):
-    """Which cached streams were consumed, and the alignment rate behind them."""
-    out = {}
-    for split, meta in split_metas.items():
-        if meta is None:
-            continue
-        out[split] = {k: meta.get(k) for k in
-                      ('pipeline', 'max_articles', 'num_tokens', 'num_bytes',
-                       'num_articles', 'alignment_rate', 'fact_names')
-                      if k in meta}
-    out['surface_spec'] = cfg.surface_spec()
-    out['frozen_spec'] = cfg.frozen.spec()
-    return out
 
 
 def tokenizer_record(cfg):
