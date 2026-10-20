@@ -31,6 +31,10 @@ def _refresh_tree(d):
     as an earlier refresh left it. Returns (the files the steps draw, the files on NOT_DRAWN)."""
     import re
     src = open(os.path.join(ROOT, 'scripts', 'ops', 'refresh_exports.sh')).read()
+    # NOT_DRAWN is tested with an entry of the test's own, whatever the script's list holds
+    m = re.search(r'^NOT_DRAWN=\((.*?)^\)', src, re.M | re.S)
+    assert m, 'refresh_exports.sh: its NOT_DRAWN=( … ) block not found'
+    src = src[:m.end(1)] + '    exports/figures/kept_by_hand.png\n' + src[m.end(1):]
     os.makedirs(os.path.join(d, 'scripts', 'ops'))
     open(os.path.join(d, 'scripts', 'ops', 'refresh_exports.sh'), 'w').write(src)
     steps = re.findall(r'^\s*"(scripts/\S+\.py) --out (\S+?)/?"', src, re.M)
@@ -42,7 +46,7 @@ def _refresh_tree(d):
         drawn.append(os.path.join(out, os.path.splitext(os.path.basename(script))[0] + '.out'))
     block = re.search(r'^NOT_DRAWN=\((.*?)^\)', src, re.M | re.S).group(1)
     not_drawn = [ln.split()[0] for ln in block.splitlines() if ln.strip() and not ln.strip().startswith('#')]
-    assert 'exports/figures/probe_axis_posprev.png' in not_drawn, not_drawn
+    assert 'exports/figures/kept_by_hand.png' in not_drawn, not_drawn
     for f in drawn + not_drawn + ['exports/REFRESHED.txt']:
         p = os.path.join(d, f)
         os.makedirs(os.path.dirname(p), exist_ok=True)

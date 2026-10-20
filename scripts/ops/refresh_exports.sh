@@ -25,9 +25,8 @@ STEPS=(
 # Files in exports/ that no step above draws, so they are never reported stale; each with
 # its reason. Nothing else may stay unrewritten.
 NOT_DRAWN=(
-    # drawn once, on 7 October, by scripts/analysis/probe_axis.py, which writes an audit
-    # record at every call and so is not a step here
-    exports/figures/probe_axis_posprev.png
+    # none since 20 October: probe_axis_posprev.png, drawn once on 7 October by
+    # scripts/analysis/probe_axis.py and used by no document, left exports/
 )
 
 # the start marker: a file the steps leave older than the marker was not rewritten
