@@ -425,6 +425,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [33.120 Item 1's 10k half: at 85M parameters the gain halves on average, because two seeds of four lose it early](15_the_list_of_19_october.md#33120-item-1s-10k-half-at-85m-parameters-the-gain-halves-on-average-because-two-seeds-of-four-lose-it-early)
 - [33.121 MultiBLiMP at width 1024, and a finer look at G-81 (prepared, 20 October)](15_the_list_of_19_october.md#33121-multiblimp-at-width-1024-and-a-finer-look-at-g-81-prepared-20-october)
 - [33.122 MultiBLiMP at width 1024: the gain holds at every seed and stops growing; G-81's fall is no spike](15_the_list_of_19_october.md#33122-multiblimp-at-width-1024-the-gain-holds-at-every-seed-and-stops-growing-g-81s-fall-is-no-spike)
+- [33.123 The chain of 21 October prepared: MultiBLiMP at 20k, items 3 and 6](15_the_list_of_19_october.md#33123-the-chain-of-21-october-prepared-multiblimp-at-20k-items-3-and-6)
 
 ### Appendices
 

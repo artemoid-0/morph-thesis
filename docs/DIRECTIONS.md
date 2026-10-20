@@ -46,7 +46,7 @@ Results committed by about 31 October reach the text; the work is admitted on 4 
 Each item's preparation runs on the CPU while the item before it trains.
 In the items, §3.x and "conclusion n" are the thesis text's sections, not the journey's.
 
-**Running:** nothing. The chain of 20 October ended at 05:32 EDT on the second machine with item 1's 10k half and the 20k pair of seed 0 (§33.120). The rest of item 1 and items 2–3 wait for hours.
+**Running** (the second machine, 24 hours from 13:38 EDT on 20 October): the rest of item 1 (`second_2026-10-20.sh`, until about 23:00 EDT), then `second_2026-10-21.sh` — MultiBLiMP at 20k, item 3 and item 6 (§33.123; P279–P285), about 9 hours. Item 2 follows when its preparation is done.
 
 1. **The tokenizer's gain beyond 30M parameters** (§3.12, §3.3.2, conclusion 2): width 1024, ~38M tokens, both nulls (BPE 17k, endings apart), seeds 0–3, at 10k and at 20k.
    The 10k half and seed 0's 20k pair ran on 20 October (§33.120): at 10k the gain is +0.0067 ± 0.0030, half width 512's, because two seeds of four fall behind early (G-81).

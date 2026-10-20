@@ -428,3 +428,42 @@ At width 512 they are +6.2 ± 0.7, +6.6 ± 0.4 and +5.2 ± 0.3.
    but the grammatical gain moved by 0.9 points between machines at width 512.
 4. **G-81 is narrowed, not closed:** no instability shows at 100-step resolution, and the fall belongs
    to the seed on this machine. Whether it belongs to the recipe at this width is still open.
+
+### 33.123 The chain of 21 October prepared: MultiBLiMP at 20k, items 3 and 6
+
+The second machine is ours for 24 hours from 13:38 EDT on 20 October. Item 1's 20k half (seeds 1–3,
+6 runs) started then and ends about 23:00 EDT. `scripts/chains/second_2026-10-21.sh` (on
+`lib/chain_v1.sh`) starts after it has let go of its lock, so the two never share the GPU. Item 2
+(number and gender) follows once its preparation is done. In the text's order, it runs items 3 and
+6 before item 2 only because item 2 is not ready.
+- **mb20k:** MultiBLiMP on width 1024's eight 20k nulls (minutes), as the text asked.
+- **en100k (item 3):** English part of speech never fed and switched off at 5,000, 100k, seeds 0–3:
+  8 runs of ~42 min. At 50k every such run was still improving at its last step (0.007 BPB over the
+  last 10k steps), so 6.8 passes over WikiText-103 should still be read at their best step.
+- **uni512 (item 6):** Unigram 17k at width 512, ~38M, 10k, seeds 0–3: the null, case and the
+  empty slot, 12 runs of ~16 min. Read on the law's axis against item 4's BPE 17k cells (§33.118).
+
+PLAN on the second machine: 20 runs, ~9.7 h with margins, ending well before END_BY. The data for
+every cell are there (`cells_ready.py`). Rehearsed with the stub in six scenarios
+(`scratch/rehearse_1021/`): all of it, a failed sanity check, MultiBLiMP run and already recorded,
+END_BY, a cell not ready.
+
+Predictions, before any of its runs:
+- **P279** (~65%). At 20k, width 1024's MultiBLiMP gain is positive at every seed and within 1.0
+  point of its 10k gain (+5.3).
+- **P280** (~50%). At 100k, the switched-off model's deficit against the never-fed one is below
+  0.001 on average: the deficit closes. At 50k it was −0.0019 ± 0.0011, 3/4 below (§33.102).
+- **P281** (~70%). Every never-fed run at 100k still improves over its last 10,000 steps (its best
+  step is its last).
+- **P282** (~65%). The deficit at 100k is smaller than at 50k.
+- **P283** (~50%). At width 512, at the lowest common reference BPB, case's gain over the empty slot
+  under Unigram is within 0.001 of BPE 17k's. At width 128 Unigram stayed +0.0016 ± 0.0003 short
+  at 1.19 (§33.117).
+- **P284** (~60%). At the end of the 10k budget, case's gains over the empty slot under Unigram and
+  under BPE 17k differ by less than 0.001.
+- **P285** (~60%). At width 512 the empty slot ends within 0.001 of the null under Unigram.
+
+**The sentences these decide** (the text's): item 3 *persists* (P280 wrong) or *closes* (P280
+right). Item 6 *stays*, if under Unigram exposed endings make case partly redundant at both sizes
+(P283 wrong), or *goes*, if at 30M parameters the redundancy is gone under every exposing tokenizer
+(P283 right).

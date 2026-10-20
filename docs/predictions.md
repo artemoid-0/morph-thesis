@@ -6,7 +6,7 @@ Each prediction was recorded in the [journey](record/journey/README.md) **before
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 161 right, 11 half right, 94 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 3 pending — of 278.
+**Tally:** 161 right, 11 half right, 94 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 10 pending — of 285.
 
 *Key to the tally (added 19 October 2026). Counted half right: P19, P46, P54 — with the eight
 whose outcome begins "half right" or "partly right". Counted right: P33, P172 — right by their
@@ -307,3 +307,10 @@ The wrong ones carried the information:
 | P276 | The grammatical gain follows the split in bits per byte: seeds 1 and 2 each gain fewer points than seeds 0 and 3 | wrong — seed 2 gains more than seed 0 (+5.3 against +5.1); seed 1, with no lead in bits per byte, still gains +4.6 | §33.121, §33.122 |
 | P277 | A rerun of seed 1's endings-apart null at width 1024, evaluated every 100 steps, repeats the 10k run's evaluations bit for bit (to 1e-6) | wrong — identical at step 0, then up to 3.2 × 10⁻⁵ BPB apart: close, not bit for bit | §33.121, §33.122 |
 | P278 | No spike: from step 1,000 to 4,000 that rerun's validation BPB never rises by more than 0.005 between evaluations | right — it falls at every evaluation | §33.121, §33.122 |
+| P279 | At 20k, width 1024's MultiBLiMP gain is positive at every seed and within 1.0 point of its 10k gain (+5.3) | pending | §33.123 |
+| P280 | At 100k, English part of speech switched off at 5,000 ends less than 0.001 behind never-fed on average: the deficit closes | pending | §33.123 |
+| P281 | Every never-fed English run at 100k still improves over its last 10,000 steps | pending | §33.123 |
+| P282 | The deficit at 100k is smaller than at 50k (−0.0019 ± 0.0011) | pending | §33.123 |
+| P283 | At width 512, at the lowest common reference BPB, case's gain over the empty slot under Unigram is within 0.001 of BPE 17k's | pending | §33.123 |
+| P284 | At the end of the 10k budget at width 512, case's gains over the empty slot under Unigram and BPE 17k differ by less than 0.001 | pending | §33.123 |
+| P285 | At width 512 the empty slot ends within 0.001 of the null under Unigram | pending | §33.123 |
