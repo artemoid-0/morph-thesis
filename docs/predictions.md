@@ -6,10 +6,10 @@ Each prediction was recorded in the [journey](record/journey/README.md) **before
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 161 right, 11 half right, 94 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 10 pending — of 285.
+**Tally:** 165 right, 11 half right, 94 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 6 pending — of 285.
 
 *Key to the tally (added 19 October 2026). Counted half right: P19, P46, P54 — with the eight
-whose outcome begins "half right" or "partly right". Counted right: P33, P172 — right by their
+whose outcome begins "half right" or "partly right". Counted right: P33, P172, P273 — right by their
 letter. Counted wrong: every outcome that begins "wrong", "badly wrong" or "narrowly wrong".
 Never tested: deferred P12, P16, P20; parked P91, P92; dropped P161, P162, P163.*
 
@@ -299,15 +299,15 @@ The wrong ones carried the information:
 | P268 | At 10k it is smaller than width 512's on the same machine (+0.0141 ± 0.0016) on average | right — +0.0067 ± 0.0030 (3/4); two seeds lose the lead early, two hold width 512's level | §33.119, §33.120 |
 | P269 | On the law's axis, at every null BPB both widths reach between 0.88 and 1.04, width 1024's gain is within 0.004 of width 512's | wrong — 0.007 to 0.015 below it (−0.0147 at 0.95) | §33.119, §33.120 |
 | P270 | Width 1024's BPE 17k null ends its 10k budget at least 0.03 BPB below width 512's (0.8794) | right — 0.8226, 0.0568 below | §33.119, §33.120 |
-| P271 | At 20k the gain levels off: over the last 5,000 steps it changes by less than 0.002 on average | pending — seed 0 levels off (+0.0119 to +0.0115); seeds 1–3 to run | §33.119, §33.120 |
-| P272 | In the 20k runs of seeds 1 and 2 at width 1024 the lead again falls below +0.003 at some evaluation between steps 2,500 and 5,000 (the 10k fall is the seed's, not chance) | pending | §33.120 |
-| P273 | At 20k width 1024's gain over four seeds is within 0.003 of width 512's at 20k on the same machine (+0.0099 ± 0.0006) | pending | §33.120 |
+| P271 | At 20k the gain levels off: over the last 5,000 steps it changes by less than 0.002 on average | right — +0.0002 | §33.119, §33.124 |
+| P272 | In the 20k runs of seeds 1 and 2 at width 1024 the lead again falls below +0.003 at some evaluation between steps 2,500 and 5,000 (the 10k fall is the seed's, not chance) | right — −0.0091 and −0.0047 | §33.120, §33.124 |
+| P273 | At 20k width 1024's gain over four seeds is within 0.003 of width 512's at 20k on the same machine (+0.0099 ± 0.0006) | right by its letter — +0.0075 ± 0.0018, 0.0024 apart; 0.0025 of it from the last 1,500 steps, as BPE 17k's null stops improving | §33.120, §33.124 |
 | P274 | At width 1024 and 10k, endings apart's models beat BPE 17k's on MultiBLiMP at every seed | right — +5.3 ± 0.4, from +4.6 to +6.3 | §33.121, §33.122 |
 | P275 | That MultiBLiMP gain is at least width 512's on the same machine at 10k | wrong — +5.3 ± 0.4 against +5.9 ± 0.3 | §33.121, §33.122 |
 | P276 | The grammatical gain follows the split in bits per byte: seeds 1 and 2 each gain fewer points than seeds 0 and 3 | wrong — seed 2 gains more than seed 0 (+5.3 against +5.1); seed 1, with no lead in bits per byte, still gains +4.6 | §33.121, §33.122 |
 | P277 | A rerun of seed 1's endings-apart null at width 1024, evaluated every 100 steps, repeats the 10k run's evaluations bit for bit (to 1e-6) | wrong — identical at step 0, then up to 3.2 × 10⁻⁵ BPB apart: close, not bit for bit | §33.121, §33.122 |
 | P278 | No spike: from step 1,000 to 4,000 that rerun's validation BPB never rises by more than 0.005 between evaluations | right — it falls at every evaluation | §33.121, §33.122 |
-| P279 | At 20k, width 1024's MultiBLiMP gain is positive at every seed and within 1.0 point of its 10k gain (+5.3) | pending | §33.123 |
+| P279 | At 20k, width 1024's MultiBLiMP gain is positive at every seed and within 1.0 point of its 10k gain (+5.3) | right — +4.7 ± 0.3 | §33.123, §33.124 |
 | P280 | At 100k, English part of speech switched off at 5,000 ends less than 0.001 behind never-fed on average: the deficit closes | pending | §33.123 |
 | P281 | Every never-fed English run at 100k still improves over its last 10,000 steps | pending | §33.123 |
 | P282 | The deficit at 100k is smaller than at 50k (−0.0019 ± 0.0011) | pending | §33.123 |

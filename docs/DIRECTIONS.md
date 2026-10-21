@@ -24,7 +24,7 @@ Each direction's answer is stated once, in FINDINGS; the table gives its status 
 | D5 | the rare and novel tail | **closed**, screened at full training; the unseen-word version parked (§33.47) | [the rare tail](FINDINGS.md#no-benefit-in-the-rare-tail) |
 | D6 | the token-independent input | **parked — outside the thesis** (§33.59); G-71 closed (§33.58) | [what the slot did instead](FINDINGS.md#what-the-slot-did-instead-a-token-independent-input) |
 | D7 | tokenization | **answered** at four seeds (§33.61–§33.81); the exposure comparison against both references (§33.110–§33.118) | [Q1 in Ukrainian](FINDINGS.md#q1-in-ukrainian-morphology-inside-bpe); [in English](FINDINGS.md#q1-in-english-morphology-inside-bpe); [the tokenizer and the embedding](FINDINGS.md#morphology-in-the-tokenizer-and-in-the-embedding-ukrainian) |
-| D8 | scale and architecture: wider, deeper, a modern block | width 512 **answered** (§33.94, §33.102, §33.118); width 1024 at 10k: half width 512's, split by seed (§33.120), its 20k half queue item 1; depth and the RMSNorm and SwiGLU block (built, §33.54) not run | [Q1 in Ukrainian](FINDINGS.md#q1-in-ukrainian-morphology-inside-bpe) ("It peaks there"); [the null at 30M](FINDINGS.md#the-same-shape-null-is-not-neutral) |
+| D8 | scale and architecture: wider, deeper, a modern block | width 512 **answered** (§33.94, §33.102, §33.118); width 1024 **answered** (§33.120–§33.124): smaller again, lasting, split by seed (G-81); depth and the RMSNorm and SwiGLU block (built, §33.54) not run | [Q1 in Ukrainian](FINDINGS.md#q1-in-ukrainian-morphology-inside-bpe) ("It peaks there"); [the null at 30M](FINDINGS.md#the-same-shape-null-is-not-neutral) |
 | D9 | a second corpus per language | Ukrainian **answered** with UberText fiction (§33.85, §33.88, §33.108); no English corpus chosen | [Q1 in Ukrainian](FINDINGS.md#q1-in-ukrainian-morphology-inside-bpe) ("And on a second corpus") |
 
 **D3 — is the reliance deficit permanent?**
@@ -46,15 +46,10 @@ Results committed by about 31 October reach the text; the work is admitted on 4 
 Each item's preparation runs on the CPU while the item before it trains.
 In the items, §3.x and "conclusion n" are the thesis text's sections, not the journey's.
 
-**Running** (the second machine, 24 hours from 13:38 EDT on 20 October): the rest of item 1 (`second_2026-10-20.sh`, until about 23:00 EDT), then `second_2026-10-21.sh` — MultiBLiMP at 20k, item 3 and item 6 (§33.123; P279–P285), about 9 hours. Item 2 follows when its preparation is done.
+**Running** (the second machine, until 13:30 EDT on 21 October): `second_2026-10-21.sh` — item 3, then item 6 (§33.123; P280–P285), to about 07:30 EDT. Item 1 is answered (§33.124). Item 2 follows if its preparation is ready by about 09:30 EDT; it is being prepared on the second machine.
 
-1. **The tokenizer's gain beyond 30M parameters** (§3.12, §3.3.2, conclusion 2): width 1024, ~38M tokens, both nulls (BPE 17k, endings apart), seeds 0–3, at 10k and at 20k.
-   The 10k half and seed 0's 20k pair ran on 20 October (§33.120): at 10k the gain is +0.0067 ± 0.0030, half width 512's, because two seeds of four fall behind early (G-81).
-   MultiBLiMP at 10k (§33.122): +5.3 ± 0.4 at every seed, no larger than width 512's on the same machine (+5.9 ± 0.3).
-   - **Left:** the 20k pairs of seeds 1–3, 6 runs of 88 min (measured), **~8.8 h**: the same chain started again (`scripts/chains/second_2026-10-20.sh`), which skips the finished runs. Then MultiBLiMP on the 8 models at 20k (minutes).
-   - **It decides** (P271–P273): level at 20k and within 0.003 of width 512's → *by 20k it holds at 30M parameters' level; at 10k two seeds of four had not yet regained it*; level and below → *smaller again but lasting*; still falling → *it fades*.
-     Whether the 10k fall recurs at seeds 1 and 2 under the 20k schedule (P272); on this machine it is the seed's, and no spike (G-81, §33.122).
-   - **Fallback** if the hours do not come before the date: the text states the 10k half and seed 0's 20k pair as they are.
+1. **The tokenizer's gain beyond 30M parameters**: answered (§33.120–§33.124). At 85M parameters it is smaller again and lasts: +0.0067 ± 0.0030 at 10k, +0.0075 ± 0.0018 at 20k, level over the last 5,000 steps; two seeds of four keep width 512's level and two lose much of it early (G-81). MultiBLiMP +5.3 and +4.7, below width 512's on the same machine.
+   Held, not asked by the text: G-81's recipe question (a longer warm-up, 4 runs, ~3 h).
 2. **Number and gender as context-aware features** (§3.10, conclusion 7): under BPE 17k and endings apart, ~38M, 10k, seeds 0–3.
    For each feature, the tagged one, its word form and its leak control, each over the null and the empty slot (both already on the second machine): 2 × 3 × 2 × 4 = **48 runs, ~3.4 h**.
    The exposure comparison for both features comes with the same runs.

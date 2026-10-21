@@ -10,7 +10,8 @@ parameters the same-shape null costs nothing; in the 5M model the tokenizer's ga
 slots is +0.0203, not +0.0175 (§33.118). At 85M parameters (width 1024) and 10k the tokenizer's gain
 is half width 512's on average, +0.0067 ± 0.0030: two seeds keep width 512's level, two lose it
 early in training (§33.120). Its grammatical gain holds at every seed (+5.3 ± 0.4 points) and is no larger than
-30M parameters' on the same machine; the two seeds' fall is a slower stretch, no spike (§33.122).
+30M parameters' on the same machine; the two seeds' fall is a slower stretch, no spike (§33.122). At 20k the gain is smaller again and lasts,
++0.0075 ± 0.0018, and the split stays (§33.124).
 
 ---
 
@@ -467,3 +468,89 @@ Predictions, before any of its runs:
 right). Item 6 *stays*, if under Unigram exposed endings make case partly redundant at both sizes
 (P283 wrong), or *goes*, if at 30M parameters the redundancy is gone under every exposing tokenizer
 (P283 right).
+
+### 33.124 Item 1's 20k half: at 85M parameters the gain is smaller again and lasts, and the split stays
+
+The 20k pairs of seeds 1–3 ran on the second machine from 13:38 to 22:33 EDT on 20 October.
+`second_2026-10-20.sh` was started again and skipped the finished runs. MultiBLiMP on the eight 20k
+models then opened the chain of 21 October (§33.123). Bits per byte at 20k, each run at its best step:
+
+| width 1024, 20k | seed 0 | seed 1 | seed 2 | seed 3 | mean |
+|---|---|---|---|---|---|
+| BPE 17k | 0.7700 | 0.7703 | 0.7684 | 0.7701 (step 18,500) | 0.7697 |
+| endings apart | 0.7585 | 0.7670 | 0.7626 | 0.7608 | 0.7622 |
+| the gain | +0.0115 | +0.0033 | +0.0058 | +0.0093 | **+0.0075 ± 0.0018 (0.97%, 4/4)** |
+
+Width 512 at 20k on the same machine: +0.0099 ± 0.0006 (1.21%, seeds 1–3; §33.102, §33.111).
+- **It lasts.** Over the last 5,000 steps the gain changes by +0.0002 on average (−0.0004, +0.0005,
+  +0.0006, +0.0002 at seeds 0–3).
+- **The split stays, and it is the seed's.** At seeds 1 and 2 the 20k runs fall behind again as
+  their 10k runs did: to −0.0091 at step 4,500 and to −0.0047 at step 3,000 (the 10k runs reached
+  −0.0084 and −0.0029). From there they regain part of it, to +0.0033 and +0.0058. Seeds 0 and 3 end
+  at +0.0115 and +0.0093, width 512's level.
+- **The last 1,500 steps add about 0.0025.** From step 18,500, BPE 17k's null stops improving at
+  every seed: its validation BPB rises at step 19,000, and seed 3's best step is 18,500.
+  Endings apart's null keeps falling, by 0.0025 to 0.0031 from 18,500 to the end. By 20k the BPE
+  17k model has read its ~38M-token text 4.3 times; endings apart's model, with 12% more tokens for
+  the same text, 3.9 times. At 85M parameters this is where repetition begins to tell. At step 18,500,
+  the last step every pair shares before a best step, the gain is +0.0049 ± 0.0018 (4/4).
+
+**On the law's axis** (`tokenizer_widths_20261021T030542`; the lead at the same null BPB, at 20k).
+From null BPB 1.11 down to 0.82, width 1024's lead is 0.003 to 0.015 below width 512's. It starts
+above it.
+
+| null BPB | width 512, 20k | width 1024, 20k | width 1024, seeds 0, 1, 2, 3 |
+|---|---|---|---|
+| 1.30 | +0.0493 | +0.0587 | +0.0617, +0.0598, +0.0571, +0.0560 |
+| 1.18 | +0.0416 | +0.0403 | +0.0436, +0.0409, +0.0346, +0.0419 |
+| 1.04 | +0.0224 | +0.0154 | +0.0214, +0.0129, +0.0069, +0.0204 |
+| 0.95 | +0.0183 | +0.0036 | +0.0128, −0.0077, −0.0039, +0.0123 |
+| 0.88 | +0.0102 | +0.0044 | +0.0115, −0.0055, +0.0029, +0.0091 |
+| 0.84 | +0.0091 | +0.0031 | +0.0092, −0.0035, −0.0003, +0.0070 |
+| 0.82 | +0.0090 | +0.0063 | +0.0110, +0.0005, +0.0023, +0.0102 |
+
+**MultiBLiMP at 20k** (`multiblimp_eval_20261021T023320`).
+- BPE 17k 81.1%, endings apart 85.8%: **+4.7 ± 0.3 points (4/4)**, at seeds 0–3 +4.19, +4.59,
+  +4.45 and +5.39.
+- By phenomenon: number +3.4 ± 0.6, gender +4.4 ± 0.1, person +5.4 ± 0.5 (4/4 each).
+- At 10k the gain was +5.3 ± 0.4. Width 512 at 20k on the same machine gains +5.8 ± 0.3 (seeds 2–3,
+  `multiblimp_eval_20261017T094841`).
+
+**Predictions** (§33.119–§33.123).
+- **P271 right:** +0.0002 over the last 5,000 steps on average.
+- **P272 right:** −0.0091 and −0.0047, again between steps 2,500 and 5,000.
+- **P273 right by its letter:** +0.0075 against +0.0099, 0.0024 apart. Not by its intent:
+  - 0.0025 of the gain comes in the last 1,500 steps, as BPE 17k's null stops improving;
+  - at step 18,500 the gain is 0.0050 below width 512's;
+  - on the law's axis it is below width 512's from null BPB 1.11 down.
+- **P279 right:** +4.7 ± 0.3 at every seed, 0.6 below the 10k gain.
+
+The tally is 165 right, 11 half right, 94 wrong, 8 never tested, 1 withdrawn and 6 pending
+(P280–P285), of 285.
+
+**The sentence** (§33.120's rule). By its letter the rule picks the first sentence, *by 20k it holds
+at 30M parameters' level; at 10k two seeds of four had not yet regained it*, because P271 and P273
+are right. Neither clause fits what the runs show.
+- At 20k, two seeds have still regained only part of the gain.
+- What brings the mean within 0.003 of width 512's is the last 1,500 steps, where BPE 17k's null
+  stops improving.
+
+The second sentence fits: *smaller again but lasting*, with the split.
+- It is smaller than at 30M parameters at both budgets, and at every common point of learning from
+  null BPB 1.11 down.
+- It is level over the last 5,000 steps.
+- Two runs of four keep 30M's level; two lose much of the gain early in training and keep a smaller
+  one.
+
+**What it changes for the thesis.**
+1. **Beyond 30M parameters the gain is smaller again, lasts, and depends on the run.** At 85M
+   parameters it is +0.0067 ± 0.0030 at 10k and +0.0075 ± 0.0018 at 20k (0.97%, 4/4). Width 512 on
+   the same machine gains +0.0141 and +0.0099. Two seeds keep width 512's level and two lose part of
+   it early, at both budgets.
+2. **At this size, ~38M tokens limit a 20k budget.** The 85M model's BPE 17k null stops improving
+   after 4.3 passes over its text. A longer budget on this corpus would compare repetition as much as
+   tokenizers.
+3. **Grammar at 20k:** +4.7 points at every seed, below 30M's +5.8 on the same machine.
+4. **G-81 holds at both budgets.** The 20k runs repeat the fall at the same seeds, and on this
+   machine it belongs to the seed. Why those seeds fall is still open: another dropout draw, or
+   another recipe.

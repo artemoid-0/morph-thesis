@@ -194,6 +194,9 @@
 | bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k | 2 | 1.0132 | 72.8640 | 5,043,168 | 8 | 325,632 | 19,999 |
 | bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k | 3 | 1.0161 | 73.7635 | 5,043,168 | 8 | 325,632 | 19,999 |
 | bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w1024 | 0 | 0.7700 | 26.0309 | 85,337,312 | 8 | 325,632 | 19,999 |
+| bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w1024 | 1 | 0.7703 | 26.0586 | 85,337,312 | 8 | 325,632 | 19,999 |
+| bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w1024 | 2 | 0.7684 | 25.8464 | 85,337,312 | 8 | 325,632 | 19,999 |
+| bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w1024 | 3 | 0.7701 | 26.0396 | 85,337,312 | 8 | 325,632 | 18,500 |
 | bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w256 | 0 | 0.9000 | 45.1183 | 11,795,168 | 8 | 325,632 | 19,999 |
 | bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w256 | 1 | 0.9110 | 47.2652 | 11,795,168 | 8 | 325,632 | 19,999 |
 | bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w256 | 2 | 0.9069 | 46.4621 | 11,795,168 | 8 | 325,632 | 19,999 |
@@ -251,6 +254,9 @@
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k | 2 | 0.9978 | 44.2337 | 5,043,168 | 8 | 363,008 | 19,999 |
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k | 3 | 0.9974 | 44.1780 | 5,043,168 | 8 | 363,008 | 19,999 |
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w1024 | 0 | 0.7585 | 17.8298 | 85,337,312 | 8 | 363,008 | 19,999 |
+| bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w1024 | 1 | 0.7670 | 18.4105 | 85,337,312 | 8 | 363,008 | 19,999 |
+| bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w1024 | 2 | 0.7626 | 18.1049 | 85,337,312 | 8 | 363,008 | 19,999 |
+| bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w1024 | 3 | 0.7608 | 17.9858 | 85,337,312 | 8 | 363,008 | 19,999 |
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w256 | 0 | 0.8812 | 28.4131 | 11,795,168 | 8 | 363,008 | 19,999 |
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w256 | 1 | 0.8806 | 28.3449 | 11,795,168 | 8 | 363,008 | 19,999 |
 | bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w256 | 2 | 0.8864 | 28.9804 | 11,795,168 | 8 | 363,008 | 19,999 |

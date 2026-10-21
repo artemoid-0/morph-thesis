@@ -44,7 +44,7 @@ before it; Parts 1–2 why the tokenizer was built as it was.
 | Part 12 | [Full Training, Grammar, and the Leak](12_full_training_and_the_leak.md) | §33.71–§33.82 | The tokenizer's gain at full training and in grammar (MultiBLiMP); what the sentence adds over the word form is the tagger's leak. |
 | Part 13 | [How Far the Gain Travels](13_how_far_the_gain_travels.md) | §33.83–§33.96 | The sentence test; morphology inside the models; the gain in English, on fiction, at widths 256 and 512. |
 | Part 14 | [Two Machines, and a Null That Is Not Neutral](14_two_machines.md) | §33.97–§33.116 | The second machine and its twins; a same-shape null that is not neutral (G-78); English's leak; width 512 and fiction at full training. |
-| Part 15 | [The List of 19 October: Case and the Null at 30M Parameters](15_the_list_of_19_october.md) | §33.117 onward | Open. BLiMP's agreement at eight seeds; exposure on the law's axis; at 30M parameters the null costs nothing; at 85M the tokenizer's gain halves at 10k, split by seed, while its grammatical gain holds at every seed. |
+| Part 15 | [The List of 19 October: Case and the Null at 30M Parameters](15_the_list_of_19_october.md) | §33.117 onward | Open. BLiMP's agreement at eight seeds; exposure on the law's axis; at 30M parameters the null costs nothing; at 85M the tokenizer's gain is smaller again and lasts, split by seed, while its grammatical gain holds at every seed. |
 | — | [Appendices](appendices.md) | A, B, C | The decision record; the mapping from an earlier section numbering; the thesis's list of 15 October with its outcome sentences. |
 
 ## By question
@@ -75,6 +75,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [§33.118](15_the_list_of_19_october.md#33118-item-4-at-30m-parameters-case-gains-alike-under-both-tokenizers-and-the-null-costs-nothing) — over the empty slots the 5M model's figure is conservative
 - [§33.119](15_the_list_of_19_october.md#33119-item-1-prepared-the-tokenizers-gain-at-width-1024), [§33.120](15_the_list_of_19_october.md#33120-item-1s-10k-half-at-85m-parameters-the-gain-halves-on-average-because-two-seeds-of-four-lose-it-early) — beyond 30M parameters: at 85M the gain halves at 10k, split by seed
 - [§33.121](15_the_list_of_19_october.md#33121-multiblimp-at-width-1024-and-a-finer-look-at-g-81-prepared-20-october), [§33.122](15_the_list_of_19_october.md#33122-multiblimp-at-width-1024-the-gain-holds-at-every-seed-and-stops-growing-g-81s-fall-is-no-spike) — at 85M parameters the grammatical gain holds at every seed and stops growing; the fall is no spike
+- [§33.124](15_the_list_of_19_october.md#33124-item-1s-20k-half-at-85m-parameters-the-gain-is-smaller-again-and-lasts-and-the-split-stays) — at 85M parameters the gain is smaller again and lasts; the split stays at 20k
 
 ### Q2: injected features against a same-shape null
 
@@ -426,6 +427,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [33.121 MultiBLiMP at width 1024, and a finer look at G-81 (prepared, 20 October)](15_the_list_of_19_october.md#33121-multiblimp-at-width-1024-and-a-finer-look-at-g-81-prepared-20-october)
 - [33.122 MultiBLiMP at width 1024: the gain holds at every seed and stops growing; G-81's fall is no spike](15_the_list_of_19_october.md#33122-multiblimp-at-width-1024-the-gain-holds-at-every-seed-and-stops-growing-g-81s-fall-is-no-spike)
 - [33.123 The chain of 21 October prepared: MultiBLiMP at 20k, items 3 and 6](15_the_list_of_19_october.md#33123-the-chain-of-21-october-prepared-multiblimp-at-20k-items-3-and-6)
+- [33.124 Item 1's 20k half: at 85M parameters the gain is smaller again and lasts, and the split stays](15_the_list_of_19_october.md#33124-item-1s-20k-half-at-85m-parameters-the-gain-is-smaller-again-and-lasts-and-the-split-stays)
 
 ### Appendices
 
