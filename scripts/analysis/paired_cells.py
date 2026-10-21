@@ -12,7 +12,9 @@ GPU; a seed whose runs come from two machines is reported and left out.
 
 Each --pair is NAME A B: the effect is B's bits per byte minus A's at each seed (positive: A is
 better). Reports each seed, the mean ± standard error and how many seeds are positive, and writes
-results/audits/paired_cells_<timestamp>.json.
+results/audits/paired_cells_<timestamp>.json. --machine keeps one machine's records, as
+morphlm.runs.load(machine=...) reads them: where a cell has runs on both machines, the first record
+of a label and seed otherwise wins, and a pair split across machines is left out.
 """
 import os
 import sys
@@ -36,11 +38,13 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--pair', nargs=3, action='append', required=True, metavar=('NAME', 'A', 'B'))
     ap.add_argument('--seeds', nargs='*', type=int, default=None, help='default: every seed both cells have')
+    ap.add_argument('--machine', choices=('thesis', 'second'), default=None,
+                    help="one machine's records only ('second' with its twin copies)")
     runs.add_results_flag(ap)
     a = ap.parse_args()
     from morphlm.record import AuditRecord
     rec = AuditRecord('paired_cells', a, out_dir=runs.AUDITS)
-    R = runs.load(runs.results_of(a), keep=lambda r: 'seed' in r and 'bits_per_byte' in r)
+    R = runs.load(runs.results_of(a), machine=a.machine, keep=lambda r: 'seed' in r and 'bits_per_byte' in r)
     out = []
     for name, la, lb in a.pair:
         pairs, left = runs.pair(R, la, lb)

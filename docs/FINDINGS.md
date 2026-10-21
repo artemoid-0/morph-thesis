@@ -39,6 +39,7 @@ The drift is chance within training, not the seed's: a run repeated on another m
 **Q1 in Ukrainian, with morphology inside BPE: yes — and the gain lasts, to full training.**
 BPE that never joins a stem to its inflectional ending (cut by a dictionary rule from the word form alone) beats plain BPE of the same vocabulary size by **+0.0174 ± 0.0014 BPB (1.6%)** at a 10k budget, 4/4 from identical initial weights, though it reads 11% less text in the same steps.
 Unigram, cutting words elsewhere and into even more tokens, leads early, loses the lead by step 3,000 and gains nothing by the end (−0.0005 ± 0.0004): where the cuts fall matters, not how many there are.
+At width 512 Unigram's null ends **0.0056 ± 0.0009** behind BPE 17k's (0/4; on a second machine, where width 128 gives −0.0014 ± 0.0003; §33.126).
 Every tokenizer's validation stream decodes to the same text, byte for byte, so each one's bits per byte is a code length for that text (G-75).
 
 **At widths 128 and 256 it does not fade as a feature does.**
@@ -139,7 +140,11 @@ A context-aware feature helps before the model has learned to read the context i
 **And in English.**
 Part of speech from a causal tagger (each word tagged from its left context alone) leads the word form by only +0.0006 ± 0.0004 at 10k and +0.0004 ± 0.0003 at 20k (3/4 each), against the tagged feature's +0.0031 and +0.0025; the leak is +0.0025 ± 0.0004 and +0.0021 ± 0.0005 (4/4 each), four fifths of the lead (§33.99, §33.107).
 
-*The control at four seeds: under two tokenizers at ~38M and at full training; for English part of speech at 10k and 20k.
+**Gender and number, at 10k.**
+Read in context they lead their word forms by about +0.001 (+0.0008 to +0.0010, 4/4 each, under BPE 17k and endings apart; a third to a half of case's lead), and little of that is the tagger's leak: 30% and none for gender, 10% and 21% for number.
+A causal tagger keeps +0.0007 to +0.0009 over the word form (4/4 each). Whether that is the sentence's information, or the tagger reading the endings of words unseen in training, which the word form's lexicon lacks, is open (G-82; §33.125, §33.127).
+
+*The control at four seeds: under two tokenizers at ~38M and at full training; for English part of speech at 10k and 20k; for Ukrainian gender and number at 10k, on a second machine.
 A split of the lead by the word the feature describes had put 55–60% after prepositions — but two trained models compared target by target are not a model and its counterfactual (§33.74, §33.76, §33.81).*
 
 ## What linguistic information does do: speed early learning
@@ -156,18 +161,20 @@ Ukrainian case against a null constant on every word; first recorded +0.0060 at 
 
 ### Removing a feature, and adding it late
 
-**Removing English part of speech leaves a lasting deficit; adding it late does not.**
+**Removing English part of speech leaves a deficit that closes with long training; adding it late does not.**
 It is a crutch, not a teacher: the model learns to use the feature, not better representations from it.
 Switched off at step 2,500 of a 10k budget, it drops the model from 0.016 ahead of one never fed it to 0.029 behind, and the model ends **0.0023 ± 0.0006** below that one (4 seeds); switched off at 7,500, 0.0118 below.
 Switched off at 5,000 of a 20k budget, 15,000 steps before the end, the model still ends **0.0039 ± 0.0009** below (5/5), the gap levelling off near 0.004 from step 12,500 while the learning rate is still a third of its peak.
-At full training, 45,000 steps after the switch, the deficit halves and lasts: **0.0019 ± 0.0011** below (3/4; the fourth seed recovers by step 30,000).
+At full training, 45,000 steps after the switch, the deficit halves: **0.0019 ± 0.0011** below (3/4; the fourth seed recovers by step 30,000).
+Over twice that budget it closes: switched off at 5,000 of 100k, the model ends **0.0005 ± 0.0010** below (2/4), within its seed spread from about step 75,000 (in the same runs −0.0048 at 10,000, −0.0020 at 30,000, −0.0012 at 50,000; on a second machine, §33.126).
+The reliance is temporary: the model leans on the feature while it is there and needs about 70,000 more steps to do without it.
 **It is not lost knowledge of part of speech**: the switched model's deepest layer probes 0.5–1.3 points behind at the switch, within 0.3 points from 1,000 steps later to the end (5/5).
 Nor of the previous word's tag, which the feature carried: rebuilt from context within 1,000 steps of the switch, it ends **+2.0 ± 0.1 points** better read at the deepest layer than in the model never fed it (5/5).
 **The deficit is not general**: Ukrainian case, switched off at 5,000 of a 20k budget under endings apart, ends level with or ahead of the model never fed it (0.0008 ± 0.0006 ahead, 3/4), level again within 2,500 steps of the switch.
 Switched *on* late, the feature is integrated slowly but well: with 15,000 steps left it recovers 54–104% of the kept gain (mean 73%).
 Weaning — dropped at a rising rate, fully by step 5,000 — leaves 70% of the abrupt switch's deficit (−0.0029 ± 0.0016 against −0.0042 ± 0.0011, 4 seeds).
 
-*Firm (4–5 seeds; the probes at five; Ukrainian case at one size and budget).* (§33.34, §33.38, §33.40, §33.42, §33.50, §33.52, §33.102, §33.111)
+*Firm (4–5 seeds; the probes at five; Ukrainian case at one size and budget; 50k and 100k on a second machine).* (§33.34, §33.38, §33.40, §33.42, §33.50, §33.52, §33.102, §33.111, §33.126)
 
 ### Morphology as a target
 
@@ -225,7 +232,7 @@ Case beats its null under each of six tokenizers (BPE at 4k, 8k, 17k and 32k, Un
 
 ### Exposed endings: case gains less for a stretch
 
-**Where the tokenizer exposes endings, adding case gains less for a stretch of training, in models of 5M and 30M parameters; late in training, only under Unigram.**
+**Where the tokenizer exposes endings, adding case gains less for a stretch of training, in models of 5M and 30M parameters; late in training, only under Unigram in the 5M model.**
 Case is compared with the best model without it — in the 5M model an empty slot where endings are exposed, the same-shape null under BPE (below).
 At ~38M tokens and 10k it gains **+0.0022 ± 0.0007 under endings apart (4/4) and +0.0018 ± 0.0012 under Unigram 17k (3/4)**, against **+0.0030 to +0.0049 under BPE** at 4k, 8k, 17k and 32k (4/4 each; +0.0032 ± 0.0006 at 17k): about half as much where endings are exposed, as the hypothesis had it (case helps where the tokenizer hides endings).
 
@@ -242,8 +249,9 @@ Unigram learns no faster than BPE 17k, and in the 5M model its shortfall stays a
 **A model of 30M parameters (width 512) shows the same order.**
 Endings apart gains more early (by 0.0037 ± 0.0001 at 1.35), less in the middle (+0.0033 ± 0.0003 less at 1.18, 4/4), and as much from 1.09 on (+0.0001 ± 0.0004 less at 0.88).
 A 10k budget takes that model past the stretch, so at a fixed budget too the two end level: **+0.0022 ± 0.0004 under BPE 17k and +0.0024 ± 0.0003 under endings apart** (4/4 each); there the null costs nothing (below), and over it too case gains alike, +0.0020 ± 0.0002 and +0.0022 ± 0.0003 (4/4 each).
+Under Unigram too: at width 512 case gains **+0.0024 ± 0.0003** over the empty slot (4/4), and the 5M model's late shortfall is gone, −0.0004 ± 0.0003 at reference BPB 0.89 and −0.0001 ± 0.0002 at the end (§33.126).
 
-*Four seeds per tokenizer, ~38M tokens; in the 5M model a 10k budget under six tokenizers and 20k under two, at width 512 a 10k budget under two; on a second machine, each comparison within it.* (§33.110, §33.113, §33.116–§33.118)
+*Four seeds per tokenizer, ~38M tokens; in the 5M model a 10k budget under six tokenizers and 20k under two, at width 512 a 10k budget under three; on a second machine, each comparison within it.* (§33.110, §33.113, §33.116–§33.118, §33.126)
 
 ### Over each tokenizer's own null
 
@@ -401,4 +409,4 @@ Each withdrawal was decided by a rule recorded before its result:
 
 Open questions that could change a claim are in [`GAPS.md`](GAPS.md); what runs next, and why, in [`DIRECTIONS.md`](DIRECTIONS.md), "The queue".
 
-Left open, as limitations: whether English part of speech's deficit ever closes (at full training it is half the 20k budget's, at three seeds of four); across model sizes, the half of the width difference that the previous word's tag does not account for (§33.83); and why two runs of four lose much of the tokenizer's gain early in training at 85M parameters (G-81).
+Left open, as limitations: across model sizes, the half of the width difference that the previous word's tag does not account for (§33.83); why two runs of four lose much of the tokenizer's gain early in training at 85M parameters (G-81); and whether what a causal tagger's gender and number add over the word form is context (G-82).

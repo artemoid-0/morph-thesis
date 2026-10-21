@@ -1,0 +1,153 @@
+{
+  "script": "paired_cells",
+  "args": {
+    "pair": [
+      [
+        "English pos switched off at 5,000 against never fed, 100k",
+        "bpe_pos-LEARN-CAUSAL-OFF5000_bpe_17k_st100k",
+        "bpe_pos-LEARN-CAUSAL-OFF0_bpe_17k_st100k"
+      ],
+      [
+        "English pos switched off at 5,000 against never fed, 50k",
+        "bpe_pos-LEARN-CAUSAL-OFF5000_bpe_17k",
+        "bpe_pos-LEARN-CAUSAL-OFF0_bpe_17k"
+      ]
+    ],
+    "seeds": null,
+    "machine": "second",
+    "results": [
+      "/home/neko/PycharmProjects/Morph/results"
+    ]
+  },
+  "timestamp_utc": "2026-10-21T17:13:41+00:00",
+  "results": {
+    "pairs": [
+      {
+        "name": "English pos switched off at 5,000 against never fed, 100k",
+        "A": "bpe_pos-LEARN-CAUSAL-OFF5000_bpe_17k_st100k",
+        "B": "bpe_pos-LEARN-CAUSAL-OFF0_bpe_17k_st100k",
+        "seeds": {
+          "0": {
+            "effect": -0.002971946168652595,
+            "A": 1.2992068645956127,
+            "B": 1.2962349184269601,
+            "machine": "5090",
+            "runs": [
+              "72c0e09080aa",
+              "01005c6f3bd2"
+            ]
+          },
+          "1": {
+            "effect": 0.0012412973326167975,
+            "A": 1.29745814748697,
+            "B": 1.2986994448195868,
+            "machine": "5090",
+            "runs": [
+              "73aef8cad630",
+              "25c291f7226b"
+            ]
+          },
+          "2": {
+            "effect": -0.0010224410144594742,
+            "A": 1.2986741820290457,
+            "B": 1.2976517410145862,
+            "machine": "5090",
+            "runs": [
+              "a1518be7993d",
+              "2c7f0d7c09b7"
+            ]
+          },
+          "3": {
+            "effect": 0.0007916847473037336,
+            "A": 1.2987274871059638,
+            "B": 1.2995191718532675,
+            "machine": "5090",
+            "runs": [
+              "59883aaef53d",
+              "9e3bac6765c1"
+            ]
+          }
+        },
+        "mean": -0.0004903512757978845,
+        "se": 0.0009610608708516793,
+        "positive": 2,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "English pos switched off at 5,000 against never fed, 50k",
+        "A": "bpe_pos-LEARN-CAUSAL-OFF5000_bpe_17k",
+        "B": "bpe_pos-LEARN-CAUSAL-OFF0_bpe_17k",
+        "seeds": {
+          "0": {
+            "effect": 0.001144457565346535,
+            "A": 1.3368798463327305,
+            "B": 1.338024303898077,
+            "machine": "5090",
+            "runs": [
+              "4bf951277fd9",
+              "793a72849d74"
+            ]
+          },
+          "1": {
+            "effect": -0.0021964356820187714,
+            "A": 1.3398583911695467,
+            "B": 1.337661955487528,
+            "machine": "5090",
+            "runs": [
+              "ee2509b8ae5b",
+              "cd2c87f2a6f2"
+            ]
+          },
+          "2": {
+            "effect": -0.003643478158357194,
+            "A": 1.3406414305938306,
+            "B": 1.3369979524354734,
+            "machine": "5090",
+            "runs": [
+              "b1c185792154",
+              "9d4efa1afe13"
+            ]
+          },
+          "3": {
+            "effect": -0.003090049172046694,
+            "A": 1.3393516031957353,
+            "B": 1.3362615540236886,
+            "machine": "5090",
+            "runs": [
+              "3cc7dc588a83",
+              "a03768d1baba"
+            ]
+          }
+        },
+        "mean": -0.001946376361769031,
+        "se": 0.0010725330621789541,
+        "positive": 1,
+        "n": 4,
+        "skipped_across_machines": {}
+      }
+    ]
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-10-21T17:13:41+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "db34c3bfb9dc0e5b48f3f35612c85152cda7a059",
+    "git_dirty": true
+  },
+  "notes": [
+    "effect = B minus A in bits per byte at each seed (positive: A better); pairs on one machine only"
+  ]
+}

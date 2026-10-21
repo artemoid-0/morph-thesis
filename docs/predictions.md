@@ -6,7 +6,7 @@ Each prediction was recorded in the [journey](record/journey/README.md) **before
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 165 right, 11 half right, 94 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 12 pending — of 291.
+**Tally:** 173 right, 13 half right, 96 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, none pending — of 291.
 
 *Key to the tally (added 19 October 2026). Counted half right: P19, P46, P54 — with the eight
 whose outcome begins "half right" or "partly right". Counted right: P33, P172, P273 — right by their
@@ -25,7 +25,8 @@ The wrong ones carried the information:
 - **case:** where the exposure effect sits (P144–P146), what the sentence's case adds over the word
   form's (P148–P150), and how much of it the tagger's leak is (P164, P166);
 - **inside the models:** what context adds inside the models (P184, P187);
-- **the null's slot:** that it helps under BPE (P252, P256), on a word's later tokens (P262).
+- **the null's slot:** that it helps under BPE (P252, P256), on a word's later tokens (P262);
+- **gender and number:** that most of what their tag adds over the word form is the tagger's leak (P288, P289).
 
 | # | prediction | outcome | journey |
 |---|---|---|---|
@@ -308,15 +309,15 @@ The wrong ones carried the information:
 | P277 | A rerun of seed 1's endings-apart null at width 1024, evaluated every 100 steps, repeats the 10k run's evaluations bit for bit (to 1e-6) | wrong — identical at step 0, then up to 3.2 × 10⁻⁵ BPB apart: close, not bit for bit | §33.121, §33.122 |
 | P278 | No spike: from step 1,000 to 4,000 that rerun's validation BPB never rises by more than 0.005 between evaluations | right — it falls at every evaluation | §33.121, §33.122 |
 | P279 | At 20k, width 1024's MultiBLiMP gain is positive at every seed and within 1.0 point of its 10k gain (+5.3) | right — +4.7 ± 0.3 | §33.123, §33.124 |
-| P280 | At 100k, English part of speech switched off at 5,000 ends less than 0.001 behind never-fed on average: the deficit closes | pending | §33.123 |
-| P281 | Every never-fed English run at 100k still improves over its last 10,000 steps | pending | §33.123 |
-| P282 | The deficit at 100k is smaller than at 50k (−0.0019 ± 0.0011) | pending | §33.123 |
-| P283 | At width 512, at the lowest common reference BPB, case's gain over the empty slot under Unigram is within 0.001 of BPE 17k's | pending | §33.123 |
-| P284 | At the end of the 10k budget at width 512, case's gains over the empty slot under Unigram and BPE 17k differ by less than 0.001 | pending | §33.123 |
-| P285 | At width 512 the empty slot ends within 0.001 of the null under Unigram | pending | §33.123 |
-| P286 | At 10k, Ukrainian gender read in context leads gender from the word form under both tokenizers (≥3/4 each) | pending | §33.125 |
-| P287 | At 10k, number read in context leads number from the word form under both tokenizers (≥3/4 each) | pending | §33.125 |
-| P288 | For gender, at least half of that lead is the tagger's leak (in context over the causal tagger), under both tokenizers | pending | §33.125 |
-| P289 | For number, at least half of that lead is the leak, under both tokenizers | pending | §33.125 |
-| P290 | Gender and number from the causal tagger lead their word forms by less than 0.001, under both tokenizers | pending | §33.125 |
-| P291 | At 10k, gender and number in context each gain less over the empty slot under endings apart than under BPE 17k | pending | §33.125 |
+| P280 | At 100k, English part of speech switched off at 5,000 ends less than 0.001 behind never-fed on average: the deficit closes | right — −0.0005 ± 0.0010 (2/4 behind) | §33.123, §33.126 |
+| P281 | Every never-fed English run at 100k still improves over its last 10,000 steps | half right — every run improves by 0.0015–0.0017 over its last 10,000 steps, but three of four reach their best 500–1,000 steps before the end | §33.123, §33.126 |
+| P282 | The deficit at 100k is smaller than at 50k (−0.0019 ± 0.0011) | right — −0.0005 against −0.0019 | §33.123, §33.126 |
+| P283 | At width 512, at the lowest common reference BPB, case's gain over the empty slot under Unigram is within 0.001 of BPE 17k's | right — −0.0004 ± 0.0003 at reference BPB 0.89 | §33.123, §33.126 |
+| P284 | At the end of the 10k budget at width 512, case's gains over the empty slot under Unigram and BPE 17k differ by less than 0.001 | right — −0.0001 ± 0.0002 | §33.123, §33.126 |
+| P285 | At width 512 the empty slot ends within 0.001 of the null under Unigram | right — −0.0001 ± 0.0007 | §33.123, §33.126 |
+| P286 | At 10k, Ukrainian gender read in context leads gender from the word form under both tokenizers (≥3/4 each) | right — +0.0010 and +0.0008 (4/4 each) | §33.125, §33.127 |
+| P287 | At 10k, number read in context leads number from the word form under both tokenizers (≥3/4 each) | right — +0.0009 and +0.0010 (4/4 each) | §33.125, §33.127 |
+| P288 | For gender, at least half of that lead is the tagger's leak (in context over the causal tagger), under both tokenizers | wrong — the leak is 30% and none of gender's lead | §33.125, §33.127 |
+| P289 | For number, at least half of that lead is the leak, under both tokenizers | wrong — 10% and 21% of number's lead | §33.125, §33.127 |
+| P290 | Gender and number from the causal tagger lead their word forms by less than 0.001, under both tokenizers | right — +0.0007 to +0.0009, all below 0.001 | §33.125, §33.127 |
+| P291 | At 10k, gender and number in context each gain less over the empty slot under endings apart than under BPE 17k | half right — number gains less under endings apart at every seed (+0.0023 ± 0.0008); gender's gains are level (+0.0004 ± 0.0020) | §33.125, §33.127 |

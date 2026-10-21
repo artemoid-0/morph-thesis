@@ -12,7 +12,10 @@ is half width 512's on average, +0.0067 ± 0.0030: two seeds keep width 512's le
 early in training (§33.120). Its grammatical gain holds at every seed (+5.3 ± 0.4 points) and is no larger than
 30M parameters' on the same machine; the two seeds' fall is a slower stretch, no spike (§33.122). At 20k the gain is smaller again and lasts,
 +0.0075 ± 0.0018, and the split stays (§33.124). For gender and number the tagger's leak is spread
-over word classes, as for English part of speech, so their control is a causal tagger (§33.125).
+over word classes, as for English part of speech, so their control is a causal tagger (§33.125). Removing
+English part of speech leaves a deficit that closes by 100k, and at 30M parameters Unigram's shortfall
+goes (§33.126). Gender's and number's lead over the word form is about 0.001 at 10k, and little of it
+is the leak (§33.127).
 
 ---
 
@@ -647,3 +650,140 @@ Predictions, before any run:
   and gender, unlike case, take information of their own from the sentence*: the title's answer then
   depends on the feature;
 - P291 gives the exposure sentence for both features.
+
+### 33.126 Items 3 and 6: English part of speech's deficit closes by 100k, and at 30M parameters Unigram's shortfall goes
+
+The chain of 21 October (§33.123) ran on the second machine from 22:33 EDT on 20 October to 07:32
+EDT on 21 October: MultiBLiMP on the 20k models (§33.124), item 3's 8 runs and item 6's 12. Item 3's
+runs took about 45 minutes each, slowed by item 2's preparation on the same CPU (§33.125); item 6's
+took about 16 minutes each. None failed, and both sanity checks passed.
+
+**Item 3: English part of speech switched off at 5,000 of 100k** (`paired_cells_20261021T171341`).
+Each run at its best step; the switched model's gain over the one never fed (negative: behind):
+
+| | seed 0 | seed 1 | seed 2 | seed 3 | mean |
+|---|---|---|---|---|---|
+| never fed, 100k | 1.2962 | 1.2987 | 1.2977 | 1.2995 | |
+| switched off at 5,000, 100k | 1.2992 | 1.2975 | 1.2987 | 1.2987 | |
+| the gain, 100k | −0.0030 | +0.0012 | −0.0010 | +0.0008 | **−0.0005 ± 0.0010 (2/4 behind)** |
+| the gain, 50k (§33.102) | +0.0011 | −0.0022 | −0.0036 | −0.0031 | −0.0019 ± 0.0011 (3/4 behind) |
+
+- **Along training,** the mean of the 100k runs at each step: −0.0414 at the switch, −0.0110 at step
+  6,000, −0.0048 at 10,000, −0.0038 at 20,000, −0.0020 at 30,000, −0.0012 at 50,000, −0.0005 at
+  75,000 and −0.0006 at the end. The deficit shrinks over the whole budget and is within its seed
+  spread from about step 75,000.
+- **No overfitting yet:** every never-fed run still improves over its last 10,000 steps, by 0.0015
+  to 0.0017. Three of the four reach their best 500 to 1,000 steps before the end, the last
+  evaluation 0.0001 above it. WikiText-103 read 6.8 times does not yet overfit the 5M model.
+
+**Item 6: Unigram 17k at width 512** (`exposure_axis_20261021T171401`, `paired_cells_20261021T171420`,
+`…T171453`; the second machine; BPE 17k's cells are item 4's, §33.118). Bits per byte at 10k:
+
+| width 512, 10k, Unigram 17k | seed 0 | seed 1 | seed 2 | seed 3 | mean |
+|---|---|---|---|---|---|
+| the null | 0.8841 | 0.8853 | 0.8860 | 0.8849 | 0.8850 |
+| case | 0.8841 | 0.8807 | 0.8833 | 0.8831 | 0.8828 |
+| the empty slot | 0.8862 | 0.8840 | 0.8853 | 0.8853 | 0.8852 |
+
+- **Case gains as much under Unigram as under BPE 17k.** Over the empty slot it gains
+  +0.0024 ± 0.0003 (4/4), against +0.0022 ± 0.0004 under BPE 17k (§33.118). Over the null it gains
+  +0.0022 ± 0.0010 (3/4).
+- **On the law's axis** case's gain over the empty slot, BPE 17k's minus Unigram's (positive:
+  Unigram gains less), at each width's own reference levels:
+
+| width 128 | | width 512 | |
+|---|---|---|---|
+| 1.38 | −0.0012 ± 0.0006 (1/4) | 1.37 | −0.0044 ± 0.0004 (0/4) |
+| 1.28 | +0.0017 ± 0.0005 (4/4) | 1.28 | −0.0000 ± 0.0005 (2/4) |
+| 1.19 | +0.0016 ± 0.0003 (4/4) | 1.18 | +0.0011 ± 0.0010 (2/4) |
+| 1.09 | +0.0020 ± 0.0007 (3/4) | 1.08 | −0.0006 ± 0.0010 (2/4) |
+| — | | 0.98 | −0.0009 ± 0.0004 (0/4) |
+| — | | 0.89 | −0.0004 ± 0.0003 (1/4) |
+| the end of 10k | +0.0020 ± 0.0008 (3/4) | the end of 10k | −0.0001 ± 0.0002 (1/4) |
+
+  Unigram's shortfall, steady in the 5M model from reference BPB 1.28 on, is not in the 30M model:
+  there the two tokenizers' gains differ by no more than their spread from 1.28 down.
+- **The null costs nothing here either:** under Unigram at width 512, the empty slot ends
+  −0.0001 ± 0.0007 (2/4) against the null, as under the other two tokenizers at that width.
+- **And an observation:** Unigram's null is behind BPE 17k's at every seed. On this machine it is
+  −0.0056 ± 0.0009 at width 512, against −0.0014 ± 0.0003 at width 128 (0/4 each).
+
+**Predictions** (§33.123).
+- **P280 right:** −0.0005 ± 0.0010, under 0.001.
+- **P281 half right:** every never-fed run improves over its last 10,000 steps, but three of four
+  reach their best 500 to 1,000 steps before the end.
+- **P282 right:** −0.0005 against −0.0019.
+- **P283 right:** −0.0004 ± 0.0003 at reference BPB 0.89.
+- **P284 right:** −0.0001 ± 0.0002.
+- **P285 right:** −0.0001 ± 0.0007.
+
+**The sentences** (the text's, from its list of 19 October).
+- Item 3 *closes*: given long enough training, the model makes up for the removed feature, so its
+  reliance on it is temporary. The deficit is 0.0039 at 20k, 0.0019 at 50k, and within its spread at
+  100k.
+- Item 6 *goes*: at 30M parameters the redundancy is gone under both exposing tokenizers, and
+  Unigram's shortfall belongs to the 5M model, as the null's cost does.
+
+**What it changes for the thesis.**
+1. **Removing English part of speech leaves a deficit that closes with training.** The feature is
+   still a crutch, not a teacher. The model leans on it while it is there, and needs about 70,000
+   more steps to do without it.
+2. **The exposure sentence is the 5M model's alone, under every exposing tokenizer.** In the 30M
+   model case gains alike where endings are exposed, late in training and at the end of a 10k
+   budget, under endings apart and under Unigram.
+3. **At width 512 Unigram trails BPE 17k by 0.006** at every seed. Where the cuts fall matters more
+   in the larger model, not less.
+
+### 33.127 Item 2: gender's and number's lead over the word form is small, and little of it is the leak
+
+The chain for item 2 (`second_item2_2026-10-21.sh`, §33.125) ran on the second machine from 07:32 to
+10:54 EDT on 21 October: 48 runs of ~4.2 min. None failed, and every sanity check passed. Width 128,
+~38M tokens, 10k, seeds 0–3, every pair within the machine (`paired_cells_20261021T171235`). Gains
+in bits per byte (positive: the first better):
+
+| 10k | gender, BPE 17k | gender, endings apart | number, BPE 17k | number, endings apart |
+|---|---|---|---|---|
+| in context over the word form: the lead | +0.0010 ± 0.0001 (4/4) | +0.0008 ± 0.0003 (4/4) | +0.0009 ± 0.0001 (4/4) | +0.0010 ± 0.0000 (4/4) |
+| in context over the causal tagger: the leak | +0.0003 ± 0.0002 (3/4) | −0.0001 ± 0.0004 (2/4) | +0.0001 ± 0.0000 (4/4) | +0.0002 ± 0.0001 (4/4) |
+| the causal tagger over the word form | +0.0007 ± 0.0001 (4/4) | +0.0009 ± 0.0002 (4/4) | +0.0008 ± 0.0001 (4/4) | +0.0008 ± 0.0001 (4/4) |
+| in context over the null | +0.0003 ± 0.0007 (2/4) | +0.0027 ± 0.0012 (3/4) | +0.0013 ± 0.0001 (4/4) | +0.0018 ± 0.0004 (4/4) |
+| in context over the empty slot | +0.0009 ± 0.0008 (3/4) | +0.0005 ± 0.0013 (2/4) | +0.0019 ± 0.0003 (4/4) | −0.0004 ± 0.0007 (2/4) |
+
+- **The lead over the word form is small:** about +0.001 for both features under both tokenizers,
+  at every seed. That is a third to a half of case's at 10k (+0.0021 to +0.0033, §33.65, §33.81).
+- **Little of it is the leak:** 30% and none for gender (BPE 17k, endings apart), 10% and 21% for
+  number. For case at 10k it was 29% and 43%; for English part of speech, four fifths.
+- **The rest is not split yet.** The causal tagger keeps +0.0007 to +0.0009 over the word form (4/4
+  each). For case at 10k, about half of the corresponding rest sat at words unseen in training:
+  there the word form gives the model nothing, while a tagger reads the word's own ending (G-76,
+  §33.74). For gender and number that split is not made yet (G-82). It decides whether the rest is
+  the sentence's information or the word's.
+- **Exposure:** over the empty slot, number gains less under endings apart than under BPE 17k at
+  every seed, +0.0023 ± 0.0008 (4/4). Gender's two gains do not differ, +0.0004 ± 0.0020 (2/4).
+  Over its references gender is noisy under endings apart, from −0.0001 to +0.0056 over the null.
+
+**Predictions** (§33.125).
+- **P286 right:** +0.0010 and +0.0008, 4/4 each.
+- **P287 right:** +0.0009 and +0.0010, 4/4 each.
+- **P288 wrong:** the leak is 30% and none of gender's lead.
+- **P289 wrong:** 10% and 21% of number's.
+- **P290 right:** +0.0007 to +0.0009, all below 0.001.
+- **P291 half right:** number gains less under endings apart at every seed; gender's gains are level.
+
+The tally is 173 right, 13 half right, 96 wrong, 8 never tested, 1 withdrawn and none pending, of 291.
+
+**The sentences** (the text's, from its list of 19 October). Neither fits yet.
+- *Mostly the leak* does not hold: for both features the leak is a small part of the lead.
+- *Number and gender take information of their own from the sentence* waits for G-82. If the causal
+  tagger's +0.0007 to +0.0009 sits at words unseen in training, it is the word's ending, which the
+  lexicon lacks and the tagger reads. If it sits at seen words, it is context.
+
+**What it changes for the thesis.**
+1. **For gender and number, what the sentence's tag adds over the word form is about 0.001 at 10k,
+   and the tagger's leak is a small part of it.** That differs from English part of speech (four
+   fifths) and is smaller than case's share (29% and 43%).
+2. **Whether the rest is context is G-82.** It needs the loss by the target's word, seen and unseen
+   in training, as for case (§33.74): the 32 word-form and causal models rescored on the validation
+   text, on the CPU.
+3. **Number gains less where endings are exposed,** as case did in the 5M model at a fixed budget;
+   gender shows no difference.

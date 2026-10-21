@@ -44,7 +44,7 @@ before it; Parts 1–2 why the tokenizer was built as it was.
 | Part 12 | [Full Training, Grammar, and the Leak](12_full_training_and_the_leak.md) | §33.71–§33.82 | The tokenizer's gain at full training and in grammar (MultiBLiMP); what the sentence adds over the word form is the tagger's leak. |
 | Part 13 | [How Far the Gain Travels](13_how_far_the_gain_travels.md) | §33.83–§33.96 | The sentence test; morphology inside the models; the gain in English, on fiction, at widths 256 and 512. |
 | Part 14 | [Two Machines, and a Null That Is Not Neutral](14_two_machines.md) | §33.97–§33.116 | The second machine and its twins; a same-shape null that is not neutral (G-78); English's leak; width 512 and fiction at full training. |
-| Part 15 | [The List of 19 October: Case and the Null at 30M Parameters](15_the_list_of_19_october.md) | §33.117 onward | Open. BLiMP's agreement at eight seeds; exposure on the law's axis; at 30M parameters the null costs nothing; at 85M the tokenizer's gain is smaller again and lasts, split by seed, while its grammatical gain holds at every seed. |
+| Part 15 | [The List of 19 October: Case and the Null at 30M Parameters](15_the_list_of_19_october.md) | §33.117 onward | Open. BLiMP's agreement at eight seeds; exposure on the law's axis; at 30M parameters the null costs nothing; at 85M the tokenizer's gain is smaller again and lasts, split by seed; a removed feature's deficit closes by 100k; gender's and number's leak is small. |
 | — | [Appendices](appendices.md) | A, B, C | The decision record; the mapping from an earlier section numbering; the thesis's list of 15 October with its outcome sentences. |
 
 ## By question
@@ -91,6 +91,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [§33.73–§33.74](12_full_training_and_the_leak.md#3373-the-queue-reviewed-what-each-candidate-settles-for-the-thesis), [§33.76–§33.77](12_full_training_and_the_leak.md#3376-morphology-in-the-tokenizer-lasts-at-full-training--and-case-on-top-of-it-in-part-through-the-leak), [§33.81](12_full_training_and_the_leak.md#3381-case-at-full-training-without-the-leak-the-words-own-case-lasts-and-the-sentences-lead-was-the-leak) — context or the tagger's leak (G-38, G-77)
 - [§33.99](14_two_machines.md#3399-a-causal-tagger-for-english-part-of-speech-the-lists-item-2-prepared), [§33.104](14_two_machines.md#33104-a-day-on-both-machines-the-comparison-g-78-on-each-and-item-2-prepared-17-october), [§33.107](14_two_machines.md#33107-in-english-too-the-sentences-lead-over-the-word-form-is-the-taggers-leak-full-trainings-twins-drift-apart), [§33.114](14_two_machines.md#33114-the-width-probes-at-five-seeds-items-7-and-8-and-131-twins) — English part of speech from a causal tagger; Ukrainian case without the leak under BPE 17k
 - [§33.110](14_two_machines.md#33110-g-78-mapped-the-nulls-handicap-is-endings-aparts-at-every-budget--and-it-confounds-exposure-makes-case-more-useful), [§33.113](14_two_machines.md#33113-g-78-across-tokenizers-and-corpus-sizes-the-slot-costs-where-endings-are-exposed-helps-under-bpe--and-exposure-makes-case-partly-redundant), [§33.115–§33.116](14_two_machines.md#33115-two-follow-ups-the-exposure-comparison-at-20k-and-where-the-nulls-help-sits-prepared-18-october), [§33.117–§33.118](15_the_list_of_19_october.md#33117-the-texts-list-of-19-october-blimps-agreement-at-eight-seeds-the-exposure-comparison-on-the-laws-axis-and-item-4-prepared) — exposure: case against the best model without it
+- [§33.127](15_the_list_of_19_october.md#33127-item-2-genders-and-numbers-lead-over-the-word-form-is-small-and-little-of-it-is-the-leak) — gender and number: the lead over the word form is small, the leak a small part of it
 
 ### The learning law: a feature helps until the model has learned it
 
@@ -103,6 +104,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [§33.58](10_the_learning_law.md#3358-the-night-of-6-october-the-vector-the-exact-null-five-tokenizers), [§33.91](13_how_far_the_gain_travels.md#3391-findings-checked-against-its-record-12-october), [§33.98](14_two_machines.md#3398-the-thesiss-list-and-its-ninth-item-the-law-in-ukrainian-is-within-its-seed-spread) — the law in Ukrainian on the constant null, within the seed spread
 - [§33.102](14_two_machines.md#33102-the-night-of-16-october-width-512-settles-a-removed-features-deficit-halves-by-50k-and-case-leaves-none), [§33.111](14_two_machines.md#33111-the-probes-at-five-seeds-width-512s-twins-and-fifty-two-twins-in-all), [§33.114](14_two_machines.md#33114-the-width-probes-at-five-seeds-items-7-and-8-and-131-twins) — removal at full training; Ukrainian case leaves no deficit; the probes at five seeds
 - [§33.117–§33.118](15_the_list_of_19_october.md#33117-the-texts-list-of-19-october-blimps-agreement-at-eight-seeds-the-exposure-comparison-on-the-laws-axis-and-item-4-prepared) — exposure read on the law's axis
+- [§33.126](15_the_list_of_19_october.md#33126-items-3-and-6-english-part-of-speechs-deficit-closes-by-100k-and-at-30m-parameters-unigrams-shortfall-goes) — English part of speech's deficit closes by 100k; at 30M parameters Unigram's shortfall goes
 
 ### Controls and nulls
 
@@ -430,6 +432,8 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [33.123 The chain of 21 October prepared: MultiBLiMP at 20k, items 3 and 6](15_the_list_of_19_october.md#33123-the-chain-of-21-october-prepared-multiblimp-at-20k-items-3-and-6)
 - [33.124 Item 1's 20k half: at 85M parameters the gain is smaller again and lasts, and the split stays](15_the_list_of_19_october.md#33124-item-1s-20k-half-at-85m-parameters-the-gain-is-smaller-again-and-lasts-and-the-split-stays)
 - [33.125 Item 2 prepared: gender's and number's leak is spread over word classes, so their control is a causal tagger](15_the_list_of_19_october.md#33125-item-2-prepared-genders-and-numbers-leak-is-spread-over-word-classes-so-their-control-is-a-causal-tagger)
+- [33.126 Items 3 and 6: English part of speech's deficit closes by 100k, and at 30M parameters Unigram's shortfall goes](15_the_list_of_19_october.md#33126-items-3-and-6-english-part-of-speechs-deficit-closes-by-100k-and-at-30m-parameters-unigrams-shortfall-goes)
+- [33.127 Item 2: gender's and number's lead over the word form is small, and little of it is the leak](15_the_list_of_19_october.md#33127-item-2-genders-and-numbers-lead-over-the-word-form-is-small-and-little-of-it-is-the-leak)
 
 ### Appendices
 

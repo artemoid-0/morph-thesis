@@ -1,0 +1,2091 @@
+{
+  "script": "paired_cells",
+  "args": {
+    "pair": [
+      [
+        "ugender in context over its word form, BPE 17k",
+        "bpe_ugender-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "bpe_ugenderlex-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "ugender in context over the causal tagger (the leak), BPE 17k",
+        "bpe_ugender-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "bpe_ugendercausal-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "ugender causal over its word form, BPE 17k",
+        "bpe_ugendercausal-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "bpe_ugenderlex-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "ugender over the null, BPE 17k",
+        "bpe_ugender-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "ugender over the empty slot, BPE 17k",
+        "bpe_ugender-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL-OFF0_bpe_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "ugenderlex over the null, BPE 17k",
+        "bpe_ugenderlex-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "ugenderlex over the empty slot, BPE 17k",
+        "bpe_ugenderlex-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL-OFF0_bpe_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "ugendercausal over the null, BPE 17k",
+        "bpe_ugendercausal-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "ugendercausal over the empty slot, BPE 17k",
+        "bpe_ugendercausal-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL-OFF0_bpe_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "unumber in context over its word form, BPE 17k",
+        "bpe_unumber-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "bpe_unumberlex-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "unumber in context over the causal tagger (the leak), BPE 17k",
+        "bpe_unumber-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "bpe_unumbercausal-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "unumber causal over its word form, BPE 17k",
+        "bpe_unumbercausal-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "bpe_unumberlex-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "unumber over the null, BPE 17k",
+        "bpe_unumber-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "unumber over the empty slot, BPE 17k",
+        "bpe_unumber-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL-OFF0_bpe_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "unumberlex over the null, BPE 17k",
+        "bpe_unumberlex-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "unumberlex over the empty slot, BPE 17k",
+        "bpe_unumberlex-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL-OFF0_bpe_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "unumbercausal over the null, BPE 17k",
+        "bpe_unumbercausal-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "unumbercausal over the empty slot, BPE 17k",
+        "bpe_unumbercausal-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL-OFF0_bpe_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "ugender in context over its word form, endings apart",
+        "bpe_ugender-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "bpe_ugenderlex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "ugender in context over the causal tagger (the leak), endings apart",
+        "bpe_ugender-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "bpe_ugendercausal-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "ugender causal over its word form, endings apart",
+        "bpe_ugendercausal-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "bpe_ugenderlex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "ugender over the null, endings apart",
+        "bpe_ugender-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "ugender over the empty slot, endings apart",
+        "bpe_ugender-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "ugenderlex over the null, endings apart",
+        "bpe_ugenderlex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "ugenderlex over the empty slot, endings apart",
+        "bpe_ugenderlex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "ugendercausal over the null, endings apart",
+        "bpe_ugendercausal-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "ugendercausal over the empty slot, endings apart",
+        "bpe_ugendercausal-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "unumber in context over its word form, endings apart",
+        "bpe_unumber-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "bpe_unumberlex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "unumber in context over the causal tagger (the leak), endings apart",
+        "bpe_unumber-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "bpe_unumbercausal-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "unumber causal over its word form, endings apart",
+        "bpe_unumbercausal-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "bpe_unumberlex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "unumber over the null, endings apart",
+        "bpe_unumber-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "unumber over the empty slot, endings apart",
+        "bpe_unumber-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "unumberlex over the null, endings apart",
+        "bpe_unumberlex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "unumberlex over the empty slot, endings apart",
+        "bpe_unumberlex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "unumbercausal over the null, endings apart",
+        "bpe_unumbercausal-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "unumbercausal over the empty slot, endings apart",
+        "bpe_unumbercausal-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.05_st10k"
+      ]
+    ],
+    "seeds": null,
+    "machine": "second",
+    "results": [
+      "/home/neko/PycharmProjects/Morph/results"
+    ]
+  },
+  "timestamp_utc": "2026-10-21T17:12:35+00:00",
+  "results": {
+    "pairs": [
+      {
+        "name": "ugender in context over its word form, BPE 17k",
+        "A": "bpe_ugender-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_ugenderlex-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.0009034126408395959,
+            "A": 1.0879221763972,
+            "B": 1.0888255890380396,
+            "machine": "5090",
+            "runs": [
+              "f235e26171a1",
+              "e7c34e91f9ab"
+            ]
+          },
+          "1": {
+            "effect": 0.0012366019160590103,
+            "A": 1.0921167521065427,
+            "B": 1.0933533540226017,
+            "machine": "5090",
+            "runs": [
+              "b3a03770d62b",
+              "aab3bf085de4"
+            ]
+          },
+          "2": {
+            "effect": 0.000961592943480083,
+            "A": 1.087621966092258,
+            "B": 1.088583559035738,
+            "machine": "5090",
+            "runs": [
+              "ea46635fab3d",
+              "f8f68887f961"
+            ]
+          },
+          "3": {
+            "effect": 0.000854401547659922,
+            "A": 1.0884232916557195,
+            "B": 1.0892776932033794,
+            "machine": "5090",
+            "runs": [
+              "65dd109de16d",
+              "4987fc10fc7e"
+            ]
+          }
+        },
+        "mean": 0.0009890022620096528,
+        "se": 8.53911563449384e-05,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "ugender in context over the causal tagger (the leak), BPE 17k",
+        "A": "bpe_ugender-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_ugendercausal-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.0003764732437507856,
+            "A": 1.0879221763972,
+            "B": 1.0882986496409508,
+            "machine": "5090",
+            "runs": [
+              "f235e26171a1",
+              "27ae21e388fb"
+            ]
+          },
+          "1": {
+            "effect": 0.0007467042546482894,
+            "A": 1.0921167521065427,
+            "B": 1.092863456361191,
+            "machine": "5090",
+            "runs": [
+              "b3a03770d62b",
+              "a481ae8e5a0f"
+            ]
+          },
+          "2": {
+            "effect": 0.00011449643789918085,
+            "A": 1.087621966092258,
+            "B": 1.087736462530157,
+            "machine": "5090",
+            "runs": [
+              "ea46635fab3d",
+              "ca2ae43e1e91"
+            ]
+          },
+          "3": {
+            "effect": -3.9738436953706824e-05,
+            "A": 1.0884232916557195,
+            "B": 1.0883835532187658,
+            "machine": "5090",
+            "runs": [
+              "65dd109de16d",
+              "d78a07150f26"
+            ]
+          }
+        },
+        "mean": 0.00029948387483613725,
+        "se": 0.0001720526953401564,
+        "positive": 3,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "ugender causal over its word form, BPE 17k",
+        "A": "bpe_ugendercausal-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_ugenderlex-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.0005269393970888103,
+            "A": 1.0882986496409508,
+            "B": 1.0888255890380396,
+            "machine": "5090",
+            "runs": [
+              "27ae21e388fb",
+              "e7c34e91f9ab"
+            ]
+          },
+          "1": {
+            "effect": 0.0004898976614107209,
+            "A": 1.092863456361191,
+            "B": 1.0933533540226017,
+            "machine": "5090",
+            "runs": [
+              "a481ae8e5a0f",
+              "aab3bf085de4"
+            ]
+          },
+          "2": {
+            "effect": 0.0008470965055809021,
+            "A": 1.087736462530157,
+            "B": 1.088583559035738,
+            "machine": "5090",
+            "runs": [
+              "ca2ae43e1e91",
+              "f8f68887f961"
+            ]
+          },
+          "3": {
+            "effect": 0.0008941399846136289,
+            "A": 1.0883835532187658,
+            "B": 1.0892776932033794,
+            "machine": "5090",
+            "runs": [
+              "d78a07150f26",
+              "4987fc10fc7e"
+            ]
+          }
+        },
+        "mean": 0.0006895183871735155,
+        "se": 0.00010526997977849766,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "ugender over the null, BPE 17k",
+        "A": "bpe_ugender-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.0009635711857189921,
+            "A": 1.0879221763972,
+            "B": 1.088885747582919,
+            "machine": "5090",
+            "runs": [
+              "f235e26171a1",
+              "e9f3f153ec20"
+            ]
+          },
+          "1": {
+            "effect": -0.0009424496237042668,
+            "A": 1.0921167521065427,
+            "B": 1.0911743024828384,
+            "machine": "5090",
+            "runs": [
+              "b3a03770d62b",
+              "6f214dfa186f"
+            ]
+          },
+          "2": {
+            "effect": -0.0007144742106051094,
+            "A": 1.087621966092258,
+            "B": 1.0869074918816528,
+            "machine": "5090",
+            "runs": [
+              "ea46635fab3d",
+              "fe50426ea6ef"
+            ]
+          },
+          "3": {
+            "effect": 0.0019939342629655687,
+            "A": 1.0884232916557195,
+            "B": 1.090417225918685,
+            "machine": "5090",
+            "runs": [
+              "65dd109de16d",
+              "f7631513ec4e"
+            ]
+          }
+        },
+        "mean": 0.0003251454035937962,
+        "se": 0.0007000029661784399,
+        "positive": 2,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "ugender over the empty slot, BPE 17k",
+        "A": "bpe_ugender-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL-OFF0_bpe_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.002341920676766751,
+            "A": 1.0879221763972,
+            "B": 1.0902640970739668,
+            "machine": "5090",
+            "runs": [
+              "f235e26171a1",
+              "31f6c2d9dfa5"
+            ]
+          },
+          "1": {
+            "effect": -0.0009355718309342897,
+            "A": 1.0921167521065427,
+            "B": 1.0911811802756084,
+            "machine": "5090",
+            "runs": [
+              "b3a03770d62b",
+              "d89dd6f360e8"
+            ]
+          },
+          "2": {
+            "effect": 0.00033655838046553477,
+            "A": 1.087621966092258,
+            "B": 1.0879585244727235,
+            "machine": "5090",
+            "runs": [
+              "ea46635fab3d",
+              "1f85e96bed25"
+            ]
+          },
+          "3": {
+            "effect": 0.001961646827224328,
+            "A": 1.0884232916557195,
+            "B": 1.0903849384829438,
+            "machine": "5090",
+            "runs": [
+              "65dd109de16d",
+              "610df4f77f1f"
+            ]
+          }
+        },
+        "mean": 0.0009261385133805811,
+        "se": 0.00075775362868696,
+        "positive": 3,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "ugenderlex over the null, BPE 17k",
+        "A": "bpe_ugenderlex-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 6.01585448793962e-05,
+            "A": 1.0888255890380396,
+            "B": 1.088885747582919,
+            "machine": "5090",
+            "runs": [
+              "e7c34e91f9ab",
+              "e9f3f153ec20"
+            ]
+          },
+          "1": {
+            "effect": -0.002179051539763277,
+            "A": 1.0933533540226017,
+            "B": 1.0911743024828384,
+            "machine": "5090",
+            "runs": [
+              "aab3bf085de4",
+              "6f214dfa186f"
+            ]
+          },
+          "2": {
+            "effect": -0.0016760671540851924,
+            "A": 1.088583559035738,
+            "B": 1.0869074918816528,
+            "machine": "5090",
+            "runs": [
+              "f8f68887f961",
+              "fe50426ea6ef"
+            ]
+          },
+          "3": {
+            "effect": 0.0011395327153056467,
+            "A": 1.0892776932033794,
+            "B": 1.090417225918685,
+            "machine": "5090",
+            "runs": [
+              "4987fc10fc7e",
+              "f7631513ec4e"
+            ]
+          }
+        },
+        "mean": -0.0006638568584158566,
+        "se": 0.0007690251872695029,
+        "positive": 2,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "ugenderlex over the empty slot, BPE 17k",
+        "A": "bpe_ugenderlex-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL-OFF0_bpe_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.0014385080359271551,
+            "A": 1.0888255890380396,
+            "B": 1.0902640970739668,
+            "machine": "5090",
+            "runs": [
+              "e7c34e91f9ab",
+              "31f6c2d9dfa5"
+            ]
+          },
+          "1": {
+            "effect": -0.0021721737469933,
+            "A": 1.0933533540226017,
+            "B": 1.0911811802756084,
+            "machine": "5090",
+            "runs": [
+              "aab3bf085de4",
+              "d89dd6f360e8"
+            ]
+          },
+          "2": {
+            "effect": -0.0006250345630145482,
+            "A": 1.088583559035738,
+            "B": 1.0879585244727235,
+            "machine": "5090",
+            "runs": [
+              "f8f68887f961",
+              "1f85e96bed25"
+            ]
+          },
+          "3": {
+            "effect": 0.001107245279564406,
+            "A": 1.0892776932033794,
+            "B": 1.0903849384829438,
+            "machine": "5090",
+            "runs": [
+              "4987fc10fc7e",
+              "610df4f77f1f"
+            ]
+          }
+        },
+        "mean": -6.286374862907174e-05,
+        "se": 0.0008360869705094264,
+        "positive": 2,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "ugendercausal over the null, BPE 17k",
+        "A": "bpe_ugendercausal-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.0005870979419682065,
+            "A": 1.0882986496409508,
+            "B": 1.088885747582919,
+            "machine": "5090",
+            "runs": [
+              "27ae21e388fb",
+              "e9f3f153ec20"
+            ]
+          },
+          "1": {
+            "effect": -0.0016891538783525561,
+            "A": 1.092863456361191,
+            "B": 1.0911743024828384,
+            "machine": "5090",
+            "runs": [
+              "a481ae8e5a0f",
+              "6f214dfa186f"
+            ]
+          },
+          "2": {
+            "effect": -0.0008289706485042903,
+            "A": 1.087736462530157,
+            "B": 1.0869074918816528,
+            "machine": "5090",
+            "runs": [
+              "ca2ae43e1e91",
+              "fe50426ea6ef"
+            ]
+          },
+          "3": {
+            "effect": 0.0020336726999192756,
+            "A": 1.0883835532187658,
+            "B": 1.090417225918685,
+            "machine": "5090",
+            "runs": [
+              "d78a07150f26",
+              "f7631513ec4e"
+            ]
+          }
+        },
+        "mean": 2.5661528757658925e-05,
+        "se": 0.0008174303104068793,
+        "positive": 2,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "ugendercausal over the empty slot, BPE 17k",
+        "A": "bpe_ugendercausal-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL-OFF0_bpe_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.0019654474330159655,
+            "A": 1.0882986496409508,
+            "B": 1.0902640970739668,
+            "machine": "5090",
+            "runs": [
+              "27ae21e388fb",
+              "31f6c2d9dfa5"
+            ]
+          },
+          "1": {
+            "effect": -0.0016822760855825791,
+            "A": 1.092863456361191,
+            "B": 1.0911811802756084,
+            "machine": "5090",
+            "runs": [
+              "a481ae8e5a0f",
+              "d89dd6f360e8"
+            ]
+          },
+          "2": {
+            "effect": 0.00022206194256635392,
+            "A": 1.087736462530157,
+            "B": 1.0879585244727235,
+            "machine": "5090",
+            "runs": [
+              "ca2ae43e1e91",
+              "1f85e96bed25"
+            ]
+          },
+          "3": {
+            "effect": 0.002001385264178035,
+            "A": 1.0883835532187658,
+            "B": 1.0903849384829438,
+            "machine": "5090",
+            "runs": [
+              "d78a07150f26",
+              "610df4f77f1f"
+            ]
+          }
+        },
+        "mean": 0.0006266546385444438,
+        "se": 0.000874504944622973,
+        "positive": 3,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "unumber in context over its word form, BPE 17k",
+        "A": "bpe_unumber-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_unumberlex-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.0010585005972310046,
+            "A": 1.0875078373863514,
+            "B": 1.0885663379835824,
+            "machine": "5090",
+            "runs": [
+              "f1b15714517f",
+              "8da06c99515f"
+            ]
+          },
+          "1": {
+            "effect": 0.0005756692000931096,
+            "A": 1.0898708569518694,
+            "B": 1.0904465261519625,
+            "machine": "5090",
+            "runs": [
+              "4a4daa7856ba",
+              "9b55d5a13764"
+            ]
+          },
+          "2": {
+            "effect": 0.0009971835902953252,
+            "A": 1.085862395434378,
+            "B": 1.0868595790246733,
+            "machine": "5090",
+            "runs": [
+              "8e1f25319b63",
+              "aa5aeff71ab8"
+            ]
+          },
+          "3": {
+            "effect": 0.000990060642863666,
+            "A": 1.0888507343957832,
+            "B": 1.0898407950386468,
+            "machine": "5090",
+            "runs": [
+              "c338f1988944",
+              "92fecfb0311c"
+            ]
+          }
+        },
+        "mean": 0.0009053535076207764,
+        "se": 0.00011096314573284836,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "unumber in context over the causal tagger (the leak), BPE 17k",
+        "A": "bpe_unumber-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_unumbercausal-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.0001004170498146717,
+            "A": 1.0875078373863514,
+            "B": 1.087608254436166,
+            "machine": "5090",
+            "runs": [
+              "f1b15714517f",
+              "4e3d8546ae3c"
+            ]
+          },
+          "1": {
+            "effect": 0.00014876353295800726,
+            "A": 1.0898708569518694,
+            "B": 1.0900196204848274,
+            "machine": "5090",
+            "runs": [
+              "4a4daa7856ba",
+              "b58b9b031615"
+            ]
+          },
+          "2": {
+            "effect": 4.546627014168081e-05,
+            "A": 1.085862395434378,
+            "B": 1.0859078617045197,
+            "machine": "5090",
+            "runs": [
+              "8e1f25319b63",
+              "ae1f8998634e"
+            ]
+          },
+          "3": {
+            "effect": 7.740297883840341e-05,
+            "A": 1.0888507343957832,
+            "B": 1.0889281373746216,
+            "machine": "5090",
+            "runs": [
+              "c338f1988944",
+              "5173085d27f8"
+            ]
+          }
+        },
+        "mean": 9.30124579381908e-05,
+        "se": 2.173190081897682e-05,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "unumber causal over its word form, BPE 17k",
+        "A": "bpe_unumbercausal-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_unumberlex-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.000958083547416333,
+            "A": 1.087608254436166,
+            "B": 1.0885663379835824,
+            "machine": "5090",
+            "runs": [
+              "4e3d8546ae3c",
+              "8da06c99515f"
+            ]
+          },
+          "1": {
+            "effect": 0.00042690566713510236,
+            "A": 1.0900196204848274,
+            "B": 1.0904465261519625,
+            "machine": "5090",
+            "runs": [
+              "b58b9b031615",
+              "9b55d5a13764"
+            ]
+          },
+          "2": {
+            "effect": 0.0009517173201536444,
+            "A": 1.0859078617045197,
+            "B": 1.0868595790246733,
+            "machine": "5090",
+            "runs": [
+              "ae1f8998634e",
+              "aa5aeff71ab8"
+            ]
+          },
+          "3": {
+            "effect": 0.0009126576640252626,
+            "A": 1.0889281373746216,
+            "B": 1.0898407950386468,
+            "machine": "5090",
+            "runs": [
+              "5173085d27f8",
+              "92fecfb0311c"
+            ]
+          }
+        },
+        "mean": 0.0008123410496825856,
+        "se": 0.00012887024405993134,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "unumber over the null, BPE 17k",
+        "A": "bpe_unumber-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.0013779101965676332,
+            "A": 1.0875078373863514,
+            "B": 1.088885747582919,
+            "machine": "5090",
+            "runs": [
+              "f1b15714517f",
+              "e9f3f153ec20"
+            ]
+          },
+          "1": {
+            "effect": 0.0013034455309690607,
+            "A": 1.0898708569518694,
+            "B": 1.0911743024828384,
+            "machine": "5090",
+            "runs": [
+              "4a4daa7856ba",
+              "6f214dfa186f"
+            ]
+          },
+          "2": {
+            "effect": 0.001045096447274796,
+            "A": 1.085862395434378,
+            "B": 1.0869074918816528,
+            "machine": "5090",
+            "runs": [
+              "8e1f25319b63",
+              "fe50426ea6ef"
+            ]
+          },
+          "3": {
+            "effect": 0.0015664915229018916,
+            "A": 1.0888507343957832,
+            "B": 1.090417225918685,
+            "machine": "5090",
+            "runs": [
+              "c338f1988944",
+              "f7631513ec4e"
+            ]
+          }
+        },
+        "mean": 0.0013232359244283454,
+        "se": 0.00010797985562409594,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "unumber over the empty slot, BPE 17k",
+        "A": "bpe_unumber-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL-OFF0_bpe_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.002756259687615392,
+            "A": 1.0875078373863514,
+            "B": 1.0902640970739668,
+            "machine": "5090",
+            "runs": [
+              "f1b15714517f",
+              "31f6c2d9dfa5"
+            ]
+          },
+          "1": {
+            "effect": 0.0013103233237390377,
+            "A": 1.0898708569518694,
+            "B": 1.0911811802756084,
+            "machine": "5090",
+            "runs": [
+              "4a4daa7856ba",
+              "d89dd6f360e8"
+            ]
+          },
+          "2": {
+            "effect": 0.00209612903834544,
+            "A": 1.085862395434378,
+            "B": 1.0879585244727235,
+            "machine": "5090",
+            "runs": [
+              "8e1f25319b63",
+              "1f85e96bed25"
+            ]
+          },
+          "3": {
+            "effect": 0.001534204087160651,
+            "A": 1.0888507343957832,
+            "B": 1.0903849384829438,
+            "machine": "5090",
+            "runs": [
+              "c338f1988944",
+              "610df4f77f1f"
+            ]
+          }
+        },
+        "mean": 0.0019242290342151303,
+        "se": 0.00032285501135670695,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "unumberlex over the null, BPE 17k",
+        "A": "bpe_unumberlex-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.0003194095993366286,
+            "A": 1.0885663379835824,
+            "B": 1.088885747582919,
+            "machine": "5090",
+            "runs": [
+              "8da06c99515f",
+              "e9f3f153ec20"
+            ]
+          },
+          "1": {
+            "effect": 0.0007277763308759511,
+            "A": 1.0904465261519625,
+            "B": 1.0911743024828384,
+            "machine": "5090",
+            "runs": [
+              "9b55d5a13764",
+              "6f214dfa186f"
+            ]
+          },
+          "2": {
+            "effect": 4.7912856979470675e-05,
+            "A": 1.0868595790246733,
+            "B": 1.0869074918816528,
+            "machine": "5090",
+            "runs": [
+              "aa5aeff71ab8",
+              "fe50426ea6ef"
+            ]
+          },
+          "3": {
+            "effect": 0.0005764308800382256,
+            "A": 1.0898407950386468,
+            "B": 1.090417225918685,
+            "machine": "5090",
+            "runs": [
+              "92fecfb0311c",
+              "f7631513ec4e"
+            ]
+          }
+        },
+        "mean": 0.000417882416807569,
+        "se": 0.00014937263921411628,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "unumberlex over the empty slot, BPE 17k",
+        "A": "bpe_unumberlex-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL-OFF0_bpe_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.0016977590903843875,
+            "A": 1.0885663379835824,
+            "B": 1.0902640970739668,
+            "machine": "5090",
+            "runs": [
+              "8da06c99515f",
+              "31f6c2d9dfa5"
+            ]
+          },
+          "1": {
+            "effect": 0.0007346541236459281,
+            "A": 1.0904465261519625,
+            "B": 1.0911811802756084,
+            "machine": "5090",
+            "runs": [
+              "9b55d5a13764",
+              "d89dd6f360e8"
+            ]
+          },
+          "2": {
+            "effect": 0.0010989454480501148,
+            "A": 1.0868595790246733,
+            "B": 1.0879585244727235,
+            "machine": "5090",
+            "runs": [
+              "aa5aeff71ab8",
+              "1f85e96bed25"
+            ]
+          },
+          "3": {
+            "effect": 0.000544143444296985,
+            "A": 1.0898407950386468,
+            "B": 1.0903849384829438,
+            "machine": "5090",
+            "runs": [
+              "92fecfb0311c",
+              "610df4f77f1f"
+            ]
+          }
+        },
+        "mean": 0.0010188755265943539,
+        "se": 0.0002538776676148304,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "unumbercausal over the null, BPE 17k",
+        "A": "bpe_unumbercausal-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.0012774931467529616,
+            "A": 1.087608254436166,
+            "B": 1.088885747582919,
+            "machine": "5090",
+            "runs": [
+              "4e3d8546ae3c",
+              "e9f3f153ec20"
+            ]
+          },
+          "1": {
+            "effect": 0.0011546819980110534,
+            "A": 1.0900196204848274,
+            "B": 1.0911743024828384,
+            "machine": "5090",
+            "runs": [
+              "b58b9b031615",
+              "6f214dfa186f"
+            ]
+          },
+          "2": {
+            "effect": 0.000999630177133115,
+            "A": 1.0859078617045197,
+            "B": 1.0869074918816528,
+            "machine": "5090",
+            "runs": [
+              "ae1f8998634e",
+              "fe50426ea6ef"
+            ]
+          },
+          "3": {
+            "effect": 0.0014890885440634882,
+            "A": 1.0889281373746216,
+            "B": 1.090417225918685,
+            "machine": "5090",
+            "runs": [
+              "5173085d27f8",
+              "f7631513ec4e"
+            ]
+          }
+        },
+        "mean": 0.0012302234664901546,
+        "se": 0.00010333010597742654,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "unumbercausal over the empty slot, BPE 17k",
+        "A": "bpe_unumbercausal-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL-OFF0_bpe_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.0026558426378007205,
+            "A": 1.087608254436166,
+            "B": 1.0902640970739668,
+            "machine": "5090",
+            "runs": [
+              "4e3d8546ae3c",
+              "31f6c2d9dfa5"
+            ]
+          },
+          "1": {
+            "effect": 0.0011615597907810304,
+            "A": 1.0900196204848274,
+            "B": 1.0911811802756084,
+            "machine": "5090",
+            "runs": [
+              "b58b9b031615",
+              "d89dd6f360e8"
+            ]
+          },
+          "2": {
+            "effect": 0.0020506627682037593,
+            "A": 1.0859078617045197,
+            "B": 1.0879585244727235,
+            "machine": "5090",
+            "runs": [
+              "ae1f8998634e",
+              "1f85e96bed25"
+            ]
+          },
+          "3": {
+            "effect": 0.0014568011083222476,
+            "A": 1.0889281373746216,
+            "B": 1.0903849384829438,
+            "machine": "5090",
+            "runs": [
+              "5173085d27f8",
+              "610df4f77f1f"
+            ]
+          }
+        },
+        "mean": 0.0018312165762769395,
+        "se": 0.000331259204337511,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "ugender in context over its word form, endings apart",
+        "A": "bpe_ugender-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_ugenderlex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.0007706461695529132,
+            "A": 1.0704362126399583,
+            "B": 1.0712068588095112,
+            "machine": "5090",
+            "runs": [
+              "1504cfa845a2",
+              "1c97fabbd493"
+            ]
+          },
+          "1": {
+            "effect": 6.16594390552283e-05,
+            "A": 1.0661712179224179,
+            "B": 1.066232877361473,
+            "machine": "5090",
+            "runs": [
+              "08a98131849a",
+              "a4d18df68fd1"
+            ]
+          },
+          "2": {
+            "effect": 0.0014531284989625082,
+            "A": 1.0704835573525713,
+            "B": 1.0719366858515338,
+            "machine": "5090",
+            "runs": [
+              "bb14cd806ab9",
+              "750eead909a3"
+            ]
+          },
+          "3": {
+            "effect": 0.0010425699260538934,
+            "A": 1.069467003263136,
+            "B": 1.0705095731891898,
+            "machine": "5090",
+            "runs": [
+              "32d1fb503b4c",
+              "fce06bcd502c"
+            ]
+          }
+        },
+        "mean": 0.0008320010084061358,
+        "se": 0.00029259317295591625,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "ugender in context over the causal tagger (the leak), endings apart",
+        "A": "bpe_ugender-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_ugendercausal-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.0004169672850125039,
+            "A": 1.0704362126399583,
+            "B": 1.0708531799249708,
+            "machine": "5090",
+            "runs": [
+              "1504cfa845a2",
+              "30f6217bce63"
+            ]
+          },
+          "1": {
+            "effect": -0.001105300877831672,
+            "A": 1.0661712179224179,
+            "B": 1.0650659170445862,
+            "machine": "5090",
+            "runs": [
+              "08a98131849a",
+              "9eb043e676c8"
+            ]
+          },
+          "2": {
+            "effect": 0.0007029513036058699,
+            "A": 1.0704835573525713,
+            "B": 1.0711865086561771,
+            "machine": "5090",
+            "runs": [
+              "bb14cd806ab9",
+              "1e534fc75eda"
+            ]
+          },
+          "3": {
+            "effect": -0.00044896374217850976,
+            "A": 1.069467003263136,
+            "B": 1.0690180395209574,
+            "machine": "5090",
+            "runs": [
+              "32d1fb503b4c",
+              "9664b8e0d8cf"
+            ]
+          }
+        },
+        "mean": -0.00010858650784795199,
+        "se": 0.0004127243435991139,
+        "positive": 2,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "ugender causal over its word form, endings apart",
+        "A": "bpe_ugendercausal-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_ugenderlex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.0003536788845404093,
+            "A": 1.0708531799249708,
+            "B": 1.0712068588095112,
+            "machine": "5090",
+            "runs": [
+              "30f6217bce63",
+              "1c97fabbd493"
+            ]
+          },
+          "1": {
+            "effect": 0.0011669603168869003,
+            "A": 1.0650659170445862,
+            "B": 1.066232877361473,
+            "machine": "5090",
+            "runs": [
+              "9eb043e676c8",
+              "a4d18df68fd1"
+            ]
+          },
+          "2": {
+            "effect": 0.0007501771953566383,
+            "A": 1.0711865086561771,
+            "B": 1.0719366858515338,
+            "machine": "5090",
+            "runs": [
+              "1e534fc75eda",
+              "750eead909a3"
+            ]
+          },
+          "3": {
+            "effect": 0.0014915336682324032,
+            "A": 1.0690180395209574,
+            "B": 1.0705095731891898,
+            "machine": "5090",
+            "runs": [
+              "9664b8e0d8cf",
+              "fce06bcd502c"
+            ]
+          }
+        },
+        "mean": 0.0009405875162540878,
+        "se": 0.00024757223517092743,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "ugender over the null, endings apart",
+        "A": "bpe_ugender-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": -0.00012501088010408168,
+            "A": 1.0704362126399583,
+            "B": 1.0703112017598542,
+            "machine": "5090",
+            "runs": [
+              "1504cfa845a2",
+              "6dda8d847d8a"
+            ]
+          },
+          "1": {
+            "effect": 0.005639552080284771,
+            "A": 1.0661712179224179,
+            "B": 1.0718107700027026,
+            "machine": "5090",
+            "runs": [
+              "08a98131849a",
+              "ed3afe0e7a24"
+            ]
+          },
+          "2": {
+            "effect": 0.0033166108660405147,
+            "A": 1.0704835573525713,
+            "B": 1.0738001682186118,
+            "machine": "5090",
+            "runs": [
+              "bb14cd806ab9",
+              "9b80b67971df"
+            ]
+          },
+          "3": {
+            "effect": 0.0020601902158035035,
+            "A": 1.069467003263136,
+            "B": 1.0715271934789394,
+            "machine": "5090",
+            "runs": [
+              "32d1fb503b4c",
+              "ad927855ba92"
+            ]
+          }
+        },
+        "mean": 0.002722835570506177,
+        "se": 0.0012044754242810571,
+        "positive": 3,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "ugender over the empty slot, endings apart",
+        "A": "bpe_ugender-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": -0.000776428371656035,
+            "A": 1.0704362126399583,
+            "B": 1.0696597842683022,
+            "machine": "5090",
+            "runs": [
+              "1504cfa845a2",
+              "dad67df35976"
+            ]
+          },
+          "1": {
+            "effect": 0.003888562257682082,
+            "A": 1.0661712179224179,
+            "B": 1.0700597801801,
+            "machine": "5090",
+            "runs": [
+              "08a98131849a",
+              "2848975b960d"
+            ]
+          },
+          "2": {
+            "effect": 0.0007684004375503317,
+            "A": 1.0704835573525713,
+            "B": 1.0712519577901216,
+            "machine": "5090",
+            "runs": [
+              "bb14cd806ab9",
+              "bdd20daed4ad"
+            ]
+          },
+          "3": {
+            "effect": -0.0018897446994343703,
+            "A": 1.069467003263136,
+            "B": 1.0675772585637016,
+            "machine": "5090",
+            "runs": [
+              "32d1fb503b4c",
+              "1582b5526982"
+            ]
+          }
+        },
+        "mean": 0.0004976974060355022,
+        "se": 0.0012548081154022442,
+        "positive": 2,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "ugenderlex over the null, endings apart",
+        "A": "bpe_ugenderlex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": -0.0008956570496569949,
+            "A": 1.0712068588095112,
+            "B": 1.0703112017598542,
+            "machine": "5090",
+            "runs": [
+              "1c97fabbd493",
+              "6dda8d847d8a"
+            ]
+          },
+          "1": {
+            "effect": 0.005577892641229543,
+            "A": 1.066232877361473,
+            "B": 1.0718107700027026,
+            "machine": "5090",
+            "runs": [
+              "a4d18df68fd1",
+              "ed3afe0e7a24"
+            ]
+          },
+          "2": {
+            "effect": 0.0018634823670780065,
+            "A": 1.0719366858515338,
+            "B": 1.0738001682186118,
+            "machine": "5090",
+            "runs": [
+              "750eead909a3",
+              "9b80b67971df"
+            ]
+          },
+          "3": {
+            "effect": 0.00101762028974961,
+            "A": 1.0705095731891898,
+            "B": 1.0715271934789394,
+            "machine": "5090",
+            "runs": [
+              "fce06bcd502c",
+              "ad927855ba92"
+            ]
+          }
+        },
+        "mean": 0.001890834562100041,
+        "se": 0.001357761150119179,
+        "positive": 3,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "ugenderlex over the empty slot, endings apart",
+        "A": "bpe_ugenderlex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": -0.0015470745412089482,
+            "A": 1.0712068588095112,
+            "B": 1.0696597842683022,
+            "machine": "5090",
+            "runs": [
+              "1c97fabbd493",
+              "dad67df35976"
+            ]
+          },
+          "1": {
+            "effect": 0.003826902818626854,
+            "A": 1.066232877361473,
+            "B": 1.0700597801801,
+            "machine": "5090",
+            "runs": [
+              "a4d18df68fd1",
+              "2848975b960d"
+            ]
+          },
+          "2": {
+            "effect": -0.0006847280614121765,
+            "A": 1.0719366858515338,
+            "B": 1.0712519577901216,
+            "machine": "5090",
+            "runs": [
+              "750eead909a3",
+              "bdd20daed4ad"
+            ]
+          },
+          "3": {
+            "effect": -0.0029323146254882637,
+            "A": 1.0705095731891898,
+            "B": 1.0675772585637016,
+            "machine": "5090",
+            "runs": [
+              "fce06bcd502c",
+              "1582b5526982"
+            ]
+          }
+        },
+        "mean": -0.0003343036023706336,
+        "se": 0.0014622730822813944,
+        "positive": 1,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "ugendercausal over the null, endings apart",
+        "A": "bpe_ugendercausal-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": -0.0005419781651165856,
+            "A": 1.0708531799249708,
+            "B": 1.0703112017598542,
+            "machine": "5090",
+            "runs": [
+              "30f6217bce63",
+              "6dda8d847d8a"
+            ]
+          },
+          "1": {
+            "effect": 0.006744852958116443,
+            "A": 1.0650659170445862,
+            "B": 1.0718107700027026,
+            "machine": "5090",
+            "runs": [
+              "9eb043e676c8",
+              "ed3afe0e7a24"
+            ]
+          },
+          "2": {
+            "effect": 0.002613659562434645,
+            "A": 1.0711865086561771,
+            "B": 1.0738001682186118,
+            "machine": "5090",
+            "runs": [
+              "1e534fc75eda",
+              "9b80b67971df"
+            ]
+          },
+          "3": {
+            "effect": 0.0025091539579820132,
+            "A": 1.0690180395209574,
+            "B": 1.0715271934789394,
+            "machine": "5090",
+            "runs": [
+              "9664b8e0d8cf",
+              "ad927855ba92"
+            ]
+          }
+        },
+        "mean": 0.002831422078354129,
+        "se": 0.0014957174339892678,
+        "positive": 3,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "ugendercausal over the empty slot, endings apart",
+        "A": "bpe_ugendercausal-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": -0.0011933956566685389,
+            "A": 1.0708531799249708,
+            "B": 1.0696597842683022,
+            "machine": "5090",
+            "runs": [
+              "30f6217bce63",
+              "dad67df35976"
+            ]
+          },
+          "1": {
+            "effect": 0.004993863135513754,
+            "A": 1.0650659170445862,
+            "B": 1.0700597801801,
+            "machine": "5090",
+            "runs": [
+              "9eb043e676c8",
+              "2848975b960d"
+            ]
+          },
+          "2": {
+            "effect": 6.544913394446183e-05,
+            "A": 1.0711865086561771,
+            "B": 1.0712519577901216,
+            "machine": "5090",
+            "runs": [
+              "1e534fc75eda",
+              "bdd20daed4ad"
+            ]
+          },
+          "3": {
+            "effect": -0.0014407809572558605,
+            "A": 1.0690180395209574,
+            "B": 1.0675772585637016,
+            "machine": "5090",
+            "runs": [
+              "9664b8e0d8cf",
+              "1582b5526982"
+            ]
+          }
+        },
+        "mean": 0.0006062839138834542,
+        "se": 0.0014992407753200848,
+        "positive": 2,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "unumber in context over its word form, endings apart",
+        "A": "bpe_unumber-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_unumberlex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.0009735021567625068,
+            "A": 1.0691162075110352,
+            "B": 1.0700897096677977,
+            "machine": "5090",
+            "runs": [
+              "6e1610524203",
+              "cc6fc40e8029"
+            ]
+          },
+          "1": {
+            "effect": 0.0009342942826224832,
+            "A": 1.0689489952148021,
+            "B": 1.0698832894974246,
+            "machine": "5090",
+            "runs": [
+              "d67796b3b2a1",
+              "0c3c15305be2"
+            ]
+          },
+          "2": {
+            "effect": 0.0010128223883352216,
+            "A": 1.0722269079322637,
+            "B": 1.073239730320599,
+            "machine": "5090",
+            "runs": [
+              "ffec93dc7269",
+              "c026cff5350e"
+            ]
+          },
+          "3": {
+            "effect": 0.0009051627186278388,
+            "A": 1.0697580335382246,
+            "B": 1.0706631962568525,
+            "machine": "5090",
+            "runs": [
+              "4c433324a57a",
+              "bb1c3c5ecaaf"
+            ]
+          }
+        },
+        "mean": 0.0009564453865870126,
+        "se": 2.3434097619344228e-05,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "unumber in context over the causal tagger (the leak), endings apart",
+        "A": "bpe_unumber-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_unumbercausal-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.00016758859180976415,
+            "A": 1.0691162075110352,
+            "B": 1.069283796102845,
+            "machine": "5090",
+            "runs": [
+              "6e1610524203",
+              "46e8eb9b394b"
+            ]
+          },
+          "1": {
+            "effect": 0.0003837685413434766,
+            "A": 1.0689489952148021,
+            "B": 1.0693327637561456,
+            "machine": "5090",
+            "runs": [
+              "d67796b3b2a1",
+              "e27f05ecb08f"
+            ]
+          },
+          "2": {
+            "effect": 0.00014793046817684896,
+            "A": 1.0722269079322637,
+            "B": 1.0723748384004406,
+            "machine": "5090",
+            "runs": [
+              "ffec93dc7269",
+              "d33416eae04e"
+            ]
+          },
+          "3": {
+            "effect": 8.889757224750383e-05,
+            "A": 1.0697580335382246,
+            "B": 1.0698469311104721,
+            "machine": "5090",
+            "runs": [
+              "4c433324a57a",
+              "a1743cfe1a06"
+            ]
+          }
+        },
+        "mean": 0.00019704629339439839,
+        "se": 6.444730679291159e-05,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "unumber causal over its word form, endings apart",
+        "A": "bpe_unumbercausal-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_unumberlex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.0008059135649527427,
+            "A": 1.069283796102845,
+            "B": 1.0700897096677977,
+            "machine": "5090",
+            "runs": [
+              "46e8eb9b394b",
+              "cc6fc40e8029"
+            ]
+          },
+          "1": {
+            "effect": 0.0005505257412790066,
+            "A": 1.0693327637561456,
+            "B": 1.0698832894974246,
+            "machine": "5090",
+            "runs": [
+              "e27f05ecb08f",
+              "0c3c15305be2"
+            ]
+          },
+          "2": {
+            "effect": 0.0008648919201583727,
+            "A": 1.0723748384004406,
+            "B": 1.073239730320599,
+            "machine": "5090",
+            "runs": [
+              "d33416eae04e",
+              "c026cff5350e"
+            ]
+          },
+          "3": {
+            "effect": 0.000816265146380335,
+            "A": 1.0698469311104721,
+            "B": 1.0706631962568525,
+            "machine": "5090",
+            "runs": [
+              "a1743cfe1a06",
+              "bb1c3c5ecaaf"
+            ]
+          }
+        },
+        "mean": 0.0007593990931926142,
+        "se": 7.080145818244479e-05,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "unumber over the null, endings apart",
+        "A": "bpe_unumber-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.0011949942488189702,
+            "A": 1.0691162075110352,
+            "B": 1.0703112017598542,
+            "machine": "5090",
+            "runs": [
+              "6e1610524203",
+              "6dda8d847d8a"
+            ]
+          },
+          "1": {
+            "effect": 0.002861774787900506,
+            "A": 1.0689489952148021,
+            "B": 1.0718107700027026,
+            "machine": "5090",
+            "runs": [
+              "d67796b3b2a1",
+              "ed3afe0e7a24"
+            ]
+          },
+          "2": {
+            "effect": 0.0015732602863480771,
+            "A": 1.0722269079322637,
+            "B": 1.0738001682186118,
+            "machine": "5090",
+            "runs": [
+              "ffec93dc7269",
+              "9b80b67971df"
+            ]
+          },
+          "3": {
+            "effect": 0.001769159940714804,
+            "A": 1.0697580335382246,
+            "B": 1.0715271934789394,
+            "machine": "5090",
+            "runs": [
+              "4c433324a57a",
+              "ad927855ba92"
+            ]
+          }
+        },
+        "mean": 0.0018497973159455894,
+        "se": 0.0003577523090404656,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "unumber over the empty slot, endings apart",
+        "A": "bpe_unumber-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.0005435767572670169,
+            "A": 1.0691162075110352,
+            "B": 1.0696597842683022,
+            "machine": "5090",
+            "runs": [
+              "6e1610524203",
+              "dad67df35976"
+            ]
+          },
+          "1": {
+            "effect": 0.0011107849652978175,
+            "A": 1.0689489952148021,
+            "B": 1.0700597801801,
+            "machine": "5090",
+            "runs": [
+              "d67796b3b2a1",
+              "2848975b960d"
+            ]
+          },
+          "2": {
+            "effect": -0.0009749501421421058,
+            "A": 1.0722269079322637,
+            "B": 1.0712519577901216,
+            "machine": "5090",
+            "runs": [
+              "ffec93dc7269",
+              "bdd20daed4ad"
+            ]
+          },
+          "3": {
+            "effect": -0.00218077497452307,
+            "A": 1.0697580335382246,
+            "B": 1.0675772585637016,
+            "machine": "5090",
+            "runs": [
+              "4c433324a57a",
+              "1582b5526982"
+            ]
+          }
+        },
+        "mean": -0.0003753408485250853,
+        "se": 0.0007456598414075663,
+        "positive": 2,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "unumberlex over the null, endings apart",
+        "A": "bpe_unumberlex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.00022149209205646336,
+            "A": 1.0700897096677977,
+            "B": 1.0703112017598542,
+            "machine": "5090",
+            "runs": [
+              "cc6fc40e8029",
+              "6dda8d847d8a"
+            ]
+          },
+          "1": {
+            "effect": 0.001927480505278023,
+            "A": 1.0698832894974246,
+            "B": 1.0718107700027026,
+            "machine": "5090",
+            "runs": [
+              "0c3c15305be2",
+              "ed3afe0e7a24"
+            ]
+          },
+          "2": {
+            "effect": 0.0005604378980128555,
+            "A": 1.073239730320599,
+            "B": 1.0738001682186118,
+            "machine": "5090",
+            "runs": [
+              "c026cff5350e",
+              "9b80b67971df"
+            ]
+          },
+          "3": {
+            "effect": 0.0008639972220869652,
+            "A": 1.0706631962568525,
+            "B": 1.0715271934789394,
+            "machine": "5090",
+            "runs": [
+              "bb1c3c5ecaaf",
+              "ad927855ba92"
+            ]
+          }
+        },
+        "mean": 0.0008933519293585768,
+        "se": 0.0003688395093192822,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "unumberlex over the empty slot, endings apart",
+        "A": "bpe_unumberlex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": -0.0004299253994954899,
+            "A": 1.0700897096677977,
+            "B": 1.0696597842683022,
+            "machine": "5090",
+            "runs": [
+              "cc6fc40e8029",
+              "dad67df35976"
+            ]
+          },
+          "1": {
+            "effect": 0.0001764906826753343,
+            "A": 1.0698832894974246,
+            "B": 1.0700597801801,
+            "machine": "5090",
+            "runs": [
+              "0c3c15305be2",
+              "2848975b960d"
+            ]
+          },
+          "2": {
+            "effect": -0.0019877725304773275,
+            "A": 1.073239730320599,
+            "B": 1.0712519577901216,
+            "machine": "5090",
+            "runs": [
+              "c026cff5350e",
+              "bdd20daed4ad"
+            ]
+          },
+          "3": {
+            "effect": -0.0030859376931509086,
+            "A": 1.0706631962568525,
+            "B": 1.0675772585637016,
+            "machine": "5090",
+            "runs": [
+              "bb1c3c5ecaaf",
+              "1582b5526982"
+            ]
+          }
+        },
+        "mean": -0.001331786235112098,
+        "se": 0.000741373589190819,
+        "positive": 1,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "unumbercausal over the null, endings apart",
+        "A": "bpe_unumbercausal-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.001027405657009206,
+            "A": 1.069283796102845,
+            "B": 1.0703112017598542,
+            "machine": "5090",
+            "runs": [
+              "46e8eb9b394b",
+              "6dda8d847d8a"
+            ]
+          },
+          "1": {
+            "effect": 0.0024780062465570296,
+            "A": 1.0693327637561456,
+            "B": 1.0718107700027026,
+            "machine": "5090",
+            "runs": [
+              "e27f05ecb08f",
+              "ed3afe0e7a24"
+            ]
+          },
+          "2": {
+            "effect": 0.0014253298181712282,
+            "A": 1.0723748384004406,
+            "B": 1.0738001682186118,
+            "machine": "5090",
+            "runs": [
+              "d33416eae04e",
+              "9b80b67971df"
+            ]
+          },
+          "3": {
+            "effect": 0.0016802623684673001,
+            "A": 1.0698469311104721,
+            "B": 1.0715271934789394,
+            "machine": "5090",
+            "runs": [
+              "a1743cfe1a06",
+              "ad927855ba92"
+            ]
+          }
+        },
+        "mean": 0.001652751022551191,
+        "se": 0.0003061290971291788,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "unumbercausal over the empty slot, endings apart",
+        "A": "bpe_unumbercausal-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL-OFF0_bpeend_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.0003759881654572528,
+            "A": 1.069283796102845,
+            "B": 1.0696597842683022,
+            "machine": "5090",
+            "runs": [
+              "46e8eb9b394b",
+              "dad67df35976"
+            ]
+          },
+          "1": {
+            "effect": 0.0007270164239543409,
+            "A": 1.0693327637561456,
+            "B": 1.0700597801801,
+            "machine": "5090",
+            "runs": [
+              "e27f05ecb08f",
+              "2848975b960d"
+            ]
+          },
+          "2": {
+            "effect": -0.0011228806103189548,
+            "A": 1.0723748384004406,
+            "B": 1.0712519577901216,
+            "machine": "5090",
+            "runs": [
+              "d33416eae04e",
+              "bdd20daed4ad"
+            ]
+          },
+          "3": {
+            "effect": -0.0022696725467705736,
+            "A": 1.0698469311104721,
+            "B": 1.0675772585637016,
+            "machine": "5090",
+            "runs": [
+              "a1743cfe1a06",
+              "1582b5526982"
+            ]
+          }
+        },
+        "mean": -0.0005723871419194837,
+        "se": 0.0006935227799021539,
+        "positive": 2,
+        "n": 4,
+        "skipped_across_machines": {}
+      }
+    ]
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-10-21T17:12:35+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "db34c3bfb9dc0e5b48f3f35612c85152cda7a059",
+    "git_dirty": true
+  },
+  "notes": [
+    "effect = B minus A in bits per byte at each seed (positive: A better); pairs on one machine only"
+  ]
+}

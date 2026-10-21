@@ -1,0 +1,153 @@
+{
+  "script": "paired_cells",
+  "args": {
+    "pair": [
+      [
+        "Unigram 17k over BPE 17k, the nulls, width 512, 10k",
+        "bpe_mconst-LEARN-CAUSAL_unigram_uk_17k_ukwiki0.05_st10k_w512",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k_w512"
+      ],
+      [
+        "Unigram 17k over BPE 17k, the nulls, width 128, 10k",
+        "bpe_mconst-LEARN-CAUSAL_unigram_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k"
+      ]
+    ],
+    "seeds": null,
+    "machine": "second",
+    "results": [
+      "/home/neko/PycharmProjects/Morph/results"
+    ]
+  },
+  "timestamp_utc": "2026-10-21T17:14:53+00:00",
+  "results": {
+    "pairs": [
+      {
+        "name": "Unigram 17k over BPE 17k, the nulls, width 512, 10k",
+        "A": "bpe_mconst-LEARN-CAUSAL_unigram_uk_17k_ukwiki0.05_st10k_w512",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k_w512",
+        "seeds": {
+          "0": {
+            "effect": -0.005031038109947095,
+            "A": 0.8840619223557057,
+            "B": 0.8790308842457586,
+            "machine": "5090",
+            "runs": [
+              "6a46077c755d",
+              "4d86892143a8"
+            ]
+          },
+          "1": {
+            "effect": -0.0034550132015261914,
+            "A": 0.885262701945775,
+            "B": 0.8818076887442489,
+            "machine": "5090",
+            "runs": [
+              "d658c8c54375",
+              "f74001fa0d30"
+            ]
+          },
+          "2": {
+            "effect": -0.006184798521802648,
+            "A": 0.8859765794223416,
+            "B": 0.879791780900539,
+            "machine": "5090",
+            "runs": [
+              "33a4314550e7",
+              "7b5b05c0cc73"
+            ]
+          },
+          "3": {
+            "effect": -0.007780969284593264,
+            "A": 0.8848871605799096,
+            "B": 0.8771061912953163,
+            "machine": "5090",
+            "runs": [
+              "121d5ceef9b2",
+              "cb0c22a0c51f"
+            ]
+          }
+        },
+        "mean": -0.0056129547794673,
+        "se": 0.000913903305614491,
+        "positive": 0,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "Unigram 17k over BPE 17k, the nulls, width 128, 10k",
+        "A": "bpe_mconst-LEARN-CAUSAL_unigram_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": -0.001048524529347672,
+            "A": 1.0899342721122667,
+            "B": 1.088885747582919,
+            "machine": "5090",
+            "runs": [
+              "d81e089f0452",
+              "e9f3f153ec20"
+            ]
+          },
+          "1": {
+            "effect": -0.002136570329037024,
+            "A": 1.0933108728118754,
+            "B": 1.0911743024828384,
+            "machine": "5090",
+            "runs": [
+              "0409e515dfb3",
+              "6f214dfa186f"
+            ]
+          },
+          "2": {
+            "effect": -0.0018253536688301875,
+            "A": 1.088732845550483,
+            "B": 1.0869074918816528,
+            "machine": "5090",
+            "runs": [
+              "0e26ca4f1a5d",
+              "fe50426ea6ef"
+            ]
+          },
+          "3": {
+            "effect": -0.0006477604022736561,
+            "A": 1.0910649863209587,
+            "B": 1.090417225918685,
+            "machine": "5090",
+            "runs": [
+              "8c9007651234",
+              "f7631513ec4e"
+            ]
+          }
+        },
+        "mean": -0.001414552232372135,
+        "se": 0.00034302744571860035,
+        "positive": 0,
+        "n": 4,
+        "skipped_across_machines": {}
+      }
+    ]
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-10-21T17:14:53+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "db34c3bfb9dc0e5b48f3f35612c85152cda7a059",
+    "git_dirty": true
+  },
+  "notes": [
+    "effect = B minus A in bits per byte at each seed (positive: A better); pairs on one machine only"
+  ]
+}

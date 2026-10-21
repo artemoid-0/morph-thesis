@@ -19,11 +19,11 @@ Each direction's answer is stated once, in FINDINGS; the table gives its status 
 |---|---|---|---|
 | D1 | the learning-progress law | **answered within one model size**; across sizes, half explained (§33.35–§33.52, §33.60) | [one curve per feature](FINDINGS.md#one-curve-per-feature-within-one-model-size); [across model sizes](FINDINGS.md#across-model-sizes) |
 | D2 | the mechanism, by probing | **closed** — the pivot not met (§33.49–§33.52, §33.60, §33.114) | [across model sizes](FINDINGS.md#across-model-sizes) |
-| D3 | removing, weaning, adding late | **answered** to full training (§33.34–§33.52, §33.102, §33.111); whether the deficit closes: queue item 3 | [removing a feature](FINDINGS.md#removing-a-feature-and-adding-it-late) |
+| D3 | removing, weaning, adding late | **answered**: the deficit halves by 50k and closes by 100k (§33.34–§33.52, §33.102, §33.111, §33.126) | [removing a feature](FINDINGS.md#removing-a-feature-and-adding-it-late) |
 | D4 | morphology as a target | **closed** (§33.50, §33.52) | [morphology as a target](FINDINGS.md#morphology-as-a-target) |
 | D5 | the rare and novel tail | **closed**, screened at full training; the unseen-word version parked (§33.47) | [the rare tail](FINDINGS.md#no-benefit-in-the-rare-tail) |
 | D6 | the token-independent input | **parked — outside the thesis** (§33.59); G-71 closed (§33.58) | [what the slot did instead](FINDINGS.md#what-the-slot-did-instead-a-token-independent-input) |
-| D7 | tokenization | **answered** at four seeds (§33.61–§33.81); the exposure comparison against both references (§33.110–§33.118) | [Q1 in Ukrainian](FINDINGS.md#q1-in-ukrainian-morphology-inside-bpe); [in English](FINDINGS.md#q1-in-english-morphology-inside-bpe); [the tokenizer and the embedding](FINDINGS.md#morphology-in-the-tokenizer-and-in-the-embedding-ukrainian) |
+| D7 | tokenization | **answered** at four seeds (§33.61–§33.81); the exposure comparison against both references (§33.110–§33.118, §33.126; Unigram at width 512) | [Q1 in Ukrainian](FINDINGS.md#q1-in-ukrainian-morphology-inside-bpe); [in English](FINDINGS.md#q1-in-english-morphology-inside-bpe); [the tokenizer and the embedding](FINDINGS.md#morphology-in-the-tokenizer-and-in-the-embedding-ukrainian) |
 | D8 | scale and architecture: wider, deeper, a modern block | width 512 **answered** (§33.94, §33.102, §33.118); width 1024 **answered** (§33.120–§33.124): smaller again, lasting, split by seed (G-81); depth and the RMSNorm and SwiGLU block (built, §33.54) not run | [Q1 in Ukrainian](FINDINGS.md#q1-in-ukrainian-morphology-inside-bpe) ("It peaks there"); [the null at 30M](FINDINGS.md#the-same-shape-null-is-not-neutral) |
 | D9 | a second corpus per language | Ukrainian **answered** with UberText fiction (§33.85, §33.88, §33.108); no English corpus chosen | [Q1 in Ukrainian](FINDINGS.md#q1-in-ukrainian-morphology-inside-bpe) ("And on a second corpus") |
 
@@ -46,25 +46,17 @@ Results committed by about 31 October reach the text; the work is admitted on 4 
 Each item's preparation runs on the CPU while the item before it trains.
 In the items, §3.x and "conclusion n" are the thesis text's sections, not the journey's.
 
-**Running** (the second machine, until 13:30 EDT on 21 October): `second_2026-10-21.sh` — item 3, then item 6 (§33.123; P280–P285), to about 07:30 EDT. Item 1 is answered (§33.124). Item 2 follows it (`second_item2_2026-10-21.sh`, §33.125), to about 11:30 EDT.
+**Running:** nothing. The 24 hours of 20–21 October answered items 1, 3, 6 and 2 (§33.124, §33.126, §33.127); item 2's last question is an analysis on the CPU (G-82).
 
 1. **The tokenizer's gain beyond 30M parameters**: answered (§33.120–§33.124). At 85M parameters it is smaller again and lasts: +0.0067 ± 0.0030 at 10k, +0.0075 ± 0.0018 at 20k, level over the last 5,000 steps; two seeds of four keep width 512's level and two lose much of it early (G-81). MultiBLiMP +5.3 and +4.7, below width 512's on the same machine.
    Held, not asked by the text: G-81's recipe question (a longer warm-up, 4 runs, ~3 h).
-2. **Number and gender as context-aware features** (§3.10, conclusion 7): under BPE 17k and endings apart, ~38M, 10k, seeds 0–3.
-   Prepared on the second machine (§33.125): their leak is spread over word classes, as English part of speech's, so the control is a causal tagger (`ugendercausal`, `unumbercausal`), beside the word form (`ugenderlex`, `unumberlex`).
-   Each feature in context, from the word form and causal, each read over the null and the empty slot already on that machine: 2 × 3 × 2 × 4 = **48 runs, ~3.4 h** (`second_item2_2026-10-21.sh`, after the chain of 21 October; P286–P291).
-   The exposure comparison for both features comes with the same runs.
-3. **Whether English part of speech's deficit closes** (§3.8, conclusion 5): switched off at 5,000 against never fed (`OFF0`), seeds 0–3, at a 100k budget: 8 runs of ~42 min, **~5.6 h**, on data already on the second machine.
-   - WikiText-103 then repeats 6.8 times (3.4 at 50k).
-     If the null's validation curve stops falling, the fallback is seeds 4–7 at 50k: 8 runs of ~21 min, **~2.8 h**.
+2. **Number and gender as context-aware features**: answered at 10k (§33.125, §33.127). Their lead over the word form is about +0.001, and the leak a small part of it; whether the causal tagger's rest is context is G-82, an analysis on the CPU.
+3. **Whether English part of speech's deficit closes**: answered (§33.126). It closes by 100k: −0.0005 ± 0.0010 (2/4), against −0.0019 at 50k.
 4. **The exposure redundancy at width 512**: answered (§33.118).
 5. **BLiMP's agreement at eight seeds**: answered (§33.117).
-6. **Unigram at width 512**, which the text asked for on 20 October, after item 3: its null, case and empty slot, 12 runs, **~3.2 h**, data on the second machine.
-   Unigram is the one exposing tokenizer whose same-point shortfall is measured at one size only.
-   *It stays:* under Unigram, exposed endings make case partly redundant at both sizes (conclusion 6 gains its Unigram clause).
-   *It goes:* at 30M parameters the redundancy is gone under both exposing tokenizers, and Unigram's shortfall is the 5M model's (§33.118).
+6. **Unigram at width 512**: answered (§33.126). The 5M model's shortfall is gone at 30M parameters (−0.0004 ± 0.0003 at reference BPB 0.89).
 
-In all, items 1–3 and 6 take ~21 h of the second machine (~18 h with item 3's fallback), plus half a day of the thesis machine's CPU for item 2.
+The text's list of 19 October is answered; what runs next waits for the text's next list.
 
 **Dropped** by the sentence test (every outcome gives the same sentence, or none):
 - more seeds for English morpheme segmentation (the 12–13% gap is about nineteen times the widest seed spread);
