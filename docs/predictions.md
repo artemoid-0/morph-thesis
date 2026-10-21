@@ -6,7 +6,7 @@ Each prediction was recorded in the [journey](record/journey/README.md) **before
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 165 right, 11 half right, 94 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 6 pending — of 285.
+**Tally:** 165 right, 11 half right, 94 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 12 pending — of 291.
 
 *Key to the tally (added 19 October 2026). Counted half right: P19, P46, P54 — with the eight
 whose outcome begins "half right" or "partly right". Counted right: P33, P172, P273 — right by their
@@ -314,3 +314,9 @@ The wrong ones carried the information:
 | P283 | At width 512, at the lowest common reference BPB, case's gain over the empty slot under Unigram is within 0.001 of BPE 17k's | pending | §33.123 |
 | P284 | At the end of the 10k budget at width 512, case's gains over the empty slot under Unigram and BPE 17k differ by less than 0.001 | pending | §33.123 |
 | P285 | At width 512 the empty slot ends within 0.001 of the null under Unigram | pending | §33.123 |
+| P286 | At 10k, Ukrainian gender read in context leads gender from the word form under both tokenizers (≥3/4 each) | pending | §33.125 |
+| P287 | At 10k, number read in context leads number from the word form under both tokenizers (≥3/4 each) | pending | §33.125 |
+| P288 | For gender, at least half of that lead is the tagger's leak (in context over the causal tagger), under both tokenizers | pending | §33.125 |
+| P289 | For number, at least half of that lead is the leak, under both tokenizers | pending | §33.125 |
+| P290 | Gender and number from the causal tagger lead their word forms by less than 0.001, under both tokenizers | pending | §33.125 |
+| P291 | At 10k, gender and number in context each gain less over the empty slot under endings apart than under BPE 17k | pending | §33.125 |

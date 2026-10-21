@@ -23,6 +23,7 @@ machine, and the seeds left out are named (FINDINGS, method point 11). Findings 
 | `fiction_full.sh` | UberText fiction's two conditions at fraction 0.4, built from the public source on a machine that has none of it; CPU only. | historical |
 | `derive_lexical_codes.py` | A strictly causal version of a contextual feature; and the controls derived the same way — the constant null, frequency bands, a shuffle, and `--recode-pos` (G-38: prepositions read from their form, `ucaseprep`). | active |
 | `derive_causal_pos.py` | `poscausal`: part of speech from a strictly causal tagger, every word tagged from its left context only. | active |
+| `derive_causal_ud.py` | `ugendercausal`, `unumbercausal`: Ukrainian gender and number from a strictly causal tagger, for every given tokenizer's stream; paragraphs decoded from the stream (G-75). | active |
 | `derive_prefix_codes.py` | Build `mprefix` codes from the cached token stream. | historical |
 | `preflight_level2.py` | Check everything that could void a Level-2 run, BEFORE the multi-hour cache build. | historical |
 | `preflight_rebuild.py` | The gate to pass BEFORE the multi-hour cache rebuild. | active |
@@ -81,7 +82,7 @@ Most read the run records only; `probe.py`, `probe_words.py`, `loss_by_kind.py` 
 | `dep_causality_check.py` | How much does a `dep` label depend on LATER words? | historical |
 | `dropout_masks.py` | Do two GPUs draw the same dropout masks, and compute the same numbers? | active |
 | `ending_gold_check.py` | Does the ending rule cut where a morpheme dictionary does? (citation forms of two Ukrainian dictionaries, read from a clone in the gitignored `external/`) | active |
-| `morph_causality_check.py` | How much do tagger-derived features depend on the words to their RIGHT? | active |
+| `morph_causality_check.py` | How much do tagger-derived features depend on the words to their RIGHT? By word class with `--by-type` (any feature with `--by-type-attrs`); text from a cached stream with `--stream`. | active |
 | `multiroot_audit.py` | How many MorphoLex entries did the multi-root bug affect? | historical |
 | `oov_audit.py` | What falls through to character fallback, and why? | historical |
 | `reconstruction_audit.py` | Is the morpheme token stream information-preserving? | historical |

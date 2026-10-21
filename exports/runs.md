@@ -424,6 +424,7 @@
 | bpe_pos-LEARN-CAUSAL-OFF0_bpe_17k | 1 | 1.3377 | 65.2801 | 5,080,704 | 8 | 252,160 | 49,999 |
 | bpe_pos-LEARN-CAUSAL-OFF0_bpe_17k | 2 | 1.3370 | 65.1448 | 5,080,704 | 8 | 252,160 | 49,999 |
 | bpe_pos-LEARN-CAUSAL-OFF0_bpe_17k | 3 | 1.3363 | 64.9951 | 5,080,704 | 8 | 252,160 | 49,999 |
+| bpe_pos-LEARN-CAUSAL-OFF0_bpe_17k_st100k | 0 | 1.2962 | 57.3558 | 5,080,704 | 8 | 252,160 | 99,999 |
 | bpe_pos-LEARN-CAUSAL-OFF0_bpe_17k_st10k | 0 | 1.5234 | 116.6142 | 5,080,704 | 8 | 252,160 | 9,999 |
 | bpe_pos-LEARN-CAUSAL-OFF0_bpe_17k_st10k | 1 | 1.5238 | 116.7617 | 5,080,704 | 8 | 252,160 | 9,999 |
 | bpe_pos-LEARN-CAUSAL-OFF0_bpe_17k_st10k | 2 | 1.5218 | 116.0547 | 5,080,704 | 8 | 252,160 | 9,999 |

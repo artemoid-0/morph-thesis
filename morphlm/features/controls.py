@@ -18,7 +18,7 @@ import numpy as np
 
 from ..registry import register_fact
 from .blocks import (FactBlock, MorphFeatureBlock, MorphRootBlock,
-                     MorphStructBlock, PosBlock, UCaseBlock)
+                     MorphStructBlock, PosBlock, UCaseBlock, UGenderBlock, UNumberBlock)
 
 
 class DerivedCodesMixin:
@@ -124,6 +124,33 @@ class UCaseLexicalBlock(LexicalLookupMixin, UCaseBlock):
                    'scripts/data/derive_lexical_codes.py --fact ucase --out-fact ucaselex --corpus ukwiki')
 
 
+@register_fact('ugenderlex')
+class UGenderLexicalBlock(LexicalLookupMixin, UGenderBlock):
+    """
+    STRICTLY CAUSAL gender (DIRECTIONS, queue item 2): each word form's most frequent gender in
+    the training corpus, looked up from the form alone. The morphologizer's gender reads the right
+    context, spread over adjectives, proper nouns, nouns and determiners (journey §33.125), so the
+    shifted feature can carry part of the next word. Same 8 classes as `ugender`, so the two share
+    initial weights at the same seed.
+    Derived: derive_lexical_codes.py --fact ugender --out-fact ugenderlex --keep ugender --corpus ukwiki
+    """
+    lexicon_name = 'ugender'
+    derive_hint = ('ugenderlex is derived per WORD, not per token: run '
+                   'scripts/data/derive_lexical_codes.py --fact ugender --out-fact ugenderlex --corpus ukwiki')
+
+
+@register_fact('unumberlex')
+class UNumberLexicalBlock(LexicalLookupMixin, UNumberBlock):
+    """
+    STRICTLY CAUSAL number: each word form's most frequent number in the training corpus, looked up
+    from the form alone; see `ugenderlex`. Same 8 classes as `unumber`.
+    Derived: derive_lexical_codes.py --fact unumber --out-fact unumberlex --keep unumber --corpus ukwiki
+    """
+    lexicon_name = 'unumber'
+    derive_hint = ('unumberlex is derived per WORD, not per token: run '
+                   'scripts/data/derive_lexical_codes.py --fact unumber --out-fact unumberlex --corpus ukwiki')
+
+
 # ── controls for the tagger's right-context leak ──────────────────────────────
 
 @register_fact('ucaseprep')
@@ -160,6 +187,33 @@ class PosCausalBlock(DerivedCodesMixin, PosBlock):
     """
     derive_hint = ('poscausal is derived from the text by a causal tagger, not per token: run '
                    'scripts/data/derive_causal_pos.py first')
+
+
+@register_fact('ugendercausal')
+class UGenderCausalBlock(DerivedCodesMixin, UGenderBlock):
+    """
+    CONTROL for the right-context leak in `ugender` (journey §33.125): gender from a strictly causal
+    tagger, each word tagged from its left context only — the value it would get if the text ended
+    at that word. The leak is spread over hundreds of word types (1,635 for gender in 10,000
+    sentences) and four classes (adjectives, proper nouns, nouns, determiners), so no word list
+    removes it, as the prepositions did for case (`ucaseprep`); this
+    removes it at every word, as `poscausal` does for English part of speech. Same 8 classes as
+    `ugender`, so the two share initial weights at the same seed.
+    Derived: scripts/data/derive_causal_ud.py
+    """
+    derive_hint = ('ugendercausal is derived from the text by a causal tagger, not per token: run '
+                   'scripts/data/derive_causal_ud.py first')
+
+
+@register_fact('unumbercausal')
+class UNumberCausalBlock(DerivedCodesMixin, UNumberBlock):
+    """
+    CONTROL for the right-context leak in `unumber`: number from a strictly causal tagger; see
+    `ugendercausal`. Same 8 classes as `unumber`.
+    Derived: scripts/data/derive_causal_ud.py
+    """
+    derive_hint = ('unumbercausal is derived from the text by a causal tagger, not per token: run '
+                   'scripts/data/derive_causal_ud.py first')
 
 
 # ── causal word identity ──────────────────────────────────────────────────────

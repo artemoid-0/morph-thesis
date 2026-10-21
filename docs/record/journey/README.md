@@ -117,6 +117,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [§33.73–§33.74](12_full_training_and_the_leak.md#3373-the-queue-reviewed-what-each-candidate-settles-for-the-thesis), [§33.76](12_full_training_and_the_leak.md#3376-morphology-in-the-tokenizer-lasts-at-full-training--and-case-on-top-of-it-in-part-through-the-leak), [§33.81](12_full_training_and_the_leak.md#3381-case-at-full-training-without-the-leak-the-words-own-case-lasts-and-the-sentences-lead-was-the-leak), [§33.114](14_two_machines.md#33114-the-width-probes-at-five-seeds-items-7-and-8-and-131-twins) — prepositions read from their form; the word form's unseen words (G-76)
 - [§33.99](14_two_machines.md#3399-a-causal-tagger-for-english-part-of-speech-the-lists-item-2-prepared), [§33.104](14_two_machines.md#33104-a-day-on-both-machines-the-comparison-g-78-on-each-and-item-2-prepared-17-october), [§33.107](14_two_machines.md#33107-in-english-too-the-sentences-lead-over-the-word-form-is-the-taggers-leak-full-trainings-twins-drift-apart) — a causal tagger for English part of speech
 - [§33.102–§33.106](14_two_machines.md#33102-the-night-of-16-october-width-512-settles-a-removed-features-deficit-halves-by-50k-and-case-leaves-none), [§33.109–§33.110](14_two_machines.md#33109-why-twins-differ-only-dropouts-masks--and-the-nulls-handicap-is-endings-aparts), [§33.112–§33.113](14_two_machines.md#33112-one-long-chain-on-the-second-machine-g-78-across-tokenizers-and-sizes-the-width-probes-items-7-and-8-prepared-18-october), [§33.115–§33.116](14_two_machines.md#33115-two-follow-ups-the-exposure-comparison-at-20k-and-where-the-nulls-help-sits-prepared-18-october), [§33.118](15_the_list_of_19_october.md#33118-item-4-at-30m-parameters-case-gains-alike-under-both-tokenizers-and-the-null-costs-nothing) — G-78: the empty slot against the null
+- [§33.125](15_the_list_of_19_october.md#33125-item-2-prepared-genders-and-numbers-leak-is-spread-over-word-classes-so-their-control-is-a-causal-tagger) — gender's and number's leak spread over word classes: a causal tagger as their control
 
 ### The mechanism: probes and the loss by kind
 
@@ -428,6 +429,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [33.122 MultiBLiMP at width 1024: the gain holds at every seed and stops growing; G-81's fall is no spike](15_the_list_of_19_october.md#33122-multiblimp-at-width-1024-the-gain-holds-at-every-seed-and-stops-growing-g-81s-fall-is-no-spike)
 - [33.123 The chain of 21 October prepared: MultiBLiMP at 20k, items 3 and 6](15_the_list_of_19_october.md#33123-the-chain-of-21-october-prepared-multiblimp-at-20k-items-3-and-6)
 - [33.124 Item 1's 20k half: at 85M parameters the gain is smaller again and lasts, and the split stays](15_the_list_of_19_october.md#33124-item-1s-20k-half-at-85m-parameters-the-gain-is-smaller-again-and-lasts-and-the-split-stays)
+- [33.125 Item 2 prepared: gender's and number's leak is spread over word classes, so their control is a causal tagger](15_the_list_of_19_october.md#33125-item-2-prepared-genders-and-numbers-leak-is-spread-over-word-classes-so-their-control-is-a-causal-tagger)
 
 ### Appendices
 

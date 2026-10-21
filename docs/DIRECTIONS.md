@@ -46,17 +46,14 @@ Results committed by about 31 October reach the text; the work is admitted on 4 
 Each item's preparation runs on the CPU while the item before it trains.
 In the items, §3.x and "conclusion n" are the thesis text's sections, not the journey's.
 
-**Running** (the second machine, until 13:30 EDT on 21 October): `second_2026-10-21.sh` — item 3, then item 6 (§33.123; P280–P285), to about 07:30 EDT. Item 1 is answered (§33.124). Item 2 follows if its preparation is ready by about 09:30 EDT; it is being prepared on the second machine.
+**Running** (the second machine, until 13:30 EDT on 21 October): `second_2026-10-21.sh` — item 3, then item 6 (§33.123; P280–P285), to about 07:30 EDT. Item 1 is answered (§33.124). Item 2 follows it (`second_item2_2026-10-21.sh`, §33.125), to about 11:30 EDT.
 
 1. **The tokenizer's gain beyond 30M parameters**: answered (§33.120–§33.124). At 85M parameters it is smaller again and lasts: +0.0067 ± 0.0030 at 10k, +0.0075 ± 0.0018 at 20k, level over the last 5,000 steps; two seeds of four keep width 512's level and two lose much of it early (G-81). MultiBLiMP +5.3 and +4.7, below width 512's on the same machine.
    Held, not asked by the text: G-81's recipe question (a longer warm-up, 4 runs, ~3 h).
 2. **Number and gender as context-aware features** (§3.10, conclusion 7): under BPE 17k and endings apart, ~38M, 10k, seeds 0–3.
-   For each feature, the tagged one, its word form and its leak control, each over the null and the empty slot (both already on the second machine): 2 × 3 × 2 × 4 = **48 runs, ~3.4 h**.
+   Prepared on the second machine (§33.125): their leak is spread over word classes, as English part of speech's, so the control is a causal tagger (`ugendercausal`, `unumbercausal`), beside the word form (`ugenderlex`, `unumberlex`).
+   Each feature in context, from the word form and causal, each read over the null and the empty slot already on that machine: 2 × 3 × 2 × 4 = **48 runs, ~3.4 h** (`second_item2_2026-10-21.sh`, after the chain of 21 October; P286–P291).
    The exposure comparison for both features comes with the same runs.
-   - **Preparation**, about half a day of the thesis machine's CPU:
-     1. the leak audit for `ugender` and `unumber` on a sample (`morph_causality_check.py`): which words take their number and gender from the right context (agreement in the noun phrase: adjectives, determiners and numerals before their noun);
-     2. the word-form variants and the leak controls, derived with `derive_lexical_codes.py` and registered beside `ucaselex` and `ucaseprep`;
-     3. their codes for both streams, slimmed and sent to the second machine (~1 GB).
 3. **Whether English part of speech's deficit closes** (§3.8, conclusion 5): switched off at 5,000 against never fed (`OFF0`), seeds 0–3, at a 100k budget: 8 runs of ~42 min, **~5.6 h**, on data already on the second machine.
    - WikiText-103 then repeats 6.8 times (3.4 at 50k).
      If the null's validation curve stops falling, the fallback is seeds 4–7 at 50k: 8 runs of ~21 min, **~2.8 h**.

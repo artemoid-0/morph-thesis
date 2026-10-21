@@ -1,0 +1,135 @@
+{
+  "script": "derive_causal_ud",
+  "args": {
+    "bpe_paths": [
+      "data/bpe_uk_17k.json",
+      "data/bpeend_uk_17k.json"
+    ],
+    "corpus": "ukwiki",
+    "corpus_fraction": 0.05,
+    "corpus_holdout": 2000,
+    "spacy_model": "uk_core_news_sm",
+    "splits": [
+      "validation",
+      "train"
+    ],
+    "window": 4,
+    "check_rows": 20000,
+    "workers": 18,
+    "rows_per_task": 100,
+    "limit_rows": 3000,
+    "cache_dir": "data/cache"
+  },
+  "timestamp_utc": "2026-10-21T03:18:05+00:00",
+  "results": {
+    "validation:bpe_uk_17k.json": {
+      "stream": "bpe_validation_None_34e4d191cf",
+      "paragraphs": 3000,
+      "tokens": 83772,
+      "cached_tokens": 325867,
+      "window_vs_prefix": [
+        2000,
+        2000
+      ],
+      "ids_identical": true,
+      "codes_identical": {
+        "ugender": true,
+        "unumber": true
+      },
+      "checked_tokens": 83772,
+      "causal_equals_cached": {
+        "ugender": 0.9731294465931337,
+        "unumber": 0.9884806379219787
+      },
+      "source": "bpe_validation_None_34e4d191cf_ucaselex.codes.npy",
+      "seconds": 14
+    },
+    "validation:bpeend_uk_17k.json": {
+      "stream": "bpe_validation_None_8e0e2788e4",
+      "paragraphs": 3000,
+      "tokens": 93384,
+      "cached_tokens": 363158,
+      "window_vs_prefix": [
+        2000,
+        2000
+      ],
+      "ids_identical": true,
+      "codes_identical": {
+        "ugender": true,
+        "unumber": true
+      },
+      "checked_tokens": 93384,
+      "causal_equals_cached": {
+        "ugender": 0.9740105371369828,
+        "unumber": 0.9891094834232845
+      },
+      "source": "bpe_validation_None_8e0e2788e4_ucaselex.codes.npy",
+      "seconds": 14
+    },
+    "train:bpe_uk_17k.json": {
+      "stream": "bpe_train_None_c360a47f1f",
+      "paragraphs": 3000,
+      "tokens": 86111,
+      "cached_tokens": 37972206,
+      "window_vs_prefix": [
+        2000,
+        2000
+      ],
+      "ids_identical": true,
+      "codes_identical": {
+        "ugender": true,
+        "unumber": true
+      },
+      "checked_tokens": 86111,
+      "causal_equals_cached": {
+        "ugender": 0.969074798806192,
+        "unumber": 0.9882245009348399
+      },
+      "source": "bpe_train_None_c360a47f1f_ucaselex.codes.npy",
+      "seconds": 13
+    },
+    "train:bpeend_uk_17k.json": {
+      "stream": "bpe_train_None_455fe69a59",
+      "paragraphs": 3000,
+      "tokens": 96423,
+      "cached_tokens": 42600731,
+      "window_vs_prefix": [
+        2000,
+        2000
+      ],
+      "ids_identical": true,
+      "codes_identical": {
+        "ugender": true,
+        "unumber": true
+      },
+      "checked_tokens": 96423,
+      "causal_equals_cached": {
+        "ugender": 0.9696856559119712,
+        "unumber": 0.9882704334028188
+      },
+      "source": "bpe_train_None_455fe69a59_ucaselex.codes.npy",
+      "seconds": 13
+    }
+  },
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+    "timestamp_utc": "2026-10-21T03:18:05+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 5090 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "spacy_model": "uk_core_news_sm",
+    "spacy_model_version": "3.8.0",
+    "git_commit": null,
+    "git_dirty": false
+  }
+}

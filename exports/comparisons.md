@@ -112,6 +112,8 @@ baseline `bpe_baseline_bpe_17k_st20k_w256`, seeds [0, 1, 2, 3, 4]: 1.2808, 1.297
 | bpe_mconst-LEARN-CAUSAL_bpe_17k_st20k_w256 | 0,1,2,3,4 | +0.0057 +0.0200 -0.0033 +0.0028 +0.0022 | +0.0055 +/- 0.0039 | +0.43% | 4/5 |
 | bpe_pos-LEARN-CAUSAL_bpe_17k_st20k_w256 | 0,1,2,3 | +0.0035 +0.0198 -0.0040 +0.0027 | +0.0055 +/- 0.0051 | +0.43% | 3/4 |
 
+*No run of `bpe_baseline_bpe_17k_st100k` exists, so these are not comparable:* `bpe_pos-LEARN-CAUSAL-OFF0_bpe_17k_st100k`
+
 *No run of `bpe_baseline_bpe_17k_st10k_w256` exists, so these are not comparable:* `bpe_mconst-LEARN-CAUSAL-x2_bpe_17k_st10k_w256`, `bpe_mconst-LEARN-CAUSAL_bpe_17k_st10k_w256`, `bpe_pos-LEARN-CAUSAL-x2_bpe_17k_st10k_w256`, `bpe_pos-LEARN-CAUSAL_bpe_17k_st10k_w256`
 
 *No run of `bpe_baseline_bpe_17k_st10k_w64` exists, so these are not comparable:* `bpe_mconst-LEARN-CAUSAL_bpe_17k_st10k_w64`, `bpe_pos-LEARN-CAUSAL_bpe_17k_st10k_w64`

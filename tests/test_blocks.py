@@ -1014,6 +1014,14 @@ DERIVATIONS = {
                  '--fact ucase --out-fact ucaseprep --recode-pos ADP --keep ucase --corpus ukwiki',
     'poscausal': 'poscausal is derived from the text by a causal tagger, not per token: run '
                  'scripts/data/derive_causal_pos.py first',
+    'ugenderlex': 'ugenderlex is derived per WORD, not per token: run scripts/data/derive_lexical_codes.py '
+                  '--fact ugender --out-fact ugenderlex --corpus ukwiki',
+    'unumberlex': 'unumberlex is derived per WORD, not per token: run scripts/data/derive_lexical_codes.py '
+                  '--fact unumber --out-fact unumberlex --corpus ukwiki',
+    'ugendercausal': 'ugendercausal is derived from the text by a causal tagger, not per token: run '
+                     'scripts/data/derive_causal_ud.py first',
+    'unumbercausal': 'unumbercausal is derived from the text by a causal tagger, not per token: run '
+                     'scripts/data/derive_causal_ud.py first',
     'mprefix': 'mprefix codes are derived from the cached token stream, not built by the pipeline. Run '
                'scripts/data/derive_prefix_codes.py first, or the cache would be filled with empty codes.',
     **{f: f'{f} is derived per WORD, not per token: run scripts/data/derive_lexical_codes.py with --out-fact {f}'
@@ -1044,7 +1052,7 @@ def test_derived_blocks_share_one_refusal():
             assert str(e) == msg, (name, str(e))
         lexical = issubclass(cls, LexicalLookupMixin)
         assert hasattr(b, 'codes_for') == lexical, name
-        assert lexical == (name not in ('ucaseprep', 'poscausal', 'mprefix')), name
+        assert lexical == (name not in ('ucaseprep', 'poscausal', 'ugendercausal', 'unumbercausal', 'mprefix')), name
     print(f'  {len(DERIVATIONS)} derived facts refuse with their own message; lexical ones code new text OK')
 
 
@@ -1162,8 +1170,9 @@ def test_split_modules_keep_every_name():
     assert facts == ['cat', 'dep', 'ectx', 'etype', 'magr', 'mconst', 'mconst16', 'mconst32', 'mconst64', 'mfeat',
                      'mfeatlex', 'mflat', 'mfreq', 'mhash', 'minfl', 'mlemma', 'mprefix', 'mrole', 'mroot', 'mstruct',
                      'mstructshuf', 'mzero', 'mzeronopos', 'mzeroposonly', 'pos', 'poscausal', 'poslex', 'posshuf',
-                     'uanimacy', 'uaspect', 'ucase', 'ucaselex', 'ucaseprep', 'ugender', 'unumber', 'uperson',
-                     'utense'], facts                   # the 37 registered before the split
+                     'uanimacy', 'uaspect', 'ucase', 'ucaselex', 'ucaseprep', 'ugender', 'ugendercausal',
+                     'ugenderlex', 'unumber', 'unumbercausal', 'unumberlex', 'uperson',
+                     'utense'], facts   # the 37 registered before the split, and gender's and number's four (21 October)
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     for first in ('morphlm.features.controls', 'morphlm.features.blocks', 'morphlm.registry'):
         code = (f'import {first}; from morphlm.registry import all_facts; '

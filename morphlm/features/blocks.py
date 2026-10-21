@@ -328,8 +328,8 @@ def _ud_block(name, feature, values):
 
 
 UCaseBlock = _ud_block('ucase', 'Case', ('Nom', 'Gen', 'Dat', 'Acc', 'Ins', 'Loc', 'Voc'))
-_ud_block('ugender', 'Gender', ('Masc', 'Fem', 'Neut'))
-_ud_block('unumber', 'Number', ('Sing', 'Plur'))
+UGenderBlock = _ud_block('ugender', 'Gender', ('Masc', 'Fem', 'Neut'))
+UNumberBlock = _ud_block('unumber', 'Number', ('Sing', 'Plur'))
 _ud_block('uperson', 'Person', ('0', '1', '2', '3'))
 _ud_block('utense', 'Tense', ('Past', 'Pres', 'Fut'))
 _ud_block('uaspect', 'Aspect', ('Imp', 'Perf'))

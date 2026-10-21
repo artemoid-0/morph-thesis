@@ -133,6 +133,7 @@
 | bpe_mzeroposonly-LEARN-CAUSAL_bpe_17k | 5,080,616 | 2,058,600 | 64 | 2,195,840 | 793,344 | 8 |
 | bpe_pos-LEARN-CAUSAL-DROP5000_bpe_17k_st20k | 5,080,704 | 2,058,600 | 152 | 2,195,840 | 793,344 | 8 |
 | bpe_pos-LEARN-CAUSAL-OFF0_bpe_17k | 5,080,704 | 2,058,600 | 152 | 2,195,840 | 793,344 | 8 |
+| bpe_pos-LEARN-CAUSAL-OFF0_bpe_17k_st100k | 5,080,704 | 2,058,600 | 152 | 2,195,840 | 793,344 | 8 |
 | bpe_pos-LEARN-CAUSAL-OFF0_bpe_17k_st10k | 5,080,704 | 2,058,600 | 152 | 2,195,840 | 793,344 | 8 |
 | bpe_pos-LEARN-CAUSAL-OFF0_bpe_17k_st20k | 5,080,704 | 2,058,600 | 152 | 2,195,840 | 793,344 | 8 |
 | bpe_pos-LEARN-CAUSAL-OFF2500_bpe_17k_st10k | 5,080,704 | 2,058,600 | 152 | 2,195,840 | 793,344 | 8 |

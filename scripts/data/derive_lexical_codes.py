@@ -67,6 +67,10 @@ KNOWN = {
         ' через': 'Acc', ' про': 'Acc',
         ' він': 'Nom', ' вони': 'Nom', ' ми': 'Nom',
     },
+    # Ukrainian gender and number: personal pronouns and nouns of one gender (their majority
+    # values over the corpus; the derivation checks them, 21 October 2026)
+    'ugender': {' він': 'Masc', ' вона': 'Fem', ' воно': 'Neut', ' місто': 'Neut', ' країна': 'Fem'},
+    'unumber': {' він': 'Sing', ' вона': 'Sing', ' вони': 'Plur', ' ми': 'Plur', ' люди': 'Plur'},
 }
 MIN_KNOWN_PRESENT = 3
 

@@ -28,6 +28,13 @@ exactly, or the run stops.
 --by-type also counts, for part of speech, where its right-context dependence sits: per word
 type, and per class of the type's majority part of speech in the sample — which words a control
 must read from their form to remove it (journey §33.98; the list of 15 October, item 2).
+--by-type-attrs counts other features the same way, e.g. Ukrainian gender and number. Where the
+corpus itself is not on the machine, --stream reads the text from a cached token stream: every
+stream decodes to its corpus text byte for byte (G-75), and it is the text a cell trains on:
+
+    python scripts/audits/morph_causality_check.py --spacy-model uk_core_news_sm \
+        --stream data/cache/bpe_train_None_c360a47f1f.npy --tokenizer data/bpe_uk_17k.json \
+        --sentences 10000 --full-pipeline --by-type --by-type-attrs pos Gender Number
 """
 
 import os
@@ -64,6 +71,11 @@ def main():
     ap.add_argument('--split', default='validation')
     ap.add_argument('--max-words', type=int, default=40)
     ap.add_argument('--text', help='read sentences from a local file instead')
+    ap.add_argument('--stream', help='read them from a cached token stream instead (an unpacked '
+                    'data/cache/<stem>.npy), decoded with --tokenizer')
+    ap.add_argument('--tokenizer', help='the tokenizer file that encoded --stream')
+    ap.add_argument('--stream-tokens', type=int, default=2_500_000,
+                    help="how many of the stream's first tokens to decode (whole paragraphs only)")
     ap.add_argument('--spacy-model', default='en_core_web_sm')
     ap.add_argument('--corpus', default='wikitext103', help='wikitext103 | ukwiki')
     ap.add_argument('--corpus-holdout', type=int, default=2000)
@@ -71,6 +83,9 @@ def main():
                     help='keep the parser: the pipeline sets part of speech with rules that read the parse')
     ap.add_argument('--by-type', action='store_true',
                     help='record part of speech changes per word type and per majority class')
+    ap.add_argument('--by-type-attrs', nargs='+', default=['pos'], metavar='FEATURE',
+                    help='with --by-type, the features counted per word type and class: pos (the default) '
+                         'and, with --ud, Universal Dependencies names such as Gender and Number')
     ap.add_argument('--ud', action='store_true',
                     help='compare Universal Dependencies features by name '
                          '(default for any non-English model)')
@@ -85,6 +100,10 @@ def main():
     global ATTRS
     if ud:
         ATTRS = UD_ATTRS
+    BY = list(args.by_type_attrs) if args.by_type else []
+    unknown = [a for a in BY if a not in ATTRS]
+    if unknown:
+        ap.error(f'--by-type-attrs: {unknown} are not among the features compared: {list(ATTRS)}')
     # without --full-pipeline only the tagger: the parser and NER cost time, and the tagger's
     # tags never depend on them — but the PIPELINE's part of speech does: rules after the parser
     # set "which" as DET or PRON, "have" as AUX or VERB, from the parse (§33.98)
@@ -95,6 +114,14 @@ def main():
 
     if args.text:
         lines = [l.strip() for l in open(args.text) if l.strip()]
+    elif args.stream:
+        import numpy as np
+        from tokenizers import Tokenizer
+        if not args.tokenizer:
+            ap.error('--stream needs --tokenizer')
+        ids = np.load(args.stream, mmap_mode='r')[:args.stream_tokens]
+        text = Tokenizer.from_file(args.tokenizer).decode([int(i) for i in ids])
+        lines = [l.strip() for l in text[:text.rfind('\n') + 1].split('\n') if l.strip()]
     else:
         from morphlm.config import ExperimentConfig, apply_overrides
         from morphlm.data.stream import load_corpus
@@ -121,7 +148,10 @@ def main():
     by_dist = defaultdict(Counter)
     n_dist = Counter()
     changes = Counter()
-    pos_n, pos_changed, pos_pairs, pos_seen = Counter(), Counter(), defaultdict(Counter), defaultdict(Counter)
+    pos_seen = defaultdict(Counter)       # each word type's part of speech in full context: its class
+    n_by = {a: Counter() for a in BY}
+    changed_by = {a: Counter() for a in BY}
+    pairs_by = {a: defaultdict(Counter) for a in BY}
     skipped = 0
     harness_ok = harness_n = 0
     for s in sents:
@@ -156,11 +186,12 @@ def main():
                 changes[(t.lower_, f_left['mfeat'] or '-', f_full['mfeat'] or '-')] += 1
             if args.by_type:
                 w = t.lower_
-                pos_n[w] += 1
                 pos_seen[w][f_full['pos']] += 1
-                if f_full['pos'] != f_left['pos']:
-                    pos_changed[w] += 1
-                    pos_pairs[w][f"{f_left['pos']}->{f_full['pos']}"] += 1
+                for a in BY:
+                    n_by[a][w] += 1
+                    if f_full[a] != f_left[a]:
+                        changed_by[a][w] += 1
+                        pairs_by[a][w][f'{f_left[a]}->{f_full[a]}'] += 1
 
     print()
     print('=' * 84)
@@ -200,31 +231,36 @@ def main():
                                for d in sorted(n_dist)})
     rec.add('mfeat_changes', {f'{w}: {a} -> {b}': n for (w, a, b), n in changes.most_common(40)})
     if args.by_type:
-        total_changed = sum(pos_changed.values())
         major = {w: c.most_common(1)[0][0] for w, c in pos_seen.items()}
-        by_class_n, by_class_changed = Counter(), Counter()
-        for w in pos_n:
-            by_class_n[major[w]] += pos_n[w]
-            by_class_changed[major[w]] += pos_changed[w]
-        print()
-        print(f'  PART OF SPEECH, by where it changes: {total_changed:,} changed of {total:,} words '
-              f'({100 * total_changed / max(total, 1):.2f}%)')
-        print(f'  {"majority class":14} {"words":>9} {"changed":>8} {"rate":>7} {"share of all changes":>21}')
-        for c, n in by_class_changed.most_common():
-            print(f'  {c:14} {by_class_n[c]:9,} {n:8,} {100 * n / by_class_n[c]:6.1f}% '
-                  f'{100 * n / max(total_changed, 1):20.1f}%')
-        top = sorted(pos_changed, key=lambda w: -pos_changed[w])
-        cum = 0
-        print(f'  {"word type":14} {"seen":>7} {"changed":>8} {"rate":>7} {"cumulative":>11}   most common changes')
-        for w in top[:40]:
-            cum += pos_changed[w]
-            print(f'  {w:14} {pos_n[w]:7,} {pos_changed[w]:8,} {100 * pos_changed[w] / pos_n[w]:6.1f}% '
-                  f'{100 * cum / max(total_changed, 1):10.1f}%   ' + ', '.join(f'{k} {v}' for k, v in pos_pairs[w].most_common(3)))
-        rec.add('pos_by_class', {c: {'words': by_class_n[c], 'changed': by_class_changed[c]} for c in by_class_n})
-        rec.add('pos_by_type', {w: {'seen': pos_n[w], 'changed': pos_changed[w], 'majority': major[w],
-                                    'changes': dict(pos_pairs[w].most_common(5))}
-                                for w in top})
-        rec.add('pos_changed_total', total_changed)
+        for a in BY:
+            n_w, ch_w, pairs = n_by[a], changed_by[a], pairs_by[a]
+            total_changed = sum(ch_w.values())
+            by_class_n, by_class_changed = Counter(), Counter()
+            for w in n_w:
+                by_class_n[major[w]] += n_w[w]
+                by_class_changed[major[w]] += ch_w[w]
+            name = 'PART OF SPEECH' if a == 'pos' else a.upper()
+            print()
+            print(f'  {name}, by where it changes: {total_changed:,} changed of {total:,} words '
+                  f'({100 * total_changed / max(total, 1):.2f}%)')
+            print(f'  {"majority class":14} {"words":>9} {"changed":>8} {"rate":>7} {"share of all changes":>21}')
+            for c, n in by_class_changed.most_common():
+                print(f'  {c:14} {by_class_n[c]:9,} {n:8,} {100 * n / by_class_n[c]:6.1f}% '
+                      f'{100 * n / max(total_changed, 1):20.1f}%')
+            top = sorted(ch_w, key=lambda w: -ch_w[w])
+            cum = 0
+            print(f'  {"word type":14} {"seen":>7} {"changed":>8} {"rate":>7} {"cumulative":>11}   most common changes')
+            for w in top[:40]:
+                cum += ch_w[w]
+                print(f'  {w:14} {n_w[w]:7,} {ch_w[w]:8,} {100 * ch_w[w] / n_w[w]:6.1f}% '
+                      f'{100 * cum / max(total_changed, 1):10.1f}%   ' + ', '.join(f'{k} {v}' for k, v in pairs[w].most_common(3)))
+            # the part-of-speech keys keep their names of 15 October
+            key = 'pos' if a == 'pos' else a.lower()
+            rec.add(f'{key}_by_class', {c: {'words': by_class_n[c], 'changed': by_class_changed[c]} for c in by_class_n})
+            rec.add(f'{key}_by_type', {w: {'seen': n_w[w], 'changed': ch_w[w], 'majority': major[w],
+                                          'changes': dict(pairs[w].most_common(5))}
+                                      for w in top})
+            rec.add(f'{key}_changed_total', total_changed)
     rec.write()
 
 

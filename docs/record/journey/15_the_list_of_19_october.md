@@ -11,7 +11,8 @@ slots is +0.0203, not +0.0175 (§33.118). At 85M parameters (width 1024) and 10k
 is half width 512's on average, +0.0067 ± 0.0030: two seeds keep width 512's level, two lose it
 early in training (§33.120). Its grammatical gain holds at every seed (+5.3 ± 0.4 points) and is no larger than
 30M parameters' on the same machine; the two seeds' fall is a slower stretch, no spike (§33.122). At 20k the gain is smaller again and lasts,
-+0.0075 ± 0.0018, and the split stays (§33.124).
++0.0075 ± 0.0018, and the split stays (§33.124). For gender and number the tagger's leak is spread
+over word classes, as for English part of speech, so their control is a causal tagger (§33.125).
 
 ---
 
@@ -554,3 +555,95 @@ The second sentence fits: *smaller again but lasting*, with the split.
 4. **G-81 holds at both budgets.** The 20k runs repeat the fall at the same seeds, and on this
    machine it belongs to the seed. Why those seeds fall is still open: another dropout draw, or
    another recipe.
+
+### 33.125 Item 2 prepared: gender's and number's leak is spread over word classes, so their control is a causal tagger
+
+Item 2 of the text's list (§33.117) asks whether Ukrainian number and gender, read as context-aware
+features, behave like case. For case, what reading the sentence adds over reading the word form is
+mostly the tagger's leak. The item is prepared on the second machine: its CPU is free while its GPU
+trains, and the thesis machine is not used.
+
+**Where the leak sits** (`morph_causality_check_20261021T030528`). The audit read 10,000 training
+sentences (101,091 alphabetic words), each word tagged by the stream builder's pipeline in full and
+from the prefix that ends at it. Two new options made this possible: `--by-type-attrs` counts gender
+and number by word class, and `--stream` reads the text from the BPE 17k training stream, decoded.
+Gender changes with the right context at 3.23% of words, number at 1.39%; case changes at 4.94% and
+part of speech at 3.66%. By the word type's majority class:
+
+| majority class | gender: share of its changes (rate) | number: share of its changes (rate) |
+|---|---|---|
+| adjectives | 40.8% (8.3%) | 26.3% (2.3%) |
+| proper nouns | 24.5% (5.9%) | 16.9% (1.7%) |
+| nouns | 18.4% (1.7%) | 25.7% (1.0%) |
+| determiners | 10.7% (11.2%) | 13.4% (6.0%) |
+| verbs | 0.5% (0.2%) | 5.8% (0.9%) |
+
+- **Gender's changes** fall on 1,635 word types; the twenty commonest hold 24.2% of them.
+- **Number's** fall on 554 types; the twenty commonest hold 39.9%.
+- **Unlike case,** whose leak sat at prepositions so that a word list removed it (`ucaseprep`), this
+  is spread like English part of speech's (§33.98). Reading adjectives and determiners from their
+  form would remove 51.5% of gender's changes and 39.7% of number's.
+
+The control is therefore a causal tagger, as `poscausal` is for English.
+
+**The data on the second machine.**
+- **The codes:** gender and number were cached for the 0.05 streams only on the thesis machine, in
+  its `_ucaselex` codes files. The four files went across (176 MB) and were checked by SHA-256
+  against the packing manifest after unpacking.
+- **The text:** Ukrainian Wikipedia's text is not on the second machine; a first attempt to load it
+  stalled on a download. Every stream decodes to its text byte for byte (G-75), so the audit and
+  the causal tagger read the text from the stream.
+
+**The word form** (`ugenderlex`, `unumberlex`; `derive_lexical_codes.py`;
+`derive_lexical_codes_20261021T031915`, `…T031956`, `…T032051`, `…T032145`). Each word form takes its
+majority value over the 0.05 training split: 1,138,752 word types under BPE 17k, 1,138,979 under
+endings apart. That majority is the in-context value at 97.25% of gender's occurrences and 98.00% of
+number's. Every known word (the personal pronouns, nouns of one gender) maps to its value.
+
+**The causal tagger** (`ugendercausal`, `unumbercausal`; the new `scripts/data/derive_causal_ud.py`;
+`derive_causal_ud_20261021T031855`, after two runs of its checks alone, `…T031542` and `…T031805`).
+- **How:** each word is tagged in a window of its last five tokens, by the builder's pipeline
+  without the parser. The parser never changed a word's gender or number: 22,208 of 22,208 words were
+  the same in full context and in windows. One pass serves both streams.
+- **Its checks, all before anything was written:**
+  - the window, tagged without the parser, gives the same values as the whole prefix tagged with
+    it, at 2,000 of 2,000 words;
+  - the decoded paragraphs re-encode to both streams' cached ids, all 37,972,206 and 42,600,731
+    training tokens;
+  - in full context, the first 20,000 paragraphs of each split reproduce the cached codes exactly:
+    the whole validation split (325,867 and 363,158 tokens) and 778,525 and 871,160 training tokens.
+- **How often it differs:** the causal value equals the in-context one at 97.42% and 97.51% of
+  training tokens for gender (BPE 17k, endings apart), 99.07% and 99.10% for number.
+- **Cost:** 18 minutes for the training split, 16 workers, both streams in one pass.
+
+**The chain** (`scripts/chains/second_item2_2026-10-21.sh`, on `lib/chain_v1.sh`).
+- **The runs:** gender and number, each in context, from the word form and from the causal tagger,
+  under BPE 17k and endings apart. ~38M tokens, 10k, seeds 0–3: 48 runs of ~4.2 min, about 3.4 h.
+- **When:** it starts once the chain of 21 October lets go of its lock (§33.123).
+- **The references:** the null and the empty slot at 10k under both tokenizers are on this machine
+  already (G-78).
+- **Rehearsed:** with the stub in five scenarios. Each new cell also ran 30 steps through the real
+  loader, on the CPU.
+
+Predictions, before any run:
+- **P286** (~70%). At 10k, gender read in context leads gender from the word form under both
+  tokenizers (≥3/4 each).
+- **P287** (~60%). Number likewise.
+- **P288** (~60%). For gender, at least half of that lead is the leak (in context over the causal
+  tagger), under both tokenizers. For case the leak was 29% and 43% of the lead at 10k; for English
+  part of speech, four fifths.
+- **P289** (~55%). For number likewise.
+- **P290** (~65%). Gender and number from the causal tagger lead their word forms by less than
+  0.001, under both tokenizers. English part of speech led its word form by +0.0006 at 10k.
+- **P291** (~65%). At 10k, gender and number in context each gain less over the empty slot under
+  endings apart than under BPE 17k: exposed endings carry them, as they did case in the 5M model at
+  a fixed budget (§33.113).
+
+**The sentences these decide** (the text's, from its list of 19 October):
+- the lead mostly the leak (P288 and P289 right, P290 right) → *for case, number and gender in
+  Ukrainian and part of speech in English, what the sentence's feature adds over the word form's is
+  mostly the leak*;
+- the causal tagger 0.001 or more above the word form, the leak under half (P290 wrong) → *number
+  and gender, unlike case, take information of their own from the sentence*: the title's answer then
+  depends on the feature;
+- P291 gives the exposure sentence for both features.
