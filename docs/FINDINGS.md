@@ -142,10 +142,13 @@ Part of speech from a causal tagger (each word tagged from its left context alon
 
 **Gender and number, at 10k.**
 Read in context they lead their word forms by about +0.001 (+0.0008 to +0.0010, 4/4 each, under BPE 17k and endings apart; a third to a half of case's lead), and little of that is the tagger's leak: 30% and none for gender, 10% and 21% for number.
-A causal tagger keeps +0.0007 to +0.0009 over the word form (4/4 each). Whether that is the sentence's information, or the tagger reading the endings of words unseen in training, which the word form's lexicon lacks, is open (G-82; §33.125, §33.127).
+A causal tagger keeps +0.0007 to +0.0009 over the word form (4/4 each), and that rest is not context.
+Split by the word the feature describes, 61–88% of it sits after words unseen in training (+0.0006 to +0.0007, 4/4 each), and there it is mostly the word form's loss — its model ends 0.00045 to 0.00055 below the null (0/4 each; G-76) — not the tagger's gain (+0.0001, 4/4 each).
+After a seen word whose gender or number the sentence changes the two models differ by −4% to +6% of the rest; 10–34% is spread over targets both models see alike (§33.125, §33.127–§33.129).
 
 *The control at four seeds: under two tokenizers at ~38M and at full training; for English part of speech at 10k and 20k; for Ukrainian gender and number at 10k, on a second machine.
-A split of the lead by the word the feature describes had put 55–60% after prepositions — but two trained models compared target by target are not a model and its counterfactual (§33.74, §33.76, §33.81).*
+A split of the lead by the word the feature describes had put 55–60% after prepositions — but two trained models compared target by target are not a model and its counterfactual (§33.74, §33.76, §33.81).
+Gender's and number's split is such a comparison too; the part where both models see the same input says they differ in what they learned as well (§33.129).*
 
 ## What linguistic information does do: speed early learning
 
@@ -409,4 +412,4 @@ Each withdrawal was decided by a rule recorded before its result:
 
 Open questions that could change a claim are in [`GAPS.md`](GAPS.md); what runs next, and why, in [`DIRECTIONS.md`](DIRECTIONS.md), "The queue".
 
-Left open, as limitations: across model sizes, the half of the width difference that the previous word's tag does not account for (§33.83); why two runs of four lose much of the tokenizer's gain early in training at 85M parameters (G-81); and whether what a causal tagger's gender and number add over the word form is context (G-82).
+Left open, as limitations: across model sizes, the half of the width difference that the previous word's tag does not account for (§33.83); and why two runs of four lose much of the tokenizer's gain early in training at 85M parameters (G-81).

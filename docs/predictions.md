@@ -6,7 +6,7 @@ Each prediction was recorded in the [journey](record/journey/README.md) **before
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 173 right, 13 half right, 96 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 4 pending — of 295.
+**Tally:** 177 right, 13 half right, 96 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, none pending — of 295.
 
 *Key to the tally (added 19 October 2026). Counted half right: P19, P46, P54 — with the eight
 whose outcome begins "half right" or "partly right". Counted right: P33, P172, P273 — right by their
@@ -321,7 +321,7 @@ The wrong ones carried the information:
 | P289 | For number, at least half of that lead is the leak, under both tokenizers | wrong — 10% and 21% of number's lead | §33.125, §33.127 |
 | P290 | Gender and number from the causal tagger lead their word forms by less than 0.001, under both tokenizers | right — +0.0007 to +0.0009, all below 0.001 | §33.125, §33.127 |
 | P291 | At 10k, gender and number in context each gain less over the empty slot under endings apart than under BPE 17k | half right — number gains less under endings apart at every seed (+0.0023 ± 0.0008); gender's gains are level (+0.0004 ± 0.0020) | §33.125, §33.127 |
-| P292 | For gender, words unseen in training hold at least half of the causal tagger's lead over the word form, under both tokenizers | pending | §33.128 |
-| P293 | For number, words unseen in training hold at least half of that lead, under both tokenizers | pending | §33.128 |
-| P294 | Seen words whose value from the causal tagger differs from their form's majority hold less than a third of that lead, in each of the four cells | pending | §33.128 |
-| P295 | After words unseen in training the word-form model ends below the null in each of the four cells, at one seed of four above it at most | pending | §33.128 |
+| P292 | For gender, words unseen in training hold at least half of the causal tagger's lead over the word form, under both tokenizers | right — 82% and 61% of the rest | §33.128, §33.129 |
+| P293 | For number, words unseen in training hold at least half of that lead, under both tokenizers | right — 80% and 88% | §33.128, §33.129 |
+| P294 | Seen words whose value from the causal tagger differs from their form's majority hold less than a third of that lead, in each of the four cells | right — −4% to +6% in the four cells | §33.128, §33.129 |
+| P295 | After words unseen in training the word-form model ends below the null in each of the four cells, at one seed of four above it at most | right — −0.00048, −0.00045, −0.00054, −0.00055, 0/4 above in each | §33.128, §33.129 |

@@ -46,11 +46,11 @@ Results committed by about 31 October reach the text; the work is admitted on 4 
 Each item's preparation runs on the CPU while the item before it trains.
 In the items, §3.x and "conclusion n" are the thesis text's sections, not the journey's.
 
-**Running:** nothing. The 24 hours of 20–21 October answered items 1, 3, 6 and 2 (§33.124, §33.126, §33.127); item 2's last question is an analysis on the CPU (G-82).
+**Running:** nothing. The 24 hours of 20–21 October answered items 1, 3, 6 and 2 (§33.124, §33.126, §33.127); item 2's last question, G-82, was answered on 22 October (§33.129).
 
 1. **The tokenizer's gain beyond 30M parameters**: answered (§33.120–§33.124). At 85M parameters it is smaller again and lasts: +0.0067 ± 0.0030 at 10k, +0.0075 ± 0.0018 at 20k, level over the last 5,000 steps; two seeds of four keep width 512's level and two lose much of it early (G-81). MultiBLiMP +5.3 and +4.7, below width 512's on the same machine.
    Held, not asked by the text: G-81's recipe question (a longer warm-up, 4 runs, ~3 h).
-2. **Number and gender as context-aware features**: answered at 10k (§33.125, §33.127). Their lead over the word form is about +0.001, and the leak a small part of it; whether the causal tagger's rest is context is G-82, an analysis on the CPU.
+2. **Number and gender as context-aware features**: answered at 10k (§33.125, §33.127, §33.129). Their lead over the word form is about +0.001, and it is not context: the leak is a small part, and most of the rest sits after words unseen in training, where the word form misleads its model (G-82, closed).
 3. **Whether English part of speech's deficit closes**: answered (§33.126). It closes by 100k: −0.0005 ± 0.0010 (2/4), against −0.0019 at 50k.
 4. **The exposure redundancy at width 512**: answered (§33.118).
 5. **BLiMP's agreement at eight seeds**: answered (§33.117).

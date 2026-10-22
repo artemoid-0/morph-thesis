@@ -15,7 +15,8 @@ early in training (§33.120). Its grammatical gain holds at every seed (+5.3 ± 
 over word classes, as for English part of speech, so their control is a causal tagger (§33.125). Removing
 English part of speech leaves a deficit that closes by 100k, and at 30M parameters Unigram's shortfall
 goes (§33.126). Gender's and number's lead over the word form is about 0.001 at 10k, and little of it
-is the leak (§33.127).
+is the leak (§33.127). The rest is not context: most of it sits after words unseen in training,
+where the word form misleads its model (§33.128–§33.129).
 
 ---
 
@@ -843,3 +844,67 @@ python scripts/analysis/loss_by_kind.py --machine second --tokenizers bpe_uk_17k
 python scripts/analysis/loss_by_kind.py --machine second --tokenizers bpe_uk_17k bpeend_uk_17k \
     --facts unumbercausal unumberlex --previous --previous-facts pos unumbercausal unumberlex --unseen-lexicon unumber
 ```
+
+### 33.129 G-82: what the causal tagger adds over the word form is not context
+
+The split of §33.128 ran on the second machine on 22 October (`loss_by_kind_20261022T021826`, gender;
+`loss_by_kind_20261022T021845`, number; 18 s each). All 48 models re-scored to their records within
+1.6 × 10⁻⁸ bits per byte, and the word form's codes were the lexicon's at every position of both
+validation streams. What the causal tagger adds over the word form, by the word the feature
+describes, paired by seed (with each class's share of the rest):
+
+| described word | gender, BPE 17k | gender, endings apart | number, BPE 17k | number, endings apart |
+|---|---|---|---|---|
+| a word unseen in training | +0.00057 ± 0.00002 (4/4), 82% | +0.00057 ± 0.00003 (4/4), 61% | +0.00065 ± 0.00003 (4/4), 80% | +0.00067 ± 0.00002 (4/4), 88% |
+| a seen word whose value differs from its form's majority | +0.00004 ± 0.00000 (4/4), 6% | −0.00001 ± 0.00002 (1/4), −1% | +0.00004 ± 0.00001 (4/4), 5% | −0.00003 ± 0.00000 (0/4), −4% |
+| a preposition | +0.00001 ± 0.00001 (3/4), 1% | +0.00005 ± 0.00002 (4/4), 6% | −0.00002 ± 0.00002 (3/4), −2% | +0.00000 ± 0.00001 (2/4), 1% |
+| every other target: the same input in both models | +0.00007 ± 0.00009 (2/4), 10% | +0.00032 ± 0.00021 (3/4), 34% | +0.00014 ± 0.00007 (3/4), 17% | +0.00012 ± 0.00004 (3/4), 16% |
+| **the whole rest** | **+0.00069 ± 0.00011 (4/4)** | **+0.00094 ± 0.00025 (4/4)** | **+0.00081 ± 0.00013 (4/4)** | **+0.00076 ± 0.00007 (4/4)** |
+
+The classes hold 2.64%, 2.53%, 2.95% and 2.82% of the targets (unseen words), 2.21%, 2.18%, 1.62% and
+1.55% (seen words whose value differs), 8.4–9.1% (prepositions), 86–87% (the rest). The described
+word is unseen in training at 4.63% of targets under BPE 17k and 4.33% under endings apart; at the
+rest of those targets the causal tagger also gives `none`. Seen words whose form's majority is
+`none`, which §33.74's rule would have counted as unseen, are 0.29–0.36% of targets.
+
+- **The rest sits after words unseen in training**: three fifths to nine tenths of it, at every seed
+  of every cell. About a third of that part is on the tokens holding an ending's start (+0.00018 to
+  +0.00021, 4/4 each).
+- **And there it is mostly the word form's loss, not the tagger's gain.** After unseen words the
+  word-form model ends below the null, −0.00048, −0.00045, −0.00054 and −0.00055 (0/4 each), while
+  the causal tagger's model gains +0.00009, +0.00013, +0.00011 and +0.00012 over it (4/4 each).
+  About four fifths of the part is the form's `none`, which in training marked a word without the
+  feature, misleading its model (G-76), as for case (§33.74).
+- **Where the sentence changes a seen word's gender or number, the two models do not differ:** −4% to
+  +6% of the rest, under 0.00005 either way.
+- **The rest of the rest, 10–34%, is spread over targets that both models see alike.** Two trained
+  models compared target by target are not a model and its counterfactual (§33.76, §33.81), and this
+  part says they differ in what they learned too.
+
+**Predictions** (§33.128).
+- **P292 right:** 82% and 61% of gender's rest.
+- **P293 right:** 80% and 88% of number's.
+- **P294 right:** −4% to +6%, in each of the four cells.
+- **P295 right:** −0.00048, −0.00045, −0.00054 and −0.00055 below the null, 0/4 above in each.
+
+The tally is 177 right, 13 half right, 96 wrong, 8 never tested, 1 withdrawn and none pending, of 295.
+
+**The sentence.** For both features unseen words hold over half of the rest under both tokenizers,
+and seen words under a third. By the rule fixed in §33.128 that gives: *what the sentence's gender
+and number add over the word form is not context: a small part is the tagger's leak, most the
+endings of words the training text never had.* The null sharpens its second half: after those words
+the word form's model is misled more than the tagger informs. The text's sentence for item 2 is
+therefore neither of its two (§33.127): not *mostly the leak*, and not *information of their own
+from the sentence*.
+
+**What it changes for the thesis.**
+1. **For gender and number, what the sentence adds over the word form is not context.** At 10k their
+   lead over the word form is about 0.001. Of that, none to 30% is the tagger's leak (§33.127). Most
+   of the rest sits after words unseen in training, where the word form misleads its model. Context
+   resolving a known word adds nothing measurable.
+2. **The same holds for all three Ukrainian features at 10k.** For case, context in the title's
+   sense held under a tenth of the extra over the word form (§33.74); for gender and number, nothing
+   measurable.
+3. **G-82 is closed.** G-76 is now measured for gender and number as well. The word-form controls'
+   handicap after unseen words is about the same for all three features: 0.00045 to 0.00055 below
+   the null for gender and number, 0.0005 to 0.0007 for case.
