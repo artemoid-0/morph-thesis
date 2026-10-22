@@ -24,7 +24,7 @@ Each direction's answer is stated once, in FINDINGS; the table gives its status 
 | D5 | the rare and novel tail | **closed**, screened at full training; the unseen-word version parked (§33.47) | [the rare tail](FINDINGS.md#no-benefit-in-the-rare-tail) |
 | D6 | the token-independent input | **parked — outside the thesis** (§33.59); G-71 closed (§33.58) | [what the slot did instead](FINDINGS.md#what-the-slot-did-instead-a-token-independent-input) |
 | D7 | tokenization | **answered** at four seeds (§33.61–§33.81); the exposure comparison against both references (§33.110–§33.118, §33.126; Unigram at width 512) | [Q1 in Ukrainian](FINDINGS.md#q1-in-ukrainian-morphology-inside-bpe); [in English](FINDINGS.md#q1-in-english-morphology-inside-bpe); [the tokenizer and the embedding](FINDINGS.md#morphology-in-the-tokenizer-and-in-the-embedding-ukrainian) |
-| D8 | scale and architecture: wider, deeper, a modern block | width 512 **answered** (§33.94, §33.102, §33.118); width 1024 **answered** (§33.120–§33.124): smaller again, lasting, split by seed (G-81); depth and the RMSNorm and SwiGLU block (built, §33.54) not run | [Q1 in Ukrainian](FINDINGS.md#q1-in-ukrainian-morphology-inside-bpe) ("It peaks there"); [the null at 30M](FINDINGS.md#the-same-shape-null-is-not-neutral) |
+| D8 | scale and architecture: wider, deeper, a modern block | width 512 **answered** (§33.94, §33.102, §33.118); width 1024 **answered** (§33.120–§33.124, §33.132): smaller again and lasting; the split by seed was the 100-step warm-up's; depth and the RMSNorm and SwiGLU block (built, §33.54) not run | [Q1 in Ukrainian](FINDINGS.md#q1-in-ukrainian-morphology-inside-bpe) ("It peaks there"); [the null at 30M](FINDINGS.md#the-same-shape-null-is-not-neutral) |
 | D9 | a second corpus per language | Ukrainian **answered** with UberText fiction (§33.85, §33.88, §33.108); no English corpus chosen | [Q1 in Ukrainian](FINDINGS.md#q1-in-ukrainian-morphology-inside-bpe) ("And on a second corpus") |
 
 **D3 — is the reliance deficit permanent?**
@@ -46,9 +46,9 @@ Results committed by about 31 October reach the text; the work is admitted on 4 
 Each item's preparation runs on the CPU while the item before it trains.
 In the items, §3.x and "conclusion n" are the thesis text's sections, not the journey's.
 
-**Running:** items 1 and 3 on the second machine, from 22 October; items 2 and 4 wait for their results.
+**Running:** item 3 on the second machine, since 09:22 EDT on 22 October; item 1 is answered (§33.132). Items 2 and 4 wait until item 3's results are in.
 
-1. **Width 1024 "depends on the run" (G-81's recipe question)**: running (§33.130). The nulls at widths 1024 and 512 with a 1,000-step warm-up, 10k, seeds 0–3, both tokenizers, then MultiBLiMP: 16 runs, ~8 h. If the split stays, the twin on the thesis machine follows (another dropout draw).
+1. **Width 1024 "depends on the run" (G-81's recipe question)**: answered (§33.130, §33.132). With a 1,000-step warm-up every seed keeps the gain, +0.0110 ± 0.0011 (4/4), smaller than width 512's +0.0147 under the same warm-up; MultiBLiMP +5.9, level with width 512's +6.0. The dependence on the run was the 100-step warm-up's; G-81 is closed.
 2. **English part of speech at full training, from the causal tagger** (§3.10, conclusion 7): waits. 50k, four seeds, on the second machine with the twins it lacks there (the tagged feature, the word form, the null): 12 runs, ~4.2 h.
 3. **Gender and number at full training** (§3.10): prepared (§33.131), runs after item 1. In context, from the word form and from the causal tagger, with the null; 151M tokens, 50k, endings apart, four seeds: 28 runs, ~10 h; then G-82's split.
 4. **Width 1024 without repeating the text** (§3.3.2): waits. 20k on the 151M-token corpus, both tokenizers, four seeds: 8 runs, ~11.9 h.

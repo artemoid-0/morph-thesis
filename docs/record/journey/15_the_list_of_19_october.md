@@ -16,7 +16,8 @@ over word classes, as for English part of speech, so their control is a causal t
 English part of speech leaves a deficit that closes by 100k, and at 30M parameters Unigram's shortfall
 goes (§33.126). Gender's and number's lead over the word form is about 0.001 at 10k, and little of it
 is the leak (§33.127). The rest is not context: most of it sits after words unseen in training,
-where the word form misleads its model (§33.128–§33.129).
+where the word form misleads its model (§33.128–§33.129). At 85M parameters
+with a 1,000-step warm-up the tokenizer's gain holds at every seed, smaller than at 30M (§33.132).
 
 ---
 
@@ -1014,3 +1015,51 @@ runs not at all.
 - that lead positive at three seeds of four or more, and seen words whose value differs holding at
   least half of it: *unlike case: gender (number) takes information of its own from the sentence*;
 - anything else: the split as it falls, each part with its size.
+
+### 33.132 Item 1: with a longer warm-up the gain at width 1024 holds at every seed
+
+The warm-up chain (`second_2026-10-22.sh`, §33.130) ran on the second machine from 01:13 to 09:22 EDT
+on 22 October: 16 runs of 44 and 16 min, then MultiBLiMP on each width's eight. None failed, and both
+pair checks passed. Paired by seed within the machine (`paired_cells_20261022T135826`;
+`multiblimp_eval_20261022T132120`, width 1024; `multiblimp_eval_20261022T132214`, width 512):
+
+| ~38M tokens, 10k | warm-up of 100 steps | warm-up of 1,000 steps |
+|---|---|---|
+| width 1024, the tokenizer's gain at seeds 0–3 | +0.0127, −0.0004, +0.0042, +0.0103 | +0.0095, +0.0143, +0.0100, +0.0103 |
+| its mean | +0.0067 ± 0.0030 (3/4) | **+0.0110 ± 0.0011 (1.34%, 4/4)** |
+| width 512, the tokenizer's gain | +0.0141 ± 0.0016 (4/4) | +0.0147 ± 0.0022 (1.67%, 4/4) |
+| MultiBLiMP, width 1024 | +5.3 ± 0.4 points (4/4) | +5.9 ± 0.4 (4/4) |
+| MultiBLiMP, width 512 | +5.9 ± 0.3 (4/4) | +6.0 ± 0.5 (4/4) |
+
+- **The split goes.** Every seed at width 1024 keeps more than half of width 512's gain under the same
+  warm-up (+0.0074). The two seeds that fell with 100 steps gain +0.0143 and +0.0100.
+- **The warm-up helps the endings-apart null.** Against its 100-step run at the same seed, the
+  endings-apart null at width 1024 ends 0.0053 ± 0.0032 lower: 0.0135 at seed 1 and 0.0067 at seed 2,
+  the two that fell. The BPE 17k null ends 0.0010 ± 0.0008 lower. At width 512 neither moves: +0.0012 ±
+  0.0023 and +0.0006 ± 0.0014 (2/4 each).
+- **The gain stays smaller than at width 512:** the mean is 0.0037 below width 512's under the same
+  warm-up, beyond the rule's 0.003.
+- **In grammar the two widths are level:** +5.9 and +6.0 points under the longer warm-up. At width
+  1024: number +5.8 ± 1.3, gender +6.6 ± 0.3, person +5.3 ± 0.5 (4/4 each).
+
+**Predictions** (§33.130).
+- **P296 right:** every seed above half of width 512's mean: +0.0095 to +0.0143.
+- **P297 wrong:** the mean is 0.0037 below width 512's, not within 0.003.
+- **P298 right:** +0.0147 against +0.0141 with 100 steps.
+- **P299 right:** +5.9 against +5.3 points, positive at every seed.
+
+The tally is 180 right, 13 half right, 97 wrong, 8 never tested, 1 withdrawn and 4 pending, of 303.
+
+**The sentence** (the rule of §33.130): every seed at least half of width 512's gain, the mean further
+below. *With a longer warm-up the gain at width 1024 holds at every seed, smaller than at width 512:
+the dependence on the run was the training schedule's, not the model's.* The twin on the thesis
+machine, needed only if the split had stayed, is not run. G-81 is closed.
+
+**What it changes for the thesis.**
+1. **At 85M parameters the tokenizer's gain is smaller than at 30M under either warm-up, and with a
+   1,000-step warm-up it holds at every seed:** +0.0110 ± 0.0011 at 10k. "Depends on the run" goes
+   from FINDINGS: it belonged to the 100-step warm-up at this width.
+2. **The grammatical gain stops growing at 30M parameters under the longer warm-up too:** +5.9
+   against +6.0 points.
+3. **The 100-step warm-up stays every other run's recipe.** At 30M parameters the longer one changes
+   neither null nor the gain; at 85M it is the endings-apart null that needed it.

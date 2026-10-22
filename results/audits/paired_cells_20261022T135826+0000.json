@@ -1,0 +1,495 @@
+{
+  "script": "paired_cells",
+  "args": {
+    "pair": [
+      [
+        "w1024 wu1000",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_wu1000_st10k_w1024",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_wu1000_st10k_w1024"
+      ],
+      [
+        "w512 wu1000",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_wu1000_st10k_w512",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_wu1000_st10k_w512"
+      ],
+      [
+        "w1024 wu100",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k_w1024",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k_w1024"
+      ],
+      [
+        "w512 wu100",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k_w512",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k_w512"
+      ],
+      [
+        "w1024 BPE17k null: wu1000 vs wu100",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k_w1024",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_wu1000_st10k_w1024"
+      ],
+      [
+        "w1024 endings null: wu1000 vs wu100",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k_w1024",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_wu1000_st10k_w1024"
+      ],
+      [
+        "w512 BPE17k null: wu1000 vs wu100",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k_w512",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_wu1000_st10k_w512"
+      ],
+      [
+        "w512 endings null: wu1000 vs wu100",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k_w512",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_wu1000_st10k_w512"
+      ]
+    ],
+    "seeds": null,
+    "machine": "second",
+    "results": [
+      "/home/neko/PycharmProjects/Morph/results"
+    ]
+  },
+  "timestamp_utc": "2026-10-22T13:58:26+00:00",
+  "results": {
+    "pairs": [
+      {
+        "name": "w1024 wu1000",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_wu1000_st10k_w1024",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_wu1000_st10k_w1024",
+        "seeds": {
+          "0": {
+            "effect": -0.009504632949751013,
+            "A": 0.8207447272234273,
+            "B": 0.8112400942736763,
+            "machine": "5090",
+            "runs": [
+              "06fdb94e8989",
+              "e8fc7779b2eb"
+            ]
+          },
+          "1": {
+            "effect": -0.014326925469896334,
+            "A": 0.8256157965928808,
+            "B": 0.8112888711229844,
+            "machine": "5090",
+            "runs": [
+              "7e04ebfa877e",
+              "d8fd1b4ba740"
+            ]
+          },
+          "2": {
+            "effect": -0.00996396995573745,
+            "A": 0.8194793724208423,
+            "B": 0.8095154024651049,
+            "machine": "5090",
+            "runs": [
+              "4325e2466023",
+              "9a28a2243d93"
+            ]
+          },
+          "3": {
+            "effect": -0.010313269953421966,
+            "A": 0.8206649786246274,
+            "B": 0.8103517086712054,
+            "machine": "5090",
+            "runs": [
+              "59b25ce83d64",
+              "4e4fb151f2ef"
+            ]
+          }
+        },
+        "mean": -0.011027199582201691,
+        "se": 0.0011123006502146517,
+        "positive": 0,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "w512 wu1000",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_wu1000_st10k_w512",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_wu1000_st10k_w512",
+        "seeds": {
+          "0": {
+            "effect": -0.018524752434620706,
+            "A": 0.8840956367801002,
+            "B": 0.8655708843454795,
+            "machine": "5090",
+            "runs": [
+              "5c17311d1fc4",
+              "6537a83f94ae"
+            ]
+          },
+          "1": {
+            "effect": -0.012675353862542149,
+            "A": 0.880239362812623,
+            "B": 0.8675640089500809,
+            "machine": "5090",
+            "runs": [
+              "616570beed19",
+              "7d3c1fea8ffd"
+            ]
+          },
+          "2": {
+            "effect": -0.009613426801352243,
+            "A": 0.8761140928928971,
+            "B": 0.8665006660915449,
+            "machine": "5090",
+            "runs": [
+              "c8face88e7a9",
+              "f9fc3d5771a2"
+            ]
+          },
+          "3": {
+            "effect": -0.018108375014681655,
+            "A": 0.8822650470841316,
+            "B": 0.8641566720694499,
+            "machine": "5090",
+            "runs": [
+              "ceb2eeb2b0fa",
+              "75fde852d97b"
+            ]
+          }
+        },
+        "mean": -0.014730477028299188,
+        "se": 0.0021643793359173444,
+        "positive": 0,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "w1024 wu100",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k_w1024",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k_w1024",
+        "seeds": {
+          "0": {
+            "effect": -0.012701726858776907,
+            "A": 0.8222171796146789,
+            "B": 0.809515452755902,
+            "machine": "5090",
+            "runs": [
+              "9fda1888c207",
+              "0182c8850ca1"
+            ]
+          },
+          "1": {
+            "effect": 0.00043706786052177815,
+            "A": 0.8244007930859092,
+            "B": 0.824837860946431,
+            "machine": "5090",
+            "runs": [
+              "0e3e53c44d2c",
+              "f0b61258c835"
+            ]
+          },
+          "2": {
+            "effect": -0.004241359384409615,
+            "A": 0.8204259687718761,
+            "B": 0.8161846093874665,
+            "machine": "5090",
+            "runs": [
+              "26fea9f2e765",
+              "58f9385097bc"
+            ]
+          },
+          "3": {
+            "effect": -0.010286326690774228,
+            "A": 0.8233436592613427,
+            "B": 0.8130573325705684,
+            "machine": "5090",
+            "runs": [
+              "b48d9a87da14",
+              "f2feb745a95e"
+            ]
+          }
+        },
+        "mean": -0.006698086268359743,
+        "se": 0.0029702006258440434,
+        "positive": 1,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "w512 wu100",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k_w512",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k_w512",
+        "seeds": {
+          "0": {
+            "effect": -0.011940719081613982,
+            "A": 0.8790308842457586,
+            "B": 0.8670901651641446,
+            "machine": "5090",
+            "runs": [
+              "4d86892143a8",
+              "9a629673512a"
+            ]
+          },
+          "1": {
+            "effect": -0.017706767919137834,
+            "A": 0.8818076887442489,
+            "B": 0.864100920825111,
+            "machine": "5090",
+            "runs": [
+              "f74001fa0d30",
+              "60b7b8cfd85e"
+            ]
+          },
+          "2": {
+            "effect": -0.01605642237428384,
+            "A": 0.879791780900539,
+            "B": 0.8637353585262552,
+            "machine": "5090",
+            "runs": [
+              "7b5b05c0cc73",
+              "01b8e928b510"
+            ]
+          },
+          "3": {
+            "effect": -0.010837401902725974,
+            "A": 0.8771061912953163,
+            "B": 0.8662687893925903,
+            "machine": "5090",
+            "runs": [
+              "cb0c22a0c51f",
+              "8d5f03b6a890"
+            ]
+          }
+        },
+        "mean": -0.014135327819440408,
+        "se": 0.0016365209933131696,
+        "positive": 0,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "w1024 BPE17k null: wu1000 vs wu100",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k_w1024",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_wu1000_st10k_w1024",
+        "seeds": {
+          "0": {
+            "effect": -0.0014724523912515997,
+            "A": 0.8222171796146789,
+            "B": 0.8207447272234273,
+            "machine": "5090",
+            "runs": [
+              "9fda1888c207",
+              "06fdb94e8989"
+            ]
+          },
+          "1": {
+            "effect": 0.0012150035069715681,
+            "A": 0.8244007930859092,
+            "B": 0.8256157965928808,
+            "machine": "5090",
+            "runs": [
+              "0e3e53c44d2c",
+              "7e04ebfa877e"
+            ]
+          },
+          "2": {
+            "effect": -0.0009465963510337794,
+            "A": 0.8204259687718761,
+            "B": 0.8194793724208423,
+            "machine": "5090",
+            "runs": [
+              "26fea9f2e765",
+              "4325e2466023"
+            ]
+          },
+          "3": {
+            "effect": -0.0026786806367152804,
+            "A": 0.8233436592613427,
+            "B": 0.8206649786246274,
+            "machine": "5090",
+            "runs": [
+              "b48d9a87da14",
+              "59b25ce83d64"
+            ]
+          }
+        },
+        "mean": -0.0009706814680072728,
+        "se": 0.0008137789484061684,
+        "positive": 1,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "w1024 endings null: wu1000 vs wu100",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k_w1024",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_wu1000_st10k_w1024",
+        "seeds": {
+          "0": {
+            "effect": 0.0017246415177742946,
+            "A": 0.809515452755902,
+            "B": 0.8112400942736763,
+            "machine": "5090",
+            "runs": [
+              "0182c8850ca1",
+              "e8fc7779b2eb"
+            ]
+          },
+          "1": {
+            "effect": -0.013548989823446544,
+            "A": 0.824837860946431,
+            "B": 0.8112888711229844,
+            "machine": "5090",
+            "runs": [
+              "f0b61258c835",
+              "d8fd1b4ba740"
+            ]
+          },
+          "2": {
+            "effect": -0.006669206922361615,
+            "A": 0.8161846093874665,
+            "B": 0.8095154024651049,
+            "machine": "5090",
+            "runs": [
+              "58f9385097bc",
+              "9a28a2243d93"
+            ]
+          },
+          "3": {
+            "effect": -0.002705623899363019,
+            "A": 0.8130573325705684,
+            "B": 0.8103517086712054,
+            "machine": "5090",
+            "runs": [
+              "f2feb745a95e",
+              "4e4fb151f2ef"
+            ]
+          }
+        },
+        "mean": -0.005299794781849221,
+        "se": 0.003240330954546469,
+        "positive": 1,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "w512 BPE17k null: wu1000 vs wu100",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k_w512",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_wu1000_st10k_w512",
+        "seeds": {
+          "0": {
+            "effect": 0.005064752534341577,
+            "A": 0.8790308842457586,
+            "B": 0.8840956367801002,
+            "machine": "5090",
+            "runs": [
+              "4d86892143a8",
+              "5c17311d1fc4"
+            ]
+          },
+          "1": {
+            "effect": -0.0015683259316258136,
+            "A": 0.8818076887442489,
+            "B": 0.880239362812623,
+            "machine": "5090",
+            "runs": [
+              "f74001fa0d30",
+              "616570beed19"
+            ]
+          },
+          "2": {
+            "effect": -0.0036776880076418994,
+            "A": 0.879791780900539,
+            "B": 0.8761140928928971,
+            "machine": "5090",
+            "runs": [
+              "7b5b05c0cc73",
+              "c8face88e7a9"
+            ]
+          },
+          "3": {
+            "effect": 0.005158855788815253,
+            "A": 0.8771061912953163,
+            "B": 0.8822650470841316,
+            "machine": "5090",
+            "runs": [
+              "cb0c22a0c51f",
+              "ceb2eeb2b0fa"
+            ]
+          }
+        },
+        "mean": 0.0012443985959722792,
+        "se": 0.0022740645536616436,
+        "positive": 2,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "w512 endings null: wu1000 vs wu100",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k_w512",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_wu1000_st10k_w512",
+        "seeds": {
+          "0": {
+            "effect": -0.0015192808186651474,
+            "A": 0.8670901651641446,
+            "B": 0.8655708843454795,
+            "machine": "5090",
+            "runs": [
+              "9a629673512a",
+              "6537a83f94ae"
+            ]
+          },
+          "1": {
+            "effect": 0.003463088124969871,
+            "A": 0.864100920825111,
+            "B": 0.8675640089500809,
+            "machine": "5090",
+            "runs": [
+              "60b7b8cfd85e",
+              "7d3c1fea8ffd"
+            ]
+          },
+          "2": {
+            "effect": 0.0027653075652896986,
+            "A": 0.8637353585262552,
+            "B": 0.8665006660915449,
+            "machine": "5090",
+            "runs": [
+              "01b8e928b510",
+              "f9fc3d5771a2"
+            ]
+          },
+          "3": {
+            "effect": -0.0021121173231404278,
+            "A": 0.8662687893925903,
+            "B": 0.8641566720694499,
+            "machine": "5090",
+            "runs": [
+              "8d5f03b6a890",
+              "75fde852d97b"
+            ]
+          }
+        },
+        "mean": 0.0006492493871134986,
+        "se": 0.0014353588406725015,
+        "positive": 2,
+        "n": 4,
+        "skipped_across_machines": {}
+      }
+    ]
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-10-22T13:58:26+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "bed5335e9577a4905e434d182b453c82e18d7e9d",
+    "git_dirty": true
+  },
+  "notes": [
+    "effect = B minus A in bits per byte at each seed (positive: A better); pairs on one machine only"
+  ]
+}

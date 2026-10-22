@@ -77,6 +77,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [§33.121](15_the_list_of_19_october.md#33121-multiblimp-at-width-1024-and-a-finer-look-at-g-81-prepared-20-october), [§33.122](15_the_list_of_19_october.md#33122-multiblimp-at-width-1024-the-gain-holds-at-every-seed-and-stops-growing-g-81s-fall-is-no-spike) — at 85M parameters the grammatical gain holds at every seed and stops growing; the fall is no spike
 - [§33.124](15_the_list_of_19_october.md#33124-item-1s-20k-half-at-85m-parameters-the-gain-is-smaller-again-and-lasts-and-the-split-stays) — at 85M parameters the gain is smaller again and lasts; the split stays at 20k
 - [§33.130](15_the_list_of_19_october.md#33130-the-texts-request-of-22-october-and-g-81s-recipe-question-prepared) — G-81's recipe question prepared: a 1,000-step warm-up at widths 1024 and 512
+- [§33.132](15_the_list_of_19_october.md#33132-item-1-with-a-longer-warm-up-the-gain-at-width-1024-holds-at-every-seed) — with a longer warm-up the gain at width 1024 holds at every seed, smaller than at width 512
 
 ### Q2: injected features against a same-shape null
 
@@ -442,6 +443,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [33.129 G-82: what the causal tagger adds over the word form is not context](15_the_list_of_19_october.md#33129-g-82-what-the-causal-tagger-adds-over-the-word-form-is-not-context)
 - [33.130 The text's request of 22 October, and G-81's recipe question prepared](15_the_list_of_19_october.md#33130-the-texts-request-of-22-october-and-g-81s-recipe-question-prepared)
 - [33.131 Item 3 prepared: gender and number at full training](15_the_list_of_19_october.md#33131-item-3-prepared-gender-and-number-at-full-training)
+- [33.132 Item 1: with a longer warm-up the gain at width 1024 holds at every seed](15_the_list_of_19_october.md#33132-item-1-with-a-longer-warm-up-the-gain-at-width-1024-holds-at-every-seed)
 
 ### Appendices
 

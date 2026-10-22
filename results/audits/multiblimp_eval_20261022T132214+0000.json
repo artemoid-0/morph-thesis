@@ -1,0 +1,345 @@
+{
+  "script": "multiblimp_eval",
+  "args": {
+    "labels": [
+      "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_wu1000_st10k_w512",
+      "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_wu1000_st10k_w512"
+    ],
+    "reference": null,
+    "results": [
+      "/home/vyzserver/morph/code/results"
+    ],
+    "machine": "second",
+    "data": "/home/vyzserver/morph/code/external/multiblimp/ukr/data.tsv",
+    "check": 40,
+    "device": null,
+    "threads": 0,
+    "batch": 128,
+    "limit": 0,
+    "by_length": false,
+    "check_only": false
+  },
+  "timestamp_utc": "2026-10-22T13:22:14+00:00",
+  "results": {
+    "runs": {
+      "5c17311d1fc4": {
+        "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_wu1000_st10k_w512",
+        "seed": 0,
+        "machine": "second",
+        "accuracy": {
+          "number": 0.7126436781609196,
+          "gender": 0.7800192122958693,
+          "person": 0.712108382726503,
+          "all": 0.7379737609329446
+        },
+        "margin": {
+          "number": 1.5447853789932426,
+          "gender": 1.9119393516342646,
+          "person": 4.453527916497239,
+          "all": 2.935977879835635
+        },
+        "batch_check_max_diff": 6.103515625e-05
+      },
+      "616570beed19": {
+        "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_wu1000_st10k_w512",
+        "seed": 1,
+        "machine": "second",
+        "accuracy": {
+          "number": 0.7011494252873564,
+          "gender": 0.7713736791546589,
+          "person": 0.7019475021168501,
+          "all": 0.728134110787172
+        },
+        "margin": {
+          "number": 1.4904462003159797,
+          "gender": 2.085542614705052,
+          "person": 4.411708376349078,
+          "all": 2.9735023217715604
+        },
+        "batch_check_max_diff": 3.0517578125e-05
+      },
+      "c8face88e7a9": {
+        "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_wu1000_st10k_w512",
+        "seed": 2,
+        "machine": "second",
+        "accuracy": {
+          "number": 0.7547892720306514,
+          "gender": 0.7829010566762729,
+          "person": 0.7112616426756986,
+          "all": 0.7467201166180758
+        },
+        "margin": {
+          "number": 1.6492850716543381,
+          "gender": 2.013033206364378,
+          "person": 4.461391542646261,
+          "all": 2.9975939457340073
+        },
+        "batch_check_max_diff": 3.0517578125e-05
+      },
+      "ceb2eeb2b0fa": {
+        "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_wu1000_st10k_w512",
+        "seed": 3,
+        "machine": "second",
+        "accuracy": {
+          "number": 0.7318007662835249,
+          "gender": 0.7780979827089337,
+          "person": 0.7087214225232854,
+          "all": 0.7394314868804664
+        },
+        "margin": {
+          "number": 1.7377507586132064,
+          "gender": 2.0012817327845682,
+          "person": 4.530850444377024,
+          "all": 3.039859531572192
+        },
+        "batch_check_max_diff": 3.0517578125e-05
+      },
+      "6537a83f94ae": {
+        "label": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_wu1000_st10k_w512",
+        "seed": 0,
+        "machine": "second",
+        "accuracy": {
+          "number": 0.8007662835249042,
+          "gender": 0.840537944284342,
+          "person": 0.756138865368332,
+          "all": 0.7966472303206997
+        },
+        "margin": {
+          "number": 2.1899321179737075,
+          "gender": 2.4232212711594405,
+          "person": 4.52540565283999,
+          "all": 3.2836085950667933
+        },
+        "batch_check_max_diff": 4.57763671875e-05
+      },
+      "7d3c1fea8ffd": {
+        "label": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_wu1000_st10k_w512",
+        "seed": 1,
+        "machine": "second",
+        "accuracy": {
+          "number": 0.789272030651341,
+          "gender": 0.8290105667627281,
+          "person": 0.7739204064352244,
+          "all": 0.797740524781341
+        },
+        "margin": {
+          "number": 2.1638245271996976,
+          "gender": 2.3450933340990576,
+          "person": 4.681286754495102,
+          "all": 3.3160926461567337
+        },
+        "batch_check_max_diff": 4.57763671875e-05
+      },
+      "f9fc3d5771a2": {
+        "label": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_wu1000_st10k_w512",
+        "seed": 2,
+        "machine": "second",
+        "accuracy": {
+          "number": 0.789272030651341,
+          "gender": 0.8386167146974063,
+          "person": 0.7569856054191363,
+          "all": 0.7940962099125365
+        },
+        "margin": {
+          "number": 2.103994691052199,
+          "gender": 2.346538439264215,
+          "person": 4.638366568401444,
+          "all": 3.2867866841419096
+        },
+        "batch_check_max_diff": 3.0517578125e-05
+      },
+      "75fde852d97b": {
+        "label": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_wu1000_st10k_w512",
+        "seed": 3,
+        "machine": "second",
+        "accuracy": {
+          "number": 0.789272030651341,
+          "gender": 0.8453410182516811,
+          "person": 0.7764606265876376,
+          "all": 0.8050291545189504
+        },
+        "margin": {
+          "number": 2.262693536692652,
+          "gender": 2.3017522993280153,
+          "person": 4.476012595723384,
+          "all": 3.2301097103875165
+        },
+        "batch_check_max_diff": 4.57763671875e-05
+      }
+    },
+    "reference": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_wu1000_st10k_w512",
+    "summary": {
+      "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_wu1000_st10k_w512": {
+        "all": {
+          "accuracy": 0.7380648688046647,
+          "seeds": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        "number": {
+          "accuracy": 0.725095785440613,
+          "seeds": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        "gender": {
+          "accuracy": 0.7780979827089337,
+          "seeds": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        "person": {
+          "accuracy": 0.7085097375105842,
+          "seeds": [
+            0,
+            1,
+            2,
+            3
+          ]
+        }
+      },
+      "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_wu1000_st10k_w512": {
+        "all": {
+          "accuracy": 0.798378279883382,
+          "seeds": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "paired_seeds": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "paired_acc_diff": [
+            5.867346938775508,
+            6.9606413994169,
+            4.737609329446069,
+            6.559766763848396
+          ],
+          "paired_margin_diff": [
+            0.3476307152311584,
+            0.34259032438517334,
+            0.2891927384079023,
+            0.19025017881532458
+          ]
+        },
+        "number": {
+          "accuracy": 0.7921455938697318,
+          "seeds": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "paired_seeds": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "paired_acc_diff": [
+            8.812260536398464,
+            8.812260536398464,
+            3.4482758620689613,
+            5.747126436781613
+          ],
+          "paired_margin_diff": [
+            0.6451467389804648,
+            0.6733783268837179,
+            0.45470961939786103,
+            0.5249427780794458
+          ]
+        },
+        "gender": {
+          "accuracy": 0.8383765609990393,
+          "seeds": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "paired_seeds": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "paired_acc_diff": [
+            6.051873198847268,
+            5.763688760806918,
+            5.5715658021133425,
+            6.724303554274735
+          ],
+          "paired_margin_diff": [
+            0.5112819195251759,
+            0.25955071939400565,
+            0.3335052328998369,
+            0.30047056654344706
+          ]
+        },
+        "person": {
+          "accuracy": 0.7658763759525826,
+          "seeds": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "paired_seeds": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "paired_acc_diff": [
+            4.403048264182896,
+            7.197290431837433,
+            4.57239627434377,
+            6.773920406435218
+          ],
+          "paired_margin_diff": [
+            0.07187773634275096,
+            0.2695783781460239,
+            0.17697502575518254,
+            -0.05483784865363983
+          ]
+        }
+      }
+    },
+    "checked_paragraphs": {
+      "bpe_uk_17k.json ['mconst'] ukwiki0.05": 40,
+      "bpeend_uk_17k.json ['mconst'] ukwiki0.05": 40
+    }
+  },
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+    "timestamp_utc": "2026-10-22T13:22:14+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 5090 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": null,
+    "git_dirty": false
+  }
+}
