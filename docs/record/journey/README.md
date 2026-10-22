@@ -94,6 +94,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [§33.110](14_two_machines.md#33110-g-78-mapped-the-nulls-handicap-is-endings-aparts-at-every-budget--and-it-confounds-exposure-makes-case-more-useful), [§33.113](14_two_machines.md#33113-g-78-across-tokenizers-and-corpus-sizes-the-slot-costs-where-endings-are-exposed-helps-under-bpe--and-exposure-makes-case-partly-redundant), [§33.115–§33.116](14_two_machines.md#33115-two-follow-ups-the-exposure-comparison-at-20k-and-where-the-nulls-help-sits-prepared-18-october), [§33.117–§33.118](15_the_list_of_19_october.md#33117-the-texts-list-of-19-october-blimps-agreement-at-eight-seeds-the-exposure-comparison-on-the-laws-axis-and-item-4-prepared) — exposure: case against the best model without it
 - [§33.127](15_the_list_of_19_october.md#33127-item-2-genders-and-numbers-lead-over-the-word-form-is-small-and-little-of-it-is-the-leak) — gender and number: the lead over the word form is small, the leak a small part of it
 - [§33.129](15_the_list_of_19_october.md#33129-g-82-what-the-causal-tagger-adds-over-the-word-form-is-not-context) — and what the causal tagger adds over the word form is not context
+- [§33.131](15_the_list_of_19_october.md#33131-item-3-prepared-gender-and-number-at-full-training) — gender and number at full training prepared: the stream moved, the codes derived
 
 ### The learning law: a feature helps until the model has learned it
 
@@ -440,6 +441,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [33.128 G-82 prepared: the causal tagger's rest, split by the word it describes](15_the_list_of_19_october.md#33128-g-82-prepared-the-causal-taggers-rest-split-by-the-word-it-describes)
 - [33.129 G-82: what the causal tagger adds over the word form is not context](15_the_list_of_19_october.md#33129-g-82-what-the-causal-tagger-adds-over-the-word-form-is-not-context)
 - [33.130 The text's request of 22 October, and G-81's recipe question prepared](15_the_list_of_19_october.md#33130-the-texts-request-of-22-october-and-g-81s-recipe-question-prepared)
+- [33.131 Item 3 prepared: gender and number at full training](15_the_list_of_19_october.md#33131-item-3-prepared-gender-and-number-at-full-training)
 
 ### Appendices
 

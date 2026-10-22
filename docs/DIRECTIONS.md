@@ -50,7 +50,7 @@ In the items, §3.x and "conclusion n" are the thesis text's sections, not the j
 
 1. **Width 1024 "depends on the run" (G-81's recipe question)**: running (§33.130). The nulls at widths 1024 and 512 with a 1,000-step warm-up, 10k, seeds 0–3, both tokenizers, then MultiBLiMP: 16 runs, ~8 h. If the split stays, the twin on the thesis machine follows (another dropout draw).
 2. **English part of speech at full training, from the causal tagger** (§3.10, conclusion 7): waits. 50k, four seeds, on the second machine with the twins it lacks there (the tagged feature, the word form, the null): 12 runs, ~4.2 h.
-3. **Gender and number at full training** (§3.10): being prepared. In context, from the word form and from the causal tagger, with the null; 151M tokens, 50k, endings apart, four seeds: 28 runs, ~10.5 h. The stream and its derived codes go to the second machine first.
+3. **Gender and number at full training** (§3.10): prepared (§33.131), runs after item 1. In context, from the word form and from the causal tagger, with the null; 151M tokens, 50k, endings apart, four seeds: 28 runs, ~10 h; then G-82's split.
 4. **Width 1024 without repeating the text** (§3.3.2): waits. 20k on the 151M-token corpus, both tokenizers, four seeds: 8 runs, ~11.9 h.
 
 The text's list of 19 October is answered (§33.117–§33.129); each item's outcome is in the journey.

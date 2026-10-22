@@ -961,3 +961,56 @@ on 19–20 October with one setting changed, so no new data or loader path is in
 - Every seed at least half, the mean further below: the same, but *smaller than at width 512*.
 - A seed below half: *the dependence on the run does not go with a longer warm-up.* Only then the
   twin on the thesis machine, another dropout draw (G-81).
+
+### 33.131 Item 3 prepared: gender and number at full training
+
+The text's item 3 (§33.130). At 10k what the causal tagger adds over the word form is not context
+(§33.129); at full training, 151M tokens and 50k steps, case's whole lead over the word form is the
+tagger's leak (§33.81). Do gender and number go the same way?
+
+**The cells**, under endings apart, where case's full training was measured: gender and number
+tagged in context, from the word form and from the causal tagger, and the null; seeds 0–3, 28 runs,
+about 10 h on the second machine. Then G-82's split of each feature's causal rest (§33.128).
+
+**The data.** The 151M-token stream under endings apart was on the thesis machine only, packed.
+- Unpacked there (`cache_pack.py`; six arrays, 8.84 GiB, each checked against the pack), its token
+  ids, its codes in context (part of speech, case, gender, number and the rest) and its null's codes
+  went to the second machine: 4.76 GB in twelve files, each checked by SHA-256 on arrival.
+- There the word-form codes were derived (`derive_lexical_codes_20261022T051852`, gender;
+  `…T052025`, number): 2,646,849 word types from 68.9M words of training text. A word's majority
+  value matches its value in context at 97.06% of occurrences for gender and 97.92% for number.
+  3.05% of validation words are unseen in training, against 5.59% at ~38M tokens (1,138,979 types).
+- And the causal tagger's codes (`derive_causal_ud_20261022T052158`; 73 min on that machine's CPU).
+  Its three checks passed: a window of four tokens tags 2,000 of 2,000 words as the whole prefix
+  does; the ids encode again identically; the full context reproduces the cached gender and number
+  on 805,818 training tokens and on the whole validation stream. The causal tag equals the tag in
+  context at 97.50% of tokens for gender and 99.10% for number (97.51% and 99.10% at ~38M tokens).
+- A cell of each piece ran 30 steps through the real loader on that machine, on its CPU while the
+  GPU trained, in a copy of the code whose records stay in the copy. All seven did, each reading the
+  stream's 662,380 training windows and its 1,418 validation windows.
+
+**The chain** (`scripts/chains/second_full_2026-10-22.sh`; pieces gender_f, number_f, null_f,
+split_f) starts when the warm-up chain lets go of its lock. Each feature's first seed must pass the
+pair check (in context against the word form). The null's first seed repeats the thesis machine's
+run `57f76ed51760` and must end within 0.01 of it (0.926563). Rehearsed with the stub, seven scenarios:
+everything runs (28 runs, four of each cell); a failed pair check skips that feature's other seeds;
+a failed twin check skips the null's; a causal cell not ready skips its feature; END_BY leaves
+every run for later; with every run done the split runs once per feature; with its records there it
+runs not at all.
+
+**Predictions** (before any run):
+- **P300** (~75%). At full training the causal tagger's lead over the word form is smaller than at
+  10k for both features (+0.0009 for gender and +0.0008 for number under endings apart, §33.127):
+  fewer words are unseen in training, and the word form's handicap after them shrinks.
+- **P301** (~75%). By the rule below, both features give *like case*.
+- **P302** (~55%). Number's leak (in context over the causal tagger) is positive at three seeds of
+  four or more.
+- **P303** (~45%). Gender read in context still leads its word form at three seeds of four or more.
+
+**What each outcome says** (the text's sentences, fixed before the run), for each feature:
+- the causal tagger's lead over the word form positive at fewer than three seeds of four, or seen
+  words whose value the sentence changes holding less than a third of it: *like case: at full
+  training what the sentence adds over the word form is not context*;
+- that lead positive at three seeds of four or more, and seen words whose value differs holding at
+  least half of it: *unlike case: gender (number) takes information of its own from the sentence*;
+- anything else: the split as it falls, each part with its size.

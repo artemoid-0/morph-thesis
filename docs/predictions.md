@@ -6,7 +6,7 @@ Each prediction was recorded in the [journey](record/journey/README.md) **before
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 177 right, 13 half right, 96 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 4 pending — of 299.
+**Tally:** 177 right, 13 half right, 96 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 8 pending — of 303.
 
 *Key to the tally (added 19 October 2026). Counted half right: P19, P46, P54 — with the eight
 whose outcome begins "half right" or "partly right". Counted right: P33, P172, P273 — right by their
@@ -329,3 +329,7 @@ The wrong ones carried the information:
 | P297 | With that warm-up, the mean gain at width 1024 is within 0.003 of width 512's under the same warm-up | pending | §33.130 |
 | P298 | The longer warm-up moves width 512's gain at 10k by less than 0.002 on the second machine (+0.0141 ± 0.0016 with 100 steps) | pending | §33.130 |
 | P299 | With the longer warm-up, width 1024's MultiBLiMP gain is within 1 point of its value with 100 steps (+5.3) and positive at every seed | pending | §33.130 |
+| P300 | At full training the causal tagger's lead over the word form is smaller than at 10k for both gender and number, under endings apart | pending | §33.131 |
+| P301 | At full training both gender and number give *like case*: what the sentence adds over the word form is not context | pending | §33.131 |
+| P302 | At full training number's leak (in context over the causal tagger) is positive at three seeds of four or more | pending | §33.131 |
+| P303 | At full training gender read in context still leads its word form at three seeds of four or more | pending | §33.131 |
