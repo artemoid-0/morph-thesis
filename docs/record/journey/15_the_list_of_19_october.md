@@ -908,3 +908,56 @@ from the sentence*.
 3. **G-82 is closed.** G-76 is now measured for gender and number as well. The word-form controls'
    handicap after unseen words is about the same for all three features: 0.00045 to 0.00055 below
    the null for gender and number, 0.0005 to 0.0007 for case.
+
+### 33.130 The text's request of 22 October, and G-81's recipe question prepared
+
+The text, checked against `a691568`, asks for four experiments in strict order: (1) the longer
+warm-up at width 1024 that G-81 holds, at four seeds under both tokenizers, then MultiBLiMP; (2)
+English part of speech at full training from the causal tagger; (3) gender and number at full
+training; (4) width 1024 at 20k on the 151M-token corpus, which repeats the text about once. Each
+passes the sentence test: its outcomes give the text different sentences. Items 1 and 3 run first,
+on the second machine; items 2 and 4 wait.
+
+**Item 1, G-81's recipe question.** At width 1024 and 10k, seeds 1 and 2 lose most of the
+tokenizer's gain early in training (−0.0004 and +0.0042, against +0.0127 and +0.0103 at seeds 0 and
+3; §33.120), and keep the split at 20k (§33.124). Every run of the thesis warms up for 100 steps to
+the same peak learning rate, 3 × 10⁻⁴, at every width; at 85M parameters that may be too short.
+- The nulls at width 1024 under BPE 17k and endings apart, ~38M tokens, 10k, seeds 0–3, with a
+  1,000-step warm-up: ten times the usual, a tenth of the budget, ending before the fall begins at
+  about step 1,500 (§33.122).
+- The same at width 512, so that width 1024's gain is set against width 512's under the same
+  recipe: a longer warm-up shifts every null.
+- Then MultiBLiMP on each width's eight. In all, 16 runs, about 8 h on the second machine (44 and
+  16 min a run).
+
+**The label.** `train.warmup` did not enter a run's label, so these runs would have joined the
+width-1024 cell as more seeds. It now adds `_wu<steps>` when it is not 100 (`morphlm/config.py`).
+The label tests say so, and had been failing since 20 October on the 5k look at G-81 (§33.121): it
+evaluated every 100 steps, never stopped early and ran on a 10k run's schedule, three settings the
+tests held to one value in every run. It is alone in its cell; the tests now name it as the one
+documented exception (`tests/test_labels.py`).
+
+**The chain** (`scripts/chains/second_2026-10-22.sh`; pieces wu1024, wu512, mbwu): each piece's first
+seed must pass the pair check. Rehearsed with the stub, five scenarios: everything runs (16 runs,
+each with the warm-up, width 1024 first); the pair check fails at width 1024 and its other seeds are
+skipped (10 runs); END_BY leaves every run for later; with every run done MultiBLiMP runs once per
+width; with its records there it runs not at all. Its cells are the nulls that ran on that machine
+on 19–20 October with one setting changed, so no new data or loader path is involved.
+
+**Predictions** (before any run):
+- **P296** (~50%). With a 1,000-step warm-up, the tokenizer's gain at width 1024 is at least half of
+  width 512's mean under the same warm-up at every seed: the split goes.
+- **P297** (~35%). Its mean is within 0.003 of width 512's under the same warm-up.
+- **P298** (~65%). The longer warm-up moves width 512's gain by less than 0.002 (+0.0141 ± 0.0016
+  with 100 steps, on the same machine).
+- **P299** (~70%). Width 1024's MultiBLiMP gain is within 1 point of its value with 100 steps (+5.3),
+  and positive at every seed.
+
+**What each outcome says** (the text's sentences, fixed before the run). With 100 steps, seeds 1 and
+2 sit below half of width 512's gain and seeds 0 and 3 above it, so the rule separates the old split.
+- Every seed at least half of width 512's mean under the same warm-up, and the mean within 0.003 of
+  it: *with a longer warm-up the gain at width 1024 holds at every seed, at width 512's level: the
+  dependence on the run was the training schedule's, not the model's.*
+- Every seed at least half, the mean further below: the same, but *smaller than at width 512*.
+- A seed below half: *the dependence on the run does not go with a longer warm-up.* Only then the
+  twin on the thesis machine, another dropout draw (G-81).

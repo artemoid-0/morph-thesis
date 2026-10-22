@@ -308,6 +308,8 @@ class ExperimentConfig:
         d = TrainConfig()
         if self.train.lr != d.lr:
             tag += f'_lr{self.train.lr:g}'
+        if self.train.warmup != d.warmup:
+            tag += f'_wu{self.train.warmup}'        # G-81's recipe question (journey §33.130)
         if self.train.max_steps != d.max_steps:
             tag += f'_st{self.train.max_steps // 1000}k'
         # The model's size too: a wider model labelled like the base one would

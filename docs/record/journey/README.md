@@ -76,6 +76,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [§33.119](15_the_list_of_19_october.md#33119-item-1-prepared-the-tokenizers-gain-at-width-1024), [§33.120](15_the_list_of_19_october.md#33120-item-1s-10k-half-at-85m-parameters-the-gain-halves-on-average-because-two-seeds-of-four-lose-it-early) — beyond 30M parameters: at 85M the gain halves at 10k, split by seed
 - [§33.121](15_the_list_of_19_october.md#33121-multiblimp-at-width-1024-and-a-finer-look-at-g-81-prepared-20-october), [§33.122](15_the_list_of_19_october.md#33122-multiblimp-at-width-1024-the-gain-holds-at-every-seed-and-stops-growing-g-81s-fall-is-no-spike) — at 85M parameters the grammatical gain holds at every seed and stops growing; the fall is no spike
 - [§33.124](15_the_list_of_19_october.md#33124-item-1s-20k-half-at-85m-parameters-the-gain-is-smaller-again-and-lasts-and-the-split-stays) — at 85M parameters the gain is smaller again and lasts; the split stays at 20k
+- [§33.130](15_the_list_of_19_october.md#33130-the-texts-request-of-22-october-and-g-81s-recipe-question-prepared) — G-81's recipe question prepared: a 1,000-step warm-up at widths 1024 and 512
 
 ### Q2: injected features against a same-shape null
 
@@ -438,6 +439,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [33.127 Item 2: gender's and number's lead over the word form is small, and little of it is the leak](15_the_list_of_19_october.md#33127-item-2-genders-and-numbers-lead-over-the-word-form-is-small-and-little-of-it-is-the-leak)
 - [33.128 G-82 prepared: the causal tagger's rest, split by the word it describes](15_the_list_of_19_october.md#33128-g-82-prepared-the-causal-taggers-rest-split-by-the-word-it-describes)
 - [33.129 G-82: what the causal tagger adds over the word form is not context](15_the_list_of_19_october.md#33129-g-82-what-the-causal-tagger-adds-over-the-word-form-is-not-context)
+- [33.130 The text's request of 22 October, and G-81's recipe question prepared](15_the_list_of_19_october.md#33130-the-texts-request-of-22-october-and-g-81s-recipe-question-prepared)
 
 ### Appendices
 

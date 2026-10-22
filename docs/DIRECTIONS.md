@@ -41,22 +41,19 @@ Also parked: morphology-factorized embeddings for parameter efficiency (Q1 partl
 
 ## The queue
 
-The thesis text's list of 19 October (§33.117), in its order, which the text confirmed on 20 October: each item with the sentence it states for every outcome (journey §33.117) and its cost from the recorded timings (`scripts/ops/run_times.py`).
+The thesis text's request of 22 October (§33.130), in its strict order: each item with the sentence it states for every outcome (journey §33.130) and its cost from the recorded timings (`scripts/ops/run_times.py`).
 Results committed by about 31 October reach the text; the work is admitted on 4 November.
 Each item's preparation runs on the CPU while the item before it trains.
 In the items, §3.x and "conclusion n" are the thesis text's sections, not the journey's.
 
-**Running:** nothing. The 24 hours of 20–21 October answered items 1, 3, 6 and 2 (§33.124, §33.126, §33.127); item 2's last question, G-82, was answered on 22 October (§33.129).
+**Running:** items 1 and 3 on the second machine, from 22 October; items 2 and 4 wait for their results.
 
-1. **The tokenizer's gain beyond 30M parameters**: answered (§33.120–§33.124). At 85M parameters it is smaller again and lasts: +0.0067 ± 0.0030 at 10k, +0.0075 ± 0.0018 at 20k, level over the last 5,000 steps; two seeds of four keep width 512's level and two lose much of it early (G-81). MultiBLiMP +5.3 and +4.7, below width 512's on the same machine.
-   Held, not asked by the text: G-81's recipe question (a longer warm-up, 4 runs, ~3 h).
-2. **Number and gender as context-aware features**: answered at 10k (§33.125, §33.127, §33.129). Their lead over the word form is about +0.001, and it is not context: the leak is a small part, and most of the rest sits after words unseen in training, where the word form misleads its model (G-82, closed).
-3. **Whether English part of speech's deficit closes**: answered (§33.126). It closes by 100k: −0.0005 ± 0.0010 (2/4), against −0.0019 at 50k.
-4. **The exposure redundancy at width 512**: answered (§33.118).
-5. **BLiMP's agreement at eight seeds**: answered (§33.117).
-6. **Unigram at width 512**: answered (§33.126). The 5M model's shortfall is gone at 30M parameters (−0.0004 ± 0.0003 at reference BPB 0.89).
+1. **Width 1024 "depends on the run" (G-81's recipe question)**: running (§33.130). The nulls at widths 1024 and 512 with a 1,000-step warm-up, 10k, seeds 0–3, both tokenizers, then MultiBLiMP: 16 runs, ~8 h. If the split stays, the twin on the thesis machine follows (another dropout draw).
+2. **English part of speech at full training, from the causal tagger** (§3.10, conclusion 7): waits. 50k, four seeds, on the second machine with the twins it lacks there (the tagged feature, the word form, the null): 12 runs, ~4.2 h.
+3. **Gender and number at full training** (§3.10): being prepared. In context, from the word form and from the causal tagger, with the null; 151M tokens, 50k, endings apart, four seeds: 28 runs, ~10.5 h. The stream and its derived codes go to the second machine first.
+4. **Width 1024 without repeating the text** (§3.3.2): waits. 20k on the 151M-token corpus, both tokenizers, four seeds: 8 runs, ~11.9 h.
 
-The text's list of 19 October is answered; what runs next waits for the text's next list.
+The text's list of 19 October is answered (§33.117–§33.129); each item's outcome is in the journey.
 
 **Dropped** by the sentence test (every outcome gives the same sentence, or none):
 - more seeds for English morpheme segmentation (the 12–13% gap is about nineteen times the widest seed spread);

@@ -50,7 +50,6 @@ LABEL_NEUTRAL = {
     'frozen.root_width': "the morpheme root factor's width: 16 in every run",
     'model.tie_output': '"none" in every run ("frozen" is a planned variant the model refuses)',
     'train.batch_size': '32 in every run',
-    'train.warmup': '100 in every run',
     'train.lr_horizon': 'the chains tie it to max_steps (steps() sets both), and max_steps is in the label',
     'train.eval_every': '500 in every run',
     'train.patience': '6 in every run',
@@ -79,7 +78,7 @@ INERT = ('train.seed', 'data.cache_dir', 'train.eval_buckets')
 # What the reasons above state about the records: one value in every run, or one per value of another field.
 FIXED = ('data.seq_len', 'data.max_articles_train', 'data.max_articles_val', 'data.morpholex_path',
          'data.vocab_csv', 'frozen.dep_granularity', 'frozen.root_width', 'model.tie_output',
-         'train.batch_size', 'train.warmup', 'train.eval_every', 'train.patience', 'train.grad_clip',
+         'train.batch_size', 'train.eval_every', 'train.patience', 'train.grad_clip',
          'train.weight_decay')
 FIXED_PER = {'data.corpus_holdout': 'data.corpus', 'data.spacy_model': 'data.corpus',
              'train.lr_horizon': 'train.max_steps'}
@@ -90,6 +89,15 @@ DOCUMENTED = {
         {'frozen.trainable', 'frozen.causal_identity'},
         'a baseline has no feature slot, so neither flag changes what it computes; seeds 0-3 ran '
         'without them, seeds 4-7 (scripts/chains/night_2026-10-16.sh) with them'),
+}
+
+# A run whose settings depart from what the reasons above state, documented: (fields, why). The
+# record checks pass over these fields for this run alone; it must stay alone in its cell.
+DOCUMENTED_RUNS = {
+    'e50b75e8fdd2': (
+        {'train.eval_every', 'train.patience', 'train.lr_horizon'},
+        "the 5k look at G-81 (journey §33.121): the first 5,000 steps of a 10k run replayed with the "
+        "10k run's schedule, evaluated every 100 steps and never stopped early; alone in its cell"),
 }
 
 # Values to probe a field with where one derived from its type would mean nothing to label()
@@ -240,18 +248,26 @@ def test_the_neutral_reasons_hold_in_results():
         print('  no runs in results/ — skipped')
         return
     rows = [dict(_fields(cfg)) for _, _, cfg in runs]
+    ids = [rid for rid, _, _ in runs]
+    labels = [label for _, label, _ in runs]
+    for rid, (fields, _) in DOCUMENTED_RUNS.items():
+        assert rid in ids, f'the documented run {rid} is no longer in results/: drop it from DOCUMENTED_RUNS'
+        assert labels.count(labels[ids.index(rid)]) == 1, f'the documented run {rid} has company in its cell'
+    skip = lambda rid, name: name in DOCUMENTED_RUNS.get(rid, (set(), ''))[0]
     for name in FIXED:
         assert name in LABEL_NEUTRAL, name
-        seen = {repr(r[name]) for r in rows}
+        seen = {repr(r[name]) for rid, r in zip(ids, rows) if not skip(rid, name)}
         assert len(seen) == 1, f'{name} takes {sorted(seen)} across the runs; its reason says one value'
     for name, key in FIXED_PER.items():
         assert name in LABEL_NEUTRAL, name
         per = {}
-        for r in rows:
-            per.setdefault(repr(r[key]), set()).add(repr(r[name]))
+        for rid, r in zip(ids, rows):
+            if not skip(rid, name):
+                per.setdefault(repr(r[key]), set()).add(repr(r[name]))
         many = {k: sorted(v) for k, v in per.items() if len(v) > 1}
         assert not many, f'{name} is not one value per {key}: {many}'
-    assert all(r['train.lr_horizon'] == r['train.max_steps'] for r in rows), \
+    assert all(r['train.lr_horizon'] == r['train.max_steps'] for rid, r in zip(ids, rows)
+               if not skip(rid, 'train.lr_horizon')), \
         'a run with lr_horizon unlike its max_steps: its label hides its schedule'
     # max_steps enters the label in thousands (`_st10k`): a budget off the thousand would share
     # the round budget's label

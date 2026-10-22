@@ -6,7 +6,7 @@ Each prediction was recorded in the [journey](record/journey/README.md) **before
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 177 right, 13 half right, 96 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, none pending — of 295.
+**Tally:** 177 right, 13 half right, 96 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 4 pending — of 299.
 
 *Key to the tally (added 19 October 2026). Counted half right: P19, P46, P54 — with the eight
 whose outcome begins "half right" or "partly right". Counted right: P33, P172, P273 — right by their
@@ -325,3 +325,7 @@ The wrong ones carried the information:
 | P293 | For number, words unseen in training hold at least half of that lead, under both tokenizers | right — 80% and 88% | §33.128, §33.129 |
 | P294 | Seen words whose value from the causal tagger differs from their form's majority hold less than a third of that lead, in each of the four cells | right — −4% to +6% in the four cells | §33.128, §33.129 |
 | P295 | After words unseen in training the word-form model ends below the null in each of the four cells, at one seed of four above it at most | right — −0.00048, −0.00045, −0.00054, −0.00055, 0/4 above in each | §33.128, §33.129 |
+| P296 | With a 1,000-step warm-up, the tokenizer's gain at width 1024 at 10k is at least half of width 512's mean under the same warm-up at every seed: the split goes | pending | §33.130 |
+| P297 | With that warm-up, the mean gain at width 1024 is within 0.003 of width 512's under the same warm-up | pending | §33.130 |
+| P298 | The longer warm-up moves width 512's gain at 10k by less than 0.002 on the second machine (+0.0141 ± 0.0016 with 100 steps) | pending | §33.130 |
+| P299 | With the longer warm-up, width 1024's MultiBLiMP gain is within 1 point of its value with 100 steps (+5.3) and positive at every seed | pending | §33.130 |
