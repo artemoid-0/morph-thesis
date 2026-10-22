@@ -813,6 +813,82 @@ def test_previous_unit_probe_labels():
     print('  previous-unit probe labels: oracle, model tables, model input OK')
 
 
+def test_loss_by_kind_unseen_by_lexicon():
+    """
+    G-82: `loss_by_kind.py --previous` classes each target by the word the feature
+    describes. With a training lexicon (--unseen-lexicon), `form unseen` is a word the
+    lexicon lacks, and a seen word whose form's majority is `none` joins `values
+    differ`; without one, every word whose form gives `none` counts as unseen
+    (§33.74). Every position of a word is coded as its word, and a lexicon other than
+    the one the form's codes came from stops the tool.
+    """
+    import os, json, types, tempfile, importlib.util
+    import numpy as np
+    from tokenizers import Tokenizer, models, trainers, pre_tokenizers, decoders
+    from morphlm.features.lexical import (tokenizer_tables, word_spans, build_lexicon, save_lexicon,
+                                          lexicon_path, lexicon_condition, lexical_codes)
+    here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    spec = importlib.util.spec_from_file_location('loss_by_kind', os.path.join(here, 'scripts', 'analysis', 'loss_by_kind.py'))
+    lk = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(lk)
+
+    N = 7                                                    # `none`, as in every 8-class UD block
+    C = {c: lk.PREVIOUS.index(c) for c in lk.PREVIOUS}
+    prep = np.array([1, 1, 0, 0, 0, 0, 0], dtype=bool)
+    ctx = np.array([2, 3, 1, 1, 2, 0, N])
+    lex = np.array([3, 3, 1, 2, N, N, N])
+    unseen = np.array([0, 0, 0, 0, 1, 0, 0], dtype=bool)    # position 5: seen, its majority `none`
+    common = [C['preposition, values differ'], C['preposition, values agree'], C['inputs agree'],
+              C['other word, values differ'], C['other word, form unseen']]
+    assert lk.previous_class(prep, ctx, lex, N, unseen).tolist() == \
+        common + [C['other word, values differ'], C['inputs agree']]
+    assert lk.previous_class(prep, ctx, lex, N).tolist() == \
+        common + [C['other word, form unseen'], C['inputs agree']], 'without a lexicon: the rule of §33.74'
+
+    train = 'Компанія відомий виробник. Вона бігла весь день, кіт сидів весь вечір.'
+    val = ' Вона бігла весь день. Ґанок відомий!'          # a word's key is its tokens': ' Вона', as in train
+    tok = Tokenizer(models.BPE())
+    tok.pre_tokenizer = pre_tokenizers.ByteLevel(add_prefix_space=False)
+    tok.decoder = decoders.ByteLevel()
+    tok.train_from_iterator([train] * 20, trainers.BpeTrainer(
+        vocab_size=300, initial_alphabet=pre_tokenizers.ByteLevel.alphabet(), show_progress=False))
+    with tempfile.TemporaryDirectory() as d:
+        path = os.path.join(d, 'bpe.json')
+        tok.save(path)
+        json.dump({'word_rule': 'decoded'}, open(os.path.join(d, 'bpe.meta.json'), 'w'))
+        tables = tokenizer_tables(path)
+
+        def words(ids):
+            wid, key, _ = word_spans(ids, tables)
+            return wid, [(tok.decode(ids[wid == w].tolist()).strip(), key[wid == w][0], np.flatnonzero(wid == w))
+                         for w in range(int(wid.max()) + 1)]
+        ids_t = np.array(tok.encode(train).ids, dtype=np.int64)
+        _, tw = words(ids_t)
+        lexicon = build_lexicon([k for _, k, _ in tw], [N if t == 'весь' else len(t) % 3 for t, _, _ in tw])
+        save_lexicon(lexicon_path(path, 'ugender', d, lexicon_condition('ukwiki', 0.05)), lexicon, {})
+        ids_v = np.array(tok.encode(val).ids, dtype=np.int64)
+        wid, vw = words(ids_v)
+        assert tables.frag[ids_v].sum() > 0, 'no split characters: the fragment rule goes untested'
+        form = lexical_codes(ids_v, lexicon, tables, N)
+        cfg = types.SimpleNamespace(data=types.SimpleNamespace(bpe_path=path, cache_dir=d, corpus='ukwiki',
+                                                                corpus_fraction=0.05))
+        got = lk.unseen_words(ids_v, form, cfg, 'ugender', N)
+        assert (got[wid < 0] == 2).all(), 'outside words'
+        for t, _, p in vw:
+            assert (got[p] == (0 if t == 'Ґанок' else 1)).all(), (t, got[p])
+            if t == 'весь':
+                assert (form[p] == N).all(), 'a seen word whose majority is none gives none from its form'
+        seen_word = next(p for t, _, p in vw if t == 'бігла')
+        bad = form.copy()
+        bad[seen_word[0]] = (bad[seen_word[0]] + 1) % 3
+        try:
+            lk.unseen_words(ids_v, bad, cfg, 'ugender', N)
+        except RuntimeError as e:
+            assert 'not lexicon' in str(e), e
+        else:
+            raise AssertionError('word-form codes from another lexicon were let through')
+    print('  loss_by_kind: classes by lexicon and by none; unseen words coded, a foreign lexicon refused OK')
+
 
 def test_feature_switch():
     """

@@ -130,6 +130,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [§33.69–§33.70](11_morphology_in_the_tokenizer.md#3369-why-exposure-helps-case-the-loss-by-what-each-token-is), [§33.74](12_full_training_and_the_leak.md#3374-what-the-sentences-case-adds-prepositions-and-words-the-form-never-saw), [§33.76](12_full_training_and_the_leak.md#3376-morphology-in-the-tokenizer-lasts-at-full-training--and-case-on-top-of-it-in-part-through-the-leak), [§33.81](12_full_training_and_the_leak.md#3381-case-at-full-training-without-the-leak-the-words-own-case-lasts-and-the-sentences-lead-was-the-leak) — the loss by what each token is
 - [§33.84](13_how_far_the_gain_travels.md#3384-context-aware-morphology-inside-the-models) — case, number and gender inside the models
 - [§33.105–§33.106](14_two_machines.md#33105-why-twins-differ-item-5s-probes-at-four-seeds-and-each-machines-afternoon-prepared-17-october), [§33.111–§33.112](14_two_machines.md#33111-the-probes-at-five-seeds-width-512s-twins-and-fifty-two-twins-in-all), [§33.114](14_two_machines.md#33114-the-width-probes-at-five-seeds-items-7-and-8-and-131-twins), [§33.116](14_two_machines.md#33116-the-follow-ups-by-20k-the-two-tokenizers-are-level-the-slot-costs-at-word-starts-or-helps-on-a-words-ending-by-tokenizer) — the probes at five seeds; where the slot's effect sits
+- [§33.128](15_the_list_of_19_october.md#33128-g-82-prepared-the-causal-taggers-rest-split-by-the-word-it-describes) — gender's and number's causal rest split by the word it describes, seen or unseen in training (prepared)
 
 ### Method and infrastructure: bugs, the two machines, twins
 
@@ -434,6 +435,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [33.125 Item 2 prepared: gender's and number's leak is spread over word classes, so their control is a causal tagger](15_the_list_of_19_october.md#33125-item-2-prepared-genders-and-numbers-leak-is-spread-over-word-classes-so-their-control-is-a-causal-tagger)
 - [33.126 Items 3 and 6: English part of speech's deficit closes by 100k, and at 30M parameters Unigram's shortfall goes](15_the_list_of_19_october.md#33126-items-3-and-6-english-part-of-speechs-deficit-closes-by-100k-and-at-30m-parameters-unigrams-shortfall-goes)
 - [33.127 Item 2: gender's and number's lead over the word form is small, and little of it is the leak](15_the_list_of_19_october.md#33127-item-2-genders-and-numbers-lead-over-the-word-form-is-small-and-little-of-it-is-the-leak)
+- [33.128 G-82 prepared: the causal tagger's rest, split by the word it describes](15_the_list_of_19_october.md#33128-g-82-prepared-the-causal-taggers-rest-split-by-the-word-it-describes)
 
 ### Appendices
 

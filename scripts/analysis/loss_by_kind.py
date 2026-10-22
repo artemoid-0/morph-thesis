@@ -44,11 +44,11 @@ case. Each target is put in one class by that described word — read through th
 model's own boundary rule and shift, so the classes are exactly what each model
 was given — using the stream's part-of-speech, case and word-form case codes:
 
-  preposition, cases differ   a preposition (ADP) whose case in context is not
+  preposition, values differ  a preposition (ADP) whose case in context is not
                               its form's: the case the tagger read from the next
                               word — where its right-context leak sits (§33.21)
-  preposition, cases agree
-  other word, cases differ    a word seen in train whose case in context is not
+  preposition, values agree
+  other word, values differ   a word seen in train whose case in context is not
                               its form's majority case (syncretism resolved from
                               either side)
   other word, form unseen     a word unseen in train: the form gives `none`
@@ -57,11 +57,22 @@ was given — using the stream's part-of-speech, case and word-form case codes:
 The first fact's gain minus the second's is reported per class, over all targets
 and over the tokens holding an ending's start, paired by seed.
 
+Any feature with a word-form variant goes the same way: --previous-facts names the
+stream's part of speech, the feature in context (or from a causal tagger) and the
+feature from the word form. With --unseen-lexicon the training lexicon decides
+what is unseen (G-82, gender and number): `form unseen` is then a word the lexicon
+lacks, and a seen word whose form's majority is `none` joins `values differ`;
+without it, every word whose form gives `none` counts as unseen (§33.74). A check
+that could fail: the form's codes must be that lexicon's at every position of the
+validation stream.
+
     python scripts/analysis/loss_by_kind.py
     python scripts/analysis/loss_by_kind.py --budget _st20k --tokenizers bpe_uk_17k bpeend_uk_17k --facts ucase
     python scripts/analysis/loss_by_kind.py --previous
     python scripts/analysis/loss_by_kind.py --previous --fraction 0.2 --budget '' --tokenizers bpe_uk_17k
     python scripts/analysis/loss_by_kind.py --machine second --tokenizers bpe_uk_4k bpe_uk_17k --facts mconst@OFF0
+    python scripts/analysis/loss_by_kind.py --machine second --tokenizers bpe_uk_17k bpeend_uk_17k \\
+        --facts ugendercausal ugenderlex --previous --previous-facts pos ugendercausal ugenderlex --unseen-lexicon ugender
 """
 import os
 import sys
@@ -83,7 +94,7 @@ WORD_CLASS = {'initial-uncut': 'uncut', 'cont-uncut': 'uncut', 'non-word': 'non-
 CLASSES = ('cut', 'uncut', 'non-word')
 ENDING = ('initial-ending', 'cont-ending')        # tokens holding the ending's start
 STEM = ('initial-stem', 'cont-cut-other')         # the rest of a cut word
-PREVIOUS = ('preposition, cases differ', 'preposition, cases agree', 'other word, cases differ',
+PREVIOUS = ('preposition, values differ', 'preposition, values agree', 'other word, values differ',
             'other word, form unseen', 'inputs agree')
 
 
@@ -154,13 +165,63 @@ def classify(ds, bpe_path, rule):
     return kind, counts
 
 
-def previous_classes(null_run, stream_sig, facts):
+def previous_class(prep, ctx, lex, none_code, unseen=None):
+    """
+    The PREVIOUS class of each target from its described word's shifted inputs:
+    `prep` marks a preposition, `ctx` and `lex` are the feature in context (or from a
+    causal tagger) and from the word form. `unseen` marks a word the training lexicon
+    lacks; without it, a word whose form gives `none` counts as unseen (§33.74).
+    """
+    differ = ctx != lex
+    if unseen is None:
+        unseen = lex == none_code
+    cls = np.full(len(ctx), PREVIOUS.index('inputs agree'), dtype=np.int8)
+    cls[prep & differ] = PREVIOUS.index('preposition, values differ')
+    cls[prep & ~differ] = PREVIOUS.index('preposition, values agree')
+    cls[~prep & differ & ~unseen] = PREVIOUS.index('other word, values differ')
+    cls[~prep & differ & unseen] = PREVIOUS.index('other word, form unseen')
+    # a check that could fail: the classes must be what the shifted inputs say —
+    # the two inputs equal wherever the class says they agree
+    agree = np.isin(cls, [PREVIOUS.index('preposition, values agree'), PREVIOUS.index('inputs agree')])
+    if bool((ctx[agree] != lex[agree]).any()):
+        raise RuntimeError('a target classed as agreeing has different inputs')
+    return cls
+
+
+def unseen_words(ids, form, cfg, lexicon_name, none_code):
+    """
+    Per stream position: 0 inside a word the training lexicon `lexicon_name` lacks,
+    1 inside a word it holds, 2 outside words — by the lexicon's own word rule, the
+    one the form's codes were made by. A check that could fail: `form`, the stream's
+    codes of the feature from the word form, are this lexicon's at every position.
+    """
+    from morphlm.features.lexical import (load_lexicon, lexicon_condition, tokenizer_tables,
+                                          word_spans, lexical_codes)
+    d = cfg.data
+    lex = load_lexicon(d.bpe_path, lexicon_name, d.cache_dir,
+                       condition=lexicon_condition(d.corpus, d.corpus_fraction))
+    tables = tokenizer_tables(d.bpe_path)
+    form = np.asarray(form)
+    mine = lexical_codes(ids, lex, tables, none_code)
+    if not np.array_equal(mine, form):
+        raise RuntimeError(f'the word-form codes are not lexicon {lexicon_name!r}\'s at '
+                           f'{int((mine != form).sum()):,} of {len(ids):,} positions')
+    wid, key, _ = word_spans(ids, tables)
+    keys = lex[0]
+    i = np.minimum(np.searchsorted(keys, key), len(keys) - 1)
+    seen = keys[i] == key
+    return np.where(wid < 0, 2, np.where(seen, 1, 0)).astype(np.int64)
+
+
+def previous_classes(null_run, stream_sig, facts, lexicon_name=None):
     """
     The PREVIOUS class of every scored target: the word the feature describes at
     the position that predicts it, read through the model's own boundary rule and
     causal shift (`word_runs`, `causal_shift`), so each class is exactly what the
-    models were given. `facts` are (part of speech, case in context, case from the
-    word form), read from the same validation stream.
+    models were given. `facts` are (part of speech, the feature in context or from
+    a causal tagger, the feature from the word form), read from the same
+    validation stream; `lexicon_name`, the training lexicon that decides what is
+    unseen (--unseen-lexicon).
     """
     import torch
     from morphlm.training.metrics import load_checkpoint
@@ -173,41 +234,53 @@ def previous_classes(null_run, stream_sig, facts):
     emb = model.embed.cpu()
     if not getattr(emb, 'causal_identity', False):
         raise RuntimeError(f'{null_run}: not a causal model — no shift to read')
-    data_cfg = dataclasses.replace(cfg, frozen=dataclasses.replace(cfg.frozen, facts=tuple(facts),
-                                                                   shuffle_codes=False))
-    ds = make_val_dataset(build_pipeline(data_cfg, verbose=False), data_cfg, verbose=False)
-    if list(ds.fact_names) != list(facts):
-        raise RuntimeError(f'asked for {list(facts)}, the loader gave {list(ds.fact_names)}')
-    sig = (len(ds.ids), int(np.asarray(ds.ids[:4096], dtype=np.int64).sum()),
-           int(np.asarray(ds.ids[-4096:], dtype=np.int64).sum()))
-    if sig != stream_sig:
-        raise RuntimeError('the codes were read from another validation stream than the one scored')
+    with_facts = lambda fs: dataclasses.replace(cfg, frozen=dataclasses.replace(cfg.frozen, facts=tuple(fs),
+                                                                               shuffle_codes=False))
+
+    def load(f):
+        # one fact at a time: a derived fact sits in a codes file of its own beside the stream's
+        # (`ugendercausal` with the causal tagger's, `ugenderlex` with its form's), never all three in one
+        c = with_facts([f])
+        d = make_val_dataset(build_pipeline(c, verbose=False), c, verbose=False)
+        if list(d.fact_names) != [f]:
+            raise RuntimeError(f'asked for {f}, the loader gave {list(d.fact_names)}')
+        sig = (len(d.ids), int(np.asarray(d.ids[:4096], dtype=np.int64).sum()),
+               int(np.asarray(d.ids[-4096:], dtype=np.int64).sum()))
+        if sig != stream_sig:
+            raise RuntimeError(f'the codes of {f} were read from another validation stream than the one scored')
+        return d
+    loaded = [load(f) for f in facts]
+    ds = loaded[0]
+    codes = [np.asarray(d.codes[0]) for d in loaded]
+    data_cfg = with_facts(facts)
     L, n_w = ds.seq_len, len(ds)
     ids = torch.from_numpy(np.asarray(ds.ids[:n_w * L], dtype=np.int64).reshape(n_w, L))
     with torch.no_grad():
         src, start = word_runs(emb._word_starts(ids))
     blocks = build_blocks(data_cfg)
     shifted = {}
-    for r, (f, blk) in enumerate(zip(facts, blocks)):
-        code = torch.from_numpy(np.asarray(ds.codes[r, :n_w * L], dtype=np.int64).reshape(n_w, L))
+    for f, blk, c in zip(facts, blocks, codes):
+        code = torch.from_numpy(c[:n_w * L].astype(np.int64).reshape(n_w, L))
         shifted[f] = causal_shift(code, src, start, blk.n_classes - 1).reshape(-1).numpy()
     pos, ctx, lex = (shifted[f] for f in facts)
-    none_case = blocks[2].n_classes - 1
+    none_code = blocks[2].n_classes - 1
     prep = pos == POS_CLASSES.index('ADP')
-    differ = ctx != lex
-    cls = np.full(len(pos), PREVIOUS.index('inputs agree'), dtype=np.int8)
-    cls[prep & differ] = PREVIOUS.index('preposition, cases differ')
-    cls[prep & ~differ] = PREVIOUS.index('preposition, cases agree')
-    cls[~prep & differ & (lex != none_case)] = PREVIOUS.index('other word, cases differ')
-    cls[~prep & differ & (lex == none_case)] = PREVIOUS.index('other word, form unseen')
-    # a check that could fail: the classes must be what the shifted inputs say —
-    # the two case inputs equal wherever the class says they agree
-    agree = np.isin(cls, [PREVIOUS.index('preposition, cases agree'), PREVIOUS.index('inputs agree')])
-    if bool((ctx[agree] != lex[agree]).any()):
-        raise RuntimeError('a target classed as agreeing has different inputs')
+    unseen = None
+    if lexicon_name:
+        word = unseen_words(np.asarray(ds.ids, dtype=np.int64), codes[2], data_cfg, lexicon_name, none_code)
+        word = torch.from_numpy(word[:n_w * L].reshape(n_w, L))
+        unseen = causal_shift(word, src, start, 2).reshape(-1).numpy() == 0
+        if bool((unseen & (lex != none_code)).any()):
+            raise RuntimeError('a word the lexicon lacks has a value from its form: the shifts disagree')
+    cls = previous_class(prep, ctx, lex, none_code, unseen)
     del model
+    differ = ctx != lex
     counts = {'targets': int(len(cls)), 'differ': int(differ.sum()), 'preposition': int(prep.sum()),
               'share': {c: float(np.mean(cls == i)) for i, c in enumerate(PREVIOUS)}}
+    if unseen is not None:
+        # against §33.74's rule: the targets after a seen word whose form's majority is `none`
+        counts.update({'unseen_lexicon': lexicon_name, 'described_word_unseen': int(unseen.sum()),
+                       'form_none_but_seen': int((~prep & differ & ~unseen & (lex == none_code)).sum())})
     return cls, counts
 
 
@@ -230,7 +303,11 @@ def main():
                     help='G-38: the first fact\'s gain minus the second\'s (or minus nothing, with one fact), by the word the feature describes')
     ap.add_argument('--previous-facts', nargs=3, default=['pos', 'ucase', 'ucaselex'],
                     metavar=('POS', 'CONTEXT', 'FORM'),
-                    help='the stream\'s part of speech, case in context and case from the word form')
+                    help='the stream\'s part of speech, the feature in context (or from a causal tagger) '
+                         'and from the word form')
+    ap.add_argument('--unseen-lexicon', default=None, metavar='NAME',
+                    help="with --previous: 'form unseen' is a word absent from this training lexicon (e.g. ugender), "
+                         "and a seen word whose form gives none joins 'values differ' (G-82)")
     ap.add_argument('--audit-dir', default=os.path.join(ROOT, 'results', 'audits'))
     a = ap.parse_args()
     t0 = time.time()
@@ -338,7 +415,7 @@ def main():
         if a.previous and a.facts and a.facts[0] in nll:
             # one feature alone: its gain over the null, by the word it describes
             f1, f2 = (a.facts[0], a.facts[1]) if len(a.facts) > 1 and a.facts[1] in nll else (a.facts[0], a.null)
-            pcls, pcounts = previous_classes(runs[a.null][seeds[0]], stream, a.previous_facts)
+            pcls, pcounts = previous_classes(runs[a.null][seeds[0]], stream, a.previous_facts, a.unseen_lexicon)
             if len(pcls) != len(kind):
                 raise RuntimeError('the previous-word classes and the target kinds differ in length')
             end_mask = np.isin(kind, [KINDS.index(k) for k in ENDING])
@@ -357,7 +434,8 @@ def main():
             rows = list(PREVIOUS) + ['total']
             keys = ('first', 'second', 'difference', 'difference_on_endings')
             summ = {c: {k: summary([v[c][k] for v in per_seed.values()]) for k in keys} for c in rows}
-            res['previous'] = {'facts': [f1, f2], 'codes': list(a.previous_facts), 'counts': pcounts,
+            res['previous'] = {'facts': [f1, f2], 'codes': list(a.previous_facts), 'unseen_lexicon': a.unseen_lexicon,
+                               'counts': pcounts,
                                'ending_target_share': {c: (float(end_mask[pcls == i].mean()) if (pcls == i).any() else None)
                                                        for i, c in enumerate(PREVIOUS)},
                                'per_seed': per_seed, 'summary': summ}
@@ -369,6 +447,11 @@ def main():
                 z = summ[c]
                 print(f'  {c:28} {share:7.2f}% {show(z["first"]):>24} {show(z["second"]):>24} '
                       f'{show(z["difference"]):>24} {show(z["difference_on_endings"]):>24}')
+            if a.unseen_lexicon:
+                n = pcounts['targets']
+                print(f'  by lexicon {a.unseen_lexicon}: the described word unseen at '
+                      f'{100 * pcounts["described_word_unseen"] / n:.2f}% of targets; a seen word whose form gives '
+                      f'none, the inputs differing, at {100 * pcounts["form_none_but_seen"] / n:.2f}%')
 
     if a.reference in out:
         print(f'\n  against {a.reference}: this tokenizer\'s gain minus the reference\'s, by word class, paired by seed')

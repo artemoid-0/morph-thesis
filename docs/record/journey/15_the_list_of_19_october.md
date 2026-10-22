@@ -787,3 +787,59 @@ The tally is 173 right, 13 half right, 96 wrong, 8 never tested, 1 withdrawn and
    text, on the CPU.
 3. **Number gains less where endings are exposed,** as case did in the 5M model at a fixed budget;
    gender shows no difference.
+
+### 33.128 G-82 prepared: the causal tagger's rest, split by the word it describes
+
+G-82 asks where gender's and number's causal rest sits (§33.127). The causal tagger leads the word
+form by +0.0007 to +0.0009 at 10k, at every seed. Either it tells a seen word's value from the words
+before it, which is the sentence's information, or it reads the ending of a word the training text
+never had, where the form gives the model `none`. For case at 10k, about half of the corresponding
+rest sat at such words (§33.74).
+
+**The tool.** `scripts/analysis/loss_by_kind.py --previous` (§33.74) now takes any feature with a
+word-form variant.
+- `--unseen-lexicon` decides what is unseen by the training lexicon itself: a word the lexicon lacks.
+  Under §33.74's rule any word whose form gives `none` counted as unseen; for gender and number
+  `none` is also the majority value of many seen words (plural forms have no gender, adverbs no
+  number). Such a seen word now joins the class whose value differs from its form's.
+- Each fact is loaded from its own codes file and checked against the scored stream: no file holds
+  part of speech, the causal tagger's codes and the word form's together.
+- A new check that could fail: the word form's codes must be the lexicon's at every position of the
+  validation stream.
+- The classes are named for any feature ("values differ"); without the option the rule is §33.74's.
+- New test, `test_loss_by_kind_unseen_by_lexicon`: the classes with and without a lexicon, every
+  position of an unseen word coded as unseen, codes from another lexicon refused.
+
+The tool was tried on the thesis machine on the four validation streams alone, before any model was
+scored; the lexicon check passed on all four. The two models' inputs differ at about 5% of targets,
+a little over half of them after words unseen in training.
+
+**Predictions** (before any model is scored; the class sizes above were seen when trying the tool):
+- **P292** (~60%). For gender, words unseen in training hold at least half of the causal tagger's
+  lead over the word form, under both tokenizers.
+- **P293** (~60%). For number likewise.
+- **P294** (~65%). Seen words whose value from the causal tagger differs from their form's majority
+  hold less than a third of that lead, in each of the four cells.
+- **P295** (~65%). After unseen words the word-form model ends below the null in each of the four
+  cells, at one seed of four above it at most: its `none`, which in training marked a word without
+  the feature, misleads it there, as for case (G-76).
+
+**What each outcome says**, for each feature, fixed before the run:
+- unseen words hold at least half under both tokenizers, and seen words less than a third: *what the
+  sentence's gender (number) adds over the word form is not context: a small part is the tagger's
+  leak, most the endings of words the training text never had*. The seen words' part bounds what
+  context adds.
+- seen words hold at least half under both tokenizers: *gender (number) takes a little information
+  of its own from the sentence*, as much as the seen words' part.
+- anything else: the split as it falls, each part with its size.
+
+**The run**, on the second machine, which holds the 32 models and their nulls. §33.74's split took
+49 s of GPU for 48 models. Every model is re-scored first, and nothing is reported unless each
+matches its record within 10⁻⁵ bits per byte.
+
+```bash
+python scripts/analysis/loss_by_kind.py --machine second --tokenizers bpe_uk_17k bpeend_uk_17k \
+    --facts ugendercausal ugenderlex --previous --previous-facts pos ugendercausal ugenderlex --unseen-lexicon ugender
+python scripts/analysis/loss_by_kind.py --machine second --tokenizers bpe_uk_17k bpeend_uk_17k \
+    --facts unumbercausal unumberlex --previous --previous-facts pos unumbercausal unumberlex --unseen-lexicon unumber
+```
