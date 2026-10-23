@@ -6,7 +6,7 @@ Each prediction was recorded in the [journey](record/journey/README.md) **before
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 183 right, 13 half right, 98 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, none pending — of 303.
+**Tally:** 183 right, 13 half right, 98 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 3 pending — of 306.
 
 *Key to the tally (added 19 October 2026). Counted half right: P19, P46, P54 — with the eight
 whose outcome begins "half right" or "partly right". Counted right: P33, P172, P273, P303 — right by their
@@ -335,3 +335,6 @@ The wrong ones carried the information:
 | P301 | At full training both gender and number give *like case*: what the sentence adds over the word form is not context | right — both *like case*: seen words whose value differs hold 4% and 2% of the rest | §33.131, §33.133 |
 | P302 | At full training number's leak (in context over the causal tagger) is positive at three seeds of four or more | wrong — positive at one seed of four (−0.0001 ± 0.0001) | §33.131, §33.133 |
 | P303 | At full training gender read in context still leads its word form at three seeds of four or more | right by its letter — 3/4, by +0.0002 ± 0.0001 | §33.131, §33.133 |
+| P304 | At full training English part of speech from the causal tagger ends level with the word form: its lead over the word form is positive at fewer than three seeds of four | pending | §33.134 |
+| P305 | At full training English part of speech's leak (in context over the causal tagger) is positive at three seeds of four or more | pending | §33.134 |
+| P306 | At full training English part of speech in context leads the word form at three seeds of four or more, and the leak is at least three quarters of that lead | pending | §33.134 |

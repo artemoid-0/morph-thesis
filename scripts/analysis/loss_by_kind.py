@@ -73,6 +73,8 @@ validation stream.
     python scripts/analysis/loss_by_kind.py --machine second --tokenizers bpe_uk_4k bpe_uk_17k --facts mconst@OFF0
     python scripts/analysis/loss_by_kind.py --machine second --tokenizers bpe_uk_17k bpeend_uk_17k \\
         --facts ugendercausal ugenderlex --previous --previous-facts pos ugendercausal ugenderlex --unseen-lexicon ugender
+    python scripts/analysis/loss_by_kind.py --machine second --corpus wikitext103 --budget '' --tokenizers bpe_17k \\
+        --facts poscausal poslex --previous --previous-facts pos poscausal poslex --unseen-lexicon pos
 """
 import os
 import sys
@@ -313,12 +315,15 @@ def main():
     t0 = time.time()
 
     R = RUNS.load(RUNS.results_of(a), machine=a.machine)
-    corpus = a.corpus + a.fraction
+    # WikiText-103, the default corpus, leaves the label as config.label() does: English cells carry no
+    # corpus part (`bpe_pos-LEARN-CAUSAL_bpe_17k`)
+    corpus = '' if a.corpus == 'wikitext103' else a.corpus + a.fraction
     def lab(f, t):
         # 'mconst@OFF0' names a switched cell, the switch's suffix after CAUSAL in its label: the null
         # switched off from step 0 is the empty slot (G-78, journey §33.105)
         base, _, switch = f.partition('@')
-        return f'bpe_{base}-LEARN-CAUSAL' + (f'-{switch}' if switch else '') + f'_{t}_{corpus}{a.budget}'
+        return (f'bpe_{base}-LEARN-CAUSAL' + (f'-{switch}' if switch else '') + f'_{t}'
+                + (f'_{corpus}' if corpus else '') + a.budget)
     rule = EndingRule()
     from morphlm.record import AuditRecord
     rec = AuditRecord('loss_by_kind', a, out_dir=a.audit_dir)
@@ -398,7 +403,7 @@ def main():
                                'ending_target_share': tok_end}
         out[t] = res
 
-        print(f'\n  {t} — {corpus}{a.budget}; gain over the null in bits per byte, paired by seed')
+        print(f'\n  {t} — {corpus or a.corpus}{a.budget}; gain over the null in bits per byte, paired by seed')
         print(f'  {"kind":16} {"targets":>8} {"null bits":>10} ' + ' '.join(f'{f:>26}' for f in a.facts if f in res['facts']))
         for i, k in enumerate(KINDS):
             print(f'  {k:16} {100 * share[k]:7.2f}% {null_bits[k] if null_bits[k] is not None else float("nan"):10.3f} '

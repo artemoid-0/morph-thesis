@@ -1132,3 +1132,51 @@ gender and number the leak has gone as well.
    preposition's case names the next noun's ending.
 3. **Number gives nothing over the null at full training, gender a little (+0.0011),** and the word
    form as much as the sentence: once the model has learned, what is left is the word's own form.
+
+### 33.134 Item 2 prepared: English part of speech at full training
+
+The text's item 2 (§33.130). At 10k and 20k English part of speech from a causal tagger leads the word
+form by +0.0006 ± 0.0004 and +0.0004 ± 0.0003 (3/4 each), and the tagger's leak is four fifths of
+the tagged feature's lead (§33.99, §33.107). At full training case's whole lead is the leak (§33.81).
+Does English part of speech go the same way, so that the text's conclusion on context can state full
+training for both languages?
+
+**The cells.** WikiText-103, width 128, 50k, seeds 0–3, on the second machine: part of speech tagged
+in context, from the word form and from the causal tagger, and the null. The word form's and the
+null's seeds 2–3 ran there on 18 October; the rest are 12 runs, ~4.2 h. The thesis machine's runs of
+these cells predate fields the configuration gained later, so their repeats take new run ids, and
+they are kept as twins. Then G-82's split of the causal tagger's rest.
+
+**The tool.** `loss_by_kind.py` now builds English labels (WikiText-103 leaves the label without a
+corpus part, as `config.label()` does). Tried on the thesis machine on the 10k runs' validation
+stream, no model scored: the English text decodes; the word form's codes are the lexicon's at every
+position; the two models' inputs differ at 22% of targets, and a word unseen in training is described
+at 0.6% of them (WikiText-103's vocabulary is closed), so the English split weighs seen words. The
+lexicon went to the second machine, checked by SHA-256.
+
+**The chain** (`scripts/chains/second_en_2026-10-23.sh`; pieces enfull, ennull, ensplit). Each piece's
+first run repeats a thesis machine run and must end within 0.01 of it: part of speech in context at
+seed 0 (1.340535), the null at seed 0 (1.340149). Its causal and in-context cells ran 30 steps through
+the real loader on that machine's GPU, in a copy of the code whose records stay in the copy. Rehearsed
+with the stub, seven scenarios: everything runs (16 runs, four of each cell); a failed twin check skips
+that piece's other seeds; a causal cell not ready skips its piece; END_BY leaves every run for later;
+with every run done the split runs once; with its record there it runs not at all.
+
+**Predictions** (before any run):
+- **P304** (~55%). At full training English part of speech from the causal tagger ends level with the
+  word form: its lead over the word form is positive at fewer than three seeds of four.
+- **P305** (~75%). The leak (in context over the causal tagger) is positive at three seeds of four or
+  more.
+- **P306** (~60%). Part of speech in context leads the word form at three seeds of four or more, and
+  the leak is at least three quarters of that lead.
+
+**What each outcome says** (the text's sentences, fixed before the run):
+- the causal tagger's lead over the word form positive at fewer than three seeds of four: *all leak:
+  at full training all that English part of speech from the sentence adds over the word form is the
+  tagger's leak, as for case*; the text's conclusion on context then states full training for both
+  languages;
+- positive at three seeds or more, seen words whose value differs holding less than a third of it:
+  *not context*, the leak and the rest that the split names;
+- positive at three seeds or more, those words holding at least half: *English part of speech takes
+  information of its own from the sentence*, and the conclusion splits by language;
+- anything else: the split as it falls.

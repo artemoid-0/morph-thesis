@@ -46,10 +46,10 @@ Results committed by about 31 October reach the text; the work is admitted on 4 
 Each item's preparation runs on the CPU while the item before it trains.
 In the items, §3.x and "conclusion n" are the thesis text's sections, not the journey's.
 
-**Running:** nothing. Items 1 and 3 are answered (§33.132, §33.133); items 2 and 4 wait for a decision on what runs next.
+**Running:** item 2 on the second machine, from 23 October (§33.134). Items 1 and 3 are answered (§33.132, §33.133); item 4 waits.
 
 1. **Width 1024 "depends on the run" (G-81's recipe question)**: answered (§33.130, §33.132). With a 1,000-step warm-up every seed keeps the gain, +0.0110 ± 0.0011 (4/4), smaller than width 512's +0.0147 under the same warm-up; MultiBLiMP +5.9, level with width 512's +6.0. The dependence on the run was the 100-step warm-up's; G-81 is closed.
-2. **English part of speech at full training, from the causal tagger** (§3.10, conclusion 7): waits. 50k, four seeds, on the second machine with the twins it lacks there (the tagged feature, the word form, the null): 12 runs, ~4.2 h.
+2. **English part of speech at full training, from the causal tagger** (§3.10, conclusion 7): running (§33.134). 50k, four seeds, on the second machine with the twins it lacks there (the tagged feature, the word form, the null): 12 runs, ~4.2 h; then G-82's split.
 3. **Gender and number at full training** (§3.10): answered (§33.131, §33.133). *Like case*: their lead over the word form falls to about +0.0002, the leak has gone, and the causal tagger's rest is not context (half after unseen words, 2–4% after seen words whose value differs).
 4. **Width 1024 without repeating the text** (§3.3.2): waits. 20k on the 151M-token corpus, both tokenizers, four seeds: 8 runs, ~11.9 h.
 
