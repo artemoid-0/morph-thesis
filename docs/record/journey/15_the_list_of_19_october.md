@@ -17,7 +17,8 @@ English part of speech leaves a deficit that closes by 100k, and at 30M paramete
 goes (§33.126). Gender's and number's lead over the word form is about 0.001 at 10k, and little of it
 is the leak (§33.127). The rest is not context: most of it sits after words unseen in training,
 where the word form misleads its model (§33.128–§33.129). At 85M parameters
-with a 1,000-step warm-up the tokenizer's gain holds at every seed, smaller than at 30M (§33.132).
+with a 1,000-step warm-up the tokenizer's gain holds at every seed, smaller than at 30M (§33.132). At full training
+gender's and number's lead over the word form is about 0.0002, without a leak, and not context (§33.133).
 
 ---
 
@@ -1063,3 +1064,71 @@ machine, needed only if the split had stayed, is not run. G-81 is closed.
    against +6.0 points.
 3. **The 100-step warm-up stays every other run's recipe.** At 30M parameters the longer one changes
    neither null nor the gain; at 85M it is the endings-apart null that needed it.
+
+### 33.133 Item 3: at full training gender's and number's lead over the word form is small, and not context
+
+The full-training chain (`second_full_2026-10-22.sh`, §33.131) ran on the second machine from 09:22 to
+19:08 EDT on 22 October: 28 runs of ~21 min, then G-82's split of each feature. None failed. Both pair
+checks passed, and the null's first seed repeated the thesis machine's run to 0.0007 (0.92725 against
+0.92656). Endings apart, 151M tokens, 50k, paired by seed within the machine
+(`paired_cells_20261023T004525`; the null's four runs are the thesis machine's repeated, kept in
+`results/audits/device_twins_20261022/`). Gains in bits per byte (positive: the first better):
+
+| full training, endings apart | gender | number |
+|---|---|---|
+| in context over the word form: the lead | +0.0002 ± 0.0001 (3/4) | +0.0002 ± 0.0002 (3/4) |
+| in context over the causal tagger: the leak | −0.0001 ± 0.0001 (2/4) | −0.0001 ± 0.0001 (1/4) |
+| the causal tagger over the word form: the rest | +0.0002 ± 0.0001 (4/4) | +0.0003 ± 0.0003 (3/4) |
+| in context over the null | +0.0011 ± 0.0006 (3/4) | −0.0005 ± 0.0005 (1/4) |
+| the word form over the null | +0.0010 ± 0.0007 (3/4) | −0.0007 ± 0.0006 (2/4) |
+
+At 10k the leads were +0.0008 and +0.0010, the rests +0.0009 and +0.0008 (§33.127).
+
+**The split** (`loss_by_kind_20261022T230754`, gender; `loss_by_kind_20261022T230806`, number; 24 models
+re-scored to their records within 9 × 10⁻⁹). What the causal tagger adds over the word form, by the
+word the feature describes:
+
+| described word | gender | number |
+|---|---|---|
+| a word unseen in training (1.35% and 1.50% of targets) | +0.00011 ± 0.00001 (4/4), 47% | +0.00016 ± 0.00001 (4/4), 50% |
+| a seen word whose value differs from its form's majority (2.27%, 1.63%) | +0.00001 ± 0.00001 (3/4), 4% | +0.00001 ± 0.00001 (2/4), 2% |
+| a preposition (9.1%) | +0.00002 (3/4), 11% | +0.00001 (3/4), 3% |
+| every other target: the same input in both models | +0.00008 ± 0.00008 (2/4), 37% | +0.00015 ± 0.00026 (3/4), 46% |
+| **the whole rest** | **+0.00022 ± 0.00010 (4/4)** | **+0.00033 ± 0.00030 (3/4)** |
+
+The described word is unseen in training at 2.38% of targets, against 4.33% at ~38M tokens. After
+unseen words the word-form model again ends below the null, −0.00006 and −0.00015 (0/4 each), and the
+causal tagger's model gains +0.00004 and +0.00002 over it.
+
+- **What the sentence adds over the word form has nearly gone:** about +0.0002 for both features,
+  against about +0.001 at 10k.
+- **There is no leak left:** in context over the causal tagger −0.0001 for both.
+- **The rest is not context:** half of it sits after words unseen in training, where the word form
+  misleads its model; after seen words whose value the sentence changes the models differ by 2–4% of
+  it; the other half is spread where both models see the same input.
+- **Over the null** gender still gains +0.0011 ± 0.0006 (3/4), from the word form as much as from the
+  sentence; number gains nothing, −0.0005 ± 0.0005 (1/4).
+
+**Predictions** (§33.131).
+- **P300 right:** the rest is +0.0002 and +0.0003, against +0.0009 and +0.0008 at 10k.
+- **P301 right:** both features give *like case*; seen words whose value differs hold 4% and 2% of
+  the rest.
+- **P302 wrong:** number's leak is positive at one seed of four.
+- **P303 right by its letter:** gender in context leads its word form at three seeds of four, by
+  +0.0002.
+
+The tally is 183 right, 13 half right, 98 wrong, 8 never tested, 1 withdrawn and none pending, of 303.
+
+**The sentence** (the rule of §33.131): both features *like case*. *At full training what the
+sentence adds to gender and number over the word form is not context — and it is small, about 0.0002
+bits per byte, with no leak left.* For case at full training the whole lead was the leak (§33.81); for
+gender and number the leak has gone as well.
+
+**What it changes for the thesis.**
+1. **At full training, as at 10k, the sentence adds no context to gender and number over the word
+   form.** Their lead shrinks from about 0.001 to 0.0002; half of what is left is the word form's
+   handicap after words unseen in training.
+2. **Their leak goes with training;** case's did not (+0.0015 at full training, §33.81), since a
+   preposition's case names the next noun's ending.
+3. **Number gives nothing over the null at full training, gender a little (+0.0011),** and the word
+   form as much as the sentence: once the model has learned, what is left is the word's own form.

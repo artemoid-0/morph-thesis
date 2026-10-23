@@ -96,6 +96,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [§33.127](15_the_list_of_19_october.md#33127-item-2-genders-and-numbers-lead-over-the-word-form-is-small-and-little-of-it-is-the-leak) — gender and number: the lead over the word form is small, the leak a small part of it
 - [§33.129](15_the_list_of_19_october.md#33129-g-82-what-the-causal-tagger-adds-over-the-word-form-is-not-context) — and what the causal tagger adds over the word form is not context
 - [§33.131](15_the_list_of_19_october.md#33131-item-3-prepared-gender-and-number-at-full-training) — gender and number at full training prepared: the stream moved, the codes derived
+- [§33.133](15_the_list_of_19_october.md#33133-item-3-at-full-training-genders-and-numbers-lead-over-the-word-form-is-small-and-not-context) — at full training gender's and number's lead over the word form is small, and not context
 
 ### The learning law: a feature helps until the model has learned it
 
@@ -444,6 +445,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [33.130 The text's request of 22 October, and G-81's recipe question prepared](15_the_list_of_19_october.md#33130-the-texts-request-of-22-october-and-g-81s-recipe-question-prepared)
 - [33.131 Item 3 prepared: gender and number at full training](15_the_list_of_19_october.md#33131-item-3-prepared-gender-and-number-at-full-training)
 - [33.132 Item 1: with a longer warm-up the gain at width 1024 holds at every seed](15_the_list_of_19_october.md#33132-item-1-with-a-longer-warm-up-the-gain-at-width-1024-holds-at-every-seed)
+- [33.133 Item 3: at full training gender's and number's lead over the word form is small, and not context](15_the_list_of_19_october.md#33133-item-3-at-full-training-genders-and-numbers-lead-over-the-word-form-is-small-and-not-context)
 
 ### Appendices
 

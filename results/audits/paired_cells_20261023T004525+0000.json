@@ -1,0 +1,723 @@
+{
+  "script": "paired_cells",
+  "args": {
+    "pair": [
+      [
+        "ugender:lead",
+        "bpe_ugenderlex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "bpe_ugender-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2"
+      ],
+      [
+        "ugender:leak",
+        "bpe_ugendercausal-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "bpe_ugender-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2"
+      ],
+      [
+        "ugender:rest",
+        "bpe_ugenderlex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "bpe_ugendercausal-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2"
+      ],
+      [
+        "ugender:context-over-null",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "bpe_ugender-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2"
+      ],
+      [
+        "ugender:form-over-null",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "bpe_ugenderlex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2"
+      ],
+      [
+        "ugender:causal-over-null",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "bpe_ugendercausal-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2"
+      ],
+      [
+        "unumber:lead",
+        "bpe_unumberlex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "bpe_unumber-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2"
+      ],
+      [
+        "unumber:leak",
+        "bpe_unumbercausal-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "bpe_unumber-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2"
+      ],
+      [
+        "unumber:rest",
+        "bpe_unumberlex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "bpe_unumbercausal-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2"
+      ],
+      [
+        "unumber:context-over-null",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "bpe_unumber-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2"
+      ],
+      [
+        "unumber:form-over-null",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "bpe_unumberlex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2"
+      ],
+      [
+        "unumber:causal-over-null",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "bpe_unumbercausal-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2"
+      ]
+    ],
+    "seeds": null,
+    "machine": "second",
+    "results": [
+      "/home/neko/PycharmProjects/Morph/results"
+    ]
+  },
+  "timestamp_utc": "2026-10-23T00:45:25+00:00",
+  "results": {
+    "pairs": [
+      {
+        "name": "ugender:lead",
+        "A": "bpe_ugenderlex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "B": "bpe_ugender-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "seeds": {
+          "0": {
+            "effect": -0.00042989069176235795,
+            "A": 0.927894406912904,
+            "B": 0.9274645162211417,
+            "machine": "5090",
+            "runs": [
+              "cc52587c49e4",
+              "363f9983ea54"
+            ]
+          },
+          "1": {
+            "effect": -0.00014307324487128348,
+            "A": 0.9251557316891978,
+            "B": 0.9250126584443266,
+            "machine": "5090",
+            "runs": [
+              "cee5e2b8b751",
+              "02d450f45fc1"
+            ]
+          },
+          "2": {
+            "effect": 2.123856505575894e-05,
+            "A": 0.9275462067148817,
+            "B": 0.9275674452799375,
+            "machine": "5090",
+            "runs": [
+              "8b4dfc0e8d90",
+              "97d1edc8250f"
+            ]
+          },
+          "3": {
+            "effect": -0.00013500387398213132,
+            "A": 0.925049103600612,
+            "B": 0.9249140997266299,
+            "machine": "5090",
+            "runs": [
+              "5c0f615ff9b5",
+              "c2735608a209"
+            ]
+          }
+        },
+        "mean": -0.00017168231139000345,
+        "se": 9.40096709213434e-05,
+        "positive": 1,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "ugender:leak",
+        "A": "bpe_ugendercausal-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "B": "bpe_ugender-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "seeds": {
+          "0": {
+            "effect": -5.205495929294646e-05,
+            "A": 0.9275165711804346,
+            "B": 0.9274645162211417,
+            "machine": "5090",
+            "runs": [
+              "4bfd8e6b9d34",
+              "363f9983ea54"
+            ]
+          },
+          "1": {
+            "effect": -0.00012740589077542275,
+            "A": 0.925140064335102,
+            "B": 0.9250126584443266,
+            "machine": "5090",
+            "runs": [
+              "065fc88decc6",
+              "02d450f45fc1"
+            ]
+          },
+          "2": {
+            "effect": 0.00011790110720588665,
+            "A": 0.9274495441727316,
+            "B": 0.9275674452799375,
+            "machine": "5090",
+            "runs": [
+              "ee6e7c676c96",
+              "97d1edc8250f"
+            ]
+          },
+          "3": {
+            "effect": 0.00026361727512846933,
+            "A": 0.9246504824515014,
+            "B": 0.9249140997266299,
+            "machine": "5090",
+            "runs": [
+              "d3d56e344541",
+              "c2735608a209"
+            ]
+          }
+        },
+        "mean": 5.051438306649669e-05,
+        "se": 8.762130022215263e-05,
+        "positive": 2,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "ugender:rest",
+        "A": "bpe_ugenderlex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "B": "bpe_ugendercausal-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "seeds": {
+          "0": {
+            "effect": -0.0003778357324694115,
+            "A": 0.927894406912904,
+            "B": 0.9275165711804346,
+            "machine": "5090",
+            "runs": [
+              "cc52587c49e4",
+              "4bfd8e6b9d34"
+            ]
+          },
+          "1": {
+            "effect": -1.566735409586073e-05,
+            "A": 0.9251557316891978,
+            "B": 0.925140064335102,
+            "machine": "5090",
+            "runs": [
+              "cee5e2b8b751",
+              "065fc88decc6"
+            ]
+          },
+          "2": {
+            "effect": -9.66625421501277e-05,
+            "A": 0.9275462067148817,
+            "B": 0.9274495441727316,
+            "machine": "5090",
+            "runs": [
+              "8b4dfc0e8d90",
+              "ee6e7c676c96"
+            ]
+          },
+          "3": {
+            "effect": -0.00039862114911060065,
+            "A": 0.925049103600612,
+            "B": 0.9246504824515014,
+            "machine": "5090",
+            "runs": [
+              "5c0f615ff9b5",
+              "d3d56e344541"
+            ]
+          }
+        },
+        "mean": -0.00022219669445650014,
+        "se": 9.736627161508135e-05,
+        "positive": 0,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "ugender:context-over-null",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "B": "bpe_ugender-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "seeds": {
+          "0": {
+            "effect": 0.000210173209646225,
+            "A": 0.9272543430114955,
+            "B": 0.9274645162211417,
+            "machine": "5090",
+            "runs": [
+              "57f76ed51760",
+              "363f9983ea54"
+            ]
+          },
+          "1": {
+            "effect": -0.0029054111740089983,
+            "A": 0.9279180696183356,
+            "B": 0.9250126584443266,
+            "machine": "5090",
+            "runs": [
+              "ae75b666d616",
+              "02d450f45fc1"
+            ]
+          },
+          "2": {
+            "effect": -0.0009221921741716654,
+            "A": 0.9284896374541092,
+            "B": 0.9275674452799375,
+            "machine": "5090",
+            "runs": [
+              "7e17426e0388",
+              "97d1edc8250f"
+            ]
+          },
+          "3": {
+            "effect": -0.0009553253096000747,
+            "A": 0.9258694250362299,
+            "B": 0.9249140997266299,
+            "machine": "5090",
+            "runs": [
+              "0d7539f05ca2",
+              "c2735608a209"
+            ]
+          }
+        },
+        "mean": -0.0011431888620336284,
+        "se": 0.000646860921699577,
+        "positive": 1,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "ugender:form-over-null",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "B": "bpe_ugenderlex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "seeds": {
+          "0": {
+            "effect": 0.0006400639014085829,
+            "A": 0.9272543430114955,
+            "B": 0.927894406912904,
+            "machine": "5090",
+            "runs": [
+              "57f76ed51760",
+              "cc52587c49e4"
+            ]
+          },
+          "1": {
+            "effect": -0.002762337929137715,
+            "A": 0.9279180696183356,
+            "B": 0.9251557316891978,
+            "machine": "5090",
+            "runs": [
+              "ae75b666d616",
+              "cee5e2b8b751"
+            ]
+          },
+          "2": {
+            "effect": -0.0009434307392274244,
+            "A": 0.9284896374541092,
+            "B": 0.9275462067148817,
+            "machine": "5090",
+            "runs": [
+              "7e17426e0388",
+              "8b4dfc0e8d90"
+            ]
+          },
+          "3": {
+            "effect": -0.0008203214356179434,
+            "A": 0.9258694250362299,
+            "B": 0.925049103600612,
+            "machine": "5090",
+            "runs": [
+              "0d7539f05ca2",
+              "5c0f615ff9b5"
+            ]
+          }
+        },
+        "mean": -0.0009715065506436249,
+        "se": 0.0006968908055498369,
+        "positive": 1,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "ugender:causal-over-null",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "B": "bpe_ugendercausal-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "seeds": {
+          "0": {
+            "effect": 0.00026222816893917145,
+            "A": 0.9272543430114955,
+            "B": 0.9275165711804346,
+            "machine": "5090",
+            "runs": [
+              "57f76ed51760",
+              "4bfd8e6b9d34"
+            ]
+          },
+          "1": {
+            "effect": -0.0027780052832335755,
+            "A": 0.9279180696183356,
+            "B": 0.925140064335102,
+            "machine": "5090",
+            "runs": [
+              "ae75b666d616",
+              "065fc88decc6"
+            ]
+          },
+          "2": {
+            "effect": -0.001040093281377552,
+            "A": 0.9284896374541092,
+            "B": 0.9274495441727316,
+            "machine": "5090",
+            "runs": [
+              "7e17426e0388",
+              "ee6e7c676c96"
+            ]
+          },
+          "3": {
+            "effect": -0.001218942584728544,
+            "A": 0.9258694250362299,
+            "B": 0.9246504824515014,
+            "machine": "5090",
+            "runs": [
+              "0d7539f05ca2",
+              "d3d56e344541"
+            ]
+          }
+        },
+        "mean": -0.001193703245100125,
+        "se": 0.0006227614762518097,
+        "positive": 1,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "unumber:lead",
+        "A": "bpe_unumberlex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "B": "bpe_unumber-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "seeds": {
+          "0": {
+            "effect": -0.00020267226642822767,
+            "A": 0.9267562699517992,
+            "B": 0.9265535976853709,
+            "machine": "5090",
+            "runs": [
+              "589e0c70d483",
+              "110ab764fd60"
+            ]
+          },
+          "1": {
+            "effect": 0.0004373059281289615,
+            "A": 0.9276923845310718,
+            "B": 0.9281296904592008,
+            "machine": "5090",
+            "runs": [
+              "024981f21c30",
+              "86274aa3fc59"
+            ]
+          },
+          "2": {
+            "effect": -0.00039647458206015784,
+            "A": 0.9300590776763016,
+            "B": 0.9296626030942414,
+            "machine": "5090",
+            "runs": [
+              "0062fc8185e7",
+              "48f15ded2ffb"
+            ]
+          },
+          "3": {
+            "effect": -0.0006473359683755175,
+            "A": 0.9277023100573665,
+            "B": 0.927054974088991,
+            "machine": "5090",
+            "runs": [
+              "98443ad215f2",
+              "4aceee4f576c"
+            ]
+          }
+        },
+        "mean": -0.00020229422218373538,
+        "se": 0.00023181470028391262,
+        "positive": 1,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "unumber:leak",
+        "A": "bpe_unumbercausal-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "B": "bpe_unumber-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "seeds": {
+          "0": {
+            "effect": 7.085991017830029e-05,
+            "A": 0.9264827377751926,
+            "B": 0.9265535976853709,
+            "machine": "5090",
+            "runs": [
+              "70d2e56206e3",
+              "110ab764fd60"
+            ]
+          },
+          "1": {
+            "effect": -4.240983960790423e-06,
+            "A": 0.9281339314431616,
+            "B": 0.9281296904592008,
+            "machine": "5090",
+            "runs": [
+              "f95b3fdea177",
+              "86274aa3fc59"
+            ]
+          },
+          "2": {
+            "effect": 6.219059132950289e-05,
+            "A": 0.9296004125029119,
+            "B": 0.9296626030942414,
+            "machine": "5090",
+            "runs": [
+              "e83f186cd709",
+              "48f15ded2ffb"
+            ]
+          },
+          "3": {
+            "effect": 0.00036636420686519955,
+            "A": 0.9266886098821258,
+            "B": 0.927054974088991,
+            "machine": "5090",
+            "runs": [
+              "fd6486480964",
+              "4aceee4f576c"
+            ]
+          }
+        },
+        "mean": 0.00012379343110305308,
+        "se": 8.25783770125121e-05,
+        "positive": 3,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "unumber:rest",
+        "A": "bpe_unumberlex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "B": "bpe_unumbercausal-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "seeds": {
+          "0": {
+            "effect": -0.00027353217660652795,
+            "A": 0.9267562699517992,
+            "B": 0.9264827377751926,
+            "machine": "5090",
+            "runs": [
+              "589e0c70d483",
+              "70d2e56206e3"
+            ]
+          },
+          "1": {
+            "effect": 0.00044154691208975194,
+            "A": 0.9276923845310718,
+            "B": 0.9281339314431616,
+            "machine": "5090",
+            "runs": [
+              "024981f21c30",
+              "f95b3fdea177"
+            ]
+          },
+          "2": {
+            "effect": -0.00045866517338966073,
+            "A": 0.9300590776763016,
+            "B": 0.9296004125029119,
+            "machine": "5090",
+            "runs": [
+              "0062fc8185e7",
+              "e83f186cd709"
+            ]
+          },
+          "3": {
+            "effect": -0.001013700175240717,
+            "A": 0.9277023100573665,
+            "B": 0.9266886098821258,
+            "machine": "5090",
+            "runs": [
+              "98443ad215f2",
+              "fd6486480964"
+            ]
+          }
+        },
+        "mean": -0.00032608765328678846,
+        "se": 0.0003003349079603176,
+        "positive": 1,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "unumber:context-over-null",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "B": "bpe_unumber-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "seeds": {
+          "0": {
+            "effect": -0.0007007453261245189,
+            "A": 0.9272543430114955,
+            "B": 0.9265535976853709,
+            "machine": "5090",
+            "runs": [
+              "57f76ed51760",
+              "110ab764fd60"
+            ]
+          },
+          "1": {
+            "effect": 0.00021162084086523425,
+            "A": 0.9279180696183356,
+            "B": 0.9281296904592008,
+            "machine": "5090",
+            "runs": [
+              "ae75b666d616",
+              "86274aa3fc59"
+            ]
+          },
+          "2": {
+            "effect": 0.0011729656401322508,
+            "A": 0.9284896374541092,
+            "B": 0.9296626030942414,
+            "machine": "5090",
+            "runs": [
+              "7e17426e0388",
+              "48f15ded2ffb"
+            ]
+          },
+          "3": {
+            "effect": 0.0011855490527610257,
+            "A": 0.9258694250362299,
+            "B": 0.927054974088991,
+            "machine": "5090",
+            "runs": [
+              "0d7539f05ca2",
+              "4aceee4f576c"
+            ]
+          }
+        },
+        "mean": 0.00046734755190849797,
+        "se": 0.00045125264585630856,
+        "positive": 3,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "unumber:form-over-null",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "B": "bpe_unumberlex-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "seeds": {
+          "0": {
+            "effect": -0.0004980730596962912,
+            "A": 0.9272543430114955,
+            "B": 0.9267562699517992,
+            "machine": "5090",
+            "runs": [
+              "57f76ed51760",
+              "589e0c70d483"
+            ]
+          },
+          "1": {
+            "effect": -0.00022568508726372727,
+            "A": 0.9279180696183356,
+            "B": 0.9276923845310718,
+            "machine": "5090",
+            "runs": [
+              "ae75b666d616",
+              "024981f21c30"
+            ]
+          },
+          "2": {
+            "effect": 0.0015694402221924086,
+            "A": 0.9284896374541092,
+            "B": 0.9300590776763016,
+            "machine": "5090",
+            "runs": [
+              "7e17426e0388",
+              "0062fc8185e7"
+            ]
+          },
+          "3": {
+            "effect": 0.0018328850211365433,
+            "A": 0.9258694250362299,
+            "B": 0.9277023100573665,
+            "machine": "5090",
+            "runs": [
+              "0d7539f05ca2",
+              "98443ad215f2"
+            ]
+          }
+        },
+        "mean": 0.0006696417740922334,
+        "se": 0.0006005511510765861,
+        "positive": 2,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "unumber:causal-over-null",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "B": "bpe_unumbercausal-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "seeds": {
+          "0": {
+            "effect": -0.0007716052363028192,
+            "A": 0.9272543430114955,
+            "B": 0.9264827377751926,
+            "machine": "5090",
+            "runs": [
+              "57f76ed51760",
+              "70d2e56206e3"
+            ]
+          },
+          "1": {
+            "effect": 0.00021586182482602467,
+            "A": 0.9279180696183356,
+            "B": 0.9281339314431616,
+            "machine": "5090",
+            "runs": [
+              "ae75b666d616",
+              "f95b3fdea177"
+            ]
+          },
+          "2": {
+            "effect": 0.001110775048802748,
+            "A": 0.9284896374541092,
+            "B": 0.9296004125029119,
+            "machine": "5090",
+            "runs": [
+              "7e17426e0388",
+              "e83f186cd709"
+            ]
+          },
+          "3": {
+            "effect": 0.0008191848458958262,
+            "A": 0.9258694250362299,
+            "B": 0.9266886098821258,
+            "machine": "5090",
+            "runs": [
+              "0d7539f05ca2",
+              "fd6486480964"
+            ]
+          }
+        },
+        "mean": 0.0003435541208054449,
+        "se": 0.00041580627031564206,
+        "positive": 3,
+        "n": 4,
+        "skipped_across_machines": {}
+      }
+    ]
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-10-23T00:45:25+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "f8c647ea28ef0b4a1092239fdbefeca3310b42c3",
+    "git_dirty": true
+  },
+  "notes": [
+    "effect = B minus A in bits per byte at each seed (positive: A better); pairs on one machine only"
+  ]
+}

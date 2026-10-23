@@ -147,8 +147,10 @@ Read in context they lead their word forms by about +0.001 (+0.0008 to +0.0010, 
 A causal tagger keeps +0.0007 to +0.0009 over the word form (4/4 each), and that rest is not context.
 Split by the word the feature describes, 61–88% of it sits after words unseen in training (+0.0006 to +0.0007, 4/4 each), and there it is mostly the word form's loss — its model ends 0.00045 to 0.00055 below the null (0/4 each; G-76) — not the tagger's gain (+0.0001, 4/4 each).
 After a seen word whose gender or number the sentence changes the two models differ by −4% to +6% of the rest; 10–34% is spread over targets both models see alike (§33.125, §33.127–§33.129).
+**At full training** (151M tokens, 50k, endings apart) their lead over the word form is **+0.0002** (3/4 each) and the leak has gone (−0.0001 for both); the causal tagger's +0.0002 and +0.0003 is not context either: half sits after words unseen in training, 2–4% after seen words whose value the sentence changes.
+Over the null gender still gains +0.0011 ± 0.0006 (3/4), from the word form as much as from the sentence; number gains nothing (−0.0005 ± 0.0005, 1/4) (§33.131, §33.133).
 
-*The control at four seeds: under two tokenizers at ~38M and at full training; for English part of speech at 10k and 20k; for Ukrainian gender and number at 10k, on a second machine.
+*The control at four seeds: under two tokenizers at ~38M and at full training; for English part of speech at 10k and 20k; for Ukrainian gender and number at 10k and at full training, on a second machine.
 A split of the lead by the word the feature describes had put 55–60% after prepositions — but two trained models compared target by target are not a model and its counterfactual (§33.74, §33.76, §33.81).
 Gender's and number's split is such a comparison too; the part where both models see the same input says they differ in what they learned as well (§33.129).*
 
