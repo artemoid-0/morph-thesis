@@ -18,7 +18,8 @@ goes (§33.126). Gender's and number's lead over the word form is about 0.001 at
 is the leak (§33.127). The rest is not context: most of it sits after words unseen in training,
 where the word form misleads its model (§33.128–§33.129). At 85M parameters
 with a 1,000-step warm-up the tokenizer's gain holds at every seed, smaller than at 30M (§33.132). At full training
-gender's and number's lead over the word form is about 0.0002, without a leak, and not context (§33.133).
+gender's and number's lead over the word form is about 0.0002, without a leak, and not context (§33.133). English part of
+speech's causal tagger keeps nothing reliable over the word form at full training (§33.135).
 
 ---
 
@@ -1180,3 +1181,53 @@ with every run done the split runs once; with its record there it runs not at al
 - positive at three seeds or more, those words holding at least half: *English part of speech takes
   information of its own from the sentence*, and the conclusion splits by language;
 - anything else: the split as it falls.
+
+### 33.135 Item 2: at full training English part of speech's causal tagger keeps nothing reliable over the word form
+
+The English chain (`second_en_2026-10-23.sh`, §33.134) ran on the second machine from 20:55 EDT on 22
+October to 01:09 on 23 October: 12 runs of ~21 min, then the split. None failed. Both twin checks
+passed: part of speech in context at seed 0 ended 0.0042 from the thesis machine's run, the null
+0.0006. WikiText-103, 50k, four seeds, every pair within the machine (the word form's and the null's
+seeds 2–3 ran there on 18 October). Gains in bits per byte (positive: the first better):
+
+| full training, English | seeds 0–3 | mean |
+|---|---|---|
+| in context over the word form: the lead | +0.0028, +0.0018, +0.0047, −0.0004 | +0.0022 ± 0.0011 (3/4) |
+| in context over the causal tagger: the leak | −0.0000, −0.0000, +0.0064, +0.0006 | +0.0017 ± 0.0016 (2/4) |
+| the causal tagger over the word form: the rest | +0.0029, +0.0018, −0.0018, −0.0010 | +0.0005 ± 0.0011 (2/4) |
+| in context over the null | +0.0044, −0.0014, +0.0039, +0.0014 | +0.0021 ± 0.0013 (3/4) |
+| the word form over the null | | −0.0001 ± 0.0012 (2/4) |
+| the causal tagger over the null | | +0.0003 ± 0.0015 (2/4) |
+
+At 10k and 20k the lead was +0.0031 and +0.0025, the leak +0.0025 and +0.0021 (4/4 each), the rest
++0.0006 and +0.0004 (3/4 each; §33.99, §33.107).
+
+- **The seeds split in two.** At seeds 0 and 1 the causal tagger's model ends level with the tagged
+  feature's (no leak) and ahead of the word form's; at seeds 2 and 3 it ends behind both, at seed 2
+  behind the null. Each causal run converged as its siblings did, still improving over its last 5,000
+  steps, so none is set aside.
+- **By the mean the lead is mostly the leak:** +0.0017 of +0.0022, 77%. The rest, +0.0005 ± 0.0011, is
+  positive at two seeds of four.
+- **The split** (`loss_by_kind_20261023T050924`; 12 models re-scored within 1.6 × 10⁻⁸). The only part
+  of the rest present at every seed sits after words unseen in training, +0.00030 ± 0.00005 (4/4), on
+  0.6% of targets, where the word form ends below the null (−0.00030). After seen words whose part of
+  speech the causal tagger changes (20.7% of targets) it is +0.00018 ± 0.00034 (2/4).
+
+**Predictions** (§33.134).
+- **P304 right:** the causal tagger's lead over the word form is positive at two seeds of four.
+- **P305 wrong:** the leak is positive at two seeds of four.
+- **P306 right:** in context leads the word form at three seeds of four, and the leak is 77% of that lead.
+
+The tally is 185 right, 13 half right, 99 wrong, 8 never tested, 1 withdrawn and none pending, of 306.
+
+**The sentence** (the rule of §33.134): the causal tagger's lead over the word form is positive at fewer
+than three seeds of four, so *all leak: at full training all that English part of speech from the
+sentence adds over the word form is the tagger's leak, as for case*. Its caveat: at full training the
+seeds disagree on where the lead sits, so the leak's share, 77%, is a mean over seeds that split.
+
+**What it changes for the thesis.**
+1. **At full training, in both languages, what the sentence adds over the word form is not context.**
+   For English part of speech the causal tagger keeps nothing reliable over the word form (+0.0005 ±
+   0.0011, 2/4); the lead in context, +0.0022, is mostly the leak by its mean. For Ukrainian case it is
+   all the leak (§33.81); for gender and number the lead is small and has no leak (§33.133).
+2. **The text's conclusion on context can state full training for both languages.**

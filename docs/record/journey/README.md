@@ -98,6 +98,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [§33.131](15_the_list_of_19_october.md#33131-item-3-prepared-gender-and-number-at-full-training) — gender and number at full training prepared: the stream moved, the codes derived
 - [§33.133](15_the_list_of_19_october.md#33133-item-3-at-full-training-genders-and-numbers-lead-over-the-word-form-is-small-and-not-context) — at full training gender's and number's lead over the word form is small, and not context
 - [§33.134](15_the_list_of_19_october.md#33134-item-2-prepared-english-part-of-speech-at-full-training) — English part of speech at full training prepared
+- [§33.135](15_the_list_of_19_october.md#33135-item-2-at-full-training-english-part-of-speechs-causal-tagger-keeps-nothing-reliable-over-the-word-form) — at full training English part of speech's causal tagger keeps nothing reliable over the word form
 
 ### The learning law: a feature helps until the model has learned it
 
@@ -448,6 +449,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [33.132 Item 1: with a longer warm-up the gain at width 1024 holds at every seed](15_the_list_of_19_october.md#33132-item-1-with-a-longer-warm-up-the-gain-at-width-1024-holds-at-every-seed)
 - [33.133 Item 3: at full training gender's and number's lead over the word form is small, and not context](15_the_list_of_19_october.md#33133-item-3-at-full-training-genders-and-numbers-lead-over-the-word-form-is-small-and-not-context)
 - [33.134 Item 2 prepared: English part of speech at full training](15_the_list_of_19_october.md#33134-item-2-prepared-english-part-of-speech-at-full-training)
+- [33.135 Item 2: at full training English part of speech's causal tagger keeps nothing reliable over the word form](15_the_list_of_19_october.md#33135-item-2-at-full-training-english-part-of-speechs-causal-tagger-keeps-nothing-reliable-over-the-word-form)
 
 ### Appendices
 

@@ -141,6 +141,7 @@ A context-aware feature helps before the model has learned to read the context i
 
 **And in English.**
 Part of speech from a causal tagger (each word tagged from its left context alone) leads the word form by only +0.0006 ± 0.0004 at 10k and +0.0004 ± 0.0003 at 20k (3/4 each), against the tagged feature's +0.0031 and +0.0025; the leak is +0.0025 ± 0.0004 and +0.0021 ± 0.0005 (4/4 each), four fifths of the lead (§33.99, §33.107).
+**At full training** (WikiText-103, 50k, a second machine) the causal tagger keeps nothing reliable over the word form: +0.0005 ± 0.0011 (2/4), its one steady part (+0.0003, 4/4) after words unseen in training. The lead in context, +0.0022 ± 0.0011 (3/4), is the leak by its mean, +0.0017 (77%), though the seeds split: at two the causal tagger matches the tagged feature, at two it falls behind the word form (§33.134, §33.135).
 
 **Gender and number, at 10k.**
 Read in context they lead their word forms by about +0.001 (+0.0008 to +0.0010, 4/4 each, under BPE 17k and endings apart; a third to a half of case's lead), and little of that is the tagger's leak: 30% and none for gender, 10% and 21% for number.
@@ -150,7 +151,7 @@ After a seen word whose gender or number the sentence changes the two models dif
 **At full training** (151M tokens, 50k, endings apart) their lead over the word form is **+0.0002** (3/4 each) and the leak has gone (−0.0001 for both); the causal tagger's +0.0002 and +0.0003 is not context either: half sits after words unseen in training, 2–4% after seen words whose value the sentence changes.
 Over the null gender still gains +0.0011 ± 0.0006 (3/4), from the word form as much as from the sentence; number gains nothing (−0.0005 ± 0.0005, 1/4) (§33.131, §33.133).
 
-*The control at four seeds: under two tokenizers at ~38M and at full training; for English part of speech at 10k and 20k; for Ukrainian gender and number at 10k and at full training, on a second machine.
+*The control at four seeds: under two tokenizers at ~38M and at full training; for English part of speech at 10k and 20k; for Ukrainian gender and number at 10k and at full training, and for English part of speech at full training, on a second machine.
 A split of the lead by the word the feature describes had put 55–60% after prepositions — but two trained models compared target by target are not a model and its counterfactual (§33.74, §33.76, §33.81).
 Gender's and number's split is such a comparison too; the part where both models see the same input says they differ in what they learned as well (§33.129).*
 

@@ -57,6 +57,7 @@ baseline `bpe_baseline_bpe_17k`, seeds [0, 1, 2, 3, 4, 5, 6, 7]: 1.3477, 1.3482,
 | bpe_pos-LEARN-CAUSAL-OFF0_bpe_17k | none of [0, 1, 2, 3] | - | not comparable: its baseline ran on the other machine at seed(s) [0, 1, 2, 3] | | |
 | bpe_pos-LEARN-CAUSAL-OFF5000_bpe_17k | none of [0, 1, 2, 3] | - | not comparable: its baseline ran on the other machine at seed(s) [0, 1, 2, 3] | | |
 | bpe_pos-LEARN-CAUSAL_bpe_17k | 0,1,2,3 | +0.0072 +0.0109 +0.0198 +0.0113 | +0.0123 +/- 0.0027 | +0.91% | 4/4 |
+| bpe_poscausal-LEARN-CAUSAL_bpe_17k | none of [0, 1, 2, 3] | - | not comparable: its baseline ran on the other machine at seed(s) [0, 1, 2, 3] | | |
 | bpe_poslex-LEARN-CAUSAL_bpe_17k | 0,1 | +0.0098 +0.0064 | +0.0081 +/- 0.0017 | +0.60% | 2/2 |
 
 baseline `bpe_baseline_bpe_17k_st10k`, seeds [0, 1, 2, 3]: 1.5266, 1.5298, 1.5289, 1.5281
@@ -262,6 +263,7 @@ baseline `morph_baseline_Spdiwc`, seeds [0, 1]: 1.5292, 1.5297
 - `bpe_mfreq-LEARN-CAUSAL_bpe_17k` against `bpe_baseline_bpe_17k`: seed(s) [2, 3] left out, the cell and its baseline ran on two machines.
 - `bpe_pos-LEARN-CAUSAL-OFF0_bpe_17k` against `bpe_baseline_bpe_17k`: seed(s) [0, 1, 2, 3] left out, the cell and its baseline ran on two machines.
 - `bpe_pos-LEARN-CAUSAL-OFF5000_bpe_17k` against `bpe_baseline_bpe_17k`: seed(s) [0, 1, 2, 3] left out, the cell and its baseline ran on two machines.
+- `bpe_poscausal-LEARN-CAUSAL_bpe_17k` against `bpe_baseline_bpe_17k`: seed(s) [0, 1, 2, 3] left out, the cell and its baseline ran on two machines.
 - `bpe_poslex-LEARN-CAUSAL_bpe_17k` against `bpe_baseline_bpe_17k`: seed(s) [2, 3] left out, the cell and its baseline ran on two machines.
 - `bpe_mconst-LEARN-CAUSAL-OFF0_bpe_uk_17k_ukwiki0.002_st10k` against `bpe_baseline_bpe_uk_17k_ukwiki0.002_st10k`: seed(s) [0, 1, 2, 3] left out, the cell and its baseline ran on two machines.
 - `bpe_mconst-LEARN-CAUSAL-OFF0_bpe_uk_17k_ukwiki0.01_st10k` against `bpe_baseline_bpe_uk_17k_ukwiki0.01_st10k`: seed(s) [0, 1, 2, 3] left out, the cell and its baseline ran on two machines.

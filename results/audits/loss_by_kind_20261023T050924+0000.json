@@ -1,0 +1,1086 @@
+{
+  "script": "loss_by_kind",
+  "args": {
+    "results": [
+      "/home/vyzserver/morph/code/results"
+    ],
+    "machine": "second",
+    "corpus": "wikitext103",
+    "fraction": "0.05",
+    "budget": "",
+    "tokenizers": [
+      "bpe_17k"
+    ],
+    "reference": "bpe_uk_17k",
+    "null": "mconst",
+    "facts": [
+      "poscausal",
+      "poslex"
+    ],
+    "tol": 1e-05,
+    "previous": true,
+    "previous_facts": [
+      "pos",
+      "poscausal",
+      "poslex"
+    ],
+    "unseen_lexicon": "pos",
+    "audit_dir": "/home/vyzserver/morph/code/results/audits"
+  },
+  "timestamp_utc": "2026-10-23T05:09:24+00:00",
+  "results": {
+    "ending_rule": "f8bb86d44819b4b1",
+    "tokenizers": {
+      "bpe_17k": {
+        "counts": {
+          "tokens": 252255,
+          "targets": 252160,
+          "words": 177685,
+          "cut_words": 0,
+          "cuts_in_text": 0,
+          "tokens_holding_a_cut": 0,
+          "cuts_at_a_token_start": 0
+        },
+        "target_share": {
+          "initial-uncut": 0.704413864213198,
+          "initial-ending": 0.0,
+          "initial-stem": 0.0,
+          "cont-ending": 0.0,
+          "cont-cut-other": 0.0,
+          "cont-uncut": 0.13435517131979696,
+          "non-word": 0.16123096446700508
+        },
+        "null_bits_per_target": {
+          "initial-uncut": 6.840139603564308,
+          "initial-ending": null,
+          "initial-stem": null,
+          "cont-ending": null,
+          "cont-cut-other": null,
+          "cont-uncut": 4.875134307475892,
+          "non-word": 3.5304081064257753
+        },
+        "facts": {
+          "poscausal": {
+            "per_seed": {
+              "0": {
+                "initial-uncut": 0.0031727102217534815,
+                "initial-ending": 0.0,
+                "initial-stem": 0.0,
+                "cont-ending": 0.0,
+                "cont-cut-other": 0.0,
+                "cont-uncut": 0.0007668170300636687,
+                "non-word": 0.0004849032275302381,
+                "total": 0.004424430479347388
+              },
+              "1": {
+                "initial-uncut": 0.002145525433422858,
+                "initial-ending": 0.0,
+                "initial-stem": 0.0,
+                "cont-ending": 0.0,
+                "cont-cut-other": 0.0,
+                "cont-uncut": -0.003515909585694558,
+                "non-word": 2.3514295867526502e-05,
+                "total": -0.001346869856404173
+              },
+              "2": {
+                "initial-uncut": 0.001259952866744034,
+                "initial-ending": 0.0,
+                "initial-stem": 0.0,
+                "cont-ending": 0.0,
+                "cont-cut-other": 0.0,
+                "cont-uncut": -0.003794026799581866,
+                "non-word": -3.255255337638628e-05,
+                "total": -0.0025666264862142176
+              },
+              "3": {
+                "initial-uncut": 0.0025170436340296266,
+                "initial-ending": 0.0,
+                "initial-stem": 0.0,
+                "cont-ending": 0.0,
+                "cont-cut-other": 0.0,
+                "cont-uncut": -0.0010344109845862389,
+                "non-word": -0.0006590992052743529,
+                "total": 0.0008235334441690344
+              }
+            },
+            "by_kind": {
+              "initial-uncut": {
+                "mean": 0.0022738080389875,
+                "se": 0.0003991185523596785,
+                "n": 4,
+                "positive": 4,
+                "values": [
+                  0.0031727102217534815,
+                  0.002145525433422858,
+                  0.001259952866744034,
+                  0.0025170436340296266
+                ]
+              },
+              "initial-ending": {
+                "mean": 0.0,
+                "se": 0.0,
+                "n": 4,
+                "positive": 0,
+                "values": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ]
+              },
+              "initial-stem": {
+                "mean": 0.0,
+                "se": 0.0,
+                "n": 4,
+                "positive": 0,
+                "values": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ]
+              },
+              "cont-ending": {
+                "mean": 0.0,
+                "se": 0.0,
+                "n": 4,
+                "positive": 0,
+                "values": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ]
+              },
+              "cont-cut-other": {
+                "mean": 0.0,
+                "se": 0.0,
+                "n": 4,
+                "positive": 0,
+                "values": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ]
+              },
+              "cont-uncut": {
+                "mean": -0.0018943825849497486,
+                "se": 0.001082417529603259,
+                "n": 4,
+                "positive": 1,
+                "values": [
+                  0.0007668170300636687,
+                  -0.003515909585694558,
+                  -0.003794026799581866,
+                  -0.0010344109845862389
+                ]
+              },
+              "non-word": {
+                "mean": -4.5808558813243636e-05,
+                "se": 0.00023501095667042985,
+                "n": 4,
+                "positive": 2,
+                "values": [
+                  0.0004849032275302381,
+                  2.3514295867526502e-05,
+                  -3.255255337638628e-05,
+                  -0.0006590992052743529
+                ]
+              },
+              "total": {
+                "mean": 0.00033361689522450803,
+                "se": 0.0015332487675671076,
+                "n": 4,
+                "positive": 2,
+                "values": [
+                  0.004424430479347388,
+                  -0.001346869856404173,
+                  -0.0025666264862142176,
+                  0.0008235334441690344
+                ]
+              }
+            },
+            "by_class": {
+              "cut": {
+                "mean": 0.0,
+                "se": 0.0,
+                "n": 4,
+                "positive": 0,
+                "values": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ]
+              },
+              "uncut": {
+                "mean": 0.0003794254540377516,
+                "se": 0.0014560707189271438,
+                "n": 4,
+                "positive": 2,
+                "values": [
+                  0.00393952725181715,
+                  -0.0013703841522717001,
+                  -0.0025340739328378317,
+                  0.0014826326494433877
+                ]
+              },
+              "non-word": {
+                "mean": -4.5808558813243636e-05,
+                "se": 0.00023501095667042985,
+                "n": 4,
+                "positive": 2,
+                "values": [
+                  0.0004849032275302381,
+                  2.3514295867526502e-05,
+                  -3.255255337638628e-05,
+                  -0.0006590992052743529
+                ]
+              }
+            },
+            "ending_tokens": {
+              "mean": 0.0,
+              "se": 0.0,
+              "n": 4,
+              "positive": 0,
+              "values": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "stem_tokens": {
+              "mean": 0.0,
+              "se": 0.0,
+              "n": 4,
+              "positive": 0,
+              "values": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "ending_gain_share": 0.0,
+            "ending_target_share": 0.0
+          },
+          "poslex": {
+            "per_seed": {
+              "0": {
+                "initial-uncut": 0.002827788942417044,
+                "initial-ending": 0.0,
+                "initial-stem": 0.0,
+                "cont-ending": 0.0,
+                "cont-cut-other": 0.0,
+                "cont-uncut": -0.0018124529101406536,
+                "non-word": 0.0005380388814213075,
+                "total": 0.001553374913697698
+              },
+              "1": {
+                "initial-uncut": 0.0019399259147614575,
+                "initial-ending": 0.0,
+                "initial-stem": 0.0,
+                "cont-ending": 0.0,
+                "cont-cut-other": 0.0,
+                "cont-uncut": -0.004946158756842504,
+                "non-word": -0.0001146160355713503,
+                "total": -0.0031208488776523955
+              },
+              "2": {
+                "initial-uncut": 0.0019367637076640055,
+                "initial-ending": 0.0,
+                "initial-stem": 0.0,
+                "cont-ending": 0.0,
+                "cont-cut-other": 0.0,
+                "cont-uncut": -0.002567135011317823,
+                "non-word": -0.00016593078385016664,
+                "total": -0.0007963020875039841
+              },
+              "3": {
+                "initial-uncut": 0.0012781035653853703,
+                "initial-ending": 0.0,
+                "initial-stem": 0.0,
+                "cont-ending": 0.0,
+                "cont-cut-other": 0.0,
+                "cont-uncut": 0.0009407927678670371,
+                "non-word": -0.00040824423399906165,
+                "total": 0.001810652099253345
+              }
+            },
+            "by_kind": {
+              "initial-uncut": {
+                "mean": 0.0019956455325569693,
+                "se": 0.0003180540931896182,
+                "n": 4,
+                "positive": 4,
+                "values": [
+                  0.002827788942417044,
+                  0.0019399259147614575,
+                  0.0019367637076640055,
+                  0.0012781035653853703
+                ]
+              },
+              "initial-ending": {
+                "mean": 0.0,
+                "se": 0.0,
+                "n": 4,
+                "positive": 0,
+                "values": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ]
+              },
+              "initial-stem": {
+                "mean": 0.0,
+                "se": 0.0,
+                "n": 4,
+                "positive": 0,
+                "values": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ]
+              },
+              "cont-ending": {
+                "mean": 0.0,
+                "se": 0.0,
+                "n": 4,
+                "positive": 0,
+                "values": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ]
+              },
+              "cont-cut-other": {
+                "mean": 0.0,
+                "se": 0.0,
+                "n": 4,
+                "positive": 0,
+                "values": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ]
+              },
+              "cont-uncut": {
+                "mean": -0.0020962384776084856,
+                "se": 0.0012127064146550618,
+                "n": 4,
+                "positive": 1,
+                "values": [
+                  -0.0018124529101406536,
+                  -0.004946158756842504,
+                  -0.002567135011317823,
+                  0.0009407927678670371
+                ]
+              },
+              "non-word": {
+                "mean": -3.768804299981777e-05,
+                "se": 0.00020230700655463627,
+                "n": 4,
+                "positive": 1,
+                "values": [
+                  0.0005380388814213075,
+                  -0.0001146160355713503,
+                  -0.00016593078385016664,
+                  -0.00040824423399906165
+                ]
+              },
+              "total": {
+                "mean": -0.00013828098805133417,
+                "se": 0.0011542942595700876,
+                "n": 4,
+                "positive": 2,
+                "values": [
+                  0.001553374913697698,
+                  -0.0031208488776523955,
+                  -0.0007963020875039841,
+                  0.001810652099253345
+                ]
+              }
+            },
+            "by_class": {
+              "cut": {
+                "mean": 0.0,
+                "se": 0.0,
+                "n": 4,
+                "positive": 0,
+                "values": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ]
+              },
+              "uncut": {
+                "mean": -0.00010059294505151647,
+                "se": 0.0011309559494464586,
+                "n": 4,
+                "positive": 2,
+                "values": [
+                  0.0010153360322763905,
+                  -0.003006232842081046,
+                  -0.0006303713036538174,
+                  0.002218896333252407
+                ]
+              },
+              "non-word": {
+                "mean": -3.768804299981777e-05,
+                "se": 0.00020230700655463627,
+                "n": 4,
+                "positive": 1,
+                "values": [
+                  0.0005380388814213075,
+                  -0.0001146160355713503,
+                  -0.00016593078385016664,
+                  -0.00040824423399906165
+                ]
+              }
+            },
+            "ending_tokens": {
+              "mean": 0.0,
+              "se": 0.0,
+              "n": 4,
+              "positive": 0,
+              "values": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "stem_tokens": {
+              "mean": 0.0,
+              "se": 0.0,
+              "n": 4,
+              "positive": 0,
+              "values": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "ending_gain_share": -0.0,
+            "ending_target_share": 0.0
+          }
+        },
+        "previous": {
+          "facts": [
+            "poscausal",
+            "poslex"
+          ],
+          "codes": [
+            "pos",
+            "poscausal",
+            "poslex"
+          ],
+          "unseen_lexicon": "pos",
+          "counts": {
+            "targets": 252160,
+            "differ": 56284,
+            "preposition": 31731,
+            "share": {
+              "preposition, values differ": 0.010326776649746194,
+              "preposition, values agree": 0.11550999365482234,
+              "other word, values differ": 0.20705107868020303,
+              "other word, form unseen": 0.005829631979695432,
+              "inputs agree": 0.661282519035533
+            },
+            "unseen_lexicon": "pos",
+            "described_word_unseen": 1470,
+            "form_none_but_seen": 37533
+          },
+          "ending_target_share": {
+            "preposition, values differ": 0.0,
+            "preposition, values agree": 0.0,
+            "other word, values differ": 0.0,
+            "other word, form unseen": 0.0,
+            "inputs agree": 0.0
+          },
+          "per_seed": {
+            "0": {
+              "preposition, values differ": {
+                "first": 6.83382262760048e-05,
+                "second": 3.95517028022536e-05,
+                "difference": 2.8786523473751225e-05,
+                "difference_on_endings": 0.0
+              },
+              "preposition, values agree": {
+                "first": 0.0006143539496608411,
+                "second": 0.0002554471218180508,
+                "difference": 0.0003589068278427903,
+                "difference_on_endings": 0.0
+              },
+              "other word, values differ": {
+                "first": -8.446565631342701e-06,
+                "second": -0.0007769395150197902,
+                "difference": 0.0007684929493884476,
+                "difference_on_endings": 0.0
+              },
+              "other word, form unseen": {
+                "first": 8.568646221773332e-05,
+                "second": -0.00029734712294743635,
+                "difference": 0.00038303358516516965,
+                "difference_on_endings": 0.0
+              },
+              "inputs agree": {
+                "first": 0.003664498406824153,
+                "second": 0.00233266272704462,
+                "difference": 0.0013318356797795325,
+                "difference_on_endings": 0.0
+              },
+              "total": {
+                "first": 0.004424430479347388,
+                "second": 0.001553374913697698,
+                "difference": 0.0028710555656496915,
+                "difference_on_endings": 0.0
+              }
+            },
+            "1": {
+              "preposition, values differ": {
+                "first": 2.1962732161184346e-06,
+                "second": 1.8619813496594786e-05,
+                "difference": -1.642354028047633e-05,
+                "difference_on_endings": 0.0
+              },
+              "preposition, values agree": {
+                "first": -0.00027204310519751246,
+                "second": -0.0005108130634021308,
+                "difference": 0.00023876995820461846,
+                "difference_on_endings": 0.0
+              },
+              "other word, values differ": {
+                "first": -0.0011633857470816735,
+                "second": -0.0019171795566938054,
+                "difference": 0.0007537938096121317,
+                "difference_on_endings": 0.0
+              },
+              "other word, form unseen": {
+                "first": -2.3943070662892683e-05,
+                "second": -0.0003907670580502993,
+                "difference": 0.0003668239873874066,
+                "difference_on_endings": 0.0
+              },
+              "inputs agree": {
+                "first": 0.00011030579332178669,
+                "second": -0.0003207090130027553,
+                "difference": 0.0004310148063245421,
+                "difference_on_endings": 0.0
+              },
+              "total": {
+                "first": -0.001346869856404173,
+                "second": -0.0031208488776523955,
+                "difference": 0.0017739790212482221,
+                "difference_on_endings": 0.0
+              }
+            },
+            "2": {
+              "preposition, values differ": {
+                "first": -8.254762319239345e-05,
+                "second": -1.8917518710988935e-05,
+                "difference": -6.36301044814045e-05,
+                "difference_on_endings": 0.0
+              },
+              "preposition, values agree": {
+                "first": -0.00030358655183572794,
+                "second": 0.000313060250604094,
+                "difference": -0.000616646802439822,
+                "difference_on_endings": 0.0
+              },
+              "other word, values differ": {
+                "first": -0.001871299496487551,
+                "second": -0.0012922887065456535,
+                "difference": -0.0005790107899418975,
+                "difference_on_endings": 0.0
+              },
+              "other word, form unseen": {
+                "first": -0.0001438586065468919,
+                "second": -0.0003466805099294374,
+                "difference": 0.0002028219033825455,
+                "difference_on_endings": 0.0
+              },
+              "inputs agree": {
+                "first": -0.0001653342081516532,
+                "second": 0.0005485243970780016,
+                "difference": -0.0007138586052296546,
+                "difference_on_endings": 0.0
+              },
+              "total": {
+                "first": -0.0025666264862142176,
+                "second": -0.0007963020875039841,
+                "difference": -0.0017703243987102332,
+                "difference_on_endings": 0.0
+              }
+            },
+            "3": {
+              "preposition, values differ": {
+                "first": 6.738495127767491e-05,
+                "second": 6.741503308694935e-05,
+                "difference": -3.008180927445425e-08,
+                "difference_on_endings": 0.0
+              },
+              "preposition, values agree": {
+                "first": 0.00031146313659896087,
+                "second": 0.0007034710239186444,
+                "difference": -0.00039200788731968354,
+                "difference_on_endings": 0.0
+              },
+              "other word, values differ": {
+                "first": -0.0010261996910595815,
+                "second": -0.0008000940007310831,
+                "difference": -0.0002261056903284982,
+                "difference_on_endings": 0.0
+              },
+              "other word, form unseen": {
+                "first": 7.563547959240925e-05,
+                "second": -0.00015468682359599562,
+                "difference": 0.00023032230318840486,
+                "difference_on_endings": 0.0
+              },
+              "inputs agree": {
+                "first": 0.0013952495677595708,
+                "second": 0.0019945468665748304,
+                "difference": -0.0005992972988152594,
+                "difference_on_endings": 0.0
+              },
+              "total": {
+                "first": 0.0008235334441690344,
+                "second": 0.001810652099253345,
+                "difference": -0.0009871186550843107,
+                "difference_on_endings": 0.0
+              }
+            }
+          },
+          "summary": {
+            "preposition, values differ": {
+              "first": {
+                "mean": 1.3842956894351175e-05,
+                "se": 3.566425465093727e-05,
+                "n": 4,
+                "positive": 3,
+                "values": [
+                  6.83382262760048e-05,
+                  2.1962732161184346e-06,
+                  -8.254762319239345e-05,
+                  6.738495127767491e-05
+                ]
+              },
+              "second": {
+                "mean": 2.66672576687022e-05,
+                "se": 1.8186816019727577e-05,
+                "n": 4,
+                "positive": 3,
+                "values": [
+                  3.95517028022536e-05,
+                  1.8619813496594786e-05,
+                  -1.8917518710988935e-05,
+                  6.741503308694935e-05
+                ]
+              },
+              "difference": {
+                "mean": -1.2824300774351014e-05,
+                "se": 1.9341959890513683e-05,
+                "n": 4,
+                "positive": 1,
+                "values": [
+                  2.8786523473751225e-05,
+                  -1.642354028047633e-05,
+                  -6.36301044814045e-05,
+                  -3.008180927445425e-08
+                ]
+              },
+              "difference_on_endings": {
+                "mean": 0.0,
+                "se": 0.0,
+                "n": 4,
+                "positive": 0,
+                "values": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ]
+              }
+            },
+            "preposition, values agree": {
+              "first": {
+                "mean": 8.754685730664038e-05,
+                "se": 0.00022545407839289454,
+                "n": 4,
+                "positive": 2,
+                "values": [
+                  0.0006143539496608411,
+                  -0.00027204310519751246,
+                  -0.00030358655183572794,
+                  0.00031146313659896087
+                ]
+              },
+              "second": {
+                "mean": 0.0001902913332346646,
+                "se": 0.000254004306684607,
+                "n": 4,
+                "positive": 3,
+                "values": [
+                  0.0002554471218180508,
+                  -0.0005108130634021308,
+                  0.000313060250604094,
+                  0.0007034710239186444
+                ]
+              },
+              "difference": {
+                "mean": -0.00010274447592802421,
+                "se": 0.00023761364953750916,
+                "n": 4,
+                "positive": 2,
+                "values": [
+                  0.0003589068278427903,
+                  0.00023876995820461846,
+                  -0.000616646802439822,
+                  -0.00039200788731968354
+                ]
+              },
+              "difference_on_endings": {
+                "mean": 0.0,
+                "se": 0.0,
+                "n": 4,
+                "positive": 0,
+                "values": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ]
+              }
+            },
+            "other word, values differ": {
+              "first": {
+                "mean": -0.0010173328750650373,
+                "se": 0.0003838967567064432,
+                "n": 4,
+                "positive": 0,
+                "values": [
+                  -8.446565631342701e-06,
+                  -0.0011633857470816735,
+                  -0.001871299496487551,
+                  -0.0010261996910595815
+                ]
+              },
+              "second": {
+                "mean": -0.0011966254447475832,
+                "se": 0.0002679743696708306,
+                "n": 4,
+                "positive": 0,
+                "values": [
+                  -0.0007769395150197902,
+                  -0.0019171795566938054,
+                  -0.0012922887065456535,
+                  -0.0008000940007310831
+                ]
+              },
+              "difference": {
+                "mean": 0.00017929256968254588,
+                "se": 0.00034358168564936517,
+                "n": 4,
+                "positive": 2,
+                "values": [
+                  0.0007684929493884476,
+                  0.0007537938096121317,
+                  -0.0005790107899418975,
+                  -0.0002261056903284982
+                ]
+              },
+              "difference_on_endings": {
+                "mean": 0.0,
+                "se": 0.0,
+                "n": 4,
+                "positive": 0,
+                "values": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ]
+              }
+            },
+            "other word, form unseen": {
+              "first": {
+                "mean": -1.6199338499105077e-06,
+                "se": 5.347972212922871e-05,
+                "n": 4,
+                "positive": 2,
+                "values": [
+                  8.568646221773332e-05,
+                  -2.3943070662892683e-05,
+                  -0.0001438586065468919,
+                  7.563547959240925e-05
+                ]
+              },
+              "second": {
+                "mean": -0.00029737037863079217,
+                "se": 5.124534628747151e-05,
+                "n": 4,
+                "positive": 0,
+                "values": [
+                  -0.00029734712294743635,
+                  -0.0003907670580502993,
+                  -0.0003466805099294374,
+                  -0.00015468682359599562
+                ]
+              },
+              "difference": {
+                "mean": 0.0002957504447808817,
+                "se": 4.617570661131629e-05,
+                "n": 4,
+                "positive": 4,
+                "values": [
+                  0.00038303358516516965,
+                  0.0003668239873874066,
+                  0.0002028219033825455,
+                  0.00023032230318840486
+                ]
+              },
+              "difference_on_endings": {
+                "mean": 0.0,
+                "se": 0.0,
+                "n": 4,
+                "positive": 0,
+                "values": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ]
+              }
+            },
+            "inputs agree": {
+              "first": {
+                "mean": 0.0012511798899384643,
+                "se": 0.0008733540819941339,
+                "n": 4,
+                "positive": 3,
+                "values": [
+                  0.003664498406824153,
+                  0.00011030579332178669,
+                  -0.0001653342081516532,
+                  0.0013952495677595708
+                ]
+              },
+              "second": {
+                "mean": 0.0011387562444236741,
+                "se": 0.000621570775633667,
+                "n": 4,
+                "positive": 3,
+                "values": [
+                  0.00233266272704462,
+                  -0.0003207090130027553,
+                  0.0005485243970780016,
+                  0.0019945468665748304
+                ]
+              },
+              "difference": {
+                "mean": 0.00011242364551479016,
+                "se": 0.0004811232601552629,
+                "n": 4,
+                "positive": 2,
+                "values": [
+                  0.0013318356797795325,
+                  0.0004310148063245421,
+                  -0.0007138586052296546,
+                  -0.0005992972988152594
+                ]
+              },
+              "difference_on_endings": {
+                "mean": 0.0,
+                "se": 0.0,
+                "n": 4,
+                "positive": 0,
+                "values": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ]
+              }
+            },
+            "total": {
+              "first": {
+                "mean": 0.00033361689522450803,
+                "se": 0.0015332487675671076,
+                "n": 4,
+                "positive": 2,
+                "values": [
+                  0.004424430479347388,
+                  -0.001346869856404173,
+                  -0.0025666264862142176,
+                  0.0008235334441690344
+                ]
+              },
+              "second": {
+                "mean": -0.00013828098805133417,
+                "se": 0.0011542942595700876,
+                "n": 4,
+                "positive": 2,
+                "values": [
+                  0.001553374913697698,
+                  -0.0031208488776523955,
+                  -0.0007963020875039841,
+                  0.001810652099253345
+                ]
+              },
+              "difference": {
+                "mean": 0.0004718978832758424,
+                "se": 0.0011033155674224319,
+                "n": 4,
+                "positive": 2,
+                "values": [
+                  0.0028710555656496915,
+                  0.0017739790212482221,
+                  -0.0017703243987102332,
+                  -0.0009871186550843107
+                ]
+              },
+              "difference_on_endings": {
+                "mean": 0.0,
+                "se": 0.0,
+                "n": 4,
+                "positive": 0,
+                "values": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "rescore_checks": [
+      {
+        "run": "9b41f6ccf444",
+        "label": "bpe_mconst-LEARN-CAUSAL_bpe_17k",
+        "seed": 0,
+        "rescored": 1.3407526874325406,
+        "recorded": 1.3407526862063348,
+        "diff": 1.2262058035616974e-09
+      },
+      {
+        "run": "28087424952a",
+        "label": "bpe_mconst-LEARN-CAUSAL_bpe_17k",
+        "seed": 1,
+        "rescored": 1.3389401384770523,
+        "recorded": 1.3389401415772668,
+        "diff": -3.1002145295389028e-09
+      },
+      {
+        "run": "39fbcc499aab",
+        "label": "bpe_mconst-LEARN-CAUSAL_bpe_17k",
+        "seed": 2,
+        "rescored": 1.3431521364136179,
+        "recorded": 1.3431521281377061,
+        "diff": 8.275911733690577e-09
+      },
+      {
+        "run": "f6326a6a5897",
+        "label": "bpe_mconst-LEARN-CAUSAL_bpe_17k",
+        "seed": 3,
+        "rescored": 1.3388416398636127,
+        "recorded": 1.3388416487724142,
+        "diff": -8.908801474305506e-09
+      },
+      {
+        "run": "8c5d0d3f2269",
+        "label": "bpe_poscausal-LEARN-CAUSAL_bpe_17k",
+        "seed": 0,
+        "rescored": 1.336328256953193,
+        "recorded": 1.336328260838975,
+        "diff": -3.885782140500282e-09
+      },
+      {
+        "run": "edb60bd1c7b2",
+        "label": "bpe_poscausal-LEARN-CAUSAL_bpe_17k",
+        "seed": 1,
+        "rescored": 1.3402870083334566,
+        "recorded": 1.3402870064428465,
+        "diff": 1.8906101129090302e-09
+      },
+      {
+        "run": "38e0e325789c",
+        "label": "bpe_poscausal-LEARN-CAUSAL_bpe_17k",
+        "seed": 2,
+        "rescored": 1.3457187628998317,
+        "recorded": 1.3457187517226543,
+        "diff": 1.1177177405841121e-08
+      },
+      {
+        "run": "08cf832ed68c",
+        "label": "bpe_poscausal-LEARN-CAUSAL_bpe_17k",
+        "seed": 3,
+        "rescored": 1.3380181064194434,
+        "recorded": 1.3380180974524802,
+        "diff": 8.966963171985753e-09
+      },
+      {
+        "run": "829ad0ff6ff2",
+        "label": "bpe_poslex-LEARN-CAUSAL_bpe_17k",
+        "seed": 0,
+        "rescored": 1.339199312518843,
+        "recorded": 1.3391993022896846,
+        "diff": 1.022915840920291e-08
+      },
+      {
+        "run": "2bbc1159a699",
+        "label": "bpe_poslex-LEARN-CAUSAL_bpe_17k",
+        "seed": 1,
+        "rescored": 1.3420609873547045,
+        "recorded": 1.342060973944636,
+        "diff": 1.3410068389063667e-08
+      },
+      {
+        "run": "8baf68a07b66",
+        "label": "bpe_poslex-LEARN-CAUSAL_bpe_17k",
+        "seed": 2,
+        "rescored": 1.3439484385011213,
+        "recorded": 1.3439484225462013,
+        "diff": 1.5954920051797217e-08
+      },
+      {
+        "run": "35ce555cced3",
+        "label": "bpe_poslex-LEARN-CAUSAL_bpe_17k",
+        "seed": 3,
+        "rescored": 1.3370309877643594,
+        "recorded": 1.3370309749101688,
+        "diff": 1.2854190600819493e-08
+      }
+    ]
+  },
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+    "timestamp_utc": "2026-10-23T05:09:24+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 5090 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": null,
+    "git_dirty": false
+  }
+}

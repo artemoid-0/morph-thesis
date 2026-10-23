@@ -530,6 +530,10 @@
 | bpe_pos-SHUF-LEARN-CAUSAL-TGT0.1_bpe_17k_st20k | 2 | 1.4339 | 88.1803 | 5,220,243 | 0 | 252,160 | 19,999 |
 | bpe_pos-SHUF-LEARN-CAUSAL-TGT0.1_bpe_17k_st20k | 3 | 1.4329 | 87.8995 | 5,220,243 | 0 | 252,160 | 19,999 |
 | bpe_pos-SHUF-LEARN-CAUSAL-TGT0.1_bpe_17k_st20k | 4 | 1.4351 | 88.5011 | 5,220,243 | 0 | 252,160 | 19,999 |
+| bpe_poscausal-LEARN-CAUSAL_bpe_17k | 0 | 1.3363 | 65.0086 | 5,080,704 | 8 | 252,160 | 49,999 |
+| bpe_poscausal-LEARN-CAUSAL_bpe_17k | 1 | 1.3403 | 65.8176 | 5,080,704 | 8 | 252,160 | 49,999 |
+| bpe_poscausal-LEARN-CAUSAL_bpe_17k | 2 | 1.3457 | 66.9439 | 5,080,704 | 8 | 252,160 | 49,500 |
+| bpe_poscausal-LEARN-CAUSAL_bpe_17k | 3 | 1.3380 | 65.3527 | 5,080,704 | 8 | 252,160 | 49,999 |
 | bpe_poscausal-LEARN-CAUSAL_bpe_17k_st10k | 0 | 1.5159 | 113.9020 | 5,080,704 | 8 | 252,160 | 9,999 |
 | bpe_poscausal-LEARN-CAUSAL_bpe_17k_st10k | 1 | 1.5141 | 113.2631 | 5,080,704 | 8 | 252,160 | 9,999 |
 | bpe_poscausal-LEARN-CAUSAL_bpe_17k_st10k | 2 | 1.5143 | 113.3589 | 5,080,704 | 8 | 252,160 | 9,999 |
