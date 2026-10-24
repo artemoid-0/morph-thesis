@@ -41,18 +41,17 @@ Also parked: morphology-factorized embeddings for parameter efficiency (Q1 partl
 
 ## The queue
 
-The thesis text's request of 22 October (§33.130), in its strict order: each item with the sentence it states for every outcome (journey §33.130) and its cost from the recorded timings (`scripts/ops/run_times.py`).
+The thesis text's request of 24 October (§33.136), in its order: each item with the sentence it states for every outcome and its cost from the recorded timings (`scripts/ops/run_times.py`).
+The text is complete without them; each lifts a limit it states.
 Results committed by about 31 October reach the text; the work is admitted on 4 November.
-Each item's preparation runs on the CPU while the item before it trains.
-In the items, §3.x and "conclusion n" are the thesis text's sections, not the journey's.
 
-**Running:** nothing. Items 1, 2 and 3 are answered (§33.132, §33.135, §33.133); item 4 waits.
+**Running:** item 2 on the second machine, from 24 October, then item 1 behind it (the weekend is the second machine's).
 
-1. **Width 1024 "depends on the run" (G-81's recipe question)**: answered (§33.130, §33.132). With a 1,000-step warm-up every seed keeps the gain, +0.0110 ± 0.0011 (4/4), smaller than width 512's +0.0147 under the same warm-up; MultiBLiMP +5.9, level with width 512's +6.0. The dependence on the run was the 100-step warm-up's; G-81 is closed.
-2. **English part of speech at full training, from the causal tagger** (§3.10, conclusion 7): answered (§33.134, §33.135). *All leak* by the rule: the causal tagger keeps nothing reliable over the word form (+0.0005 ± 0.0011, 2/4); the lead in context (+0.0022) is the leak by its mean (77%), the seeds splitting.
-3. **Gender and number at full training** (§3.10): answered (§33.131, §33.133). *Like case*: their lead over the word form falls to about +0.0002, the leak has gone, and the causal tagger's rest is not context (half after unseen words, 2–4% after seen words whose value differs).
-4. **Width 1024 without repeating the text** (§3.3.2): waits. 20k on the 151M-token corpus, both tokenizers, four seeds: 8 runs, ~11.9 h.
+1. **Width 1024 without repeating the text** (§3.3.2, §3.12): being prepared. The nulls at width 1024, 20k, on the 151M-token corpus (about 1.1 passes), both tokenizers, four seeds, with the 1,000-step warm-up; then MultiBLiMP: 8 runs, ~12 h. Its BPE 17k null's codes go to the second machine first.
+2. **The empty slot at width 1024** (§3.12, method point 10): running (§33.136). Both tokenizers, 10k, four seeds, the 1,000-step warm-up: 8 runs, ~6 h.
+3. **The work's size** (the Introduction): no GPU. Trained models, GPU-hours by machine and training tokens, from the records.
 
+The text's request of 22 October is answered (§33.130–§33.135): width 1024 holds at every seed with a longer warm-up; at full training what the sentence adds over the word form is not context, for Ukrainian gender and number and for English part of speech.
 The text's list of 19 October is answered (§33.117–§33.129); each item's outcome is in the journey.
 
 **Dropped** by the sentence test (every outcome gives the same sentence, or none):

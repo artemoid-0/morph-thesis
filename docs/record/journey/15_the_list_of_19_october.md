@@ -1231,3 +1231,36 @@ seeds disagree on where the lead sits, so the leak's share, 77%, is a mean over 
    0.0011, 2/4); the lead in context, +0.0022, is mostly the leak by its mean. For Ukrainian case it is
    all the leak (§33.81); for gender and number the lead is small and has no leak (§33.133).
 2. **The text's conclusion on context can state full training for both languages.**
+
+### 33.136 The text's request of 24 October, and the empty slot at width 1024 prepared
+
+The text, checked against `b36c89f`, asks for three things, in order: (1) width 1024 at 20k on the
+151M-token corpus, so that the text is not repeated; (2) the empty slot at width 1024; (3) the work's
+size: trained models, GPU-hours by machine, training tokens. The text is complete without them; each
+lifts a limit it states. The second machine is free over the weekend, so (1) and (2) both run. (2)
+goes first: its data is already on that machine, while (1) needs its BPE 17k null's codes there.
+
+**Item 2, the empty slot at width 1024.** At 85M parameters the tokenizer's gain is measured between
+the two tokenizers' same-shape nulls (§33.132). Method point 10 asks for the empty slot, the null
+switched off from step 0, at every model size. In the 5M model the null costs endings apart about
+0.002, so the gain between the empty slots is larger (+0.0203 against +0.0175); at 30M the two
+references agree (+0.0142, +0.0141; §33.118).
+- The empty slot at width 1024 under BPE 17k and endings apart, ~38M tokens, 10k, the 1,000-step
+  warm-up of the nulls it is set against (§33.132), seeds 0–3: 8 runs, about 6 h.
+- The chain (`scripts/chains/second_2026-10-24.sh`, piece empty1024): the first seed's two runs must
+  pass the pair check. Rehearsed with the stub, four scenarios: everything runs (8 runs, each switched
+  off from step 0, with the warm-up); a failed pair check skips the other seeds; END_BY leaves every
+  run for later; with every run done nothing runs. Its cells ran at widths 128 and 512 on that
+  machine, so no new loader path is involved.
+
+**Predictions** (before any run):
+- **P307** (~65%). The tokenizer's gain between the empty slots is within 0.002 of its gain between the
+  nulls (+0.0110 ± 0.0011).
+- **P308** (~70%). Under each tokenizer the empty slot ends within 0.002 of its null on average.
+- **P309** (~75%). The tokenizer's gain between the empty slots is positive at every seed.
+
+**What each outcome says** (the text's sentences, fixed before the run):
+- the gain between the empty slots within 0.002 of the gain between the nulls: *at width 1024 the two
+  references agree, as at width 512*;
+- further apart: *at width 1024 the tokenizer's gain over the empty slots is X*, with the null's cost
+  or gain at that size.

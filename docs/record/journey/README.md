@@ -78,6 +78,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [§33.124](15_the_list_of_19_october.md#33124-item-1s-20k-half-at-85m-parameters-the-gain-is-smaller-again-and-lasts-and-the-split-stays) — at 85M parameters the gain is smaller again and lasts; the split stays at 20k
 - [§33.130](15_the_list_of_19_october.md#33130-the-texts-request-of-22-october-and-g-81s-recipe-question-prepared) — G-81's recipe question prepared: a 1,000-step warm-up at widths 1024 and 512
 - [§33.132](15_the_list_of_19_october.md#33132-item-1-with-a-longer-warm-up-the-gain-at-width-1024-holds-at-every-seed) — with a longer warm-up the gain at width 1024 holds at every seed, smaller than at width 512
+- [§33.136](15_the_list_of_19_october.md#33136-the-texts-request-of-24-october-and-the-empty-slot-at-width-1024-prepared) — the text's request of 24 October; the empty slot at width 1024 prepared
 
 ### Q2: injected features against a same-shape null
 
@@ -450,6 +451,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [33.133 Item 3: at full training gender's and number's lead over the word form is small, and not context](15_the_list_of_19_october.md#33133-item-3-at-full-training-genders-and-numbers-lead-over-the-word-form-is-small-and-not-context)
 - [33.134 Item 2 prepared: English part of speech at full training](15_the_list_of_19_october.md#33134-item-2-prepared-english-part-of-speech-at-full-training)
 - [33.135 Item 2: at full training English part of speech's causal tagger keeps nothing reliable over the word form](15_the_list_of_19_october.md#33135-item-2-at-full-training-english-part-of-speechs-causal-tagger-keeps-nothing-reliable-over-the-word-form)
+- [33.136 The text's request of 24 October, and the empty slot at width 1024 prepared](15_the_list_of_19_october.md#33136-the-texts-request-of-24-october-and-the-empty-slot-at-width-1024-prepared)
 
 ### Appendices
 
