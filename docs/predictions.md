@@ -6,7 +6,7 @@ Each prediction was recorded in the [journey](record/journey/README.md) **before
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 185 right, 13 half right, 99 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 3 pending — of 309.
+**Tally:** 185 right, 13 half right, 99 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 7 pending — of 313.
 
 *Key to the tally (added 19 October 2026). Counted half right: P19, P46, P54 — with the eight
 whose outcome begins "half right" or "partly right". Counted right: P33, P172, P273, P303 — right by their
@@ -341,3 +341,7 @@ The wrong ones carried the information:
 | P307 | At width 1024 with a 1,000-step warm-up, the tokenizer's gain between the empty slots is within 0.002 of its gain between the nulls (+0.0110) | pending | §33.136 |
 | P308 | At width 1024, under each tokenizer, the empty slot ends within 0.002 of its null on average | pending | §33.136 |
 | P309 | At width 1024 the tokenizer's gain between the empty slots is positive at every seed | pending | §33.136 |
+| P310 | Without repeating the text (151M tokens), the tokenizer's gain at width 1024 at 20k with the 1,000-step warm-up is positive at every seed | pending | §33.137 |
+| P311 | It is more than 0.002 below the gain on the repeated text (~38M) under the same warm-up | pending | §33.137 |
+| P312 | Without repetition, the gain over the last 5,000 steps stays within 0.002 of its value at step 15,000 | pending | §33.137 |
+| P313 | MultiBLiMP without repetition is positive at every seed and within 1 point of the repeated text's | pending | §33.137 |

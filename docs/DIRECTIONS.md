@@ -47,7 +47,7 @@ Results committed by about 31 October reach the text; the work is admitted on 4 
 
 **Running:** item 2 on the second machine, from 24 October, then item 1 behind it (the weekend is the second machine's).
 
-1. **Width 1024 without repeating the text** (§3.3.2, §3.12): being prepared. The nulls at width 1024, 20k, on the 151M-token corpus (about 1.1 passes), both tokenizers, four seeds, with the 1,000-step warm-up; then MultiBLiMP: 8 runs, ~12 h. Its BPE 17k null's codes go to the second machine first.
+1. **Width 1024 without repeating the text** (§3.3.2, §3.12): prepared (§33.137), runs after item 2. The nulls at width 1024, 20k, with the 1,000-step warm-up, both tokenizers, four seeds, on the 151M-token corpus (about 1.1 passes) and on ~38M (the repeated text under the same warm-up); then MultiBLiMP: 16 runs, ~25 h.
 2. **The empty slot at width 1024** (§3.12, method point 10): running (§33.136). Both tokenizers, 10k, four seeds, the 1,000-step warm-up: 8 runs, ~6 h.
 3. **The work's size** (the Introduction): no GPU. Trained models, GPU-hours by machine and training tokens, from the records.
 

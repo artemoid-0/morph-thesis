@@ -1264,3 +1264,45 @@ references agree (+0.0142, +0.0141; §33.118).
   references agree, as at width 512*;
 - further apart: *at width 1024 the tokenizer's gain over the empty slots is X*, with the null's cost
   or gain at that size.
+
+### 33.137 Item 1 prepared: width 1024 without repeating the text
+
+The text's item 1 (§33.136). At 20k on ~38M tokens the BPE 17k null stops improving after 4.3 passes,
+and the last 1,500 steps add about 0.0025 to the tokenizer's gain (§33.124). On the 151M-token corpus
+20k steps are about 1.1 passes.
+
+**The design.** The 20k runs of §33.124 had the 100-step warm-up, which splits the seeds at this width
+(§33.132). Set against them, a 151M-token run with the 1,000-step warm-up would change two things. So
+both corpora run under the 1,000-step warm-up, and the two differ in the repetition alone.
+- The nulls at width 1024, 20k, 1,000-step warm-up, under BPE 17k and endings apart, seeds 0–3, on the
+  151M-token corpus: 8 runs.
+- The same on ~38M tokens: 8 runs, the repeated text's partner under the same recipe.
+- Then MultiBLiMP on each set. In all 16 runs, about 25 h on the second machine (89 min a run), after
+  the empty slot.
+
+**The data.** The BPE 17k 151M stream's ids on the second machine equal the thesis machine's pack
+(SHA-256). Its null's codes went there from the pack, decompressed on arrival and checked against the
+pack's SHA-256. A null under BPE 17k on that stream ran 30 steps through the real loader there (on the
+CPU, the GPU being busy).
+
+**The chain** (`scripts/chains/second_wide_2026-10-24.sh`; pieces wide151, wide38, mbwide) starts when
+the empty slot's chain lets go of its lock. Each piece's first seed must pass the pair check.
+Rehearsed with the stub, five scenarios: everything runs (16 runs, 151M first, each with the warm-up);
+a failed pair check on 151M skips its other seeds; END_BY leaves every run for later; with every run
+done MultiBLiMP runs once per corpus; with its records there it runs not at all.
+
+**Predictions** (before any run):
+- **P310** (~70%). Without repeating the text, the tokenizer's gain at width 1024 at 20k is positive at
+  every seed.
+- **P311** (~50%). It is more than 0.002 below the gain on the repeated text under the same warm-up:
+  repetition adds to the 20k gain.
+- **P312** (~65%). Without repetition, the gain over the last 5,000 steps stays within 0.002 of its
+  value at step 15,000.
+- **P313** (~70%). MultiBLiMP without repetition is positive at every seed and within 1 point of the
+  repeated text's.
+
+**What each outcome says** (the text's sentences, fixed before the run), X the gain without repetition
+and Y on the repeated text, both with the 1,000-step warm-up:
+- X within 0.002 of Y or above: *without repeating the text the gain at width 1024 is X*, and the
+  caveat about repetition goes;
+- X more than 0.002 below Y: *without repeating the text the gain at width 1024 is smaller: X*.
