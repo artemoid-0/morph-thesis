@@ -1306,3 +1306,29 @@ and Y on the repeated text, both with the 1,000-step warm-up:
 - X within 0.002 of Y or above: *without repeating the text the gain at width 1024 is X*, and the
   caveat about repetition goes;
 - X more than 0.002 below Y: *without repeating the text the gain at width 1024 is smaller: X*.
+
+### 33.138 Item 3: the work's size, and a term in the Ukrainian figures
+
+The text's item 3 (§33.136) asks for the work's size, from the records, for the Introduction.
+`scripts/ops/work_size.py` reads every run record (`work_size_20261024T021450`):
+
+| machine | trained models | GPU-hours | training tokens |
+|---|---|---|---|
+| thesis machine, RTX 4060 Laptop | 569 | 284.1 | 117.6 billion |
+| second machine, RTX 5090 Laptop | 376 | 93.3 | 70.3 billion |
+| **in all** | **945** | **377.5** | **188.0 billion** |
+
+- 25 of the thesis machine's models come from September records that name no GPU, an older record
+  format without an environment block. The second machine first trained on 16 October and every
+  record of it names its GPU, so they are the thesis machine's.
+- 152 of the second machine's models repeat the thesis machine's runs (twins).
+- Tokens are the steps completed times 32 windows of 256 tokens. Toy rehearsals and smoke tests run
+  in copies of the code, leave no record, and are not counted.
+- A first count a minute earlier (`work_size_20261024T021411`) listed the September records apart, as
+  an unnamed GPU; this one gives them to their machine.
+
+The home is the results record, §3. The weekend's runs add to it, and the tool counts again.
+
+**A term.** The thesis now calls the same-shape null «контроль тієї самої архітектури», not
+«…тієї самої форми», which readers took for the word form. The Ukrainian Q2 figure (`fig_q2_end`) says
+so, its axis label now on three lines. The English figures keep "same-shape null".

@@ -1,0 +1,88 @@
+{
+  "script": "work_size",
+  "args": {
+    "results": "/home/neko/PycharmProjects/Morph/results"
+  },
+  "timestamp_utc": "2026-10-24T02:14:11+00:00",
+  "results": {
+    "batch_window": [
+      32,
+      256
+    ],
+    "rows": [
+      {
+        "machine": "second machine (RTX 5090 Laptop)",
+        "records": "runs",
+        "models": 224,
+        "gpu_hours": 69.3,
+        "steps": 5546000,
+        "tokens": 45432832000
+      },
+      {
+        "machine": "second machine (RTX 5090 Laptop)",
+        "records": "twins",
+        "models": 152,
+        "gpu_hours": 24.0,
+        "steps": 3041500,
+        "tokens": 24915968000
+      },
+      {
+        "machine": "thesis machine (RTX 4060 Laptop)",
+        "records": "runs",
+        "models": 544,
+        "gpu_hours": 260.3,
+        "steps": 13111500,
+        "tokens": 107409408000
+      },
+      {
+        "machine": "unnamed GPU (device not recorded)",
+        "records": "runs",
+        "models": 25,
+        "gpu_hours": 23.8,
+        "steps": 1249975,
+        "tokens": 10239795200
+      }
+    ],
+    "per_machine": {
+      "second machine (RTX 5090 Laptop)": {
+        "models": 376,
+        "gpu_hours": 93.3,
+        "tokens": 70348800000
+      },
+      "thesis machine (RTX 4060 Laptop)": {
+        "models": 544,
+        "gpu_hours": 260.3,
+        "tokens": 107409408000
+      },
+      "unnamed GPU (device not recorded)": {
+        "models": 25,
+        "gpu_hours": 23.8,
+        "tokens": 10239795200
+      }
+    },
+    "total": {
+      "models": 945,
+      "gpu_hours": 377.5,
+      "tokens": 187998003200
+    }
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-10-24T02:14:11+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "3ed4c198040c804d1423223d0a26bdb56b2cb2ef",
+    "git_dirty": true
+  }
+}

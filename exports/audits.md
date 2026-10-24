@@ -394,6 +394,8 @@
 | `scripts/data/prepare_ubertext_fiction.py` | 20261011T074342+0000 | - | bytes_written, characters, document_characters, documents, keys_repeated, paragraphs, titled, wrapped |
 | `scripts/data/prepare_ubertext_fiction.py` | 20261016T000257+0000 | - | bytes_written, characters, document_characters, documents, keys_repeated, paragraphs, titled, wrapped |
 | `ukwiki_stats` | 2026-09-28T22:39:28+00:00 | holdout=2000 target_chars=539000000.0 | splits, suggested_fraction |
+| `work_size` | 2026-10-24T02:14:11+00:00 | results=/home/neko/PycharmProjects/Morph/results | batch_window, per_machine, rows, total |
+| `work_size` | 2026-10-24T02:14:50+00:00 | results=/home/neko/PycharmProjects/Morph/results | batch_window, per_machine, rows, total |
 
 ## Caveats recorded with the numbers
 

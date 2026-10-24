@@ -454,6 +454,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [33.135 Item 2: at full training English part of speech's causal tagger keeps nothing reliable over the word form](15_the_list_of_19_october.md#33135-item-2-at-full-training-english-part-of-speechs-causal-tagger-keeps-nothing-reliable-over-the-word-form)
 - [33.136 The text's request of 24 October, and the empty slot at width 1024 prepared](15_the_list_of_19_october.md#33136-the-texts-request-of-24-october-and-the-empty-slot-at-width-1024-prepared)
 - [33.137 Item 1 prepared: width 1024 without repeating the text](15_the_list_of_19_october.md#33137-item-1-prepared-width-1024-without-repeating-the-text)
+- [33.138 Item 3: the work's size, and a term in the Ukrainian figures](15_the_list_of_19_october.md#33138-item-3-the-works-size-and-a-term-in-the-ukrainian-figures)
 
 ### Appendices
 

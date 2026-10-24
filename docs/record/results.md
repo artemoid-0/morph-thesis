@@ -245,7 +245,9 @@ sweep (clamp bug, quarantined).
 
 ## 3. Complete run inventory
 
-28 training runs in 11 batches. *(Complete to Batch 9; every run: `exports/runs.csv`.)*
+**The work's size** (24 October; `work_size_20261024T021450`, from `scripts/ops/work_size.py`, journey §33.138): **945 trained models** in the records — 569 on the thesis machine (RTX 4060 Laptop; 25 of them from September records that name no GPU) and 376 on the second (RTX 5090 Laptop; 152 of them repeats of the thesis machine's runs); **377.5 GPU-hours** of training (284.1 and 93.3); **188.0 billion training tokens** (117.6 and 70.3 billion: the steps times 32 windows of 256 tokens). Toy rehearsals and smoke tests leave no record and are not counted; the tool counts again as runs are added.
+
+*The early inventory, kept as it was:* 28 training runs in 11 batches. *(Complete to Batch 9; every run: `exports/runs.csv`.)*
 
 **Unit warning.** Perplexity is per-token and comparable ONLY within a pipeline.
 A BPE cell at 67.36 and a morpheme cell at 6.25 are not 10× apart — they count

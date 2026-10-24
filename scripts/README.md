@@ -105,6 +105,7 @@ Most read the run records only; `probe.py`, `probe_words.py`, `loss_by_kind.py` 
 | `run_batch.py` | Run a block of experiments unattended, safely. | historical |
 | `run_ids.py` | The run id a command line would produce, without running it; `--done` tells a chain whether a cell's seed is already finished, `--bpb` what it scored. | active |
 | `run_times.py` | How long runs of a kind took, from their records — the source of every estimate in a queue review. | active |
+| `work_size.py` | The work's size from the run records: trained models, GPU-hours and training tokens, by machine (twins and September records without a GPU name counted apart, then folded in); writes a `work_size` audit record | active |
 | `slim_codes.py` | One fact of a stream's codes in a file of its own, for a machine that holds only what its runs read. | active |
 | `smoke_model.py` | Build each cell's REAL model and push one batch through it. | active |
 | `tagger_record.py` | Which spaCy tagger, at which version, tagged each corpus's caches? From the installed packages and the earliest evidence of each corpus's caches (G-74). | active |

@@ -23,7 +23,8 @@
   on both; a run repeated on the other machine differs like a dropout draw, so every comparison is
   made within one machine (journey §33.101, §33.106). The RTX 5090 is about 2.8 times faster: a
   width-128 run of 10k steps takes 245 seconds alone, and three at once 787 seconds each, so runs
-  go one at a time (journey §33.101)
+  go one at a time (journey §33.101). The work's size by machine — models, GPU-hours, training tokens — is in
+  [the results record, §3](../record/results.md#3-complete-run-inventory)
 
 ### 1.2 Data assets
 
