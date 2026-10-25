@@ -1394,3 +1394,79 @@ larger by 0.003.*
    nothing. The null is a fair reference only where the empty slot shows it.
 3. **The 20k figures at width 1024 are between the nulls** (§33.124; item 1, §33.137). At 10k that
    reference gives 0.003 more than the empty slot at this width; the gap at 20k is not measured.
+
+### 33.140 The queue reviewed: full training at 30M parameters, and English at 30M, prepared
+
+Nothing the text asked for is left to run, and the second machine has until Monday, 26 October. The
+queue was reviewed against the limits the text states. Two of its headline claims rest on the 5M model
+at full training:
+- the tokenizer's gain lasts (+0.0165, 1.75%, at 151M tokens and 50k);
+- the features' gain is gone at the end of training (no feature beyond about 0.002 over its null).
+
+At 30M parameters (width 512) the tokenizer ran to 20k on ~38M tokens (+0.0102), and case to 10k, where
+it still gains +0.0020 over its null at null BPB 0.88 (§33.118). English endings apart (+0.0046 at 10k)
+is measured in the 5M model only. The text ranked the candidates on 25 October: first the full
+training at 30M, then English at 30M, then what case's lead over the word form is made of, but only
+if case keeps a gain. The modern block and widths beyond 85M it does not need.
+
+**The chain** (`scripts/chains/second_2026-10-25.sh`), at 151M tokens and 50k unless noted, seeds 0–3:
+- full512: the nulls at width 512 under BPE 17k and endings apart, and case (tagger) under BPE 17k:
+  12 runs of about 80 min;
+- mb512: MultiBLiMP on the nulls;
+- en512: English plain baselines at width 512 under BPE 17k and endings apart, 10k: 8 runs of about
+  16 min;
+- lex512, **only if case keeps more than 0.002 over its null in full512**: case from the word form and
+  case without the leak (prepositions read from their form, as for G-77), under BPE 17k: 8 runs;
+- empty512, **only if the tokenizer's gain in full512 is below 0.006**: the empty slot under both
+  tokenizers: 8 runs. Below 0.006, a gap like width 1024's (0.0032 ± 0.0010, §33.139) could take the
+  gain to zero over the empty slots.
+
+The chain decides the two conditions itself, from the records, once full512's four seeds are in. The
+100-step warm-up is kept: at width 512 the longer one changes neither null (§33.132). Every cell's data
+is on the second machine except the English endings-apart stream, which goes there before en512 starts.
+Rehearsed with the stub in seven scenarios:
+- case keeps a gain: 28 runs, the word form and its leak control run, the empty slot does not;
+- case's gain is gone and the tokenizer's gain is low: 28 runs, the empty slot runs, the word form does
+  not;
+- a failed pair check in full512 skips its other seeds;
+- END_BY leaves every long set for later;
+- with every run done, MultiBLiMP runs once;
+- with its record there, MultiBLiMP runs not at all;
+- with full512's seeds missing, neither condition is decided and neither piece runs.
+
+**Predictions** (before any run):
+- **P314** (~80%). At width 512 and full training the tokenizer's gain is positive at every seed.
+- **P315** (~75%). It is more than 0.002 below the 5M model's at full training (+0.0165).
+- **P316** (~70%). Case (tagger) under BPE 17k ends within 0.002 of its null on average.
+- **P317** (~75%). On MultiBLiMP endings apart is ahead at every seed, by at least the 5M model's lead
+  at full training (+4.9 points).
+- **P318** (~65%). English endings apart at width 512 and 10k beats BPE 17k at three seeds of four or
+  more, with a positive mean.
+- **P319** (~60%; only if lex512 runs). The leak (case over case without it) is at least half of case's
+  lead over the word form.
+- **P320** (~60%; only if empty512 runs). The tokenizer's gain between the empty slots is within 0.002
+  of its gain between the nulls.
+
+**What each outcome says** (the text's sentences, fixed before the run):
+- the tokenizer, X the gain between the nulls:
+  - X within 0.002 of +0.0165 or above: *at full training the tokenizer gains 1.75% in the 5M model and
+    X% in the 30M*;
+  - more than 0.002 below: *in the 30M model it is smaller: X%*.
+
+  Either way the reference is named: between the nulls, which agree with the empty slots at this width
+  at 10k.
+- case under BPE 17k:
+  - within 0.002 of its null on average: *in the 30M model too, at the end of full training, case
+    does not beat the same-architecture control by more than about 0.002*. The full-training claims
+    then hold at 5M and 30M parameters.
+  - more than 0.002: *in the 30M model case keeps X at full training*. Those claims keep the 5M scope,
+    and the law gains a sentence: the gain goes in the 5M model, and at full training in the 30M model
+    it is still there.
+- English, positive at three seeds of four or more with a positive mean: *in English too, at 30M
+  parameters: X%*; otherwise: *only in the small model*.
+- what case's lead over the word form is made of, if lex512 runs:
+  - the leak at least half of the lead: *at 30M parameters too, case's lead over the word form at full
+    training is mostly the leak*;
+  - otherwise: *in the 30M model context itself gives X*.
+
+The tally is 187 right, 13 half right, 100 wrong, 8 never tested, 1 withdrawn and 11 pending, of 320.

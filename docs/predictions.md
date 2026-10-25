@@ -6,7 +6,7 @@ Each prediction was recorded in the [journey](record/journey/README.md) **before
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 187 right, 13 half right, 100 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 4 pending — of 313.
+**Tally:** 187 right, 13 half right, 100 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 11 pending — of 320.
 
 *Key to the tally (added 19 October 2026). Counted half right: P19, P46, P54 — with the eight
 whose outcome begins "half right" or "partly right". Counted right: P33, P172, P273, P303 — right by their
@@ -346,3 +346,10 @@ The wrong ones carried the information:
 | P311 | It is more than 0.002 below the gain on the repeated text (~38M) under the same warm-up | pending | §33.137 |
 | P312 | Without repetition, the gain over the last 5,000 steps stays within 0.002 of its value at step 15,000 | pending | §33.137 |
 | P313 | MultiBLiMP without repetition is positive at every seed and within 1 point of the repeated text's | pending | §33.137 |
+| P314 | At width 512 and full training (151M tokens, 50k) the tokenizer's gain is positive at every seed | pending | §33.140 |
+| P315 | It is more than 0.002 below the 5M model's at full training (+0.0165) | pending | §33.140 |
+| P316 | Case (tagger) under BPE 17k at width 512 and full training ends within 0.002 of its null on average | pending | §33.140 |
+| P317 | On MultiBLiMP endings apart at width 512 and full training is ahead at every seed, by at least +4.9 points | pending | §33.140 |
+| P318 | English endings apart at width 512 and 10k beats BPE 17k at three seeds of four or more, with a positive mean | pending | §33.140 |
+| P319 | (Only if lex512 runs) at width 512 and full training the leak is at least half of case's lead over the word form | pending | §33.140 |
+| P320 | (Only if empty512 runs) at width 512 and full training the tokenizer's gain between the empty slots is within 0.002 of its gain between the nulls | pending | §33.140 |
