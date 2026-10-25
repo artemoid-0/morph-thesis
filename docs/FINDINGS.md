@@ -297,7 +297,7 @@ Net, case beats the empty slot by half its gain over the null at 10k (+0.0022 ag
 **In a model of 30M parameters the null costs nothing.**
 At width 512 and 10k the empty slot ends level with it under both tokenizers: −0.0002 ± 0.0001 under endings apart (1/4), −0.0002 ± 0.0005 under BPE 17k.
 Along training the slot helps there, as early in the 5M model, and the help fades: where the 5M model's slot costs under endings apart (+0.0017 at null BPB 1.15, +0.0021 at 1.10), the 30M model's still helps (−0.0015, −0.0012; 0/4 each).
-The cost belongs to the small model, not to a stage of learning.
+Under endings apart the cost belongs to the small model, not to a stage of learning.
 
 **In a model of 85M parameters it is not neutral again, and its sign turns with the tokenizer.**
 At width 1024 and 10k, with the 1,000-step warm-up, the empty slot ends better than the null under BPE 17k, **+0.0017 ± 0.0011** (3/4), and worse under endings apart, **−0.0015 ± 0.0006** (0/4).

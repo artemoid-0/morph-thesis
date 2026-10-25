@@ -131,11 +131,11 @@ TXT = {
         'unigram': 'Unigram 17k',
     },
     'en': {
-        'gain': 'gain over the null,\nbits per byte',
-        'gain_end': 'gain over the same-shape null\nat the end of training, bits per byte',
+        'gain': 'gain over the control,\nbits per byte',
+        'gain_end': 'gain over the same-architecture\ncontrol at the end of training,\nbits per byte',
         'step': 'training step, thousands',
-        'null_bpb': "the null's validation BPB\n(→ more learned)",
-        'ref_bpb': "BPE 17k null's validation BPB\n(→ more learned)",
+        'null_bpb': "the control's validation BPB\n(→ more learned)",
+        'ref_bpb': "BPE 17k control's validation BPB\n(→ more learned)",
         'lead': 'lead over BPE 17k,\nbits per byte',
         'tok_title': 'BPE 17k with endings apart, n = 4:',
         'letters': 'abcd',
@@ -169,7 +169,7 @@ _EN_LAW_NAMES = [['151M tokens, 50k steps', '38M tokens, 10k steps'],
                  ['50k steps', '20k steps', '10k steps', '5k steps'],
                  ['width 128, 50k steps', 'width 128, 10k steps', 'width 256, 10k steps', 'width 256, 20k steps',
                   'width 64, 10k steps'],
-                 ['BPE 4k', 'BPE 8k', 'BPE 17k', 'BPE 32k', 'Unigram 17k', 'BPE 17k, endings apart']]
+                 ['BPE 4k', 'BPE 8k', 'BPE 17k', 'BPE 32k', 'Unigram 17k', 'BPE 17k with\nendings apart']]
 TXT['en']['law'] = [(ref, [(nm, n, f) for nm, (_, n, f) in zip(names, conds)])
                     for names, (ref, conds) in zip(_EN_LAW_NAMES, TXT['uk']['law'])]
 

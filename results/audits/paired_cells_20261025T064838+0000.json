@@ -1,0 +1,96 @@
+{
+  "script": "paired_cells",
+  "args": {
+    "pair": [
+      [
+        "w1024 wu1000 20k, 151M tokens, the nulls",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_wu1000_st20k_w1024",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_wu1000_st20k_w1024"
+      ]
+    ],
+    "seeds": null,
+    "machine": "second",
+    "results": [
+      "/home/neko/PycharmProjects/Morph/results"
+    ]
+  },
+  "timestamp_utc": "2026-10-25T06:48:38+00:00",
+  "results": {
+    "pairs": [
+      {
+        "name": "w1024 wu1000 20k, 151M tokens, the nulls",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_wu1000_st20k_w1024",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_wu1000_st20k_w1024",
+        "seeds": {
+          "0": {
+            "effect": -0.007662078147552154,
+            "A": 0.7512345629354661,
+            "B": 0.7435724847879139,
+            "machine": "5090",
+            "runs": [
+              "1bd87cdcabf7",
+              "6c8218474231"
+            ]
+          },
+          "1": {
+            "effect": -0.008876353770852718,
+            "A": 0.7547771434458925,
+            "B": 0.7459007896750398,
+            "machine": "5090",
+            "runs": [
+              "a9063df661b8",
+              "413c3fe90c4c"
+            ]
+          },
+          "2": {
+            "effect": -0.0071877117820956515,
+            "A": 0.7505066286002854,
+            "B": 0.7433189168181897,
+            "machine": "5090",
+            "runs": [
+              "4be05466fa0f",
+              "5dcad058f827"
+            ]
+          },
+          "3": {
+            "effect": -0.009207474929481263,
+            "A": 0.7519865355354469,
+            "B": 0.7427790606059657,
+            "machine": "5090",
+            "runs": [
+              "4dd44cca40d4",
+              "13c830a0c9c8"
+            ]
+          }
+        },
+        "mean": -0.008233404657495447,
+        "se": 0.000481498012089986,
+        "positive": 0,
+        "n": 4,
+        "skipped_across_machines": {}
+      }
+    ]
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-10-25T06:48:38+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "5d47858c5cffc0502fc343cad92863b6251a48d7",
+    "git_dirty": false
+  },
+  "notes": [
+    "effect = B minus A in bits per byte at each seed (positive: A better); pairs on one machine only"
+  ]
+}
