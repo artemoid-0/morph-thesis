@@ -19,7 +19,9 @@ is the leak (§33.127). The rest is not context: most of it sits after words uns
 where the word form misleads its model (§33.128–§33.129). At 85M parameters
 with a 1,000-step warm-up the tokenizer's gain holds at every seed, smaller than at 30M (§33.132). At full training
 gender's and number's lead over the word form is about 0.0002, without a leak, and not context (§33.133). English part of
-speech's causal tagger keeps nothing reliable over the word form at full training (§33.135).
+speech's causal tagger keeps nothing reliable over the word form at full training (§33.135). At 85M parameters the
+same-shape null costs BPE 17k and helps endings apart, so the tokenizer's gain over the empty slots is +0.0079, 0.003
+below its gain between the nulls (§33.139).
 
 ---
 
@@ -1332,3 +1334,63 @@ The home is the results record, §3. The weekend's runs add to it, and the tool 
 **A term.** The thesis now calls the same-shape null «контроль тієї самої архітектури», not
 «…тієї самої форми», which readers took for the word form. The Ukrainian Q2 figure (`fig_q2_end`) says
 so, its axis label now on three lines. The English figures keep "same-shape null".
+
+### 33.139 Item 2: at width 1024 the tokenizer's gain over the empty slots is smaller than between the nulls
+
+The empty slot's chain (`second_2026-10-24.sh`, §33.136) ran on the second machine from 22:00 EDT on
+23 October to 03:55 on 24 October: 8 runs of 44 min, none failed, and the pair check passed. Every
+run's best step was its last. Paired by seed within the machine against the nulls of §33.132, which
+had the same warm-up (`paired_cells_20261025T061543`; along training `exposure_axis_20261025T061652`,
+whose new option `--warmup` reads the labels' `_wu1000`):
+
+| width 1024, ~38M tokens, 10k, 1,000-step warm-up | BPE 17k | endings apart | the tokenizer's gain |
+|---|---|---|---|
+| the null (§33.132) | 0.8207, 0.8256, 0.8195, 0.8207 | 0.8112, 0.8113, 0.8095, 0.8104 | +0.0110 ± 0.0011 (1.34%, 4/4) |
+| the empty slot | 0.8186, 0.8213, 0.8203, 0.8196 | 0.8117, 0.8121, 0.8109, 0.8135 | **+0.0079 ± 0.0008 (0.96%, 4/4)**: +0.0069, +0.0091, +0.0093, +0.0061 |
+| the empty slot over the null | **+0.0017 ± 0.0011 (3/4)**: +0.0021, +0.0044, −0.0008, +0.0010 | **−0.0015 ± 0.0006 (0/4)**: −0.0005, −0.0008, −0.0014, −0.0032 | |
+
+- **The two references differ by 0.0032 ± 0.0010, at every seed** (+0.0026, +0.0052, +0.0006, +0.0042).
+  The null's slot costs BPE 17k and helps endings apart, so the gain between the nulls is the larger.
+  In the 5M model it is the other way round: there the null costs endings apart, and the gain between
+  the nulls is the smaller (+0.0175 against +0.0203). At 30M parameters the two agree (§33.118).
+- **Each tokenizer's part is small.** Under BPE 17k the empty slot is better at three seeds of four;
+  under endings apart it is worse at all four, by 0.0032 at seed 3.
+
+**Along training** (the empty slot over the null at the same null BPB; positive: the empty slot is better):
+
+| null BPB | 1.46 | 1.33 | 1.21 | 1.08 | 0.95 | 0.83 | the end of the 10k budget |
+|---|---|---|---|---|---|---|---|
+| BPE 17k | −0.0028 ± 0.0006 (0/4) | −0.0044 ± 0.0008 (0/4) | −0.0044 ± 0.0006 (0/4) | −0.0016 ± 0.0005 (0/4) | **+0.0033 ± 0.0020 (4/4)** | +0.0015 ± 0.0012 (3/4) | +0.0017 ± 0.0011 (3/4) |
+| endings apart | −0.0024 ± 0.0005 (0/4) | −0.0030 ± 0.0006 (0/4) | −0.0033 ± 0.0009 (0/4) | −0.0031 ± 0.0005 (0/4) | −0.0041 ± 0.0005 (0/4) | −0.0015 ± 0.0007 (0/4) | −0.0015 ± 0.0006 (0/4) |
+| the references' gap in the tokenizer's gain | −0.0004 ± 0.0006 (2/4) | −0.0014 ± 0.0008 (1/4) | −0.0011 ± 0.0010 (1/4) | +0.0015 ± 0.0007 (3/4) | **+0.0074 ± 0.0019 (4/4)** | +0.0030 ± 0.0011 (4/4) | +0.0032 ± 0.0010 (4/4) |
+
+Early in training the null's slot helps under both tokenizers, as at widths 128 and 512 (§33.118).
+Under BPE 17k the help turns into a cost from about null BPB 1.0; under endings apart the slot still
+helps at the end of the budget, less than at 0.95. The gap between the references is largest at
+null BPB 0.95 and smaller by the end of the budget; whether it closes with longer training is not
+measured.
+
+**Predictions** (§33.136).
+- **P307 wrong:** the two gains are 0.0032 apart (+0.0079 against +0.0110), beyond the rule's 0.002.
+- **P308 right:** under BPE 17k the empty slot ends 0.0017 better than the null, under endings apart
+  0.0015 worse, each within 0.002.
+- **P309 right:** +0.0061 to +0.0093, positive at every seed.
+
+The tally is 187 right, 13 half right, 100 wrong, 8 never tested, 1 withdrawn and 4 pending, of 313.
+
+**The sentence** (the rule of §33.136): further apart than 0.002. *At width 1024 the tokenizer's gain
+over the empty slots is +0.0079 (0.96%), positive at every seed; at this size the null's slot costs
+BPE 17k 0.0017 and helps endings apart by 0.0015, so the gain between the nulls (+0.0110) is the
+larger by 0.003.*
+
+**What it changes for the thesis.**
+1. **At 85M parameters the tokenizer's gain has its second reference:** +0.0079 ± 0.0008 (0.96%, 4/4)
+   over the empty slots, against +0.0110 ± 0.0011 (1.34%) between the nulls. Over either it is below
+   width 512's (+0.0142 over its empty slots, with the 100-step warm-up, which changes neither null at
+   that width; §33.118, §33.132), so "smaller beyond 30M parameters" holds over both references, and
+   at every seed.
+2. **Method point 10 holds at 85M too, with the opposite sign.** In the 5M model the gains between the
+   nulls are conservative; at 85M they overstate the tokenizer's gain by 0.003. At 30M the null costs
+   nothing. The null is a fair reference only where the empty slot shows it.
+3. **The 20k figures at width 1024 are between the nulls** (§33.124; item 1, §33.137). At 10k that
+   reference gives 0.003 more than the empty slot at this width; the gap at 20k is not measured.

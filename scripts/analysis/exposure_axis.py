@@ -20,6 +20,7 @@ training; journey §33.118).
     python scripts/analysis/exposure_axis.py --widths 128 512
     python scripts/analysis/exposure_axis.py --widths 128 --reference null --levels 1.15 1.10 1.05
     python scripts/analysis/exposure_axis.py --widths 128 512 --feature empty --reference null
+    python scripts/analysis/exposure_axis.py --widths 1024 --warmup 1000 --feature empty --reference null
 
 Records: the second machine's by default, its twin copies included (results/audits/device_*/),
 as `morphlm.runs.load(machine=...)` reads them; --machine thesis for the thesis machine's.
@@ -37,9 +38,9 @@ NAMES = {'bpe_uk_17k': 'BPE 17k', 'bpeend_uk_17k': 'endings apart', 'unigram_uk_
          'bpe_uk_4k': 'BPE 4k', 'bpe_uk_8k': 'BPE 8k', 'bpe_uk_32k': 'BPE 32k'}
 
 
-def label(fact, tok, budget, width, off=False):
-    return (f'bpe_{fact}-LEARN-CAUSAL' + ('-OFF0' if off else '') + f'_{tok}_ukwiki0.05_st{budget // 1000}k'
-            + ('' if width == 128 else f'_w{width}'))
+def label(fact, tok, budget, width, off=False, warmup=None):
+    return (f'bpe_{fact}-LEARN-CAUSAL' + ('-OFF0' if off else '') + f'_{tok}_ukwiki0.05'
+            + (f'_wu{warmup}' if warmup else '') + f'_st{budget // 1000}k' + ('' if width == 128 else f'_w{width}'))
 
 
 def per_seed_curves(R, ref_label, case_label):
@@ -70,6 +71,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--widths', nargs='+', type=int, default=[128, 512])
     ap.add_argument('--budget', type=int, default=10000)
+    ap.add_argument('--warmup', type=int, default=None,
+                    help="the runs' warm-up steps when not the default (the label's _wu<steps>; width 1024, journey §33.132)")
     ap.add_argument('--reference', choices=('empty', 'null'), default='empty')
     ap.add_argument('--feature', choices=('case', 'empty'), default='case',
                     help="whose gain is read: case's, or the empty slot's (over the null only)")
@@ -92,8 +95,9 @@ def main():
             pair = [a.against, tok]
             cur = {}
             for t in pair:
-                ref = label('mconst', t, a.budget, w, off=(a.reference == 'empty'))
-                feat = label('mconst', t, a.budget, w, off=True) if a.feature == 'empty' else label('ucase', t, a.budget, w)
+                ref = label('mconst', t, a.budget, w, off=(a.reference == 'empty'), warmup=a.warmup)
+                feat = (label('mconst', t, a.budget, w, off=True, warmup=a.warmup) if a.feature == 'empty'
+                        else label('ucase', t, a.budget, w, warmup=a.warmup))
                 cur[t] = per_seed_curves(R, ref, feat)
             seeds = sorted(set(cur[a.against]) & set(cur[tok]))
             what = 'the empty slot' if a.feature == 'empty' else 'case'

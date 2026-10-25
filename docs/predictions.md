@@ -6,7 +6,7 @@ Each prediction was recorded in the [journey](record/journey/README.md) **before
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 185 right, 13 half right, 99 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 7 pending — of 313.
+**Tally:** 187 right, 13 half right, 100 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 4 pending — of 313.
 
 *Key to the tally (added 19 October 2026). Counted half right: P19, P46, P54 — with the eight
 whose outcome begins "half right" or "partly right". Counted right: P33, P172, P273, P303 — right by their
@@ -26,7 +26,8 @@ The wrong ones carried the information:
 - **case:** where the exposure effect sits (P144–P146), what the sentence's case adds over the word
   form's (P148–P150), and how much of it the tagger's leak is (P164, P166);
 - **inside the models:** what context adds inside the models (P184, P187);
-- **the null's slot:** that it helps under BPE (P252, P256), on a word's later tokens (P262);
+- **the null's slot:** that it helps under BPE (P252, P256), on a word's later tokens (P262), and that at
+  width 1024 the tokenizer's gain is the same over the empty slots as between the nulls (P307);
 - **gender and number:** that most of what their tag adds over the word form is the tagger's leak (P288, P289),
   and that number's leak lasts to full training (P302).
 
@@ -338,9 +339,9 @@ The wrong ones carried the information:
 | P304 | At full training English part of speech from the causal tagger ends level with the word form: its lead over the word form is positive at fewer than three seeds of four | right — positive at two seeds of four (+0.0005 ± 0.0011) | §33.134, §33.135 |
 | P305 | At full training English part of speech's leak (in context over the causal tagger) is positive at three seeds of four or more | wrong — positive at two seeds of four (+0.0017 ± 0.0016) | §33.134, §33.135 |
 | P306 | At full training English part of speech in context leads the word form at three seeds of four or more, and the leak is at least three quarters of that lead | right — 3/4, and the leak is 77% of the lead (+0.0017 of +0.0022) | §33.134, §33.135 |
-| P307 | At width 1024 with a 1,000-step warm-up, the tokenizer's gain between the empty slots is within 0.002 of its gain between the nulls (+0.0110) | pending | §33.136 |
-| P308 | At width 1024, under each tokenizer, the empty slot ends within 0.002 of its null on average | pending | §33.136 |
-| P309 | At width 1024 the tokenizer's gain between the empty slots is positive at every seed | pending | §33.136 |
+| P307 | At width 1024 with a 1,000-step warm-up, the tokenizer's gain between the empty slots is within 0.002 of its gain between the nulls (+0.0110) | wrong — +0.0079 ± 0.0008, 0.0032 apart | §33.136, §33.139 |
+| P308 | At width 1024, under each tokenizer, the empty slot ends within 0.002 of its null on average | right — 0.0017 better under BPE 17k, 0.0015 worse under endings apart | §33.136, §33.139 |
+| P309 | At width 1024 the tokenizer's gain between the empty slots is positive at every seed | right — +0.0061 to +0.0093 | §33.136, §33.139 |
 | P310 | Without repeating the text (151M tokens), the tokenizer's gain at width 1024 at 20k with the 1,000-step warm-up is positive at every seed | pending | §33.137 |
 | P311 | It is more than 0.002 below the gain on the repeated text (~38M) under the same warm-up | pending | §33.137 |
 | P312 | Without repetition, the gain over the last 5,000 steps stays within 0.002 of its value at step 15,000 | pending | §33.137 |

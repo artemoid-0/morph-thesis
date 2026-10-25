@@ -61,8 +61,10 @@ At the same point of learning the lead starts above width 512's (at 10k +0.059 a
 By 20k the 85M model's BPE 17k null stops improving, after 4.3 passes over its ~38M-token text, so the last 1,500 steps add about 0.0025 to the gain (+0.0049 at step 18,500) (§33.120, §33.124).
 
 These gains are between the two tokenizers' nulls.
-The 5M model's null costs endings apart about 0.002 (below), so at 10k the gain between the empty slots is larger: +0.0203 ± 0.0013, against +0.0175 ± 0.0015 between the nulls on a second machine.
-At width 512 the two references agree (+0.0142, +0.0141), and its gain is the smaller over either (§33.118).
+Over the empty slots the gain is larger in the 5M model, the same at 30M parameters and smaller at 85M:
+- the 5M model's null costs endings apart about 0.002 (below), so at 10k the gain between the empty slots is +0.0203 ± 0.0013, against +0.0175 ± 0.0015 between the nulls on a second machine;
+- at width 512 the two references agree (+0.0142, +0.0141), and its gain is the smaller over either (§33.118);
+- at width 1024 the null costs BPE 17k and helps endings apart (below), so at 10k with the 1,000-step warm-up the gain between the empty slots is **+0.0079 ± 0.0008 (0.96%, 4/4)**, against +0.0110 ± 0.0011 between the nulls: 0.0032 ± 0.0010 less, at every seed (§33.139).
 
 **And it shows in grammar, not only in bits per byte.**
 On MultiBLiMP's 2,744 Ukrainian subject–verb agreement pairs the endings-apart models prefer the grammatical sentence more often (4/4 each):
@@ -79,7 +81,7 @@ Exposing more endings elsewhere does not do it: BPE 4k is 1.2 points below BPE 1
 On UberText 2.0's fiction (novels and prose; both tokenizers trained on it) endings apart beats BPE 17k at every seed: **+0.0097 ± 0.0010 BPB (0.8%, 4/4)** at 10k, half its share on Wikipedia, and **+5.3 ± 0.6 points (4/4)** on MultiBLiMP, as much as on Wikipedia or more.
 At full training on four times that text (154M tokens, 50k) it is **+0.0155 ± 0.0010 (1.45%, 4/4)**, flat from step 20,000 — near its share on Wikipedia, so the smaller share belonged to the 10k budget — and +2.3 ± 0.3 points (4/4) on MultiBLiMP, from 88.1% (§33.108, §33.109).
 
-*Two corpora (fiction at 10k, and at full training on a second machine), two corpus sizes and three budgets on Wikipedia, four widths (512 at 20k: seeds 2–3 on a second machine; 1024 on a second machine).* (§33.61–§33.68, §33.76, §33.79, §33.86, §33.88, §33.94, §33.96, §33.100, §33.102, §33.108, §33.120, §33.122, §33.124, §33.132)
+*Two corpora (fiction at 10k, and at full training on a second machine), two corpus sizes and three budgets on Wikipedia, four widths (512 at 20k: seeds 2–3 on a second machine; 1024 on a second machine).* (§33.61–§33.68, §33.76, §33.79, §33.86, §33.88, §33.94, §33.96, §33.100, §33.102, §33.108, §33.120, §33.122, §33.124, §33.132, §33.139)
 
 ### Q2: no feature beats its null at the end of training
 
@@ -297,7 +299,12 @@ At width 512 and 10k the empty slot ends level with it under both tokenizers: �
 Along training the slot helps there, as early in the 5M model, and the help fades: where the 5M model's slot costs under endings apart (+0.0017 at null BPB 1.15, +0.0021 at 1.10), the 30M model's still helps (−0.0015, −0.0012; 0/4 each).
 The cost belongs to the small model, not to a stage of learning.
 
-*Six tokenizers and three corpus sizes at 10k, on a second machine; endings apart at three budgets and BPE 17k at two, on both machines; width 512 under both at 10k, on the second machine.* (§33.106, §33.109, §33.110, §33.113, §33.116, §33.118)
+**In a model of 85M parameters it is not neutral again, and its sign turns with the tokenizer.**
+At width 1024 and 10k, with the 1,000-step warm-up, the empty slot ends better than the null under BPE 17k, **+0.0017 ± 0.0011** (3/4), and worse under endings apart, **−0.0015 ± 0.0006** (0/4).
+Along training the slot helps under both early, as at the smaller widths; under BPE 17k the help turns into a cost from about null BPB 1.0 (+0.0033 ± 0.0020 at 0.95, 4/4), while under endings apart it still helps at the end, less than before (−0.0041 ± 0.0005 at 0.95).
+In the tokenizer's gain the two add up: between the nulls it is 0.0032 ± 0.0010 larger than between the empty slots, at every seed ([above](#q1-in-ukrainian-morphology-inside-bpe)).
+
+*Six tokenizers and three corpus sizes at 10k, on a second machine; endings apart at three budgets and BPE 17k at two, on both machines; widths 512 and 1024 under both at 10k, on the second machine.* (§33.106, §33.109, §33.110, §33.113, §33.116, §33.118, §33.139)
 
 ### Case helps by predicting endings
 
@@ -389,8 +396,8 @@ Each is an artifact this project found in its own numbers or pipeline; together 
    A label that ignored a setting would have merged different runs into one cell (model size, slot tiling); a run id that hashes the whole configuration splits one cell's seed in two once a field is added; a quarantine rule written for one generation of runs misfired on the next; tests left out of a hand-kept list never ran.
    Each was caught before it changed a number. (§33.39, §33.43–§33.45, §33.48)
 10. **A same-shape null is not neutral, and its sign depends on the tokenizer and the model's size.**
-   In the 5M Ukrainian model the null's slot loses to the same slot held at zero where the tokenizer exposes endings (by 0.0022 to 0.0039 at 10k, 0.0025 to 0.0034 at 20k) and beats it under BPE at 4k, 8k and 32k and on less data (by 0.0015 to 0.0037); a feature with the same slot pays the cost too; at 30M parameters the two end level under endings apart and BPE 17k ([above](#the-same-shape-null-is-not-neutral)).
-   A gain over the null then overstates or understates the gain over the best model without the feature, the tokenizer's own gain included, and gains compared across tokenizers over their own nulls can turn a conclusion round: check against an empty slot, at each model size. (§33.106, §33.113, §33.116, §33.118)
+   In the 5M Ukrainian model the null's slot loses to the same slot held at zero where the tokenizer exposes endings (by 0.0022 to 0.0039 at 10k, 0.0025 to 0.0034 at 20k) and beats it under BPE at 4k, 8k and 32k and on less data (by 0.0015 to 0.0037); a feature with the same slot pays the cost too; at 30M parameters the two end level under endings apart and BPE 17k; at 85M the slot costs under BPE 17k and helps under endings apart, so the tokenizer's gain between the nulls is 0.003 larger than between the empty slots ([above](#the-same-shape-null-is-not-neutral)).
+   A gain over the null then overstates or understates the gain over the best model without the feature, the tokenizer's own gain included, and gains compared across tokenizers over their own nulls can turn a conclusion round: check against an empty slot, at each model size. (§33.106, §33.113, §33.116, §33.118, §33.139)
 11. **Two GPUs run the same model alike, not the same run.**
    The same weights evaluate within 2 × 10⁻⁹ on both machines, and a matrix product, a softmax and a layer norm are bitwise identical; with dropout off, two machines train the same run to within 2 × 10⁻⁸.
    But dropout's masks are drawn on the GPU, differently by kernel layout, so a run repeated on the other machine differs like a dropout draw: −0.0001 ± 0.0001 over 143 pairs, no consistent sign (71 above, 72 below), the largest difference growing with training (0.0034 at 10k, 0.0044 at 20k, 0.0063 at 50k); at width 512 about as much as one seed's run from another's.

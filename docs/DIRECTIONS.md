@@ -45,10 +45,10 @@ The thesis text's request of 24 October (§33.136), in its order: each item with
 The text is complete without them; each lifts a limit it states.
 Results committed by about 31 October reach the text; the work is admitted on 4 November.
 
-**Running:** item 2 on the second machine, from 24 October, then item 1 behind it (the weekend is the second machine's).
+**Running:** item 1 on the second machine, from 24 October (the weekend is the second machine's).
 
-1. **Width 1024 without repeating the text** (§3.3.2, §3.12): prepared (§33.137), runs after item 2. The nulls at width 1024, 20k, with the 1,000-step warm-up, both tokenizers, four seeds, on the 151M-token corpus (about 1.1 passes) and on ~38M (the repeated text under the same warm-up); then MultiBLiMP: 16 runs, ~25 h.
-2. **The empty slot at width 1024** (§3.12, method point 10): running (§33.136). Both tokenizers, 10k, four seeds, the 1,000-step warm-up: 8 runs, ~6 h.
+1. **Width 1024 without repeating the text** (§3.3.2, §3.12): running (§33.137), after item 2. The nulls at width 1024, 20k, with the 1,000-step warm-up, both tokenizers, four seeds, on the 151M-token corpus (about 1.1 passes) and on ~38M (the repeated text under the same warm-up); then MultiBLiMP: 16 runs, ~25 h.
+2. **The empty slot at width 1024** (§3.12, method point 10): answered (§33.139). The two references do not agree: over the empty slots the tokenizer's gain is +0.0079 (0.96%), 0.0032 below the gain between the nulls, at every seed; the null's slot costs BPE 17k and helps endings apart. The empty slot at 20k is not run: a follow-up, only if the text asks (8 runs, ~12 h).
 3. **The work's size** (the Introduction): no GPU. Trained models, GPU-hours by machine and training tokens, from the records.
 
 The text's request of 22 October is answered (§33.130–§33.135): width 1024 holds at every seed with a longer warm-up; at full training what the sentence adds over the word form is not context, for Ukrainian gender and number and for English part of speech.
