@@ -82,6 +82,8 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [§33.137](15_the_list_of_19_october.md#33137-item-1-prepared-width-1024-without-repeating-the-text) — width 1024 at 20k without repeating the text, prepared
 - [§33.139](15_the_list_of_19_october.md#33139-item-2-at-width-1024-the-tokenizers-gain-over-the-empty-slots-is-smaller-than-between-the-nulls) — at width 1024 the null costs BPE 17k and helps endings apart: the tokenizer's gain over the empty slots is +0.0079, 0.003 below the nulls'
 - [§33.140](15_the_list_of_19_october.md#33140-the-queue-reviewed-full-training-at-30m-parameters-and-english-at-30m-prepared) — the queue reviewed: full training at 30M parameters, and English at 30M, prepared
+- [§33.141](15_the_list_of_19_october.md#33141-item-1-without-repeating-the-text-the-gain-at-width-1024-is-smaller-and-still-rising) — without repeating the text the gain at width 1024 is smaller, and still rising
+- [§33.142](15_the_list_of_19_october.md#33142-full-training-at-30m-parameters-the-tokenizers-gain-is-smaller-and-lasts-case-stays-within-the-bound-english-gains-nothing) — full training at 30M parameters: the tokenizer's gain is smaller and lasts, case stays within the bound, English gains nothing
 
 ### Q2: injected features against a same-shape null
 
@@ -459,6 +461,8 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [33.138 Item 3: the work's size, and a term in the Ukrainian figures](15_the_list_of_19_october.md#33138-item-3-the-works-size-and-a-term-in-the-ukrainian-figures)
 - [33.139 Item 2: at width 1024 the tokenizer's gain over the empty slots is smaller than between the nulls](15_the_list_of_19_october.md#33139-item-2-at-width-1024-the-tokenizers-gain-over-the-empty-slots-is-smaller-than-between-the-nulls)
 - [33.140 The queue reviewed: full training at 30M parameters, and English at 30M, prepared](15_the_list_of_19_october.md#33140-the-queue-reviewed-full-training-at-30m-parameters-and-english-at-30m-prepared)
+- [33.141 Item 1: without repeating the text the gain at width 1024 is smaller, and still rising](15_the_list_of_19_october.md#33141-item-1-without-repeating-the-text-the-gain-at-width-1024-is-smaller-and-still-rising)
+- [33.142 Full training at 30M parameters: the tokenizer's gain is smaller and lasts, case stays within the bound, English gains nothing](15_the_list_of_19_october.md#33142-full-training-at-30m-parameters-the-tokenizers-gain-is-smaller-and-lasts-case-stays-within-the-bound-english-gains-nothing)
 
 ### Appendices
 

@@ -1,0 +1,438 @@
+{
+  "script": "paired_cells",
+  "args": {
+    "pair": [
+      [
+        "w1024 wu1000 20k, 151M tokens, the nulls",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_wu1000_st20k_w1024",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_wu1000_st20k_w1024"
+      ],
+      [
+        "w1024 wu1000 20k, ~38M tokens, the nulls",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_wu1000_st20k_w1024",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_wu1000_st20k_w1024"
+      ],
+      [
+        "w1024 wu1000 20k, BPE 17k null: 151M over ~38M",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_wu1000_st20k_w1024",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_wu1000_st20k_w1024"
+      ],
+      [
+        "w1024 wu1000 20k, endings-apart null: 151M over ~38M",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_wu1000_st20k_w1024",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_wu1000_st20k_w1024"
+      ],
+      [
+        "w512 full training, the nulls",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_w512",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_w512"
+      ],
+      [
+        "w512 full training, case over the BPE 17k null",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_w512",
+        "bpe_ucase-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_w512"
+      ],
+      [
+        "English w512 10k, plain baselines",
+        "bpe_baseline_bpe_17k_st10k_w512",
+        "bpe_baseline_bpeend_17k_st10k_w512"
+      ]
+    ],
+    "seeds": null,
+    "machine": "second",
+    "results": [
+      "/home/neko/PycharmProjects/Morph/results"
+    ]
+  },
+  "timestamp_utc": "2026-10-26T10:13:53+00:00",
+  "results": {
+    "pairs": [
+      {
+        "name": "w1024 wu1000 20k, 151M tokens, the nulls",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_wu1000_st20k_w1024",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_wu1000_st20k_w1024",
+        "seeds": {
+          "0": {
+            "effect": -0.007662078147552154,
+            "A": 0.7512345629354661,
+            "B": 0.7435724847879139,
+            "machine": "5090",
+            "runs": [
+              "1bd87cdcabf7",
+              "6c8218474231"
+            ]
+          },
+          "1": {
+            "effect": -0.008876353770852718,
+            "A": 0.7547771434458925,
+            "B": 0.7459007896750398,
+            "machine": "5090",
+            "runs": [
+              "a9063df661b8",
+              "413c3fe90c4c"
+            ]
+          },
+          "2": {
+            "effect": -0.0071877117820956515,
+            "A": 0.7505066286002854,
+            "B": 0.7433189168181897,
+            "machine": "5090",
+            "runs": [
+              "4be05466fa0f",
+              "5dcad058f827"
+            ]
+          },
+          "3": {
+            "effect": -0.009207474929481263,
+            "A": 0.7519865355354469,
+            "B": 0.7427790606059657,
+            "machine": "5090",
+            "runs": [
+              "4dd44cca40d4",
+              "13c830a0c9c8"
+            ]
+          }
+        },
+        "mean": -0.008233404657495447,
+        "se": 0.000481498012089986,
+        "positive": 0,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "w1024 wu1000 20k, ~38M tokens, the nulls",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_wu1000_st20k_w1024",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_wu1000_st20k_w1024",
+        "seeds": {
+          "0": {
+            "effect": -0.010497956723761304,
+            "A": 0.768843969125187,
+            "B": 0.7583460124014257,
+            "machine": "5090",
+            "runs": [
+              "d4927fe56ab1",
+              "67727dc64bc3"
+            ]
+          },
+          "1": {
+            "effect": -0.011154745000521604,
+            "A": 0.7704963076462267,
+            "B": 0.7593415626457051,
+            "machine": "5090",
+            "runs": [
+              "cba901979f67",
+              "2e9ea57b898b"
+            ]
+          },
+          "2": {
+            "effect": -0.009199262736396707,
+            "A": 0.7681613848596726,
+            "B": 0.7589621221232759,
+            "machine": "5090",
+            "runs": [
+              "2d872152aec5",
+              "136245cf1399"
+            ]
+          },
+          "3": {
+            "effect": -0.011019677064201705,
+            "A": 0.7690828978501675,
+            "B": 0.7580632207859658,
+            "machine": "5090",
+            "runs": [
+              "d769d766eded",
+              "aff57dc86e5d"
+            ]
+          }
+        },
+        "mean": -0.01046791038122033,
+        "se": 0.0004459594428622041,
+        "positive": 0,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "w1024 wu1000 20k, BPE 17k null: 151M over ~38M",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_wu1000_st20k_w1024",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_wu1000_st20k_w1024",
+        "seeds": {
+          "0": {
+            "effect": -0.017609406189720955,
+            "A": 0.768843969125187,
+            "B": 0.7512345629354661,
+            "machine": "5090",
+            "runs": [
+              "d4927fe56ab1",
+              "1bd87cdcabf7"
+            ]
+          },
+          "1": {
+            "effect": -0.015719164200334146,
+            "A": 0.7704963076462267,
+            "B": 0.7547771434458925,
+            "machine": "5090",
+            "runs": [
+              "cba901979f67",
+              "a9063df661b8"
+            ]
+          },
+          "2": {
+            "effect": -0.017654756259387172,
+            "A": 0.7681613848596726,
+            "B": 0.7505066286002854,
+            "machine": "5090",
+            "runs": [
+              "2d872152aec5",
+              "4be05466fa0f"
+            ]
+          },
+          "3": {
+            "effect": -0.01709636231472056,
+            "A": 0.7690828978501675,
+            "B": 0.7519865355354469,
+            "machine": "5090",
+            "runs": [
+              "d769d766eded",
+              "4dd44cca40d4"
+            ]
+          }
+        },
+        "mean": -0.017019922241040708,
+        "se": 0.00045169312240433496,
+        "positive": 0,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "w1024 wu1000 20k, endings-apart null: 151M over ~38M",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_wu1000_st20k_w1024",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_wu1000_st20k_w1024",
+        "seeds": {
+          "0": {
+            "effect": -0.014773527613511805,
+            "A": 0.7583460124014257,
+            "B": 0.7435724847879139,
+            "machine": "5090",
+            "runs": [
+              "67727dc64bc3",
+              "6c8218474231"
+            ]
+          },
+          "1": {
+            "effect": -0.01344077297066526,
+            "A": 0.7593415626457051,
+            "B": 0.7459007896750398,
+            "machine": "5090",
+            "runs": [
+              "2e9ea57b898b",
+              "413c3fe90c4c"
+            ]
+          },
+          "2": {
+            "effect": -0.015643205305086116,
+            "A": 0.7589621221232759,
+            "B": 0.7433189168181897,
+            "machine": "5090",
+            "runs": [
+              "136245cf1399",
+              "5dcad058f827"
+            ]
+          },
+          "3": {
+            "effect": -0.015284160180000117,
+            "A": 0.7580632207859658,
+            "B": 0.7427790606059657,
+            "machine": "5090",
+            "runs": [
+              "aff57dc86e5d",
+              "13c830a0c9c8"
+            ]
+          }
+        },
+        "mean": -0.014785416517315825,
+        "se": 0.0004824204994154339,
+        "positive": 0,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "w512 full training, the nulls",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_w512",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_w512",
+        "seeds": {
+          "0": {
+            "effect": -0.007574871199833799,
+            "A": 0.744721941495806,
+            "B": 0.7371470702959722,
+            "machine": "5090",
+            "runs": [
+              "ae4ee76ed3f6",
+              "ae245ee3f706"
+            ]
+          },
+          "1": {
+            "effect": -0.007252435293281567,
+            "A": 0.7450169355330675,
+            "B": 0.7377645002397859,
+            "machine": "5090",
+            "runs": [
+              "4b055123e509",
+              "ce52ac238dc9"
+            ]
+          },
+          "2": {
+            "effect": -0.007636440791196741,
+            "A": 0.7441707813849999,
+            "B": 0.7365343405938032,
+            "machine": "5090",
+            "runs": [
+              "24403887879a",
+              "9081e44ff649"
+            ]
+          },
+          "3": {
+            "effect": -0.006464136989741354,
+            "A": 0.7438180459853082,
+            "B": 0.7373539089955669,
+            "machine": "5090",
+            "runs": [
+              "189021be282e",
+              "f4d6528b2ecb"
+            ]
+          }
+        },
+        "mean": -0.007231971068513365,
+        "se": 0.00026943833766531275,
+        "positive": 0,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "w512 full training, case over the BPE 17k null",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_w512",
+        "B": "bpe_ucase-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_w512",
+        "seeds": {
+          "0": {
+            "effect": -0.0020317458267932187,
+            "A": 0.744721941495806,
+            "B": 0.7426901956690127,
+            "machine": "5090",
+            "runs": [
+              "ae4ee76ed3f6",
+              "30a4bd92efcf"
+            ]
+          },
+          "1": {
+            "effect": -0.0026658585519452327,
+            "A": 0.7450169355330675,
+            "B": 0.7423510769811222,
+            "machine": "5090",
+            "runs": [
+              "4b055123e509",
+              "af7000aaf78f"
+            ]
+          },
+          "2": {
+            "effect": -0.0009361393710608512,
+            "A": 0.7441707813849999,
+            "B": 0.7432346420139391,
+            "machine": "5090",
+            "runs": [
+              "24403887879a",
+              "191f7bab5fa1"
+            ]
+          },
+          "3": {
+            "effect": -0.00024369825851622284,
+            "A": 0.7438180459853082,
+            "B": 0.743574347726792,
+            "machine": "5090",
+            "runs": [
+              "189021be282e",
+              "fcf439c8ef2b"
+            ]
+          }
+        },
+        "mean": -0.0014693605020788814,
+        "se": 0.0005427136711814703,
+        "positive": 0,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "English w512 10k, plain baselines",
+        "A": "bpe_baseline_bpe_17k_st10k_w512",
+        "B": "bpe_baseline_bpeend_17k_st10k_w512",
+        "seeds": {
+          "0": {
+            "effect": 0.00034972174583081106,
+            "A": 1.2605158009228918,
+            "B": 1.2608655226687226,
+            "machine": "5090",
+            "runs": [
+              "800dcd29c51e",
+              "6f0402da5d14"
+            ]
+          },
+          "1": {
+            "effect": 0.00037763517237454636,
+            "A": 1.259810336644707,
+            "B": 1.2601879718170816,
+            "machine": "5090",
+            "runs": [
+              "5d00d207cbc3",
+              "f1c43da0a4d5"
+            ]
+          },
+          "2": {
+            "effect": -0.0014041698400499847,
+            "A": 1.2624675842532829,
+            "B": 1.2610634144132329,
+            "machine": "5090",
+            "runs": [
+              "969fb9a58f43",
+              "c33589d164d2"
+            ]
+          },
+          "3": {
+            "effect": -0.00017899214410888042,
+            "A": 1.2609789430947036,
+            "B": 1.2607999509505947,
+            "machine": "5090",
+            "runs": [
+              "1a3782527ec3",
+              "5f47bf6baae3"
+            ]
+          }
+        },
+        "mean": -0.00021395126648837692,
+        "se": 0.0004168876919659214,
+        "positive": 2,
+        "n": 4,
+        "skipped_across_machines": {}
+      }
+    ]
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-10-26T10:13:53+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "599efe3e166b053a0394222adf22e3f14a66c843",
+    "git_dirty": true
+  },
+  "notes": [
+    "effect = B minus A in bits per byte at each seed (positive: A better); pairs on one machine only"
+  ]
+}

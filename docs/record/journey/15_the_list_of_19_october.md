@@ -21,7 +21,10 @@ with a 1,000-step warm-up the tokenizer's gain holds at every seed, smaller than
 gender's and number's lead over the word form is about 0.0002, without a leak, and not context (§33.133). English part of
 speech's causal tagger keeps nothing reliable over the word form at full training (§33.135). At 85M parameters the
 same-shape null costs BPE 17k and helps endings apart, so the tokenizer's gain over the empty slots is +0.0079, 0.003
-below its gain between the nulls (§33.139).
+below its gain between the nulls (§33.139). Without repeating the text, at 20k, that gain is smaller:
++0.0082 (1.09%), still rising (§33.141). At full training at 30M parameters the tokenizer gains +0.0072
+(0.97%) and lasts; case stays within 0.002 of its null but keeps +0.0015 at every seed; English endings
+apart gains nothing at 30M (§33.142).
 
 ---
 
@@ -1470,3 +1473,108 @@ Rehearsed with the stub in seven scenarios:
   - otherwise: *in the 30M model context itself gives X*.
 
 The tally is 187 right, 13 half right, 100 wrong, 8 never tested, 1 withdrawn and 11 pending, of 320.
+
+### 33.141 Item 1: without repeating the text the gain at width 1024 is smaller, and still rising
+
+The chain of 24 October (`second_wide_2026-10-24.sh`, §33.137) ran on the second machine from 03:55 EDT
+on 24 October to 03:38 on 25 October: 16 runs of 88–89 min, then MultiBLiMP on each corpus. None failed,
+and both pair checks passed. Paired by seed within the machine (`paired_cells_20261026T101353`; at step
+15,000, `paired_cells_20261026T101504`, read with the tool's new option `--step`;
+`multiblimp_eval_20261025T073703`, 151M tokens; `…T073758`, ~38M):
+
+| width 1024, 20k, 1,000-step warm-up | BPE 17k | endings apart | the gain |
+|---|---|---|---|
+| ~38M tokens (4.3 passes) | 0.7688, 0.7705, 0.7682, 0.7691 | 0.7583, 0.7593, 0.7590, 0.7581 | +0.0105 ± 0.0004 (1.36%, 4/4) |
+| 151M tokens (about 1.1 passes) | 0.7512, 0.7548, 0.7505, 0.7520 | 0.7436, 0.7459, 0.7433, 0.7428 | **+0.0082 ± 0.0005 (1.09%, 4/4)**: +0.0077, +0.0089, +0.0072, +0.0092 |
+
+- **Without repetition the gain is smaller, at every seed,** by 0.0022 ± 0.0002 (−0.0028, −0.0023, −0.0020,
+  −0.0018). Both nulls gain from the larger corpus, BPE 17k's more: by 0.0170 ± 0.0005 against 0.0148 ±
+  0.0005.
+- **It is still rising:** +0.0074 at step 15,000, +0.0008 more by the end (+0.0001 to +0.0011). On the
+  repeated text the gain is level over the last 5,000 steps (−0.0003).
+- **With the 1,000-step warm-up the repeated text's gain is larger** than with 100 steps (+0.0075 ± 0.0018,
+  §33.124), and every seed keeps it (+0.0092 to +0.0112).
+- **Grammar holds without repetition:** MultiBLiMP +5.4 ± 0.3 points (4/4): number +6.4, gender +4.3,
+  person +5.8. On the repeated text it is +5.1 ± 0.1 (4/4).
+
+**Predictions** (§33.137).
+- **P310 right:** +0.0072 to +0.0092, positive at every seed.
+- **P311 right:** 0.0022 below the repeated text's gain, beyond 0.002.
+- **P312 right:** +0.0008 over the last 5,000 steps.
+- **P313 right:** +5.4 against +5.1 points, positive at every seed.
+
+The tally is 191 right, 13 half right, 100 wrong, 8 never tested, 1 withdrawn and 7 pending, of 320.
+
+**The sentence** (the rule of §33.137: X more than 0.002 below Y). *Without repeating the text the gain at
+width 1024 is smaller: +0.0082 (1.09%) at 20k, at every seed, and still rising.*
+
+**What it changes for the thesis.**
+1. **The 20k figure at width 1024 is measured without repetition:** +0.0082 (1.09%). The caveat about
+   the repeated text goes. On that text, with the same warm-up, it is +0.0105 (1.36%).
+2. **Repeating the text added to the gain:** BPE 17k's null loses more from the repetition than the
+   endings-apart null.
+3. **The grammatical gain does not depend on the repetition:** +5.4 points against +5.1.
+
+### 33.142 Full training at 30M parameters: the tokenizer's gain is smaller and lasts, case stays within the bound, English gains nothing
+
+The chain of 25 October (`second_2026-10-25.sh`, §33.140) ran on the second machine from 03:38 to 21:56
+EDT on 25 October: 12 runs of about 80 min, MultiBLiMP, and 8 English runs of 16 min. None failed, and both
+pair checks passed. The chain decided both conditions from the records:
+- case keeps +0.0015 over its null, not more than 0.002, so the split of its lead (lex512) did not run;
+- the tokenizer's gain is +0.0072, not below 0.006, so the empty slots (empty512) did not run.
+
+Paired by seed within the machine (`paired_cells_20261026T101353`; along training
+`paired_cells_20261026T101648`, `…T101650`, `…T101653`, at steps 10,000, 25,000 and 45,000;
+`multiblimp_eval_20261025T234639`). 50k steps read the 151M-token corpus about 2.7 times.
+
+| width 512, 151M tokens, 50k | seed 0 | seed 1 | seed 2 | seed 3 | mean |
+|---|---|---|---|---|---|
+| the null, BPE 17k | 0.7447 | 0.7450 | 0.7442 | 0.7438 | 0.7444 |
+| the null, endings apart | 0.7371 | 0.7378 | 0.7365 | 0.7374 | 0.7372 |
+| case (tagger), BPE 17k | 0.7427 | 0.7424 | 0.7432 | 0.7436 | 0.7430 |
+| the tokenizer's gain | +0.0076 | +0.0073 | +0.0076 | +0.0065 | **+0.0072 ± 0.0003 (0.97%, 4/4)** |
+| case over its null | +0.0020 | +0.0027 | +0.0009 | +0.0002 | **+0.0015 ± 0.0005 (4/4)** |
+
+- **The tokenizer's gain is smaller than the 5M model's, and it lasts.** It is +0.0078 at step 10,000,
+  +0.0072 at 25,000, +0.0077 at 45,000 and +0.0072 at the end. That is less than half of the 5M model's
+  +0.0165 (1.75%), and 0.003 below width 512's at 20k on ~38M tokens (+0.0102).
+- **Case stays within the bound, but its gain does not go.** It is +0.0017 at step 10,000, +0.0014 at 25,000
+  and at 45,000, and +0.0015 at the end, positive at every seed at each point. In the 5M model, on the same
+  text, case gains nothing with a 20k budget (−0.0003) and ends full training below its null (−0.0013 ±
+  0.0008).
+- **Grammar:** MultiBLiMP gives +5.0 ± 0.6 points (4/4, from +3.9 to +6.3): number +5.4, gender +4.2, person
+  +5.6. The 5M model's at full training is +4.9, on the thesis machine; at width 512 the second machine's
+  models gain 0.9 points less (§33.122).
+- **English gains nothing at 30M parameters and 10k.** The plain baselines at width 512:
+  - BPE 17k: 1.2605, 1.2598, 1.2625, 1.2610;
+  - endings apart: 1.2609, 1.2602, 1.2611, 1.2608;
+  - the gain: −0.0003, −0.0004, +0.0014, +0.0002, **+0.0002 ± 0.0004 (2/4)**.
+
+  In the 5M model it is +0.0046 ± 0.0010 (4/4).
+
+**Predictions** (§33.140).
+- **P314 right:** +0.0065 to +0.0076, positive at every seed.
+- **P315 right:** 0.0093 below the 5M model's.
+- **P316 right:** +0.0015 on average, though positive at every seed.
+- **P317 right by its letter:** +5.0 on average, at least +4.9. Seeds 0 and 2 gain less (+3.9, +4.2).
+- **P318 wrong:** positive at two seeds of four.
+- **P319 and P320 not tested:** their conditions were not met.
+
+The tally is 195 right, 13 half right, 101 wrong, 10 never tested and 1 withdrawn, of 320; none pending.
+
+**The sentences** (the rules of §33.140).
+- **The tokenizer:** X is more than 0.002 below +0.0165. *In the 30M model it is smaller: 0.97%*, between
+  the nulls, which agree with the empty slots at this width at 10k.
+- **Case:** within 0.002. *In the 30M model too, at the end of full training, case does not beat the
+  same-architecture control by more than about 0.002.* Unlike in the 5M model, it keeps that small gain at
+  every seed, level from step 10,000.
+- **English:** *only in the small model.*
+
+**What it changes for the thesis.**
+1. **Full training at two model sizes:** the tokenizer's gain lasts at 30M parameters too, at 0.97%, smaller
+   than the 5M model's 1.75%.
+2. **The features' end-of-training answer holds at 30M by its bound, but "gone" is the 5M model's.** At 30M,
+   case falls to about +0.0015 by step 10,000 and stays there to the end, at every seed.
+3. **English endings apart helps the small model only:** at 30M parameters and 10k it gains nothing.
+4. **The grammatical gain at full training is about the same at 30M as at 5M:** +5.0 and +4.9 points, on
+   two machines.

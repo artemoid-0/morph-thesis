@@ -45,17 +45,17 @@ The queue as the thesis text ranked it on 25 October (§33.140), each item tied 
 The text is complete without them; each lifts a limit it states.
 Results committed by about 31 October reach the text; the work is admitted on 4 November.
 
-**Running:** on the second machine, item 1 of the request of 24 October (below), then the chain of 25 October (`second_2026-10-25.sh`), until Monday, 26 October.
+**Answered** (§33.141–§33.142): the chain of 25 October ran items 1 and 2; items 3 and 4 did not run, their conditions unmet (case kept +0.0015 over its null, not more than 0.002; the tokenizer's gain was +0.0072, not below 0.006). Nothing runs; nothing is queued.
 
-1. **Full training at 30M parameters** (the Introduction's first and third novelties, general conclusions 4 and 7): the nulls at width 512 under BPE 17k and endings apart, and case under BPE 17k, at 151M tokens and 50k, four seeds: 12 runs, ~16 h; then MultiBLiMP on the nulls. The tokenizer's gain and the features' end-of-training answer, each now measured at full training in the 5M model only.
-2. **English endings apart at 30M parameters** (width 512, 10k, four seeds): 8 runs, ~2.2 h. The English gain is measured in the 5M model only.
+1. **Full training at 30M parameters** (the Introduction's first and third novelties, general conclusions 4 and 7), answered (§33.142): the tokenizer gains +0.0072 (0.97%) and lasts; case stays within 0.002 of its null (+0.0015, at every seed). The runs: the nulls at width 512 under BPE 17k and endings apart, and case under BPE 17k, at 151M tokens and 50k, four seeds: 12 runs, ~16 h; then MultiBLiMP on the nulls. The tokenizer's gain and the features' end-of-training answer, each now measured at full training in the 5M model only.
+2. **English endings apart at 30M parameters** (width 512, 10k, four seeds): 8 runs, ~2.2 h; answered (§33.142): it gains nothing there (+0.0002 ± 0.0004, 2/4), so the English gain is the 5M model's.
 3. **What case's lead over the word form is made of at 30M**, only if case keeps more than 0.002 over its null in item 1: case from the word form and case without the leak, 8 runs, ~10.7 h. If case's gain is gone, the text does without it.
 4. **The empty slots at 30M**, only if the tokenizer's gain in item 1 falls below 0.006: 8 runs, ~10.7 h.
 5. **Case under endings apart at full training at 30M**, last: it would need its own leak control; not in the chain.
 
 The text's request of 24 October (§33.136): the empty slot at width 1024 is answered (§33.139), the work's size given (§33.138), and item 1 runs:
 
-- **Width 1024 without repeating the text** (§3.3.2, §3.12): running (§33.137), after item 2. The nulls at width 1024, 20k, with the 1,000-step warm-up, both tokenizers, four seeds, on the 151M-token corpus (about 1.1 passes) and on ~38M (the repeated text under the same warm-up); then MultiBLiMP: 16 runs, ~25 h.
+- **Width 1024 without repeating the text** (§3.3.2, §3.12): answered (§33.141): +0.0082 (1.09%) at 20k, 0.0022 below the repeated text's, still rising. The nulls at width 1024, 20k, with the 1,000-step warm-up, both tokenizers, four seeds, on the 151M-token corpus (about 1.1 passes) and on ~38M (the repeated text under the same warm-up); then MultiBLiMP: 16 runs, ~25 h.
 
 The text's request of 22 October is answered (§33.130–§33.135): width 1024 holds at every seed with a longer warm-up; at full training what the sentence adds over the word form is not context, for Ukrainian gender and number and for English part of speech.
 The text's list of 19 October is answered (§33.117–§33.129); each item's outcome is in the journey.

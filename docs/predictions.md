@@ -6,12 +6,12 @@ Each prediction was recorded in the [journey](record/journey/README.md) **before
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 187 right, 13 half right, 100 wrong, 8 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test), 1 withdrawn, 11 pending — of 320.
+**Tally:** 195 right, 13 half right, 101 wrong, 10 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test, 2 whose condition was not met), 1 withdrawn — of 320.
 
 *Key to the tally (added 19 October 2026). Counted half right: P19, P46, P54 — with the eight
-whose outcome begins "half right" or "partly right". Counted right: P33, P172, P273, P303 — right by their
+whose outcome begins "half right" or "partly right". Counted right: P33, P172, P273, P303, P317 — right by their
 letter. Counted wrong: every outcome that begins "wrong", "badly wrong" or "narrowly wrong".
-Never tested: deferred P12, P16, P20; parked P91, P92; dropped P161, P162, P163.*
+Never tested: deferred P12, P16, P20; parked P91, P92; dropped P161, P162, P163; condition not met P319, P320.*
 
 The wrong ones carried the information:
 - **the null and the controls:** the null's gain (P18), the shuffled control (P15), the leak's
@@ -29,7 +29,8 @@ The wrong ones carried the information:
 - **the null's slot:** that it helps under BPE (P252, P256), on a word's later tokens (P262), and that at
   width 1024 the tokenizer's gain is the same over the empty slots as between the nulls (P307);
 - **gender and number:** that most of what their tag adds over the word form is the tagger's leak (P288, P289),
-  and that number's leak lasts to full training (P302).
+  and that number's leak lasts to full training (P302);
+- **English at 30M parameters:** that endings apart gains there too (P318).
 
 | # | prediction | outcome | journey |
 |---|---|---|---|
@@ -342,14 +343,14 @@ The wrong ones carried the information:
 | P307 | At width 1024 with a 1,000-step warm-up, the tokenizer's gain between the empty slots is within 0.002 of its gain between the nulls (+0.0110) | wrong — +0.0079 ± 0.0008, 0.0032 apart | §33.136, §33.139 |
 | P308 | At width 1024, under each tokenizer, the empty slot ends within 0.002 of its null on average | right — 0.0017 better under BPE 17k, 0.0015 worse under endings apart | §33.136, §33.139 |
 | P309 | At width 1024 the tokenizer's gain between the empty slots is positive at every seed | right — +0.0061 to +0.0093 | §33.136, §33.139 |
-| P310 | Without repeating the text (151M tokens), the tokenizer's gain at width 1024 at 20k with the 1,000-step warm-up is positive at every seed | pending | §33.137 |
-| P311 | It is more than 0.002 below the gain on the repeated text (~38M) under the same warm-up | pending | §33.137 |
-| P312 | Without repetition, the gain over the last 5,000 steps stays within 0.002 of its value at step 15,000 | pending | §33.137 |
-| P313 | MultiBLiMP without repetition is positive at every seed and within 1 point of the repeated text's | pending | §33.137 |
-| P314 | At width 512 and full training (151M tokens, 50k) the tokenizer's gain is positive at every seed | pending | §33.140 |
-| P315 | It is more than 0.002 below the 5M model's at full training (+0.0165) | pending | §33.140 |
-| P316 | Case (tagger) under BPE 17k at width 512 and full training ends within 0.002 of its null on average | pending | §33.140 |
-| P317 | On MultiBLiMP endings apart at width 512 and full training is ahead at every seed, by at least +4.9 points | pending | §33.140 |
-| P318 | English endings apart at width 512 and 10k beats BPE 17k at three seeds of four or more, with a positive mean | pending | §33.140 |
-| P319 | (Only if lex512 runs) at width 512 and full training the leak is at least half of case's lead over the word form | pending | §33.140 |
-| P320 | (Only if empty512 runs) at width 512 and full training the tokenizer's gain between the empty slots is within 0.002 of its gain between the nulls | pending | §33.140 |
+| P310 | Without repeating the text (151M tokens), the tokenizer's gain at width 1024 at 20k with the 1,000-step warm-up is positive at every seed | right — +0.0072 to +0.0092 | §33.137, §33.141 |
+| P311 | It is more than 0.002 below the gain on the repeated text (~38M) under the same warm-up | right — 0.0022 below | §33.137, §33.141 |
+| P312 | Without repetition, the gain over the last 5,000 steps stays within 0.002 of its value at step 15,000 | right — +0.0008 over the last 5,000 steps | §33.137, §33.141 |
+| P313 | MultiBLiMP without repetition is positive at every seed and within 1 point of the repeated text's | right — +5.4 against +5.1 points, 4/4 | §33.137, §33.141 |
+| P314 | At width 512 and full training (151M tokens, 50k) the tokenizer's gain is positive at every seed | right — +0.0065 to +0.0076 | §33.140, §33.142 |
+| P315 | It is more than 0.002 below the 5M model's at full training (+0.0165) | right — +0.0072, 0.0093 below | §33.140, §33.142 |
+| P316 | Case (tagger) under BPE 17k at width 512 and full training ends within 0.002 of its null on average | right — +0.0015 ± 0.0005, though positive at every seed | §33.140, §33.142 |
+| P317 | On MultiBLiMP endings apart at width 512 and full training is ahead at every seed, by at least +4.9 points | right by its letter — +5.0 ± 0.6 on average; seeds 0 and 2 +3.9, +4.2 | §33.140, §33.142 |
+| P318 | English endings apart at width 512 and 10k beats BPE 17k at three seeds of four or more, with a positive mean | wrong — +0.0002 ± 0.0004, positive at two seeds of four | §33.140, §33.142 |
+| P319 | (Only if lex512 runs) at width 512 and full training the leak is at least half of case's lead over the word form | not tested — case kept +0.0015, not more than 0.002, so lex512 did not run | §33.140, §33.142 |
+| P320 | (Only if empty512 runs) at width 512 and full training the tokenizer's gain between the empty slots is within 0.002 of its gain between the nulls | not tested — the gain was +0.0072, not below 0.006, so empty512 did not run | §33.140, §33.142 |

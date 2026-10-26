@@ -12,7 +12,9 @@ GPU; a seed whose runs come from two machines is reported and left out.
 
 Each --pair is NAME A B: the effect is B's bits per byte minus A's at each seed (positive: A is
 better). Reports each seed, the mean ± standard error and how many seeds are positive, and writes
-results/audits/paired_cells_<timestamp>.json. --machine keeps one machine's records, as
+results/audits/paired_cells_<timestamp>.json. --step reads each run's validation BPB at that
+evaluation step instead of its record's final figure (a seed missing the step in either run is
+left out and named). --machine keeps one machine's records, as
 morphlm.runs.load(machine=...) reads them: where a cell has runs on both machines, the first record
 of a label and seed otherwise wins, and a pair split across machines is left out.
 """
@@ -40,18 +42,21 @@ def main():
     ap.add_argument('--seeds', nargs='*', type=int, default=None, help='default: every seed both cells have')
     ap.add_argument('--machine', choices=('thesis', 'second'), default=None,
                     help="one machine's records only ('second' with its twin copies)")
+    ap.add_argument('--step', type=int, default=None, help="each run's validation BPB at this evaluation step")
     runs.add_results_flag(ap)
     a = ap.parse_args()
     from morphlm.record import AuditRecord
     rec = AuditRecord('paired_cells', a, out_dir=runs.AUDITS)
     R = runs.load(runs.results_of(a), machine=a.machine, keep=lambda r: 'seed' in r and 'bits_per_byte' in r)
     out = []
+    bpb = (lambda r: r['bits_per_byte']) if a.step is None else (lambda r: runs.curve(r).get(a.step))
     for name, la, lb in a.pair:
         pairs, left = runs.pair(R, la, lb)
         keep = lambda s: a.seeds is None or s in a.seeds
-        per = {s: {'effect': rb['bits_per_byte'] - ra['bits_per_byte'], 'A': ra['bits_per_byte'],
-                   'B': rb['bits_per_byte'], 'machine': machine(ra), 'runs': [ra['run_id'], rb['run_id']]}
-               for s, (ra, rb) in pairs.items() if keep(s)}
+        lacking = [s for s, (ra, rb) in pairs.items() if keep(s) and (bpb(ra) is None or bpb(rb) is None)]
+        per = {s: {'effect': bpb(rb) - bpb(ra), 'A': bpb(ra), 'B': bpb(rb),
+                   'machine': machine(ra), 'runs': [ra['run_id'], rb['run_id']]}
+               for s, (ra, rb) in pairs.items() if keep(s) and s not in lacking}
         skipped = {s: [machine(m) for m in ms] for s, ms in left.items() if keep(s)}
         xs = [v['effect'] for v in per.values()]
         sm = runs.summary(xs)
@@ -67,8 +72,12 @@ def main():
             print('    no seed has both cells on one machine')
         if skipped:
             print(f'    left out, runs on two machines: {skipped}')
+        if lacking:
+            row['lacking_step'] = lacking
+            print(f'    left out, no evaluation at step {a.step}: seeds {lacking}')
     rec.add('pairs', out)
-    rec.note('effect = B minus A in bits per byte at each seed (positive: A better); pairs on one machine only')
+    rec.note('effect = B minus A in bits per byte at each seed (positive: A better); pairs on one machine only'
+             + ('' if a.step is None else f"; each run's validation BPB at step {a.step}"))
     rec.write()
 
 

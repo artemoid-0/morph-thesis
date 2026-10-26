@@ -1,0 +1,154 @@
+{
+  "script": "paired_cells",
+  "args": {
+    "pair": [
+      [
+        "w512 full training, the nulls, at step 45000",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_w512",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_w512"
+      ],
+      [
+        "w512 full training, case over the BPE 17k null, at step 45000",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_w512",
+        "bpe_ucase-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_w512"
+      ]
+    ],
+    "seeds": null,
+    "machine": "second",
+    "step": 45000,
+    "results": [
+      "/home/neko/PycharmProjects/Morph/results"
+    ]
+  },
+  "timestamp_utc": "2026-10-26T10:16:53+00:00",
+  "results": {
+    "pairs": [
+      {
+        "name": "w512 full training, the nulls, at step 45000",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_w512",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_w512",
+        "seeds": {
+          "0": {
+            "effect": -0.008304832859111877,
+            "A": 0.7478159952567466,
+            "B": 0.7395111623976347,
+            "machine": "5090",
+            "runs": [
+              "ae4ee76ed3f6",
+              "ae245ee3f706"
+            ]
+          },
+          "1": {
+            "effect": -0.007738169333673772,
+            "A": 0.7480669960774535,
+            "B": 0.7403288267437798,
+            "machine": "5090",
+            "runs": [
+              "4b055123e509",
+              "ce52ac238dc9"
+            ]
+          },
+          "2": {
+            "effect": -0.008435653417052102,
+            "A": 0.747499540975597,
+            "B": 0.7390638875585449,
+            "machine": "5090",
+            "runs": [
+              "24403887879a",
+              "9081e44ff649"
+            ]
+          },
+          "3": {
+            "effect": -0.006352573175911536,
+            "A": 0.7465780216082468,
+            "B": 0.7402254484323353,
+            "machine": "5090",
+            "runs": [
+              "189021be282e",
+              "f4d6528b2ecb"
+            ]
+          }
+        },
+        "mean": -0.007707807196437322,
+        "se": 0.00047642600619292254,
+        "positive": 0,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "w512 full training, case over the BPE 17k null, at step 45000",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_w512",
+        "B": "bpe_ucase-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_w512",
+        "seeds": {
+          "0": {
+            "effect": -0.001987988908156435,
+            "A": 0.7478159952567466,
+            "B": 0.7458280063485901,
+            "machine": "5090",
+            "runs": [
+              "ae4ee76ed3f6",
+              "30a4bd92efcf"
+            ]
+          },
+          "1": {
+            "effect": -0.002550817601452815,
+            "A": 0.7480669960774535,
+            "B": 0.7455161784760007,
+            "machine": "5090",
+            "runs": [
+              "4b055123e509",
+              "af7000aaf78f"
+            ]
+          },
+          "2": {
+            "effect": -0.0009766742063944678,
+            "A": 0.747499540975597,
+            "B": 0.7465228667692025,
+            "machine": "5090",
+            "runs": [
+              "24403887879a",
+              "191f7bab5fa1"
+            ]
+          },
+          "3": {
+            "effect": -0.0001176005493778165,
+            "A": 0.7465780216082468,
+            "B": 0.746460421058869,
+            "machine": "5090",
+            "runs": [
+              "189021be282e",
+              "fcf439c8ef2b"
+            ]
+          }
+        },
+        "mean": -0.0014082703163453836,
+        "se": 0.0005395670790771854,
+        "positive": 0,
+        "n": 4,
+        "skipped_across_machines": {}
+      }
+    ]
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-10-26T10:16:53+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "599efe3e166b053a0394222adf22e3f14a66c843",
+    "git_dirty": true
+  },
+  "notes": [
+    "effect = B minus A in bits per byte at each seed (positive: A better); pairs on one machine only; each run's validation BPB at step 45000"
+  ]
+}

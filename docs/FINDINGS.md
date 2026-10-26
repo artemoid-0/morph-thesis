@@ -21,18 +21,20 @@ Morphemes help only the rarest words (+9% below frequency 10), learn more slowly
 
 ### Q1 in English: morphology inside BPE
 
-**What lost was replacing BPE, not morphology: kept inside BPE, English morphology helps.**
+**What lost was replacing BPE, not morphology: kept inside BPE, English morphology helps the 5M model.**
 The tokenizer is the Ukrainian result's (below): BPE 17k that never joins a stem to its inflectional ending, by a rule that reads the word alone.
 English inflects far less (the rule cuts 10.2% of words, reaching half of the inflected ones), so the gain is a fifth of the Ukrainian one; it does not fade:
 - 10k: **+0.0046 ± 0.0010 BPB (0.30%, 4/4)**, every run below every BPE 17k run;
 - twice the budget: **+0.0055 ± 0.0008 (0.38%, 4/4)**;
 - full training, 50k: **+0.0053 on the median seed (0.39%)**, at seven seeds of eight.
 
+At 30M parameters (width 512, on a second machine) it is gone at 10k: **+0.0002 ± 0.0004 (2/4)** (§33.142).
+
 After 20k steps two BPE 17k runs of eight drift by about 0.009 and two endings-apart runs by about 0.005, leaving one pair level; the mean (+0.0066 ± 0.0024) tells less.
 The drift is chance within training, not the seed's: a run repeated on another machine, same initial weights and batches, drifts or not (§33.107).
 **Grammar agrees at every seed:** BLiMP **+1.0 ± 0.2 points** over all 67 paradigms (8/8; +0.3 at 10k), morphology +1.1 ± 0.6 (6/8); better on average in each agreement phenomenon — subject–verb +1.1 ± 0.5, anaphor +3.8 ± 1.8 (six seeds of eight), determiner–noun +1.2 ± 1.1 (only four) (§33.117).
 
-*Plain baselines; four seeds at 10k and 20k, eight at full training (seeds 4–7 on a second machine); BLiMP at eight seeds.* (§33.85, §33.87, §33.92, §33.102, §33.107)
+*Plain baselines; four seeds at 10k and 20k, eight at full training (seeds 4–7 on a second machine); BLiMP at eight seeds; width 512 at 10k on a second machine.* (§33.85, §33.87, §33.92, §33.102, §33.107, §33.142)
 
 ### Q1 in Ukrainian: morphology inside BPE
 
@@ -50,6 +52,7 @@ At width 256 (four times the core's parameters) it is larger at every matched nu
 At width 512 (30M parameters, four times width 128) it is **+0.0125 ± 0.0009 (1.4%, 4/4)** at 10k, below both smaller widths.
 At the same point of learning it starts above width 256's (+0.041 against +0.038 at null BPB 1.18), then falls as a feature's gain does — below width 256's from 1.11 on, at width 128's level near 0.98 (+0.018), +0.014 at 0.92 — while the smaller widths' leads hold flat.
 At 20k it levels off from about step 7,500 at every seed, at **+0.0102 ± 0.0006 (1.25%, 4/4)**: smaller than at widths 128 and 256, but lasting (§33.94, §33.96, §33.100, §33.102).
+At full training (151M tokens, 50k, on a second machine) it is **+0.0072 ± 0.0003 (0.97%, 4/4)**, level from step 10,000 (+0.0078; +0.0072 at 25,000, +0.0077 at 45,000): less than half the 5M model's, and lasting (§33.142).
 
 **Beyond 30M parameters it is smaller again and lasts; with a longer warm-up it holds at every seed.**
 At width 1024 (85M parameters, on a second machine), with the 100-step warm-up of every other run, it is **+0.0067 ± 0.0030 (0.81%, 3/4)** at 10k and **+0.0075 ± 0.0018 (0.97%, 4/4)** at 20k, against width 512's +0.0141 ± 0.0016 and +0.0099 ± 0.0006 there, and level over the last 5,000 steps (+0.0002).
@@ -58,7 +61,9 @@ The fall is no spike: at 100-step resolution that null's validation BPB falls at
 **It is the warm-up's.** With 1,000 steps of warm-up every seed keeps the gain, **+0.0110 ± 0.0011 (1.34%, 4/4)** at 10k, from +0.0095 to +0.0143; the two seeds that fell gain +0.0143 and +0.0100, their endings-apart nulls ending 0.0135 and 0.0067 lower than with 100 steps.
 Width 512 under the same warm-up gains +0.0147 ± 0.0022, as with 100 steps (+0.0141), so at 85M parameters the gain is smaller than at 30M under either recipe (§33.130, §33.132).
 At the same point of learning the lead starts above width 512's (at 10k +0.059 against +0.048 at null BPB 1.30) and from 1.11 down is 0.003–0.015 below it, at both budgets.
-By 20k the 85M model's BPE 17k null stops improving, after 4.3 passes over its ~38M-token text, so the last 1,500 steps add about 0.0025 to the gain (+0.0049 at step 18,500) (§33.120, §33.124).
+With the 100-step warm-up, by 20k the 85M model's BPE 17k null stops improving, after 4.3 passes over its ~38M-token text, so the last 1,500 steps add about 0.0025 to the gain (+0.0049 at step 18,500) (§33.120, §33.124).
+With the 1,000-step warm-up at 20k the gain is +0.0105 ± 0.0004 (1.36%, 4/4) on that text, level over the last 5,000 steps, and **+0.0082 ± 0.0005 (1.09%, 4/4)** on the 151M-token corpus, read about 1.1 times: smaller at every seed, by 0.0022 ± 0.0002, and still rising (+0.0008 over the last 5,000 steps).
+Repeating the text added to the gain: BPE 17k's null gains more from the larger corpus than the endings-apart null (+0.0170 against +0.0148) (§33.137, §33.141).
 
 These gains are between the two tokenizers' nulls.
 Over the empty slots the gain is larger in the 5M model, the same at 30M parameters and smaller at 85M:
@@ -71,9 +76,11 @@ On MultiBLiMP's 2,744 Ukrainian subject–verb agreement pairs the endings-apart
 - full training: 76.3% against 71.4%, **+4.9 ± 0.4 points**, in number, gender and person; +5.0 on pairs of equal token length;
 - ~38M, 10k: 69.0% against 64.8%, +4.3 ± 0.3; 20k: +4.5 ± 0.5;
 - width 256: +5.3 ± 0.3; width 512: **+6.8 ± 0.2** (20k: +5.9 ± 0.2), where the lead in bits per byte is half width 256's;
-- width 1024 (85M parameters, a second machine), 10k: **+5.3 ± 0.4**, from +4.6 to +6.3 at every seed, also at the two where the lead in bits per byte is nearly gone; width 512 on that machine +5.9 ± 0.3; at 20k +4.7 ± 0.3 against +5.8 ± 0.3 (two seeds); with a 1,000-step warm-up **+5.9 ± 0.4**, as much as width 512's +6.0 ± 0.5 under it.
+- width 512 at full training (151M tokens, 50k, a second machine): 87.2% against 82.2%, **+5.0 ± 0.6** (§33.142);
+- width 1024 (85M parameters, a second machine), 10k: **+5.3 ± 0.4**, from +4.6 to +6.3 at every seed, also at the two where the lead in bits per byte is nearly gone; width 512 on that machine +5.9 ± 0.3; at 20k +4.7 ± 0.3 against +5.8 ± 0.3 (two seeds); with a 1,000-step warm-up **+5.9 ± 0.4**, as much as width 512's +6.0 ± 0.5 under it; at 20k with that warm-up +5.4 ± 0.3 on the 151M-token corpus and +5.1 ± 0.1 on ~38M tokens (§33.141).
 
 The grammatical gain grows with the model up to 30M parameters, not beyond (on one machine 85M's is no larger than 30M's), and it is not the code length's.
+At full training it is about the same at 5M and 30M parameters: +4.9 and +5.0 points, on two machines (§33.142).
 Between machines it moves more than within one: width 512's twins gain 0.9 ± 0.4 points less than the thesis machine's models, at every seed (§33.122).
 Exposing more endings elsewhere does not do it: BPE 4k is 1.2 points below BPE 17k, Unigram level with it.
 
@@ -81,7 +88,7 @@ Exposing more endings elsewhere does not do it: BPE 4k is 1.2 points below BPE 1
 On UberText 2.0's fiction (novels and prose; both tokenizers trained on it) endings apart beats BPE 17k at every seed: **+0.0097 ± 0.0010 BPB (0.8%, 4/4)** at 10k, half its share on Wikipedia, and **+5.3 ± 0.6 points (4/4)** on MultiBLiMP, as much as on Wikipedia or more.
 At full training on four times that text (154M tokens, 50k) it is **+0.0155 ± 0.0010 (1.45%, 4/4)**, flat from step 20,000 — near its share on Wikipedia, so the smaller share belonged to the 10k budget — and +2.3 ± 0.3 points (4/4) on MultiBLiMP, from 88.1% (§33.108, §33.109).
 
-*Two corpora (fiction at 10k, and at full training on a second machine), two corpus sizes and three budgets on Wikipedia, four widths (512 at 20k: seeds 2–3 on a second machine; 1024 on a second machine).* (§33.61–§33.68, §33.76, §33.79, §33.86, §33.88, §33.94, §33.96, §33.100, §33.102, §33.108, §33.120, §33.122, §33.124, §33.132, §33.139)
+*Two corpora (fiction at 10k, and at full training on a second machine), two corpus sizes and three budgets on Wikipedia, four widths (512 at 20k: seeds 2–3 on a second machine, and at full training on it; 1024 on a second machine).* (§33.61–§33.68, §33.76, §33.79, §33.86, §33.88, §33.94, §33.96, §33.100, §33.102, §33.108, §33.120, §33.122, §33.124, §33.132, §33.139, §33.141, §33.142)
 
 ### Q2: no feature beats its null at the end of training
 
@@ -103,10 +110,11 @@ Against a **null of the same shape** — which here sees the feature cell's data
 
 Identity-like features (inflection bundles, lemma and root hashes) do worse than the null.
 BLiMP shows no grammatical gain from any feature, and MultiBLiMP none from Ukrainian case: within 0.4 points of its null at both sizes, under both tokenizers.
+**At 30M parameters too, by the bound:** at full training (151M tokens, 50k, on a second machine) case (tagger) under BPE 17k ends **+0.0015 ± 0.0005** over its null — within 0.002, but positive at every seed and level from step 10,000 (+0.0017), where in the 5M model it ends below its null (§33.142).
 
 *Four seeds for every row, none beyond 0.002 on average.
 The frequency band and strictly causal part of speech (read from the word form) have seeds 2–3 from a second machine, each against the null's twin there; per seed they range from −0.0037 to +0.0023 (§33.114).
-The Ukrainian rows are against a null constant on every word; first recorded −0.0009 and −0.0015 (G-73, §33.56).* (§33.9–§33.19, §33.79)
+The Ukrainian rows are against a null constant on every word; first recorded −0.0009 and −0.0015 (G-73, §33.56).* (§33.9–§33.19, §33.79, §33.142)
 
 ### Before the model has learned it, features help
 
