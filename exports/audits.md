@@ -407,6 +407,7 @@
 | `ukwiki_stats` | 2026-09-28T22:39:28+00:00 | holdout=2000 target_chars=539000000.0 | splits, suggested_fraction |
 | `work_size` | 2026-10-24T02:14:11+00:00 | results=/home/neko/PycharmProjects/Morph/results | batch_window, per_machine, rows, total |
 | `work_size` | 2026-10-24T02:14:50+00:00 | results=/home/neko/PycharmProjects/Morph/results | batch_window, per_machine, rows, total |
+| `work_size` | 2026-10-26T10:20:23+00:00 | results=/home/neko/PycharmProjects/Morph/results | batch_window, per_machine, rows, total |
 
 ## Caveats recorded with the numbers
 

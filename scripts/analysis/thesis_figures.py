@@ -16,8 +16,9 @@ controls and contrasts in grey.
   fig_law_english   English part of speech's: by schedule, and by model width
   fig_tokenizer     BPE 17k with endings apart against BPE 17k, null against null,
                     along training and against the reference null's BPB, with
-                    Unigram 17k for contrast; width 1024's runs are all the second
-                    machine's, and its legend key says so
+                    Unigram 17k for contrast; width 1024's runs, with the 1,000-step
+                    warm-up it needs (journey §33.132), are all the second machine's,
+                    and its legend key says so; so is width 512 at full training
 
 A figure is drawn only if every run it is planned to show exists (as in
 demo_figures.py): one that silently dropped points would read as another result.
@@ -79,6 +80,9 @@ UK = lambda f, fr='0.2', x='': TOK(f, 'bpe_uk_17k', fr, x)
 T = lambda f, t: TOK(f, t)
 U5 = lambda f, x='': UK(f, '0.05', x)
 LONG_DASH = (0, (7, 2.5))      # width 1024: a fourth line style after '-', '-.', ':' (Unigram's grey '--' is shorter)
+# fig_tokenizer's fourth colour key takes the palette's indigo (SERIES[6]), not its amber: all four keys share a
+# panel, and amber against orange-red is 13.7 in OKLab (×100) to normal vision, below the floor of 15; indigo is
+# 16.3 or more against each of the three, and 13.0 or more under simulated colour blindness
 
 TXT = {
     'uk': {
@@ -122,10 +126,12 @@ TXT = {
                 ('38 млн токенів, 20 тис. кроків, ширина 256', '0.05', '_st20k_w256', 2, '-.'),
                 ('38 млн токенів, 10 тис. кроків, ширина 512', '0.05', '_st10k_w512', 1, ':'),
                 ('38 млн токенів, 20 тис. кроків, ширина 512', '0.05', '_st20k_w512', 2, ':'),
-                ('38 млн токенів, 10 тис. кроків, ширина 1024', '0.05', '_st10k_w1024', 1, LONG_DASH),
-                ('38 млн токенів, 20 тис. кроків, ширина 1024', '0.05', '_st20k_w1024', 2, LONG_DASH)],
-        'tok_keys': [('151 млн токенів, 50 тис. кроків', 0), ('38 млн токенів, 20 тис. кроків', 2),
-                     ('38 млн токенів, 10 тис. кроків', 1)],
+                ('151 млн токенів, 50 тис. кроків, ширина 512', '0.2', '_w512', 0, ':'),
+                ('38 млн токенів, 10 тис. кроків, ширина 1024', '0.05', '_wu1000_st10k_w1024', 1, LONG_DASH),
+                ('38 млн токенів, 20 тис. кроків, ширина 1024', '0.05', '_wu1000_st20k_w1024', 2, LONG_DASH),
+                ('151 млн токенів, 20 тис. кроків, ширина 1024', '0.2', '_wu1000_st20k_w1024', 6, LONG_DASH)],
+        'tok_keys': [('151 млн токенів, 50 тис. кроків', 0), ('151 млн токенів, 20 тис. кроків', 6),
+                     ('38 млн токенів, 20 тис. кроків', 2), ('38 млн токенів, 10 тис. кроків', 1)],
         'tok_widths': [('ширина 128', '-'), ('ширина 256', '-.'), ('ширина 512', ':'),
                        ('ширина 1024 (друга машина)', LONG_DASH)],
         'unigram': 'Unigram 17k',
@@ -157,9 +163,12 @@ TXT = {
                 ('38M tokens, 20k steps, width 256', '0.05', '_st20k_w256', 2, '-.'),
                 ('38M tokens, 10k steps, width 512', '0.05', '_st10k_w512', 1, ':'),
                 ('38M tokens, 20k steps, width 512', '0.05', '_st20k_w512', 2, ':'),
-                ('38M tokens, 10k steps, width 1024', '0.05', '_st10k_w1024', 1, LONG_DASH),
-                ('38M tokens, 20k steps, width 1024', '0.05', '_st20k_w1024', 2, LONG_DASH)],
-        'tok_keys': [('151M tokens, 50k steps', 0), ('38M tokens, 20k steps', 2), ('38M tokens, 10k steps', 1)],
+                ('151M tokens, 50k steps, width 512', '0.2', '_w512', 0, ':'),
+                ('38M tokens, 10k steps, width 1024', '0.05', '_wu1000_st10k_w1024', 1, LONG_DASH),
+                ('38M tokens, 20k steps, width 1024', '0.05', '_wu1000_st20k_w1024', 2, LONG_DASH),
+                ('151M tokens, 20k steps, width 1024', '0.2', '_wu1000_st20k_w1024', 6, LONG_DASH)],
+        'tok_keys': [('151M tokens, 50k steps', 0), ('151M tokens, 20k steps', 6), ('38M tokens, 20k steps', 2),
+                     ('38M tokens, 10k steps', 1)],
         'tok_widths': [('width 128', '-'), ('width 256', '-.'), ('width 512', ':'),
                        ('width 1024 (second machine)', LONG_DASH)],
         'unigram': 'Unigram 17k',
