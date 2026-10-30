@@ -6,7 +6,7 @@ Each prediction was recorded in the [journey](record/journey/README.md) **before
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 195 right, 13 half right, 101 wrong, 10 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test, 2 whose condition was not met), 1 withdrawn — of 320.
+**Tally:** 195 right, 13 half right, 101 wrong, 10 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test, 2 whose condition was not met), 1 withdrawn, 9 pending — of 329.
 
 *Key to the tally (added 19 October 2026). Counted half right: P19, P46, P54 — with the eight
 whose outcome begins "half right" or "partly right". Counted right: P33, P172, P273, P303, P317 — right by their
@@ -354,3 +354,12 @@ The wrong ones carried the information:
 | P318 | English endings apart at width 512 and 10k beats BPE 17k at three seeds of four or more, with a positive mean | wrong — +0.0002 ± 0.0004, positive at two seeds of four | §33.140, §33.142 |
 | P319 | (Only if lex512 runs) at width 512 and full training the leak is at least half of case's lead over the word form | not tested — case kept +0.0015, not more than 0.002, so lex512 did not run | §33.140, §33.142 |
 | P320 | (Only if empty512 runs) at width 512 and full training the tokenizer's gain between the empty slots is within 0.002 of its gain between the nulls | not tested — the gain was +0.0072, not below 0.006, so empty512 did not run | §33.140, §33.142 |
+| P321 | At seed 0, BPE 17k's null at 151M tokens and 50k ends lower at a learning rate of 1e-3 or 3e-3 than at the default 3e-4 | pending | §33.143 |
+| P322 | (Only if lrbest runs) at the better rate the tokenizer's gain between the nulls at full training is positive at every seed | pending | §33.143 |
+| P323 | (Only if lrbest runs) it is within 0.003 of the gain at the default rate on the same machine | pending | §33.143 |
+| P324 | Between the plain baselines at full training (5M) the tokenizer's gain is positive at every seed | pending | §33.143 |
+| P325 | It is more than 0.002 larger than between the nulls on the same machine | pending | §33.143 |
+| P326 | With the 1,000-step warm-up, the 5M model's gain at 10k on ~38M tokens is within 0.002 of its gain with 100 steps on the same machine (+0.0175) | pending | §33.143 |
+| P327 | At width 1024 and full training the tokenizer's gain between the nulls is positive at every seed | pending | §33.143 |
+| P328 | It is at least 0.87% of BPE 17k's null BPB: within 0.1 point of the 30M model's 0.97%, or above it | pending | §33.143 |
+| P329 | On MultiBLiMP, endings apart at width 1024 and full training is ahead at every seed, by at least 4 points | pending | §33.143 |

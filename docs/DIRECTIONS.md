@@ -29,7 +29,7 @@ Each direction's answer is stated once, in FINDINGS; the table gives its status 
 
 **D3 — is the reliance deficit permanent?**
 At full training it halves and lasts (§33.102); whether it ever closes is queue item 3.
-Not queued (new code, a short block): switching off to a constant (every code to one class) instead of to zeros — removing the information but keeping a shared vector — would tell the lost information from the input's sudden change.
+Queued as item 11 of the text's list of 30 October (new code, a short block): switching off to a constant (every code to one class) instead of to zeros — removing the information but keeping a shared vector — would tell the lost information from the input's sudden change.
 
 ## Parked
 
@@ -41,26 +41,58 @@ Also parked: morphology-factorized embeddings for parameter efficiency (Q1 partl
 
 ## The queue
 
-The queue as the thesis text ranked it on 25 October (§33.140), each item tied to a limit the text states, with its cost from the recorded timings (`scripts/ops/run_times.py`).
-The text is complete without them; each lifts a limit it states.
-Results committed by about 31 October reach the text; the work is admitted on 4 November.
+The thesis text's list of 30–31 October (§33.143): fifteen limits a reviewer could fairly call gaps, ranked by the text in three tiers.
+- **Costs:** from the recorded timings (`scripts/ops/run_times.py`), on the second machine, with the thesis machine's in brackets.
+- **Deadlines:** results committed by the morning of 2 November reach the text; a single number by noon on 3 November can still go in as a sentence; the work is admitted on 4 November.
 
-**Answered** (§33.141–§33.142): the chain of 25 October ran items 1 and 2; items 3 and 4 did not run, their conditions unmet (case kept +0.0015 over its null, not more than 0.002; the tokenizer's gain was +0.0072, not below 0.006). Nothing runs; nothing is queued.
+**Running** from 31 October (`second_2026-10-31.sh`, then `second_wide_2026-10-31.sh`; §33.143). The 5M model at 151M tokens and 50k unless noted:
+1. **Item 1, the learning rate:** §2.1 does not justify 3·10⁻⁴, and English at 10k put 3e-3 first (results §5.21).
+   - The nulls at 1e-3 and 3e-3 at seed 0, then the better rate's seeds 1–3, decided by BPE 17k's null.
+   - 11 runs, ~3.9 h [~10 h]. P321–P323.
+2. **Item 12, the tokenizer without a slot:** plain baselines under both tokenizers, and BPE 17k's null at the default rate as twins.
+   - 11 runs, ~3.9 h [4 runs, ~3.9 h; BPE 17k's plain baselines are on the thesis machine]. P324–P325.
+3. **Item 14, the 1,000-step warm-up at width 128:** the nulls at 10k on ~38M tokens.
+   - 8 runs, ~35 min [~1.6 h]. P326.
+4. **Item 2, width 1024 at full training:** the nulls, with the 1,000-step warm-up; then MultiBLiMP.
+   - 8 runs of ~3.7 h, ~30 h [too slow there]. P327–P329.
+   - The reference does not change its cost; the nulls keep the series like for like (§33.143).
 
-1. **Full training at 30M parameters** (the Introduction's first and third novelties, general conclusions 4 and 7), answered (§33.142): the tokenizer gains +0.0072 (0.97%) and lasts; case stays within 0.002 of its null (+0.0015, at every seed). The runs: the nulls at width 512 under BPE 17k and endings apart, and case under BPE 17k, at 151M tokens and 50k, four seeds: 12 runs, ~16 h; then MultiBLiMP on the nulls. The tokenizer's gain and the features' end-of-training answer, each now measured at full training in the 5M model only.
-2. **English endings apart at 30M parameters** (width 512, 10k, four seeds): 8 runs, ~2.2 h; answered (§33.142): it gains nothing there (+0.0002 ± 0.0004, 2/4), so the English gain is the 5M model's.
-3. **What case's lead over the word form is made of at 30M**, only if case keeps more than 0.002 over its null in item 1: case from the word form and case without the leak, 8 runs, ~10.7 h. If case's gain is gone, the text does without it.
-4. **The empty slots at 30M**, only if the tokenizer's gain in item 1 falls below 0.006: 8 runs, ~10.7 h.
-5. **Case under endings apart at full training at 30M**, last: it would need its own leak control; not in the chain.
+**Next**, each needing code, a condition or a short run on the second machine first; its runs are cheap:
+- **item 9, where the cut falls:** BPE 17k with the rule's words cut as often, but one letter off the boundary; the null at 10k on ~38M tokens.
+  - 4 runs, ~17 min [~47 min].
+  - The tokenizer is about 10 min of CPU; the condition's tagging ~1–1.5 h.
+- **item 10, shuffled case:** the word form's case values shuffled among word types of similar frequency, as `mstructshuf`, under BPE 17k at 10k.
+  - 4 runs, ~18 min [~47 min]; the derivation takes minutes.
+- **item 11, switching off to a constant:** English part of speech set to one class at step 5,000 of 20k, on the seeds of the switch to zeros.
+  - 4 runs, ~34 min [~1.5 h]; new code.
+- **item 7, the modern block** (rotary positions, RMSNorm, SwiGLU; built, §33.54): both nulls at 10k.
+  - 8 runs, ~40 min [~1.6 h]; at full training ~2.8 h more.
+- **item 13, depth:** 8 layers at width 512, both nulls at 10k.
+  - 8 runs, ~3–4 h by estimate, timed by a short run first.
 
-The text's request of 24 October (§33.136): the empty slot at width 1024 is answered (§33.139), the work's size given (§33.138), and item 1 runs:
+**Without the GPU**, in order:
+1. the software's size;
+2. 95% intervals, one-sided upper bounds and the minimum detectable effect;
+3. the gain against every vocabulary size;
+4. the probes at layer 0;
+5. item 4, the gain as compute or model size;
+6. item 3, where the gain sits, per word;
+7. the test split (it needs test caches);
+8. item 6, minimal pairs for agreement and government, checked by the author on a random hundred;
+9. item 8, the tagger on gold labels, which needs the treebank downloaded;
+10. the figures.
 
-- **Width 1024 without repeating the text** (§3.3.2, §3.12): answered (§33.141): +0.0082 (1.09%) at 20k, 0.0022 below the repeated text's, still rising. The nulls at width 1024, 20k, with the 1,000-step warm-up, both tokenizers, four seeds, on the 151M-token corpus (about 1.1 passes) and on ~38M (the repeated text under the same warm-up); then MultiBLiMP: 16 runs, ~25 h.
+**Optional**, if hours remain:
+- what case's +0.0015 at 30M is made of: 8 runs, ~10.8 h;
+- 100k steps at 5M: 8 runs, ~6.1 h;
+- shuffled case at 30M: 4 runs, ~5.4 h;
+- Ukrainian case as a target: 4 runs, ~35 min.
 
-The text's request of 22 October is answered (§33.130–§33.135): width 1024 holds at every seed with a longer warm-up; at full training what the sentence adds over the word form is not context, for Ukrainian gender and number and for English part of speech.
-The text's list of 19 October is answered (§33.117–§33.129); each item's outcome is in the journey.
+The queue of 25 October is answered (§33.140–§33.142): full training at 30M parameters and English at 30M. Its conditional pieces did not run: case kept +0.0015 over its null, and the tokenizer's gain was +0.0072.
 
 **Dropped** by the sentence test (every outcome gives the same sentence, or none):
+- item 15 of the list of 30 October, the word-form control with an unseen-word class: it makes the split of case's lead at 10k exact, a number rather than the answer (G-76);
+- Morfessor in place of the dictionary, this week: an install and hours of training before any run, where item 9 and Unigram bracket the question;
 - more seeds for English morpheme segmentation (the 12–13% gap is about nineteen times the widest seed spread);
 - the shape effect by language;
 - why fiction's share of bits per byte is half Wikipedia's (§33.88): the thesis states the size on each corpus, and no outcome changes a claim;

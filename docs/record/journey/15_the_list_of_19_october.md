@@ -1578,3 +1578,113 @@ The tally is 195 right, 13 half right, 101 wrong, 10 never tested and 1 withdraw
 3. **English endings apart helps the small model only:** at 30M parameters and 10k it gains nothing.
 4. **The grammatical gain at full training is about the same at 30M as at 5M:** +5.0 and +4.9 points, on
    two machines.
+
+### 33.143 The text's list of limits of 30 October: the learning rate, the plain baselines, the warm-up at width 128 and width 1024 at full training, prepared
+
+On 30 and 31 October the thesis text listed fifteen limits a reviewer could fairly call gaps, ranked in
+three tiers. The first tier:
+- where the cut falls, at matched fertility;
+- the learning rate;
+- width 1024 at full training;
+- shuffled case;
+- switching a feature off to a constant instead of to zeros.
+
+Each item is costed in DIRECTIONS' queue from the recorded timings. Four of them need no new code and run
+now on the second machine. The others need code, a condition or a download first, and wait.
+
+**The chain** (`scripts/chains/second_2026-10-31.sh`). The 5M model at 151M tokens and 50k, unless noted:
+- **lr0**, the learning rate (item 1): the nulls under BPE 17k and endings apart at 1e-3 and 3e-3, and
+  BPE 17k's null at the default 3e-4 as the thesis machine's twin, all at seed 0. 5 runs of ~21 min.
+- **lrbest**, decided on lr0: the rate at which BPE 17k's null ends lowest at seed 0, of the three. If it
+  is not the default, both nulls at that rate, seeds 1–3: 6 runs.
+- **plain128**, the tokenizer without a slot (item 12): plain baselines under both tokenizers, seeds 0–3,
+  and BPE 17k's null at the default rate, seeds 1–3. 11 runs.
+  - BPE 17k's runs are the thesis machine's twins, and this machine already holds endings apart's nulls at
+    that rate.
+  - So the gain between the nulls at the default rate is paired by seed here, for items 1 and 12 alike.
+- **wu128**, the 1,000-step warm-up at width 128 (item 14): the nulls under both tokenizers, ~38M tokens,
+  10k, seeds 0–3. 8 runs of ~4 min.
+
+**Then** (`scripts/chains/second_wide_2026-10-31.sh`), item 2:
+- **full1024:** the nulls at width 1024 under both tokenizers, 151M tokens, 50k, with the 1,000-step
+  warm-up, seeds 0–3. 8 runs of ~3.7 h, each seed's pair together.
+- **mb1024:** MultiBLiMP on the eight.
+
+About 8.5 hours, then about 30. Both chains must end by 08:00 New York time on 2 November.
+
+**Two choices.**
+- **The rate is searched at the full budget, not at 10k.**
+  - The English sweep at 10k (results §5.21) put 3e-3 first and the default 7.8% behind. Its caveat: a
+    10k horizon favours higher rates under the cosine schedule.
+  - The search at 50k costs about as much as one at 10k followed by full training.
+  - The rate is chosen for BPE 17k, the reference, so the run answers whether the reference was held back
+    by its rate.
+- **Width 1024 runs between the nulls,** as at 5M and 30M parameters at full training, and in width 1024's
+  cells at 10k and 20k.
+  - So its gain compares like with like along both axes.
+  - At this width and 10k the nulls overstate the gain by 0.0032 against the empty slots (§33.139). The text
+    states that bound beside it.
+  - A second reference would double the 30 hours.
+
+**Rehearsed** with the stub in ten scenarios:
+- a new rate wins and lrbest runs; the default wins and it does not;
+- lr0's twin is off by more than 0.01, and lrbest does not run;
+- plain128's twin is off, and its other seeds are skipped;
+- a seed-0 run is missing, and lrbest is not decided;
+- END_BY leaves whole sets for later, in both chains;
+- the wide chain with all eight runs to do; with all eight done, and MultiBLiMP runs once; with
+  MultiBLiMP's record there, and it does not run again.
+
+**Predictions** (before any run):
+- **P321** (~80%). At seed 0, BPE 17k's null ends lower at 1e-3 or 3e-3 than at the default 3e-4, so lrbest
+  runs.
+- **P322** (~80%; only if lrbest runs). At the better rate the tokenizer's gain between the nulls is
+  positive at every seed.
+- **P323** (~55%; only if lrbest runs). It is within 0.003 of the gain at the default rate on the same
+  machine.
+- **P324** (~90%). Between the plain baselines at full training the tokenizer's gain is positive at every
+  seed.
+- **P325** (~65%). It is more than 0.002 larger than between the nulls on the same machine. In the 5M
+  model the null costs endings apart about 0.002, and in English a same-shape slot helps a plain baseline
+  (FINDINGS, [the same-shape null](../../FINDINGS.md#the-same-shape-null-is-not-neutral)).
+- **P326** (~80%). With the 1,000-step warm-up, the 5M model's gain at 10k on ~38M tokens is within 0.002 of
+  its gain with 100 steps on the same machine (+0.0175 ± 0.0015).
+- **P327** (~85%). At width 1024 and full training the tokenizer's gain between the nulls is positive at
+  every seed.
+- **P328** (~65%). It is at least 0.87% of BPE 17k's null BPB: within 0.1 point of the 30M model's 0.97%, or
+  above it.
+- **P329** (~80%). On MultiBLiMP, endings apart at width 1024 and full training is ahead at every seed, by
+  at least 4 points.
+
+**What each outcome says** (the text's sentences, fixed before the run):
+- **The rate:**
+  - the default is the best of the three: *3·10⁻⁴ is the best of three rates for the reference at full
+    training*;
+  - a new rate wins, and the gain moves by at most 0.003: *the gain does not depend on the learning rate*;
+  - the gain is more than 0.003 smaller: the headline is restated at the better rate.
+
+  Either way the text says why 3·10⁻⁴.
+- **The plain baselines:**
+  - within 0.002 of the nulls' gain: *it does not depend on the slot*;
+  - more than 0.002 larger: the figure between the nulls is conservative;
+  - more than 0.002 smaller: a correction to the headline.
+- **The warm-up:** within 0.002, the 5M results do not depend on it. Otherwise the text names the warm-up
+  with them.
+- **Width 1024,** X its gain in per cent:
+  - within 0.1 point of 0.97%: *from 30M parameters the gain does not fall*;
+  - above that: *at 85M it is no smaller than at 30M*;
+  - below: *it falls with each size: 1.75 / 0.97 / X%*.
+
+**Waiting:**
+- **items needing code, a condition or a download:** 9, 10 and 11 of the first tier, then 7 and 13;
+- **the analyses without the GPU;**
+- **item 6's minimal pairs,** which the author checks on a random hundred;
+- **item 8,** the tagger on gold labels, after the treebank is downloaded.
+
+**Dropped:**
+- **item 15,** the word-form control with an unseen-word class: it would make the split of case's lead at
+  10k exact, a number rather than the answer (G-76);
+- **Morfessor in place of the dictionary,** this week: it needs an install and hours of training before
+  any run, and item 9 and Unigram bracket the question.
+
+The tally is 195 right, 13 half right, 101 wrong, 10 never tested, 1 withdrawn and 9 pending, of 329.
