@@ -45,6 +45,8 @@ The thesis text's list of 30–31 October (§33.143): fifteen limits a reviewer 
 - **Costs:** from the recorded timings (`scripts/ops/run_times.py`), on the second machine, with the thesis machine's in brackets.
 - **Deadlines:** results committed by the morning of 2 November reach the text; a single number by noon on 3 November can still go in as a sentence; the work is admitted on 4 November.
 
+**Answered** (§33.145): items 1, 12 and 14. At the best of three rates (3e-3, the reference 5.2% better) the 5M model's gain at full training is +0.0136 (1.52%), 0.0037 below the default's on the same machine; between plain baselines +0.0219 (2.31%), 0.0046 above the nulls'; the 1,000-step warm-up changes nothing at width 128.
+
 **Running** from 31 October (`second_2026-10-31.sh`, then `second_wide_2026-10-31.sh`; §33.143). The 5M model at 151M tokens and 50k unless noted:
 1. **Item 1, the learning rate:** §2.1 does not justify 3·10⁻⁴, and English at 10k put 3e-3 first (results §5.21).
    - The nulls at 1e-3 and 3e-3 at seed 0, then the better rate's seeds 1–3, decided by BPE 17k's null.
@@ -65,11 +67,11 @@ The thesis text's list of 30–31 October (§33.143): fifteen limits a reviewer 
 - **item 9, where the cut falls:** BPE 17k with the rule's words cut as often, but one letter off the boundary; the null at 10k on ~38M tokens.
   - 4 runs, ~47 min, once its data is built (~1.5 h of CPU beside the chain). P334–P336.
 
-**Next**, on the second machine once item 2 ends:
+**Next**, on the second machine once item 2 ends (`second_block_2026-10-31.sh`, queued after it; §33.146):
 - **item 7, the modern block** (rotary positions, RMSNorm, SwiGLU; built, §33.54): both nulls at 10k.
   - 8 runs, ~40 min [~1.6 h]; at full training ~2.8 h more.
 - **item 13, depth:** 8 layers at width 512, both nulls at 10k.
-  - 8 runs, ~3–4 h by estimate, timed by a short run first.
+  - 8 runs, ~3–4 h by estimate (32 min a run with its margin).
 
 **Without the GPU**, in order:
 1. the software's size;

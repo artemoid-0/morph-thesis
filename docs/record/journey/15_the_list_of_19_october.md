@@ -1757,3 +1757,120 @@ About 3.7 hours of the GPU.
   - in between: the boundary gives the rest.
 
 The tally is 195 right, 13 half right, 101 wrong, 10 never tested, 1 withdrawn and 16 pending, of 336.
+
+### 33.145 The learning rate, the plain baselines and the warm-up at width 128: at the best of three rates the gain is smaller; without the slot it is larger
+
+The chain of 31 October (`second_2026-10-31.sh`, §33.143) ran on the second machine from 18:53 EDT on
+30 October to 03:07 on 31 October. It made 30 runs: 22 at full training of 20.5–21.2 min, and 8 at 10k
+of ~4.2 min. None failed.
+- **The twin checks passed.** BPE 17k's null at the default rate ended 0.0003 from the thesis machine's at
+  seed 0, and its plain baseline 0.0050.
+- **The twins over all four seeds:** the null's within −0.0001 to +0.0015 of the thesis machine's, the
+  plain baseline's within −0.0050 to +0.0022.
+- **The rate was decided:** of the three rates, BPE 17k's null at seed 0 ended lowest at 3e-3, so lrbest ran
+  there.
+
+Paired by seed within the machine: `paired_cells_20261031T070744`. An earlier record of the same pairs with
+each pair's cells the other way round, `…T064544`, gives the same numbers with the opposite sign.
+
+**Item 1, the learning rate** (the 5M model, 151M tokens, 50k, the nulls):
+
+| | BPE 17k | endings apart | the tokenizer's gain |
+|---|---|---|---|
+| 3e-4, the default | 0.9422, 0.9464, 0.9436, 0.9463 | 0.9273, 0.9279, 0.9285, 0.9259 | +0.0172 ± 0.0013 (1.82%, 4/4) |
+| 1e-3, seed 0 | 0.9041 | 0.8948 | +0.0093 |
+| 3e-3 | 0.8952, 0.8966, 0.8943, 0.8961 | 0.8819, 0.8808, 0.8838, 0.8814 | **+0.0136 ± 0.0011 (1.52%, 4/4)** |
+| 3e-3 over the default | **+0.0491 ± 0.0007 (5.2%, 4/4)** | +0.0454 ± 0.0006 (4/4) | **−0.0037 ± 0.0009 (0/4)** |
+
+- **The default is not the best rate for the 5M model at full training.**
+  - 3e-3 is better for both tokenizers, by about 5%.
+  - At seed 0, 1e-3 lies between the two rates, for both tokenizers.
+- **At 3e-3 the gain is smaller at every seed,** by 0.0017, 0.0026, 0.0046 and 0.0058. In per cent of the
+  reference it falls from 1.82% to 1.52%.
+- **The better rate helps BPE 17k more than endings apart** (+0.0491 against +0.0454), so the gap closes
+  by about a fifth. A reference held back by its rate inflated a fifth of the gain.
+- **At 1e-3 (seed 0) the gain is smaller still,** +0.0093 against +0.0133 at 3e-3. One seed, so it is
+  read as no trend.
+
+**Item 12, the tokenizer without a slot** (the same models; the plain baselines have all 128 dims for the
+token):
+- **The plain baselines:**
+  - BPE 17k: 0.9425, 0.9485, 0.9484, 0.9475;
+  - endings apart: 0.9222, 0.9251, 0.9270, 0.9250;
+  - the gain: **+0.0219 ± 0.0007 (2.31%, 4/4).**
+- **Against the nulls' +0.0172 the gain is +0.0046 ± 0.0009 larger, at every seed** (+0.0054, +0.0049,
+  +0.0063, +0.0020).
+- **The null helps BPE 17k and costs endings apart:**
+  - BPE 17k's null beats its plain baseline by +0.0021 ± 0.0010 (4/4);
+  - endings apart's ends 0.0026 ± 0.0009 behind its own (0/4).
+
+  At 10k the empty slots told the same story (+0.0203 against +0.0175; FINDINGS, method point 10).
+
+**Item 14, the 1,000-step warm-up at width 128** (~38M tokens, 10k, the nulls):
+- **The gain:**
+  - with 1,000 steps: BPE 17k 1.0894, 1.0929, 1.0913, 1.0903; endings apart 1.0724, 1.0747, 1.0731,
+    1.0737; **+0.0175 ± 0.0004 (4/4)**;
+  - with 100 steps on the same machine: +0.0175 ± 0.0015.
+- **The difference is +0.0000 ± 0.0017** (−0.0016, −0.0012, +0.0051, −0.0024).
+- Both nulls end 0.0016 worse with the longer warm-up.
+
+**Verdicts:**
+- **P321 right:** 3e-3 and 1e-3 both beat the default at seed 0, by 0.0470 and 0.0381.
+- **P322 right:** +0.0105 to +0.0158 at every seed.
+- **P323 wrong:** the gain is 0.0037 smaller, not within 0.003.
+- **P324 right:** +0.0203 to +0.0233.
+- **P325 right:** 0.0046 larger.
+- **P326 right:** +0.0175 against +0.0175.
+
+The tally is 200 right, 13 half right, 102 wrong, 10 never tested, 1 withdrawn and 10 pending, of 336.
+
+**The sentences** (the rules of §33.143):
+- **The rate:** a new rate wins, and the gain is more than 0.003 smaller, so the headline is restated at the
+  better rate.
+  - *At the best of three learning rates the 5M model's gain at full training is 1.52%; at the default rate it
+    is 1.82% on the same machine.*
+  - Why 3·10⁻⁴: it is the recipe every run shares. The English sweep at 10k (results §5.21) did not show it
+    to be worse at 50k, and at full training the 5M reference is 5.2% better at 3·10⁻³.
+- **The plain baselines:** more than 0.002 larger, so *the figure between the nulls is conservative: without
+  a slot the gain is 2.31%.*
+- **The warm-up:** within 0.002, so the 5M results do not depend on it.
+
+**What it changes for the thesis.**
+1. **The 5M headline is measured at a rate that holds the reference back by 5%.** At the best of three rates
+   the gain at full training is 1.52% (+0.0136), smaller at every seed, and still positive at every seed.
+   The 30M and 85M models ran at the default rate only: a limitation the text states.
+2. **Between plain baselines, with no slot, the gain is larger: 2.31% (+0.0219).** The nulls understate it
+   by 0.0046: at full training too, the null helps BPE and costs endings apart.
+3. **The 1,000-step warm-up chosen for width 1024 changes nothing at width 128.**
+
+### 33.146 Items 7 and 13 prepared: the modern block and depth, after width 1024
+
+Width and data were varied, but the transformer's block and its depth (4 layers) never were. The text's
+items 7 and 13 ask whether the tokenizer's gain holds under a modern block and in a deeper model. The chain
+(`scripts/chains/second_block_2026-10-31.sh`) runs on the second machine once width 1024's full training
+ends, at ~38M tokens and 10k:
+- **block10** (item 7): the nulls under both tokenizers with the LLaMA-style block (rotary positions,
+  RMSNorm, SwiGLU, built in §33.54), width 128, seeds 0–3. 8 runs of ~4.5 min.
+- **deep10** (item 13): the nulls at 8 layers of width 512, with the 1,000-step warm-up, seeds 0–3. 8 runs
+  estimated at ~24 min each, 32 with the margin.
+
+**The references** are on that machine already: the nulls at width 128 under the standard block, and width
+512's 4 layers under the same warm-up (§33.132).
+- **Rehearsed** with the stub: every run to do, and a failed pair check.
+- **A cell of each piece ran 30 steps** through the real loader on that machine's CPU, while its GPU trained
+  width 1024. They had 5.0M and 42.6M trainable parameters.
+
+**Predictions** (before any run):
+- **P337** (~80%). Under the LLaMA-style block the tokenizer's gain at width 128 and 10k is positive at every
+  seed.
+- **P338** (~60%). It is within 0.003 of the standard block's on the same machine (+0.0175 ± 0.0015).
+- **P339** (~80%). At 8 layers of width 512 and 10k the gain is positive at every seed.
+- **P340** (~55%). It is within 0.003 of 4 layers' under the same warm-up on the same machine (+0.0147 ±
+  0.0022).
+
+**What each outcome says** (the text's sentences):
+- **The block:** within 0.003, *the gain does not depend on the block's architecture*; smaller, *it depends
+  on the architecture*.
+- **Depth:** within 0.003, *it does not depend on depth*; smaller, *it falls with depth too*.
+
+The tally is 200 right, 13 half right, 102 wrong, 10 never tested, 1 withdrawn and 14 pending, of 340.

@@ -1,0 +1,493 @@
+{
+  "script": "paired_cells",
+  "args": {
+    "pair": [
+      [
+        "gain_lr3e-3",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_lr0.003",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_lr0.003"
+      ],
+      [
+        "gain_lr3e-4",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2"
+      ],
+      [
+        "gain_lr1e-3",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_lr0.001",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_lr0.001"
+      ],
+      [
+        "rate_bpe17k_3e-3_over_3e-4",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_lr0.003"
+      ],
+      [
+        "rate_bpeend_3e-3_over_3e-4",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_lr0.003"
+      ],
+      [
+        "rate_bpe17k_1e-3_over_3e-4",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_lr0.001"
+      ],
+      [
+        "gain_plain",
+        "bpe_baseline_bpe_uk_17k_ukwiki0.2",
+        "bpe_baseline_bpeend_uk_17k_ukwiki0.2"
+      ],
+      [
+        "null_over_plain_bpe17k",
+        "bpe_baseline_bpe_uk_17k_ukwiki0.2",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2"
+      ],
+      [
+        "null_over_plain_bpeend",
+        "bpe_baseline_bpeend_uk_17k_ukwiki0.2",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2"
+      ]
+    ],
+    "seeds": null,
+    "machine": "second",
+    "step": null,
+    "results": [
+      "/home/neko/PycharmProjects/Morph/results"
+    ]
+  },
+  "timestamp_utc": "2026-10-31T06:45:44+00:00",
+  "results": {
+    "pairs": [
+      {
+        "name": "gain_lr3e-3",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_lr0.003",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_lr0.003",
+        "seeds": {
+          "0": {
+            "effect": -0.01326345569864451,
+            "A": 0.8951871659385392,
+            "B": 0.8819237102398947,
+            "machine": "5090",
+            "runs": [
+              "ae452920abc5",
+              "df6c33e920b7"
+            ]
+          },
+          "1": {
+            "effect": -0.01581972510327334,
+            "A": 0.8965902516057788,
+            "B": 0.8807705265025054,
+            "machine": "5090",
+            "runs": [
+              "b960babe7c48",
+              "01e61f353d3c"
+            ]
+          },
+          "2": {
+            "effect": -0.010503898375046838,
+            "A": 0.8942705695035229,
+            "B": 0.8837666711284761,
+            "machine": "5090",
+            "runs": [
+              "0f0263ef62a0",
+              "76761dc68058"
+            ]
+          },
+          "3": {
+            "effect": -0.014690325341708443,
+            "A": 0.8961360182792896,
+            "B": 0.8814456929375811,
+            "machine": "5090",
+            "runs": [
+              "26856f00ddad",
+              "9c17b6c17e3a"
+            ]
+          }
+        },
+        "mean": -0.013569351129668283,
+        "se": 0.001147872626886926,
+        "positive": 0,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "gain_lr3e-4",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "seeds": {
+          "0": {
+            "effect": -0.014921380584520971,
+            "A": 0.9421757235960164,
+            "B": 0.9272543430114955,
+            "machine": "5090",
+            "runs": [
+              "c58ba0662048",
+              "57f76ed51760"
+            ]
+          },
+          "1": {
+            "effect": -0.018443425021126947,
+            "A": 0.9463614946394625,
+            "B": 0.9279180696183356,
+            "machine": "5090",
+            "runs": [
+              "07dd78de8832",
+              "ae75b666d616"
+            ]
+          },
+          "2": {
+            "effect": -0.015096850605803347,
+            "A": 0.9435864880599125,
+            "B": 0.9284896374541092,
+            "machine": "5090",
+            "runs": [
+              "fe24a14162b2",
+              "7e17426e0388"
+            ]
+          },
+          "3": {
+            "effect": -0.02047066037418732,
+            "A": 0.9463400854104173,
+            "B": 0.9258694250362299,
+            "machine": "5090",
+            "runs": [
+              "b60e2ee58522",
+              "0d7539f05ca2"
+            ]
+          }
+        },
+        "mean": -0.017233079146409647,
+        "se": 0.0013495150969157611,
+        "positive": 0,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "gain_lr1e-3",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_lr0.001",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_lr0.001",
+        "seeds": {
+          "0": {
+            "effect": -0.009260193799261018,
+            "A": 0.9040729624401399,
+            "B": 0.8948127686408789,
+            "machine": "5090",
+            "runs": [
+              "f77dcb9bcd06",
+              "751d15b7c636"
+            ]
+          }
+        },
+        "mean": -0.009260193799261018,
+        "se": null,
+        "positive": 0,
+        "n": 1,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "rate_bpe17k_3e-3_over_3e-4",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_lr0.003",
+        "seeds": {
+          "0": {
+            "effect": -0.046988557657477226,
+            "A": 0.9421757235960164,
+            "B": 0.8951871659385392,
+            "machine": "5090",
+            "runs": [
+              "c58ba0662048",
+              "ae452920abc5"
+            ]
+          },
+          "1": {
+            "effect": -0.04977124303368374,
+            "A": 0.9463614946394625,
+            "B": 0.8965902516057788,
+            "machine": "5090",
+            "runs": [
+              "07dd78de8832",
+              "b960babe7c48"
+            ]
+          },
+          "2": {
+            "effect": -0.049315918556389615,
+            "A": 0.9435864880599125,
+            "B": 0.8942705695035229,
+            "machine": "5090",
+            "runs": [
+              "fe24a14162b2",
+              "0f0263ef62a0"
+            ]
+          },
+          "3": {
+            "effect": -0.05020406713112768,
+            "A": 0.9463400854104173,
+            "B": 0.8961360182792896,
+            "machine": "5090",
+            "runs": [
+              "b60e2ee58522",
+              "26856f00ddad"
+            ]
+          }
+        },
+        "mean": -0.04906994659466957,
+        "se": 0.0007170964719158018,
+        "positive": 0,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "rate_bpeend_3e-3_over_3e-4",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_lr0.003",
+        "seeds": {
+          "0": {
+            "effect": -0.045330632771600765,
+            "A": 0.9272543430114955,
+            "B": 0.8819237102398947,
+            "machine": "5090",
+            "runs": [
+              "57f76ed51760",
+              "df6c33e920b7"
+            ]
+          },
+          "1": {
+            "effect": -0.04714754311583014,
+            "A": 0.9279180696183356,
+            "B": 0.8807705265025054,
+            "machine": "5090",
+            "runs": [
+              "ae75b666d616",
+              "01e61f353d3c"
+            ]
+          },
+          "2": {
+            "effect": -0.04472296632563311,
+            "A": 0.9284896374541092,
+            "B": 0.8837666711284761,
+            "machine": "5090",
+            "runs": [
+              "7e17426e0388",
+              "76761dc68058"
+            ]
+          },
+          "3": {
+            "effect": -0.044423732098648805,
+            "A": 0.9258694250362299,
+            "B": 0.8814456929375811,
+            "machine": "5090",
+            "runs": [
+              "0d7539f05ca2",
+              "9c17b6c17e3a"
+            ]
+          }
+        },
+        "mean": -0.045406218577928203,
+        "se": 0.0006103303533504555,
+        "positive": 0,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "rate_bpe17k_1e-3_over_3e-4",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_lr0.001",
+        "seeds": {
+          "0": {
+            "effect": -0.03810276115587652,
+            "A": 0.9421757235960164,
+            "B": 0.9040729624401399,
+            "machine": "5090",
+            "runs": [
+              "c58ba0662048",
+              "f77dcb9bcd06"
+            ]
+          }
+        },
+        "mean": -0.03810276115587652,
+        "se": null,
+        "positive": 0,
+        "n": 1,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "gain_plain",
+        "A": "bpe_baseline_bpe_uk_17k_ukwiki0.2",
+        "B": "bpe_baseline_bpeend_uk_17k_ukwiki0.2",
+        "seeds": {
+          "0": {
+            "effect": -0.020290533740992323,
+            "A": 0.9425037415958127,
+            "B": 0.9222132078548204,
+            "machine": "5090",
+            "runs": [
+              "c97ed09f292c",
+              "5dcc0ce00358"
+            ]
+          },
+          "1": {
+            "effect": -0.023341588183994788,
+            "A": 0.9484516641522088,
+            "B": 0.925110075968214,
+            "machine": "5090",
+            "runs": [
+              "55549b1ff7aa",
+              "7d2c460cd9af"
+            ]
+          },
+          "2": {
+            "effect": -0.0213829669043768,
+            "A": 0.9483644415246633,
+            "B": 0.9269814746202865,
+            "machine": "5090",
+            "runs": [
+              "5227eac862b8",
+              "c134f8e5a481"
+            ]
+          },
+          "3": {
+            "effect": -0.022442930227598024,
+            "A": 0.9474571638009391,
+            "B": 0.9250142335733411,
+            "machine": "5090",
+            "runs": [
+              "6e3be31d67f3",
+              "8f9aaf9288d1"
+            ]
+          }
+        },
+        "mean": -0.021864504764240483,
+        "se": 0.0006598999253725532,
+        "positive": 0,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "null_over_plain_bpe17k",
+        "A": "bpe_baseline_bpe_uk_17k_ukwiki0.2",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+        "seeds": {
+          "0": {
+            "effect": -0.0003280179997963151,
+            "A": 0.9425037415958127,
+            "B": 0.9421757235960164,
+            "machine": "5090",
+            "runs": [
+              "c97ed09f292c",
+              "c58ba0662048"
+            ]
+          },
+          "1": {
+            "effect": -0.0020901695127463205,
+            "A": 0.9484516641522088,
+            "B": 0.9463614946394625,
+            "machine": "5090",
+            "runs": [
+              "55549b1ff7aa",
+              "07dd78de8832"
+            ]
+          },
+          "2": {
+            "effect": -0.004777953464750739,
+            "A": 0.9483644415246633,
+            "B": 0.9435864880599125,
+            "machine": "5090",
+            "runs": [
+              "5227eac862b8",
+              "fe24a14162b2"
+            ]
+          },
+          "3": {
+            "effect": -0.0011170783905218862,
+            "A": 0.9474571638009391,
+            "B": 0.9463400854104173,
+            "machine": "5090",
+            "runs": [
+              "6e3be31d67f3",
+              "b60e2ee58522"
+            ]
+          }
+        },
+        "mean": -0.0020783048419538153,
+        "se": 0.0009693513199447881,
+        "positive": 0,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "null_over_plain_bpeend",
+        "A": "bpe_baseline_bpeend_uk_17k_ukwiki0.2",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "seeds": {
+          "0": {
+            "effect": 0.005041135156675036,
+            "A": 0.9222132078548204,
+            "B": 0.9272543430114955,
+            "machine": "5090",
+            "runs": [
+              "5dcc0ce00358",
+              "57f76ed51760"
+            ]
+          },
+          "1": {
+            "effect": 0.002807993650121521,
+            "A": 0.925110075968214,
+            "B": 0.9279180696183356,
+            "machine": "5090",
+            "runs": [
+              "7d2c460cd9af",
+              "ae75b666d616"
+            ]
+          },
+          "2": {
+            "effect": 0.0015081628338227127,
+            "A": 0.9269814746202865,
+            "B": 0.9284896374541092,
+            "machine": "5090",
+            "runs": [
+              "c134f8e5a481",
+              "7e17426e0388"
+            ]
+          },
+          "3": {
+            "effect": 0.0008551914628888158,
+            "A": 0.9250142335733411,
+            "B": 0.9258694250362299,
+            "machine": "5090",
+            "runs": [
+              "8f9aaf9288d1",
+              "0d7539f05ca2"
+            ]
+          }
+        },
+        "mean": 0.0025531207758770214,
+        "se": 0.0009233127311322329,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      }
+    ]
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-10-31T06:45:44+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "99c6f6e6cca50c0682f7f7541b2984054fbf1985",
+    "git_dirty": true
+  },
+  "notes": [
+    "effect = B minus A in bits per byte at each seed (positive: A better); pairs on one machine only"
+  ]
+}

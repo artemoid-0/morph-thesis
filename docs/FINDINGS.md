@@ -48,6 +48,11 @@ Every tokenizer's validation stream decodes to the same text, byte for byte, so 
 At 20k it is +0.0169 ± 0.0007 (4/4); **at full training on four times the text (151M tokens, 50k) +0.0165 ± 0.0008 (1.75%, 4/4)**, flat from step 5,000 while the null falls from 1.13 to 0.944: about 0.017 at two corpus sizes and three budgets, wherever the null stands between 1.21 and 0.944 BPB.
 At width 256 (four times the core's parameters) it is larger at every matched null BPB: **+0.0254 ± 0.0012 (2.6%, 4/4)** at 10k, settling at **+0.0218 ± 0.0029 (2.4%, 4/4)** at 20k, flat from step 7,500 (width 128 at 20k: +0.0169, 1.7%).
 
+**At a better learning rate it is smaller.**
+The default rate, 3·10⁻⁴, is not the best for the 5M model at full training: BPE 17k's null ends **0.0491 ± 0.0007 BPB (5.2%)** lower at 3·10⁻³ (4/4), 0.0381 lower at 1·10⁻³ (seed 0), on a second machine; 3·10⁻³ is the best of the three for both tokenizers.
+There the gain is **+0.0136 ± 0.0011 (1.52%, 4/4)**, against +0.0172 ± 0.0013 (1.82%) at the default on the same machine: 0.0036 ± 0.0010 less, at every seed (§33.145).
+The larger models ran at the default rate only.
+
 **It peaks there.**
 At width 512 (30M parameters, four times width 128) it is **+0.0125 ± 0.0009 (1.4%, 4/4)** at 10k, below both smaller widths.
 At the same point of learning it starts above width 256's (+0.041 against +0.038 at null BPB 1.18), then falls as a feature's gain does — below width 256's from 1.11 on, at width 128's level near 0.98 (+0.018), +0.014 at 0.92 — while the smaller widths' leads hold flat.
@@ -59,13 +64,14 @@ At width 1024 (85M parameters, on a second machine), with the 100-step warm-up o
 Two seeds keep width 512's level (+0.0115, +0.0093 at 20k). At the other two the endings-apart null falls behind in early training, from about step 1,500, at both budgets, and keeps a smaller gain (+0.0033, +0.0058 at 20k; G-81).
 The fall is no spike: at 100-step resolution that null's validation BPB falls at every evaluation, and a rerun on the same machine repeats it to 3 × 10⁻⁵, so there it is the seed's (§33.122).
 **It is the warm-up's.** With 1,000 steps of warm-up every seed keeps the gain, **+0.0110 ± 0.0011 (1.34%, 4/4)** at 10k, from +0.0095 to +0.0143; the two seeds that fell gain +0.0143 and +0.0100, their endings-apart nulls ending 0.0135 and 0.0067 lower than with 100 steps.
-Width 512 under the same warm-up gains +0.0147 ± 0.0022, as with 100 steps (+0.0141), so at 85M parameters the gain is smaller than at 30M under either recipe (§33.130, §33.132).
+Width 512 under the same warm-up gains +0.0147 ± 0.0022, as with 100 steps (+0.0141), so at 85M parameters the gain is smaller than at 30M under either recipe (§33.130, §33.132); width 128 gains +0.0175 ± 0.0004 under it, as with 100 steps (+0.0175 ± 0.0015; §33.145).
 At the same point of learning the lead starts above width 512's (at 10k +0.059 against +0.048 at null BPB 1.30) and from 1.11 down is 0.003–0.015 below it, at both budgets.
 With the 100-step warm-up, by 20k the 85M model's BPE 17k null stops improving, after 4.3 passes over its ~38M-token text, so the last 1,500 steps add about 0.0025 to the gain (+0.0049 at step 18,500) (§33.120, §33.124).
 With the 1,000-step warm-up at 20k the gain is +0.0105 ± 0.0004 (1.36%, 4/4) on that text, level over the last 5,000 steps, and **+0.0082 ± 0.0005 (1.09%, 4/4)** on the 151M-token corpus, read about 1.1 times: smaller at every seed, by 0.0022 ± 0.0002, and still rising (+0.0008 over the last 5,000 steps).
 Repeating the text added to the gain: BPE 17k's null gains more from the larger corpus than the endings-apart null (+0.0170 against +0.0148) (§33.137, §33.141).
 
 These gains are between the two tokenizers' nulls.
+In the 5M model at full training the gain between plain baselines, with no slot at all, is **+0.0219 ± 0.0007 (2.31%, 4/4)**, against +0.0172 ± 0.0013 between the nulls on the same machine: the null helps BPE 17k (+0.0021 ± 0.0010) and costs endings apart (0.0026 ± 0.0009), so the figure between the nulls is the conservative one (§33.145).
 Over the empty slots the gain is larger in the 5M model, the same at 30M parameters and smaller at 85M:
 - the 5M model's null costs endings apart about 0.002 (below), so at 10k the gain between the empty slots is +0.0203 ± 0.0013, against +0.0175 ± 0.0015 between the nulls on a second machine;
 - at width 512 the two references agree (+0.0142, +0.0141), and its gain is the smaller over either (§33.118);
@@ -405,6 +411,7 @@ Each is an artifact this project found in its own numbers or pipeline; together 
    Each was caught before it changed a number. (§33.39, §33.43–§33.45, §33.48)
 10. **A same-shape null is not neutral, and its sign depends on the tokenizer and the model's size.**
    In the 5M Ukrainian model the null's slot loses to the same slot held at zero where the tokenizer exposes endings (by 0.0022 to 0.0039 at 10k, 0.0025 to 0.0034 at 20k) and beats it under BPE at 4k, 8k and 32k and on less data (by 0.0015 to 0.0037); a feature with the same slot pays the cost too; at 30M parameters the two end level under endings apart and BPE 17k; at 85M the slot costs under BPE 17k and helps under endings apart, so the tokenizer's gain between the nulls is 0.003 larger than between the empty slots ([above](#the-same-shape-null-is-not-neutral)).
+   At full training in the 5M model, against plain baselines with no slot, it helps BPE 17k by 0.0021 and costs endings apart 0.0026, so the tokenizer's gain between the nulls is 0.0047 below its gain between plain baselines (§33.145).
    A gain over the null then overstates or understates the gain over the best model without the feature, the tokenizer's own gain included, and gains compared across tokenizers over their own nulls can turn a conclusion round: check against an empty slot, at each model size. (§33.106, §33.113, §33.116, §33.118, §33.139)
 11. **Two GPUs run the same model alike, not the same run.**
    The same weights evaluate within 2 × 10⁻⁹ on both machines, and a matrix product, a softmax and a layer norm are bitwise identical; with dropout off, two machines train the same run to within 2 × 10⁻⁸.
@@ -432,4 +439,4 @@ Each withdrawal was decided by a rule recorded before its result:
 
 Open questions that could change a claim are in [`GAPS.md`](GAPS.md); what runs next, and why, in [`DIRECTIONS.md`](DIRECTIONS.md), "The queue".
 
-Left open, as limitations: across model sizes, the half of the width difference that the previous word's tag does not account for (§33.83).
+Left open, as limitations: across model sizes, the half of the width difference that the previous word's tag does not account for (§33.83); the learning rate beyond the 5M model, where every run used the default 3·10⁻⁴ (§33.145).
