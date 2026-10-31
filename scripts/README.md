@@ -21,6 +21,7 @@ machine, and the seeds left out are named (FINDINGS, method point 11). Findings 
 | `check_cache.py` | The health of a built cache, in any language. | active |
 | `corpus_info.py` | Look at a dataset before it becomes a corpus: splits, sizes, fields, samples, estimates. | active |
 | `fiction_full.sh` | UberText fiction's two conditions at fraction 0.4, built from the public source on a machine that has none of it; CPU only. | historical |
+| `make_minimal_pairs_uk.py` | Ukrainian minimal pairs beyond subject–verb agreement, from the held-out test split: an adjective agreeing with its noun in case, number or gender, and a noun in the case its preposition governs; the changed form unambiguously wrong by the dictionary; MultiBLiMP's table format, with a stratified sample for a native speaker's check. | active |
 | `derive_lexical_codes.py` | A strictly causal version of a contextual feature; and the controls derived the same way — the constant null, frequency bands, a shuffle, and `--recode-pos` (G-38: prepositions read from their form, `ucaseprep`). | active |
 | `derive_causal_pos.py` | `poscausal`: part of speech from a strictly causal tagger, every word tagged from its left context only. | active |
 | `derive_causal_ud.py` | `ugendercausal`, `unumbercausal`: Ukrainian gender and number from a strictly causal tagger, for every given tokenizer's stream; paragraphs decoded from the stream (G-75). | active |

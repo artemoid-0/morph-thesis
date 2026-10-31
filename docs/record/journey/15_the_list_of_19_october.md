@@ -1874,3 +1874,52 @@ ends, at ~38M tokens and 10k:
 - **Depth:** within 0.003, *it does not depend on depth*; smaller, *it falls with depth too*.
 
 The tally is 200 right, 13 half right, 102 wrong, 10 never tested, 1 withdrawn and 14 pending, of 340.
+
+### 33.147 Item 6 prepared: minimal pairs for agreement in the noun phrase and for government
+
+The tokenizer's grammatical gain rests on MultiBLiMP's single phenomenon, a verb agreeing with its subject.
+Item 6 of the text's list asks whether it covers the two that an inflectional ending carries inside a noun
+phrase and after a preposition.
+
+**The pairs** (`scripts/data/make_minimal_pairs_uk.py`; `data/minimal_pairs/uk_np_pp_v1.tsv`, its sidecar
+`.json`). They come from the corpus's test split rather than validation: no checkpoint was ever chosen on
+it. The tagger finds the phrases:
+- **an adjective** whose head is the noun directly after it, the two agreeing;
+- **a noun** directly after one of 24 prepositions whose government is not in doubt (в/у, по and о are left
+  out).
+
+pymorphy3 then changes one word:
+- **AN-C:** the adjective's case;
+- **AN-#:** its number;
+- **AN-G:** its gender, in the singular;
+- **PP-C:** the noun's case, to one its preposition never governs.
+
+**A pair is kept only if the change is wrong by every reading in the dictionary.** No reading of the new
+adjective may agree with any reading of the noun, and no reading of the new noun may be in a case the
+preposition governs. Both words must be known, wholly Ukrainian, and free of apostrophes.
+
+**What was built:**
+- From 14,973 paragraphs: 11,229, 8,865, 8,380 and 4,275 candidates.
+- Kept: 1,000 of each, at one sentence each and a fixed seed; AN-C has 999, after one row with a tab.
+- A first build kept singular words only by accident. pymorphy3 names the plural but not the singular,
+  so the check now reads a reading without a number as singular.
+
+**The check.** A random 100, 25 per phenomenon (`…_sample100.tsv`), goes to a native speaker on a page that
+saves each mark. ✓ when the first sentence is fine and the second wrong because of the changed word; ✗
+otherwise, with a note. At 95 or more valid the set stands; below, the rule is tightened and a fresh sample
+checked.
+
+**The scoring** follows the check. `multiblimp_eval.py` gains the four phenomena and reads the table with
+`--data`. It scores the nulls at full training: the 5M model's on the thesis machine, the 30M model's on
+the second.
+
+**Predictions** (before any check or score):
+- **P341** (~70%). At least 95 of the 100 checked pairs are valid.
+- **P342** (~75%). On the three agreement phenomena together, the 5M model's endings-apart nulls at full
+  training beat BPE 17k's at every seed.
+- **P343** (~65%). On government, endings apart leads at every seed in the 5M model.
+
+**What each outcome says** (the text's sentences): a gain, *it covers agreement in the noun phrase and
+government*; none, *only subject–verb agreement*.
+
+The tally is 200 right, 13 half right, 102 wrong, 10 never tested, 1 withdrawn and 17 pending, of 343.

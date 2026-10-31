@@ -86,6 +86,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [§33.144](15_the_list_of_19_october.md#33144-the-first-tier-on-the-thesis-machine-prepared-shuffled-case-the-switch-to-a-constant-and-where-the-cut-falls) — the first tier on the thesis machine prepared: shuffled case, the switch to a constant, where the cut falls
 - [§33.145](15_the_list_of_19_october.md#33145-the-learning-rate-the-plain-baselines-and-the-warm-up-at-width-128-at-the-best-of-three-rates-the-gain-is-smaller-without-the-slot-it-is-larger) — at the best of three learning rates the 5M model's gain is smaller; between plain baselines it is larger; the warm-up changes nothing at width 128
 - [§33.146](15_the_list_of_19_october.md#33146-items-7-and-13-prepared-the-modern-block-and-depth-after-width-1024) — the modern block and depth prepared
+- [§33.147](15_the_list_of_19_october.md#33147-item-6-prepared-minimal-pairs-for-agreement-in-the-noun-phrase-and-for-government) — minimal pairs for agreement in the noun phrase and for government, prepared
 - [§33.141](15_the_list_of_19_october.md#33141-item-1-without-repeating-the-text-the-gain-at-width-1024-is-smaller-and-still-rising) — without repeating the text the gain at width 1024 is smaller, and still rising
 - [§33.142](15_the_list_of_19_october.md#33142-full-training-at-30m-parameters-the-tokenizers-gain-is-smaller-and-lasts-case-stays-within-the-bound-english-gains-nothing) — full training at 30M parameters: the tokenizer's gain is smaller and lasts, case stays within the bound, English gains nothing
 
@@ -471,6 +472,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [33.144 The first tier on the thesis machine prepared: shuffled case, the switch to a constant, and where the cut falls](15_the_list_of_19_october.md#33144-the-first-tier-on-the-thesis-machine-prepared-shuffled-case-the-switch-to-a-constant-and-where-the-cut-falls)
 - [33.145 The learning rate, the plain baselines and the warm-up at width 128: at the best of three rates the gain is smaller; without the slot it is larger](15_the_list_of_19_october.md#33145-the-learning-rate-the-plain-baselines-and-the-warm-up-at-width-128-at-the-best-of-three-rates-the-gain-is-smaller-without-the-slot-it-is-larger)
 - [33.146 Items 7 and 13 prepared: the modern block and depth, after width 1024](15_the_list_of_19_october.md#33146-items-7-and-13-prepared-the-modern-block-and-depth-after-width-1024)
+- [33.147 Item 6 prepared: minimal pairs for agreement in the noun phrase and for government](15_the_list_of_19_october.md#33147-item-6-prepared-minimal-pairs-for-agreement-in-the-noun-phrase-and-for-government)
 
 ### Appendices
 

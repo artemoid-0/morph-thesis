@@ -81,7 +81,7 @@ The thesis text's list of 30–31 October (§33.143): fifteen limits a reviewer 
 5. item 4, the gain as compute or model size;
 6. item 3, where the gain sits, per word;
 7. the test split (it needs test caches);
-8. item 6, minimal pairs for agreement and government, checked by the author on a random hundred;
+8. item 6, minimal pairs for agreement and government (built, §33.147), checked by the author on a random hundred, then scored;
 9. item 8, the tagger on gold labels, which needs the treebank downloaded;
 10. the figures.
 

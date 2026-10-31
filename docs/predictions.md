@@ -6,7 +6,7 @@ Each prediction was recorded in the [journey](record/journey/README.md) **before
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 200 right, 13 half right, 102 wrong, 10 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test, 2 whose condition was not met), 1 withdrawn, 14 pending — of 340.
+**Tally:** 200 right, 13 half right, 102 wrong, 10 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test, 2 whose condition was not met), 1 withdrawn, 17 pending — of 343.
 
 *Key to the tally (added 19 October 2026). Counted half right: P19, P46, P54 — with the eight
 whose outcome begins "half right" or "partly right". Counted right: P33, P172, P273, P303, P317 — right by their
@@ -374,3 +374,6 @@ The wrong ones carried the information:
 | P338 | It is within 0.003 of the standard block's on the same machine (+0.0175) | pending | §33.146 |
 | P339 | At 8 layers of width 512 and 10k the tokenizer's gain is positive at every seed | pending | §33.146 |
 | P340 | It is within 0.003 of 4 layers' under the same warm-up on the same machine (+0.0147) | pending | §33.146 |
+| P341 | At least 95 of 100 random minimal pairs for noun-phrase agreement and government are valid by a native speaker's check | pending | §33.147 |
+| P342 | On the three agreement phenomena together, the 5M model's endings-apart nulls at full training beat BPE 17k's at every seed | pending | §33.147 |
+| P343 | On preposition–case government, endings apart leads at every seed in the 5M model | pending | §33.147 |
