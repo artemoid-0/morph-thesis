@@ -44,7 +44,7 @@ import datetime
 
 #: the name each algorithm gives its files; `bpe-endings` is BPE trained and
 #: applied on text marked at stem|ending cuts (endings.py)
-NAME_OF = {'bpe': 'bpe', 'unigram': 'unigram', 'bpe-endings': 'bpeend'}
+NAME_OF = {'bpe': 'bpe', 'unigram': 'unigram', 'bpe-endings': 'bpeend', 'bpe-endings-shift1': 'bpeshift'}
 
 
 def standard_name(corpus: str, algorithm: str, vocab: int) -> str:
@@ -132,14 +132,16 @@ def train_tokenizer(cfg, vocab, out, algorithm='bpe', pre_tokenizer='bytelevel',
     spec = get_corpus(corpus)
     counter = {'texts': 0, 'cuts': 0, 'chars': 0}
     rule = None
-    if algorithm == 'bpe-endings':
-        from .endings import RULES, RULE_OF_LANGUAGE, mark_text
+    if algorithm in ('bpe-endings', 'bpe-endings-shift1'):
+        from .endings import RULES, RULE_OF_LANGUAGE, RULE_SHIFT, mark_text
         if spec.language not in RULE_OF_LANGUAGE:
             raise ValueError(f'no ending rule for {spec.language!r} (corpus {corpus!r}); '
                              f'rules exist for {sorted(RULE_OF_LANGUAGE)}')
+        if algorithm == 'bpe-endings-shift1' and spec.language != 'uk':
+            raise ValueError('the shifted cut (bpe-endings-shift1) is the Ukrainian rule\'s control only')
         if pre_tokenizer != 'bytelevel':
             raise ValueError('bpe-endings is byte-level only')
-        rule = RULES[RULE_OF_LANGUAGE[spec.language]]()
+        rule = RULES[RULE_SHIFT if algorithm == 'bpe-endings-shift1' else RULE_OF_LANGUAGE[spec.language]]()
         sidecar = 'full'
 
     def counted():

@@ -22,6 +22,11 @@ bpeend_<k>k on WikiText-103.
 
     python scripts/data/train_tokenizer.py --corpus wikitext103 --vocab 17000 --algorithm bpe-endings
 
+`bpe-endings-shift1`: its control, the same words cut once each but one letter off the
+boundary (endings.ShiftedEndingRule; journey §33.144), named bpeshift_uk_<k>k.
+
+    python scripts/data/train_tokenizer.py --corpus ukwiki --corpus-fraction 0.2 --vocab 17000 --algorithm bpe-endings-shift1
+
 STATS — on held-out text (the corpus's validation split), with spaCy's words:
 characters per token, tokens per word, words split, and ending exposure (the
 stem|ending boundary, all inflected words and the case-bearing ones). One
@@ -63,7 +68,7 @@ def main():
     ap.add_argument('--corpus-fraction', type=float, default=1.0)
     ap.add_argument('--corpus-holdout', type=int, default=2000)
     ap.add_argument('--vocab', type=int, default=17000)
-    ap.add_argument('--algorithm', choices=['bpe', 'unigram', 'bpe-endings'], default='bpe')
+    ap.add_argument('--algorithm', choices=['bpe', 'unigram', 'bpe-endings', 'bpe-endings-shift1'], default='bpe')
     ap.add_argument('--out', default=None, help='default: data/<standard name>.json')
     ap.add_argument('--lines', type=int, default=0, help='train on at most this many rows (0 = all)')
     ap.add_argument('--stats', nargs='+', default=None, metavar='TOKENIZER',

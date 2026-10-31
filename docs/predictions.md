@@ -6,7 +6,7 @@ Each prediction was recorded in the [journey](record/journey/README.md) **before
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 195 right, 13 half right, 101 wrong, 10 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test, 2 whose condition was not met), 1 withdrawn, 9 pending — of 329.
+**Tally:** 195 right, 13 half right, 101 wrong, 10 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test, 2 whose condition was not met), 1 withdrawn, 16 pending — of 336.
 
 *Key to the tally (added 19 October 2026). Counted half right: P19, P46, P54 — with the eight
 whose outcome begins "half right" or "partly right". Counted right: P33, P172, P273, P303, P317 — right by their
@@ -363,3 +363,10 @@ The wrong ones carried the information:
 | P327 | At width 1024 and full training the tokenizer's gain between the nulls is positive at every seed | pending | §33.143 |
 | P328 | It is at least 0.87% of BPE 17k's null BPB: within 0.1 point of the 30M model's 0.97%, or above it | pending | §33.143 |
 | P329 | On MultiBLiMP, endings apart at width 1024 and full training is ahead at every seed, by at least 4 points | pending | §33.143 |
+| P330 | At 10k on ~38M tokens under BPE 17k, shuffled case (word-form values reassigned among types of similar frequency) ends within 0.001 of the null on average | pending | §33.144 |
+| P331 | It gains less than half of case's +0.0032 over the null on average | pending | §33.144 |
+| P332 | Set to one class at step 5,000 of 20k, English part of speech ends at least 0.002 below the empty slot on average, below it at four seeds of five or more | pending | §33.144 |
+| P333 | That deficit is within 0.002 of the switch to zeros' (+0.0039) | pending | §33.144 |
+| P334 | The null under the cut moved one letter off the rule's boundary gains less than half of endings apart's +0.0174 over BPE 17k's null at 10k | pending | §33.144 |
+| P335 | It gains less than +0.004, or loses | pending | §33.144 |
+| P336 | Its characters per token on held-out text are within 3% of endings apart's | pending | §33.144 |

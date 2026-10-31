@@ -106,6 +106,31 @@ def _train(d, presplit=True, vocab=600):
     return path
 
 
+def test_shifted_rule_moves_every_cut_by_one_letter():
+    """The control for where the cut falls (journey §33.144): the rule's words, one letter off its cut."""
+    from morphlm.data.endings import ShiftedEndingRule, RULES, RULE_SHIFT, mark_text
+    r, s = rule(), ShiftedEndingRule()
+    words = re.findall(r"[^\W\d_]+(?:['’ʼ`][^\W\d_]+)*", TEXT + ' ' + ' '.join(TRAIN[:4]))
+    cut = [w for w in set(words) if r.cut(w)]
+    assert len(cut) > 20, len(cut)
+    moved = 0
+    for w in cut:
+        k, j = r.cut(w), s.cut(w)
+        if j:
+            moved += 1
+            assert abs(j - k) == 1 and 1 <= j < len(w) and w[j - 1].isalpha() and w[j].isalpha(), (w, k, j)
+    assert moved >= 0.9 * len(cut), f'only {moved} of {len(cut)} cuts could move'
+    assert all(s.cut(w) == 0 for w in set(words) if not r.cut(w)), 'it cuts only the words the rule cuts'
+    assert {ShiftedEndingRule().cut(w) for w in cut} and all(ShiftedEndingRule().cut(w) == s.cut(w) for w in cut)
+    later = sum(s.cut(w) > r.cut(w) for w in cut if s.cut(w))
+    assert 0 < later < moved, f'{later} of {moved} later: the hash must send cuts both ways'   # a one-letter ending only earlier
+    assert s.cut('книгами') in (3, 5) and s.cut('його') == 0
+    assert s.fingerprint() != r.fingerprint() and RULES[RULE_SHIFT] is ShiftedEndingRule
+    marked, cuts = mark_text(TEXT, s)
+    assert marked.replace('﷐', '') == TEXT and not set(cuts) & set(mark_text(TEXT, r)[1])
+    print(f'  shifted rule: {moved} of {len(cut)} cuts moved one letter ({later} later), none on the boundary OK')
+
+
 def test_ending_tokenizer_encodes_every_cut():
     import numpy as np
     from morphlm.data.tokenization import load_tokenizer

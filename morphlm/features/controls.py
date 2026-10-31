@@ -124,6 +124,23 @@ class UCaseLexicalBlock(LexicalLookupMixin, UCaseBlock):
                    'scripts/data/derive_lexical_codes.py --fact ucase --out-fact ucaselex --corpus ukwiki')
 
 
+@register_fact('ucaseshuf')
+class UCaseShuffledBlock(LexicalLookupMixin, UCaseBlock):
+    """
+    CONTROL for case from the word form (`ucaselex`): each word form's majority case
+    reassigned at random among word types of similar frequency, as `mstructshuf` is for
+    `mstruct` (lexical.shuffle_within_frequency). Class sizes and the class-frequency
+    profile are kept; which form carries which case is destroyed. If it helps as much as
+    case early in training, that gain comes from any consistent grouping of word types,
+    not from case (journey §33.144).
+    Derived: derive_lexical_codes.py --fact ucase --out-fact ucaseshuf --shuffle-types 0
+             --keep ucase --corpus ukwiki
+    """
+    lexicon_name = 'ucaseshuf'
+    derive_hint = ('ucaseshuf is derived per WORD: run scripts/data/derive_lexical_codes.py '
+                   '--fact ucase --out-fact ucaseshuf --shuffle-types 0 --keep ucase --corpus ukwiki')
+
+
 @register_fact('ugenderlex')
 class UGenderLexicalBlock(LexicalLookupMixin, UGenderBlock):
     """

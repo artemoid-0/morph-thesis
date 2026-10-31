@@ -121,6 +121,7 @@ def train_cell(cfg, verbose=True):
     step = 0
     off_step = getattr(cfg.frozen, 'feature_off_step', None)
     on_step = getattr(cfg.frozen, 'feature_on_step', None)
+    const_step = getattr(cfg.frozen, 'feature_const_step', None)
     drop_until = getattr(cfg.frozen, 'feature_dropout_until', None)
     import os as _os
     ckpt_every = int(_os.environ.get('MORPHLM_CHECKPOINT_EVERY', '0') or 0)   # D2 (§33.48)
@@ -156,6 +157,14 @@ def train_cell(cfg, verbose=True):
                 best, best_state, since_improve = None, None, 0
                 if verbose:
                     print(f'  features switched on at step {step}: best and patience reset')
+            if const_step is not None and const_step > 0 and step == const_step:
+                # the switch to a constant: the information goes, a shared vector
+                # stays; only evaluations from here on count, as after the switch
+                # off (journey §33.144)
+                model.embed.switch_features_const()
+                best, best_state, since_improve = None, None, 0
+                if verbose:
+                    print(f'  features set to one class at step {step}: best and patience reset')
 
             if drop_until:
                 # weaning: the keep rate falls linearly to 0 at drop_until;

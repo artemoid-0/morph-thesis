@@ -946,6 +946,56 @@ def test_feature_switch():
     print('  feature switch: gate, gradient, checkpoint, initial weights, label, key, reverse OK')
 
 
+def test_feature_const_switch():
+    """
+    The switch to a constant (frozen.feature_const_step, journey §33.144): until the
+    switch the model is the plain one; after it every value but 'none' is the block's
+    first class, so the slot is a shared vector, not zeros, and only those two rows of
+    the feature's table learn. The flag survives a checkpoint; the label says it; it is
+    refused with another switch.
+    """
+    import torch
+    from morphlm.config import ExperimentConfig, apply_overrides
+    from morphlm.modeling.embedding import HybridEmbedding
+    base = ['data.pipeline=bpe', 'frozen.facts=pos', 'frozen.trainable=true']
+
+    def make(*extra):
+        cfg = apply_overrides(ExperimentConfig(), base + list(extra))
+        torch.manual_seed(0)
+        return cfg, HybridEmbedding(cfg, 100, verbose=False)
+
+    g = torch.Generator().manual_seed(1)
+    ids = torch.randint(0, 100, (2, 16), generator=g)
+    codes = torch.randint(0, 8, (2, 1, 16), generator=g)
+    _, plain = make()
+    cfg5, sw = make('frozen.feature_const_step=5')
+    T, none = sw.T, sw.blocks[0].n_classes - 1
+    codes[..., :3] = none
+    assert not hasattr(plain, 'feature_const')
+    assert all(torch.equal(a, b) for a, b in zip(plain.parameters(), sw.parameters())), \
+        'the switch changes no initial weight'
+    assert torch.equal(sw(ids, codes), plain(ids, codes)), 'before the switch: the plain model'
+    sw.switch_features_const()
+    one = torch.where(codes == none, codes, torch.zeros_like(codes))
+    out = sw(ids, codes)
+    assert torch.equal(out, plain(ids, one)), "after the switch: class 0 everywhere but 'none'"
+    assert torch.count_nonzero(out[..., :T]) > 0, 'a shared vector, not zeros'
+    out.sum().backward()
+    grads = [p.grad for n, p in sw.named_parameters() if not n.startswith('trained') and p.grad is not None]
+    rows = {int(r) for gr in grads for r in torch.nonzero(gr.abs().sum(-1)).flatten()}
+    assert rows <= {0, none}, f'only the constant and none learn: {sorted(rows)}'
+    _, fresh = make('frozen.feature_const_step=5')
+    fresh.load_state_dict(sw.state_dict())
+    assert int(fresh.feature_const) == 1, 'the flag survives a checkpoint'
+    assert '-CONST5' in cfg5.label()
+    try:
+        make('frozen.feature_const_step=5', 'frozen.feature_off_step=5')
+        raise AssertionError('a constant with another switch must be refused')
+    except ValueError:
+        pass
+    print('  switch to a constant: plain before, one class after, gradient, checkpoint, label, refusal OK')
+
+
 
 def _screen_cfg(*extra):
     from morphlm.config import ExperimentConfig, apply_overrides
@@ -1088,6 +1138,8 @@ DERIVATIONS = {
                 '--fact ucase --out-fact ucaselex --corpus ukwiki',
     'ucaseprep': 'ucaseprep is derived per WORD, not per token: run scripts/data/derive_lexical_codes.py '
                  '--fact ucase --out-fact ucaseprep --recode-pos ADP --keep ucase --corpus ukwiki',
+    'ucaseshuf': 'ucaseshuf is derived per WORD: run scripts/data/derive_lexical_codes.py --fact ucase '
+                 '--out-fact ucaseshuf --shuffle-types 0 --keep ucase --corpus ukwiki',
     'poscausal': 'poscausal is derived from the text by a causal tagger, not per token: run '
                  'scripts/data/derive_causal_pos.py first',
     'ugenderlex': 'ugenderlex is derived per WORD, not per token: run scripts/data/derive_lexical_codes.py '
@@ -1246,7 +1298,7 @@ def test_split_modules_keep_every_name():
     assert facts == ['cat', 'dep', 'ectx', 'etype', 'magr', 'mconst', 'mconst16', 'mconst32', 'mconst64', 'mfeat',
                      'mfeatlex', 'mflat', 'mfreq', 'mhash', 'minfl', 'mlemma', 'mprefix', 'mrole', 'mroot', 'mstruct',
                      'mstructshuf', 'mzero', 'mzeronopos', 'mzeroposonly', 'pos', 'poscausal', 'poslex', 'posshuf',
-                     'uanimacy', 'uaspect', 'ucase', 'ucaselex', 'ucaseprep', 'ugender', 'ugendercausal',
+                     'uanimacy', 'uaspect', 'ucase', 'ucaselex', 'ucaseprep', 'ucaseshuf', 'ugender', 'ugendercausal',
                      'ugenderlex', 'unumber', 'unumbercausal', 'unumberlex', 'uperson',
                      'utense'], facts   # the 37 registered before the split, and gender's and number's four (21 October)
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

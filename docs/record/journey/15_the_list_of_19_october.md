@@ -1688,3 +1688,72 @@ About 8.5 hours, then about 30. Both chains must end by 08:00 New York time on 2
   any run, and item 9 and Unigram bracket the question.
 
 The tally is 195 right, 13 half right, 101 wrong, 10 never tested, 1 withdrawn and 9 pending, of 329.
+
+### 33.144 The first tier on the thesis machine prepared: shuffled case, the switch to a constant, and where the cut falls
+
+The second machine is busy with width 1024 at full training until Sunday (§33.143). The three cheap items of
+the first tier therefore run on the thesis machine, which holds every run each is compared with.
+
+**New code** (`morphlm/`, tests in `tests/test_blocks.py` and `tests/test_endings.py`):
+- **`ucaseshuf`**, shuffled case: case from the word form, each form's majority value reassigned at random
+  among word types of similar frequency, as `mstructshuf` is for structure.
+  - Derived at ~38M tokens under BPE 17k (`derive_lexical_codes_20261031T063236`).
+  - The class of 72% of tokens changed; the classes' shares moved by 1.4%.
+- **`frozen.feature_const_step`**, the switch to a constant: from step K every value of the feature but
+  'none' becomes its block's first class (for part of speech, NOUN).
+  - The information goes, and a shared vector stays where the switch to zeros left nothing.
+  - As after that switch, only evaluations after the step count.
+- **`bpe-endings-shift1`**, a tokenizer named `bpeshift_uk_17k`: BPE 17k trained as endings apart is, on the
+  same words cut once each, but one letter off the rule's boundary (endings.ShiftedEndingRule).
+  - The direction comes from a stable hash of the form; a one-letter ending can only move earlier.
+  - Its data is built beside the chain: the tokenizer, its statistics on held-out text beside BPE 17k's and
+    endings apart's, then `prepare_condition.py` at ~38M tokens.
+- A test of the tokenizer loader had failed since 21 October: an audit script opened a tokenizer directly.
+  It now opens it through the loader.
+
+**The chain** (`scripts/chains/tulpar_2026-10-31.sh`):
+- **shuf** (item 10): shuffled case under BPE 17k, ~38M tokens, 10k, seeds 0–3. 4 runs of ~12 min.
+- **const** (item 11): English part of speech set to one class at step 5,000 of 20k, the seeds of the switch
+  to zeros (0–4). 5 runs of ~23 min.
+- **cutshift** (item 9): the null under the shifted cut, ~38M tokens, 10k, seeds 0–3. 4 runs of ~12 min,
+  once its data is built.
+
+About 3.7 hours of the GPU.
+
+**The references,** all on this machine at the same budgets:
+- the null, case, case from the word form and case without the leak;
+- the switch to zeros (OFF5000), the empty slot (OFF0) and the null at 20k in English;
+- the nulls under BPE 17k and endings apart.
+
+**Rehearsed** with the stub:
+- every run to do;
+- a failed first-run check in shuf;
+- cutshift's data not ready;
+- cutshift waiting for its build and then running;
+- END_BY reached during that wait.
+
+**Predictions** (before any run):
+- **P330** (~60%). At 10k, shuffled case ends within 0.001 of the null on average.
+- **P331** (~75%). It gains less than half of case's +0.0032 over the null on average.
+- **P332** (~65%). Set to one class at step 5,000 of 20k, English part of speech ends at least 0.002 below
+  the model never fed it (the empty slot) on average, and below it at four seeds of five or more.
+- **P333** (~55%). That deficit is within 0.002 of the switch to zeros' (+0.0039).
+- **P334** (~75%). The shifted cut's null gains less than half of endings apart's +0.0174 over BPE 17k's
+  null at 10k.
+- **P335** (~55%). It gains less than +0.004, or loses.
+- **P336** (~75%). Its characters per token on held-out text are within 3% of endings apart's.
+
+**What each outcome says** (the text's sentences, fixed before the run):
+- **Shuffled case:**
+  - about zero (P330): *what acts is the feature's content*;
+  - as much as case: *any grouping of words gives the early gain*.
+- **The switch to a constant:**
+  - the same deficit: the conclusion stands;
+  - none: *the deficit comes from the change of the input*, and §3.8 is rewritten.
+- **The cut moved:**
+  - no gain: *it is the morpheme boundary that matters*;
+  - the same gain, within 0.003 of endings apart's: *cutting off a word end of typical length is enough;
+    the dictionary is not needed*;
+  - in between: the boundary gives the rest.
+
+The tally is 195 right, 13 half right, 101 wrong, 10 never tested, 1 withdrawn and 16 pending, of 336.

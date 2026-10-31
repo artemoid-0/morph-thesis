@@ -57,14 +57,15 @@ The thesis text's list of 30–31 October (§33.143): fifteen limits a reviewer 
    - 8 runs of ~3.7 h, ~30 h [too slow there]. P327–P329.
    - The reference does not change its cost; the nulls keep the series like for like (§33.143).
 
-**Next**, each needing code, a condition or a short run on the second machine first; its runs are cheap:
-- **item 9, where the cut falls:** BPE 17k with the rule's words cut as often, but one letter off the boundary; the null at 10k on ~38M tokens.
-  - 4 runs, ~17 min [~47 min].
-  - The tokenizer is about 10 min of CPU; the condition's tagging ~1–1.5 h.
+**Running on the thesis machine** from 31 October (`tulpar_2026-10-31.sh`; §33.144), where every run each is compared with already is:
 - **item 10, shuffled case:** the word form's case values shuffled among word types of similar frequency, as `mstructshuf`, under BPE 17k at 10k.
-  - 4 runs, ~18 min [~47 min]; the derivation takes minutes.
+  - 4 runs, ~47 min. P330–P331.
 - **item 11, switching off to a constant:** English part of speech set to one class at step 5,000 of 20k, on the seeds of the switch to zeros.
-  - 4 runs, ~34 min [~1.5 h]; new code.
+  - 5 runs, ~1.9 h. P332–P333.
+- **item 9, where the cut falls:** BPE 17k with the rule's words cut as often, but one letter off the boundary; the null at 10k on ~38M tokens.
+  - 4 runs, ~47 min, once its data is built (~1.5 h of CPU beside the chain). P334–P336.
+
+**Next**, on the second machine once item 2 ends:
 - **item 7, the modern block** (rotary positions, RMSNorm, SwiGLU; built, §33.54): both nulls at 10k.
   - 8 runs, ~40 min [~1.6 h]; at full training ~2.8 h more.
 - **item 13, depth:** 8 layers at width 512, both nulls at 10k.

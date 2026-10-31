@@ -253,11 +253,20 @@ class HybridEmbedding(nn.Module):
             self.register_buffer('feature_gate', torch.tensor(0.0 if off <= 0 else 1.0))
         if on is not None and self.T:
             self.register_buffer('feature_gate', torch.tensor(0.0 if on > 0 else 1.0))
+        # The switch to a constant (frozen.feature_const_step, journey §33.144): from
+        # step K every feature's value is its block's first class, 'none' kept, so
+        # the information goes and a shared vector stays. A flag, registered only
+        # when set, and persistent, as the gate is.
+        const = getattr(getattr(cfg, 'frozen', None), 'feature_const_step', None)
+        if const is not None and (off is not None or on is not None):
+            raise ValueError('frozen.feature_const_step and the other switches are separate experiments; set one')
+        if const is not None and self.T:
+            self.register_buffer('feature_const', torch.tensor(1 if const <= 0 else 0))
         # Weaning (frozen.feature_dropout_until): the gate holds the KEEP rate;
         # in training each token's features survive with that probability, at
         # evaluation they are scaled by it (journey §33.47).
         drop = getattr(getattr(cfg, 'frozen', None), 'feature_dropout_until', None)
-        if drop is not None and (off is not None or on is not None):
+        if drop is not None and (off is not None or on is not None or const is not None):
             raise ValueError('feature dropout and the switches are separate experiments; set one')
         self.feature_dropout = drop is not None and bool(self.T)
         if self.feature_dropout:
@@ -352,6 +361,11 @@ class HybridEmbedding(nn.Module):
         if hasattr(self, 'feature_gate'):
             self.feature_gate.fill_(1.0)
 
+    def switch_features_const(self):
+        """The switch to a constant: from now on every feature's value is its block's first class."""
+        if hasattr(self, 'feature_const'):
+            self.feature_const.fill_(1)
+
     def set_feature_keep(self, q):
         """Weaning: the probability that a token keeps its features."""
         if hasattr(self, 'feature_gate'):
@@ -391,6 +405,10 @@ class HybridEmbedding(nn.Module):
                     code = keep_struct(code, self.struct_keep)
                 code = fold_codes(code, block)
                 ci += 1
+            if hasattr(self, 'feature_const'):
+                # after the switch to a constant every value but 'none' is class 0
+                keep = (code == block.n_classes - 1) | (self.feature_const == 0)
+                code = torch.where(keep, code, torch.zeros_like(code))
             parts.append(self._factor(i, code))
 
         if hasattr(self, 'feature_gate'):

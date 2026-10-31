@@ -317,7 +317,42 @@ class EnglishEndingRule:
 
 EndingRule.name = RULE
 
+
+# ─── The cut moved off the boundary (journey §33.144) ───────────────────────
+
+RULE_SHIFT = 'uk_endings_shift1_v1'
+
+
+class ShiftedEndingRule(EndingRule):
+    """
+    THE CONTROL FOR WHERE THE CUT FALLS: the words `uk_endings_v1` cuts, each cut once, but one
+    letter off the rule's boundary — later or earlier, by a stable hash of the form — so the
+    number of cuts and the pieces' lengths stay about the same while no cut falls on the
+    stem|ending boundary (книгами → книга|ми or кни|гами, never книг|ами). Where only one side
+    keeps both pieces letters, that side; where neither, no cut. Read from the word alone, as
+    the rule is.
+    """
+    name = RULE_SHIFT
+
+    def cut(self, word: str) -> int:
+        k = super().cut(word)
+        if not k:
+            return 0
+        key = word.lower()
+        for a in APOSTROPHES:
+            key = key.replace(a, "'")
+        later = hashlib.sha256(key.encode('utf-8')).digest()[0] & 1
+        for j in ((k + 1, k - 1) if later else (k - 1, k + 1)):
+            if 1 <= j < len(word) and word[j - 1].isalpha() and word[j].isalpha():
+                return j
+        return 0
+
+    def fingerprint(self) -> str:
+        """The shift's identity on top of the rule's: its name, and the probes' shifted cuts."""
+        return hashlib.sha256((RULE_SHIFT + super().fingerprint()).encode('utf-8')).hexdigest()[:16]
+
+
 #: every cut rule by the name a tokenizer's sidecar records (`presplit`)
-RULES = {RULE: EndingRule, RULE_EN: EnglishEndingRule}
+RULES = {RULE: EndingRule, RULE_EN: EnglishEndingRule, RULE_SHIFT: ShiftedEndingRule}
 #: the rule a `bpe-endings` tokenizer trained on a corpus of each language uses
 RULE_OF_LANGUAGE = {'uk': RULE, 'en': RULE_EN}

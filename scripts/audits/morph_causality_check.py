@@ -116,11 +116,11 @@ def main():
         lines = [l.strip() for l in open(args.text) if l.strip()]
     elif args.stream:
         import numpy as np
-        from tokenizers import Tokenizer
+        from morphlm.data.tokenization import load_tokenizer
         if not args.tokenizer:
             ap.error('--stream needs --tokenizer')
         ids = np.load(args.stream, mmap_mode='r')[:args.stream_tokens]
-        text = Tokenizer.from_file(args.tokenizer).decode([int(i) for i in ids])
+        text = load_tokenizer(args.tokenizer, vocab_only=True).decode([int(i) for i in ids])   # decoding needs no rule
         lines = [l.strip() for l in text[:text.rfind('\n') + 1].split('\n') if l.strip()]
     else:
         from morphlm.config import ExperimentConfig, apply_overrides

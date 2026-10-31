@@ -84,6 +84,12 @@ class FrozenConfig:
     feature_on_step: Optional[int] = None   # the reverse: features contribute
                                         # zeros until step K, then switch on
                                         # (journey §33.34); not with feature_off_step
+    feature_const_step: Optional[int] = None  # the switch to a constant: from step K
+                                        # on every feature's value is its block's
+                                        # first class (part of speech: NOUN), 'none'
+                                        # kept — the information goes, a shared
+                                        # vector stays (journey §33.144); not with
+                                        # the other switches
     feature_dropout_until: Optional[int] = None  # weaning: each token's features
                                         # dropped with probability rising linearly
                                         # to 1 at step K (journey §33.47)
@@ -277,6 +283,8 @@ class ExperimentConfig:
             facts += f'-OFF{self.frozen.feature_off_step}'
         if self.frozen.facts and getattr(self.frozen, 'feature_on_step', None) is not None:
             facts += f'-ON{self.frozen.feature_on_step}'
+        if self.frozen.facts and getattr(self.frozen, 'feature_const_step', None) is not None:
+            facts += f'-CONST{self.frozen.feature_const_step}'
         if self.frozen.facts and getattr(self.frozen, 'feature_dropout_until', None) is not None:
             facts += f'-DROP{self.frozen.feature_dropout_until}'
         if self.frozen.facts and getattr(self.frozen, 'role', 'input') == 'target':

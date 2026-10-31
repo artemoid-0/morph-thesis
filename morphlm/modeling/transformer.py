@@ -280,7 +280,8 @@ def build_model(cfg, verbose=True):
         from ..features.blocks import build_blocks
         specs = build_blocks(cfg)
         if len(specs) != 1 or any(getattr(cfg.frozen, k, None) is not None
-                                  for k in ('feature_off_step', 'feature_on_step', 'feature_dropout_until')):
+                                  for k in ('feature_off_step', 'feature_on_step', 'feature_const_step',
+                                            'feature_dropout_until')):
             raise ValueError('role=target takes exactly one fact and no switch or dropout')
         n_target = specs[0].n_classes
         embed_cfg = dataclasses.replace(cfg, frozen=dataclasses.replace(cfg.frozen, facts=()))
