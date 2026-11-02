@@ -24,7 +24,11 @@ same-shape null costs BPE 17k and helps endings apart, so the tokenizer's gain o
 below its gain between the nulls (§33.139). Without repeating the text, at 20k, that gain is smaller:
 +0.0082 (1.09%), still rising (§33.141). At full training at 30M parameters the tokenizer gains +0.0072
 (0.97%) and lasts; case stays within 0.002 of its null but keeps +0.0015 at every seed; English endings
-apart gains nothing at 30M (§33.142).
+apart gains nothing at 30M (§33.142). At the best of three learning rates the 5M model's gain at full training is 1.52%,
+smaller than at the default; between plain baselines 2.31%, larger (§33.145). The cut one letter off the boundary loses
+to plain BPE, shuffled case gains nothing, and the switch to a constant leaves the deficit the switch to zeros does
+(§33.148). At 85M parameters the gain at full training is the 30M model's, +0.0071 (1.02%); it holds under a modern
+block and halves at 8 layers (§33.149).
 
 ---
 
@@ -1923,3 +1927,143 @@ the second.
 government*; none, *only subject–verb agreement*.
 
 The tally is 200 right, 13 half right, 102 wrong, 10 never tested, 1 withdrawn and 17 pending, of 343.
+
+### 33.148 Items 9, 10 and 11: the morpheme boundary matters, case's content acts, and the deficit is not the input's change
+
+The thesis machine's chain (`tulpar_2026-10-31.sh`, §33.144) ran from 08:43 to 12:07 on 31 October: 13 runs,
+none failed, and every first-run check passed. cutshift's data was ready before the chain reached it.
+
+Paired by seed on the thesis machine (`paired_cells_20261102T100043`). The switch at and just after step
+5,000: `…T100302`, `…T100304`, `…T100306`.
+
+**Item 9, where the cut falls** (the nulls, ~38M tokens, 10k):
+- **The tokenizer** (`tokenizer_stats_ukwiki_20261031T064805`, held-out text). The shifted cut splits the
+  words endings apart splits, at the same rate:
+
+  | | characters per token | tokens per word | words split | a boundary at the rule's cut |
+  |---|---|---|---|---|
+  | BPE 17k | 3.59 | 1.73 | 43.3% | 8.8% |
+  | endings apart | 3.21 | 1.99 | 64.4% | 100% |
+  | the cut moved one letter | 3.18 | 2.02 | 64.9% | 1.4% |
+
+- **The null under the moved cut ends worse than plain BPE 17k:** 1.1089, 1.1114, 1.1105, 1.1104 against
+  1.0891, 1.0910, 1.0874, 1.0911, so **−0.0207 ± 0.0008 (−1.90%, 0/4)**.
+  - Endings apart beats it by +0.0381 ± 0.0007 (4/4).
+  - Endings apart beats BPE 17k by +0.0174 ± 0.0014.
+- **A cut placed one letter off the boundary costs** more than the right cut gains.
+
+**Item 10, shuffled case** (BPE 17k, ~38M tokens, 10k; over the null):
+
+| | the gain over the null |
+|---|---|
+| case in context (tagger) | +0.0032 ± 0.0007 (4/4) |
+| case from the word form | +0.0011 ± 0.0009 (3/4) |
+| the word form's values shuffled among types of similar frequency | **−0.0011 ± 0.0004 (0/4)**: −0.0013, −0.0000, −0.0020, −0.0010 |
+
+- **The same grouping of word types,** with the case values reassigned, gains nothing and costs a little.
+- **The word form beats its shuffled version** by +0.0022 ± 0.0012 (3/4).
+
+**Item 11, the switch to a constant** (English part of speech, 20k, switched at step 5,000, seeds 0–4):
+- **Set to one class (NOUN),** the model ends **0.0038 ± 0.0009 below the model never fed it** (the empty slot,
+  5/5).
+  - Set to zeros, it ends 0.0039 ± 0.0009 below (5/5).
+  - It ends 0.0035 ± 0.0007 below the null, whose slot held one class throughout (5/5).
+- **The two switches end within 0.0001 of each other at every seed.**
+- **The runs are the same until the switch,** and they part there.
+  - At step 5,000 the constant costs 0.0264 ± 0.0012 more than zeros (5/5): the jump is larger with the shared
+    vector.
+  - By step 5,500 the two are within 0.0002, and by 6,000 within 0.0001.
+- The input's change is absorbed within 500 steps, and what remains is the lost information.
+
+**Verdicts:**
+- **P330 wrong:** it ends 0.0011 ± 0.0004 below the null, just past the bound (0/4).
+- **P331 right:** it loses rather than gains.
+- **P332 right:** +0.0038, 5/5.
+- **P333 right:** 0.0038 against 0.0039.
+- **P334 and P335 right:** the moved cut loses 0.0207.
+- **P336 right:** 3.18 characters per token against 3.21.
+
+**The sentences** (the rules of §33.144):
+- **The cut moved:** no gain, a loss: *it is the morpheme boundary that matters*.
+- **Shuffled case:** about zero, a small cost: *what acts is the feature's content*.
+- **The switch to a constant:** the same deficit, so the conclusion stands. *The deficit is lost
+  information, not the input's change.*
+
+**What it changes for the thesis.**
+1. **"Where the cuts fall matters, not how many there are"** no longer rests on Unigram alone. At the same
+   words and the same split rate, the cut one letter off the boundary loses 1.9% to plain BPE, where the cut on
+   it gains 1.6%.
+2. **«Отже діє саме відмінок»** has its shuffled control: the same grouping of words with case reassigned
+   gains nothing.
+3. **§3.8's deficit after removal** is not the input's sudden change. A shared vector kept in the slot leaves
+   the same deficit.
+
+### 33.149 Items 2, 7 and 13: at 85M parameters the gain at full training is the 30M model's; it holds under a modern block and falls with depth
+
+Width 1024's chain (`second_wide_2026-10-31.sh`, §33.143) ran on the second machine from 03:09 EDT on
+31 October to 07:53 EST on 1 November: 8 runs of 222–224 min, then MultiBLiMP. The block-and-depth chain
+(`second_block_2026-10-31.sh`, §33.146) followed it, from 07:53 to 12:00 EST: 16 runs. None failed, and every
+pair check passed.
+
+Paired by seed on the second machine (`paired_cells_20261102T100005`; item 2 at steps 10,000, 25,000 and
+45,000: `…T100255`, `…T100258`, `…T100300`; MultiBLiMP: `multiblimp_eval_20261101T125220`).
+
+**Item 2, width 1024 at full training** (151M tokens, 50k, the 1,000-step warm-up, the nulls):
+- **The nulls:**
+  - BPE 17k: 0.6969, 0.6987, 0.6960, 0.6968;
+  - endings apart: 0.6895, 0.6909, 0.6902, 0.6893;
+  - the gain: **+0.0071 ± 0.0004 (1.02%, 4/4)**, from +0.0058 to +0.0078.
+- **It is level from step 10,000:** +0.0069 there, +0.0073 at 25,000, +0.0076 at 45,000.
+- **Width 512 at full training gains +0.0072 (0.97%).** At 20k on the same corpus, width 1024 gained +0.0082
+  (1.09%).
+- **MultiBLiMP:** endings apart 89.4% against BPE 17k's 86.2%, **+3.1 ± 0.2 points (4/4)**, from +2.5 to +3.5.
+  Width 512 at full training: +5.0.
+
+| at full training | the tokenizer's gain | MultiBLiMP |
+|---|---|---|
+| 5M (width 128; thesis machine) | +0.0165 (1.75%) | +4.9 |
+| 30M (width 512; second machine) | +0.0072 (0.97%) | +5.0 |
+| 85M (width 1024; second machine) | **+0.0071 (1.02%)** | **+3.1** |
+
+**Item 7, the LLaMA-style block** (width 128, ~38M tokens, 10k):
+- **The nulls under the block:**
+  - BPE 17k: 1.0288, 1.0267, 1.0253, 1.0258;
+  - endings apart: 1.0136, 1.0113, 1.0112, 1.0097;
+  - the gain: **+0.0152 ± 0.0004 (1.48%, 4/4)**.
+- **Under the standard block on the same machine the gain is +0.0175 ± 0.0015 (1.60%).** The block's gain is
+  0.0023 smaller.
+- **The block itself is much better:** BPE 17k's null gains 0.0627 ± 0.0011 (5.8%) from it.
+
+**Item 13, depth** (8 layers of width 512, ~38M tokens, 10k, the 1,000-step warm-up):
+- **The nulls at 8 layers:**
+  - BPE 17k: 0.8550, 0.8537, 0.8545, 0.8541;
+  - endings apart: 0.8450, 0.8498, 0.8449, 0.8459;
+  - the gain: **+0.0079 ± 0.0014 (0.93%, 4/4)**, from +0.0040 to +0.0101.
+- **4 layers under the same warm-up gain +0.0147 ± 0.0022 (1.67%).** At 8 layers the gain is about half.
+- **8 layers improve BPE 17k's null by 0.0263 ± 0.0017 (3.0%).**
+- As with width at 10k, the gain shrinks as the model grows.
+
+**Verdicts:**
+- **P327 right:** +0.0058 to +0.0078.
+- **P328 right:** 1.02%.
+- **P329 wrong:** ahead at every seed, but by +3.1 points, not 4.
+- **P337 right:** +0.0141 to +0.0161.
+- **P338 right:** 0.0023 smaller.
+- **P339 right:** +0.0040 to +0.0101.
+- **P340 wrong:** 0.0068 smaller.
+
+The tally is 211 right, 13 half right, 105 wrong, 10 never tested, 1 withdrawn and 3 pending, of 343.
+
+**The sentences** (the rules of §33.143 and §33.146):
+- **Width 1024:** X = 1.02%, within 0.1 point of 0.97%: *from 30M parameters the gain does not fall*.
+- **The block:** within 0.003: *the gain does not depend on the block's architecture*.
+- **Depth:** smaller: *it falls with depth too*.
+
+**What it changes for the thesis.**
+1. **The gain at full training is 1.75% at 5M parameters, 0.97% at 30M and 1.02% at 85M,** all at the default
+   rate. It falls from 5M to 30M, then holds, and lasts at every size.
+   - The Introduction's and the general conclusions' full-training claims can name 85M parameters.
+   - At 10k and 20k, 85M stays below 30M; at full training the two agree.
+2. **The grammatical gain is smaller at 85M:** +3.1 points against +5.0 and +4.9. It is positive at every seed.
+3. **A modern block keeps the gain,** at 5M parameters and 10k.
+4. **Depth reduces it, as width does,** at 10k: two models of 30M-parameter width, 4 and 8 layers.

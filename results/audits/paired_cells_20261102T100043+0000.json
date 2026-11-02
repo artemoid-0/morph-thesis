@@ -1,0 +1,707 @@
+{
+  "script": "paired_cells",
+  "args": {
+    "pair": [
+      [
+        "item 10: shuffled case over the null",
+        "bpe_ucaseshuf-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "case from the word form over the null",
+        "bpe_ucaselex-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "case (tagger) over the null",
+        "bpe_ucase-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "case from the word form over shuffled case",
+        "bpe_ucaselex-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "bpe_ucaseshuf-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "item 11: the empty slot over the switch to a constant (its deficit)",
+        "bpe_pos-LEARN-CAUSAL-OFF0_bpe_17k_st20k",
+        "bpe_pos-LEARN-CAUSAL-CONST5000_bpe_17k_st20k"
+      ],
+      [
+        "the empty slot over the switch to zeros (its deficit)",
+        "bpe_pos-LEARN-CAUSAL-OFF0_bpe_17k_st20k",
+        "bpe_pos-LEARN-CAUSAL-OFF5000_bpe_17k_st20k"
+      ],
+      [
+        "the null over the switch to a constant",
+        "bpe_mconst-LEARN-CAUSAL_bpe_17k_st20k",
+        "bpe_pos-LEARN-CAUSAL-CONST5000_bpe_17k_st20k"
+      ],
+      [
+        "the switch to zeros over the switch to a constant",
+        "bpe_pos-LEARN-CAUSAL-OFF5000_bpe_17k_st20k",
+        "bpe_pos-LEARN-CAUSAL-CONST5000_bpe_17k_st20k"
+      ],
+      [
+        "item 9: the cut moved, over BPE 17k (nulls)",
+        "bpe_mconst-LEARN-CAUSAL_bpeshift_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "endings apart over BPE 17k (nulls)",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k"
+      ],
+      [
+        "endings apart over the cut moved (nulls)",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "bpe_mconst-LEARN-CAUSAL_bpeshift_uk_17k_ukwiki0.05_st10k"
+      ]
+    ],
+    "seeds": null,
+    "machine": "thesis",
+    "step": null,
+    "results": [
+      "/home/neko/PycharmProjects/Morph/results"
+    ]
+  },
+  "timestamp_utc": "2026-11-02T10:00:43+00:00",
+  "results": {
+    "pairs": [
+      {
+        "name": "item 10: shuffled case over the null",
+        "A": "bpe_ucaseshuf-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": -0.0013143988428503395,
+            "A": 1.0903741318387357,
+            "B": 1.0890597329958853,
+            "machine": "4060",
+            "runs": [
+              "13927a503822",
+              "e9f3f153ec20"
+            ]
+          },
+          "1": {
+            "effect": -1.0433952439603544e-05,
+            "A": 1.0910396927346102,
+            "B": 1.0910292587821706,
+            "machine": "4060",
+            "runs": [
+              "47423684949e",
+              "6f214dfa186f"
+            ]
+          },
+          "2": {
+            "effect": -0.002039917766930577,
+            "A": 1.0894760211988541,
+            "B": 1.0874361034319235,
+            "machine": "4060",
+            "runs": [
+              "4d360cd2538d",
+              "fe50426ea6ef"
+            ]
+          },
+          "3": {
+            "effect": -0.0009656224075247355,
+            "A": 1.0920300530896756,
+            "B": 1.0910644306821509,
+            "machine": "4060",
+            "runs": [
+              "ab0379c4b8ca",
+              "f7631513ec4e"
+            ]
+          }
+        },
+        "mean": -0.0010825932424363138,
+        "se": 0.00042164477554449743,
+        "positive": 0,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "case from the word form over the null",
+        "A": "bpe_ucaselex-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.00024768981569867066,
+            "A": 1.0888120431801867,
+            "B": 1.0890597329958853,
+            "machine": "4060",
+            "runs": [
+              "d3bdd954bfb9",
+              "e9f3f153ec20"
+            ]
+          },
+          "1": {
+            "effect": -0.0008136867432972927,
+            "A": 1.091842945525468,
+            "B": 1.0910292587821706,
+            "machine": "4060",
+            "runs": [
+              "ec2e283e41a4",
+              "6f214dfa186f"
+            ]
+          },
+          "2": {
+            "effect": 0.0014815886536267975,
+            "A": 1.0859545147782967,
+            "B": 1.0874361034319235,
+            "machine": "4060",
+            "runs": [
+              "ea5603cbda17",
+              "fe50426ea6ef"
+            ]
+          },
+          "3": {
+            "effect": 0.003412153979311494,
+            "A": 1.0876522767028394,
+            "B": 1.0910644306821509,
+            "machine": "4060",
+            "runs": [
+              "e000c1ef94ed",
+              "f7631513ec4e"
+            ]
+          }
+        },
+        "mean": 0.0010819364263349174,
+        "se": 0.0009073308086352352,
+        "positive": 3,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "case (tagger) over the null",
+        "A": "bpe_ucase-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.0028246493356793856,
+            "A": 1.086235083660206,
+            "B": 1.0890597329958853,
+            "machine": "4060",
+            "runs": [
+              "87041e3a147b",
+              "e9f3f153ec20"
+            ]
+          },
+          "1": {
+            "effect": 0.0017840329835614455,
+            "A": 1.0892452257986092,
+            "B": 1.0910292587821706,
+            "machine": "4060",
+            "runs": [
+              "193641468331",
+              "6f214dfa186f"
+            ]
+          },
+          "2": {
+            "effect": 0.0032811627422275613,
+            "A": 1.084154940689696,
+            "B": 1.0874361034319235,
+            "machine": "4060",
+            "runs": [
+              "93283cc38857",
+              "fe50426ea6ef"
+            ]
+          },
+          "3": {
+            "effect": 0.005032088509864696,
+            "A": 1.0860323421722862,
+            "B": 1.0910644306821509,
+            "machine": "4060",
+            "runs": [
+              "bbd5d2cfa20b",
+              "f7631513ec4e"
+            ]
+          }
+        },
+        "mean": 0.003230483392833272,
+        "se": 0.0006773274357476263,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "case from the word form over shuffled case",
+        "A": "bpe_ucaselex-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_ucaseshuf-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.0015620886585490101,
+            "A": 1.0888120431801867,
+            "B": 1.0903741318387357,
+            "machine": "4060",
+            "runs": [
+              "d3bdd954bfb9",
+              "13927a503822"
+            ]
+          },
+          "1": {
+            "effect": -0.0008032527908576892,
+            "A": 1.091842945525468,
+            "B": 1.0910396927346102,
+            "machine": "4060",
+            "runs": [
+              "ec2e283e41a4",
+              "47423684949e"
+            ]
+          },
+          "2": {
+            "effect": 0.0035215064205573743,
+            "A": 1.0859545147782967,
+            "B": 1.0894760211988541,
+            "machine": "4060",
+            "runs": [
+              "ea5603cbda17",
+              "4d360cd2538d"
+            ]
+          },
+          "3": {
+            "effect": 0.00437777638683623,
+            "A": 1.0876522767028394,
+            "B": 1.0920300530896756,
+            "machine": "4060",
+            "runs": [
+              "e000c1ef94ed",
+              "ab0379c4b8ca"
+            ]
+          }
+        },
+        "mean": 0.002164529668771231,
+        "se": 0.0011514669932450015,
+        "positive": 3,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "item 11: the empty slot over the switch to a constant (its deficit)",
+        "A": "bpe_pos-LEARN-CAUSAL-OFF0_bpe_17k_st20k",
+        "B": "bpe_pos-LEARN-CAUSAL-CONST5000_bpe_17k_st20k",
+        "seeds": {
+          "0": {
+            "effect": 0.004426563453000076,
+            "A": 1.425504566177262,
+            "B": 1.4299311296302621,
+            "machine": "4060",
+            "runs": [
+              "7ab5b53eb521",
+              "398c9e4a3fe2"
+            ]
+          },
+          "1": {
+            "effect": 0.001040186179973368,
+            "A": 1.427340265419945,
+            "B": 1.4283804515999183,
+            "machine": "4060",
+            "runs": [
+              "7c1c4832beb7",
+              "029a7fe25d02"
+            ]
+          },
+          "2": {
+            "effect": 0.004783032244263463,
+            "A": 1.4236883254200061,
+            "B": 1.4284713576642696,
+            "machine": "4060",
+            "runs": [
+              "7e3d28edbe98",
+              "8f98de56f94e"
+            ]
+          },
+          "3": {
+            "effect": 0.00634177261015334,
+            "A": 1.4243668200963686,
+            "B": 1.430708592706522,
+            "machine": "4060",
+            "runs": [
+              "9901f0cab89a",
+              "0ee1c6fb80b0"
+            ]
+          },
+          "4": {
+            "effect": 0.002640155630782015,
+            "A": 1.427787688160496,
+            "B": 1.430427843791278,
+            "machine": "4060",
+            "runs": [
+              "4517f6981718",
+              "dff88e18332e"
+            ]
+          }
+        },
+        "mean": 0.0038463420236344525,
+        "se": 0.0009157132608482508,
+        "positive": 5,
+        "n": 5,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "the empty slot over the switch to zeros (its deficit)",
+        "A": "bpe_pos-LEARN-CAUSAL-OFF0_bpe_17k_st20k",
+        "B": "bpe_pos-LEARN-CAUSAL-OFF5000_bpe_17k_st20k",
+        "seeds": {
+          "0": {
+            "effect": 0.004382802355231918,
+            "A": 1.425504566177262,
+            "B": 1.429887368532494,
+            "machine": "4060",
+            "runs": [
+              "7ab5b53eb521",
+              "2a4088f908db"
+            ]
+          },
+          "1": {
+            "effect": 0.0011172500885183734,
+            "A": 1.427340265419945,
+            "B": 1.4284575155084633,
+            "machine": "4060",
+            "runs": [
+              "7c1c4832beb7",
+              "78db298d34de"
+            ]
+          },
+          "2": {
+            "effect": 0.00471946971814452,
+            "A": 1.4236883254200061,
+            "B": 1.4284077951381506,
+            "machine": "4060",
+            "runs": [
+              "7e3d28edbe98",
+              "44bc0e944578"
+            ]
+          },
+          "3": {
+            "effect": 0.006444235060709236,
+            "A": 1.4243668200963686,
+            "B": 1.4308110551570778,
+            "machine": "4060",
+            "runs": [
+              "9901f0cab89a",
+              "f5a618f263d8"
+            ]
+          },
+          "4": {
+            "effect": 0.002692839288303217,
+            "A": 1.427787688160496,
+            "B": 1.4304805274487993,
+            "machine": "4060",
+            "runs": [
+              "4517f6981718",
+              "8a45d99a8019"
+            ]
+          }
+        },
+        "mean": 0.003871319302181453,
+        "se": 0.0009103455914896817,
+        "positive": 5,
+        "n": 5,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "the null over the switch to a constant",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpe_17k_st20k",
+        "B": "bpe_pos-LEARN-CAUSAL-CONST5000_bpe_17k_st20k",
+        "seeds": {
+          "0": {
+            "effect": 0.0025740821673845282,
+            "A": 1.4273570474628776,
+            "B": 1.4299311296302621,
+            "machine": "4060",
+            "runs": [
+              "48103d34e324",
+              "398c9e4a3fe2"
+            ]
+          },
+          "1": {
+            "effect": 0.003410700031134084,
+            "A": 1.4249697515687842,
+            "B": 1.4283804515999183,
+            "machine": "4060",
+            "runs": [
+              "438f86ec47aa",
+              "029a7fe25d02"
+            ]
+          },
+          "2": {
+            "effect": 0.0015067776168558034,
+            "A": 1.4269645800474138,
+            "B": 1.4284713576642696,
+            "machine": "4060",
+            "runs": [
+              "e13fc3edc3a6",
+              "8f98de56f94e"
+            ]
+          },
+          "3": {
+            "effect": 0.005796396816310612,
+            "A": 1.4249121958902113,
+            "B": 1.430708592706522,
+            "machine": "4060",
+            "runs": [
+              "869cc75b3095",
+              "0ee1c6fb80b0"
+            ]
+          },
+          "4": {
+            "effect": 0.004325952863240667,
+            "A": 1.4261018909280374,
+            "B": 1.430427843791278,
+            "machine": "4060",
+            "runs": [
+              "964b4c8368e6",
+              "dff88e18332e"
+            ]
+          }
+        },
+        "mean": 0.003522781898985139,
+        "se": 0.0007345500385103774,
+        "positive": 5,
+        "n": 5,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "the switch to zeros over the switch to a constant",
+        "A": "bpe_pos-LEARN-CAUSAL-OFF5000_bpe_17k_st20k",
+        "B": "bpe_pos-LEARN-CAUSAL-CONST5000_bpe_17k_st20k",
+        "seeds": {
+          "0": {
+            "effect": 4.376109776815795e-05,
+            "A": 1.429887368532494,
+            "B": 1.4299311296302621,
+            "machine": "4060",
+            "runs": [
+              "2a4088f908db",
+              "398c9e4a3fe2"
+            ]
+          },
+          "1": {
+            "effect": -7.706390854500533e-05,
+            "A": 1.4284575155084633,
+            "B": 1.4283804515999183,
+            "machine": "4060",
+            "runs": [
+              "78db298d34de",
+              "029a7fe25d02"
+            ]
+          },
+          "2": {
+            "effect": 6.35625261189432e-05,
+            "A": 1.4284077951381506,
+            "B": 1.4284713576642696,
+            "machine": "4060",
+            "runs": [
+              "44bc0e944578",
+              "8f98de56f94e"
+            ]
+          },
+          "3": {
+            "effect": -0.00010246245055589576,
+            "A": 1.4308110551570778,
+            "B": 1.430708592706522,
+            "machine": "4060",
+            "runs": [
+              "f5a618f263d8",
+              "0ee1c6fb80b0"
+            ]
+          },
+          "4": {
+            "effect": -5.2683657521201965e-05,
+            "A": 1.4304805274487993,
+            "B": 1.430427843791278,
+            "machine": "4060",
+            "runs": [
+              "8a45d99a8019",
+              "dff88e18332e"
+            ]
+          }
+        },
+        "mean": -2.497727854700038e-05,
+        "se": 3.320306742635913e-05,
+        "positive": 2,
+        "n": 5,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "item 9: the cut moved, over BPE 17k (nulls)",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpeshift_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": -0.01988538669702189,
+            "A": 1.1089451196929072,
+            "B": 1.0890597329958853,
+            "machine": "4060",
+            "runs": [
+              "2100923868da",
+              "e9f3f153ec20"
+            ]
+          },
+          "1": {
+            "effect": -0.020408719744547277,
+            "A": 1.1114379785267179,
+            "B": 1.0910292587821706,
+            "machine": "4060",
+            "runs": [
+              "97e0b75d8e84",
+              "6f214dfa186f"
+            ]
+          },
+          "2": {
+            "effect": -0.02308413451978253,
+            "A": 1.110520237951706,
+            "B": 1.0874361034319235,
+            "machine": "4060",
+            "runs": [
+              "ec6fd297c2f8",
+              "fe50426ea6ef"
+            ]
+          },
+          "3": {
+            "effect": -0.01934728798841201,
+            "A": 1.1104117186705629,
+            "B": 1.0910644306821509,
+            "machine": "4060",
+            "runs": [
+              "5dd8e8f798a3",
+              "f7631513ec4e"
+            ]
+          }
+        },
+        "mean": -0.020681382237440926,
+        "se": 0.0008297077663745924,
+        "positive": 0,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "endings apart over BPE 17k (nulls)",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.017697130671000982,
+            "A": 1.0713626023248843,
+            "B": 1.0890597329958853,
+            "machine": "4060",
+            "runs": [
+              "6dda8d847d8a",
+              "e9f3f153ec20"
+            ]
+          },
+          "1": {
+            "effect": 0.01952507068669518,
+            "A": 1.0715041880954754,
+            "B": 1.0910292587821706,
+            "machine": "4060",
+            "runs": [
+              "ed3afe0e7a24",
+              "6f214dfa186f"
+            ]
+          },
+          "2": {
+            "effect": 0.013488104972568804,
+            "A": 1.0739479984593547,
+            "B": 1.0874361034319235,
+            "machine": "4060",
+            "runs": [
+              "9b80b67971df",
+              "fe50426ea6ef"
+            ]
+          },
+          "3": {
+            "effect": 0.018823164727318265,
+            "A": 1.0722412659548326,
+            "B": 1.0910644306821509,
+            "machine": "4060",
+            "runs": [
+              "ad927855ba92",
+              "f7631513ec4e"
+            ]
+          }
+        },
+        "mean": 0.017383367764395807,
+        "se": 0.001351894537330841,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "endings apart over the cut moved (nulls)",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeshift_uk_17k_ukwiki0.05_st10k",
+        "seeds": {
+          "0": {
+            "effect": 0.03758251736802287,
+            "A": 1.0713626023248843,
+            "B": 1.1089451196929072,
+            "machine": "4060",
+            "runs": [
+              "6dda8d847d8a",
+              "2100923868da"
+            ]
+          },
+          "1": {
+            "effect": 0.039933790431242455,
+            "A": 1.0715041880954754,
+            "B": 1.1114379785267179,
+            "machine": "4060",
+            "runs": [
+              "ed3afe0e7a24",
+              "97e0b75d8e84"
+            ]
+          },
+          "2": {
+            "effect": 0.03657223949235133,
+            "A": 1.0739479984593547,
+            "B": 1.110520237951706,
+            "machine": "4060",
+            "runs": [
+              "9b80b67971df",
+              "ec6fd297c2f8"
+            ]
+          },
+          "3": {
+            "effect": 0.038170452715730274,
+            "A": 1.0722412659548326,
+            "B": 1.1104117186705629,
+            "machine": "4060",
+            "runs": [
+              "ad927855ba92",
+              "5dd8e8f798a3"
+            ]
+          }
+        },
+        "mean": 0.038064750001836734,
+        "se": 0.0007050189787349113,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      }
+    ]
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-11-02T10:00:43+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "478409db95526c2125d3ca14ac1eaa987705116b",
+    "git_dirty": true
+  },
+  "notes": [
+    "effect = B minus A in bits per byte at each seed (positive: A better); pairs on one machine only"
+  ]
+}

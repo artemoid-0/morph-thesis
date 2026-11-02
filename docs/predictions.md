@@ -6,7 +6,7 @@ Each prediction was recorded in the [journey](record/journey/README.md) **before
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 200 right, 13 half right, 102 wrong, 10 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test, 2 whose condition was not met), 1 withdrawn, 17 pending — of 343.
+**Tally:** 211 right, 13 half right, 105 wrong, 10 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test, 2 whose condition was not met), 1 withdrawn, 3 pending — of 343.
 
 *Key to the tally (added 19 October 2026). Counted half right: P19, P46, P54 — with the eight
 whose outcome begins "half right" or "partly right". Counted right: P33, P172, P273, P303, P317 — right by their
@@ -360,20 +360,20 @@ The wrong ones carried the information:
 | P324 | Between the plain baselines at full training (5M) the tokenizer's gain is positive at every seed | right — +0.0203 to +0.0233 | §33.143, §33.145 |
 | P325 | It is more than 0.002 larger than between the nulls on the same machine | right — 0.0046 ± 0.0009 larger, at every seed | §33.143, §33.145 |
 | P326 | With the 1,000-step warm-up, the 5M model's gain at 10k on ~38M tokens is within 0.002 of its gain with 100 steps on the same machine (+0.0175) | right — +0.0175 ± 0.0004 against +0.0175 ± 0.0015 | §33.143, §33.145 |
-| P327 | At width 1024 and full training the tokenizer's gain between the nulls is positive at every seed | pending | §33.143 |
-| P328 | It is at least 0.87% of BPE 17k's null BPB: within 0.1 point of the 30M model's 0.97%, or above it | pending | §33.143 |
-| P329 | On MultiBLiMP, endings apart at width 1024 and full training is ahead at every seed, by at least 4 points | pending | §33.143 |
-| P330 | At 10k on ~38M tokens under BPE 17k, shuffled case (word-form values reassigned among types of similar frequency) ends within 0.001 of the null on average | pending | §33.144 |
-| P331 | It gains less than half of case's +0.0032 over the null on average | pending | §33.144 |
-| P332 | Set to one class at step 5,000 of 20k, English part of speech ends at least 0.002 below the empty slot on average, below it at four seeds of five or more | pending | §33.144 |
-| P333 | That deficit is within 0.002 of the switch to zeros' (+0.0039) | pending | §33.144 |
-| P334 | The null under the cut moved one letter off the rule's boundary gains less than half of endings apart's +0.0174 over BPE 17k's null at 10k | pending | §33.144 |
-| P335 | It gains less than +0.004, or loses | pending | §33.144 |
-| P336 | Its characters per token on held-out text are within 3% of endings apart's | pending | §33.144 |
-| P337 | Under the LLaMA-style block (rotary, RMSNorm, SwiGLU) the tokenizer's gain at width 128 and 10k is positive at every seed | pending | §33.146 |
-| P338 | It is within 0.003 of the standard block's on the same machine (+0.0175) | pending | §33.146 |
-| P339 | At 8 layers of width 512 and 10k the tokenizer's gain is positive at every seed | pending | §33.146 |
-| P340 | It is within 0.003 of 4 layers' under the same warm-up on the same machine (+0.0147) | pending | §33.146 |
+| P327 | At width 1024 and full training the tokenizer's gain between the nulls is positive at every seed | right — +0.0058 to +0.0078 | §33.143, §33.149 |
+| P328 | It is at least 0.87% of BPE 17k's null BPB: within 0.1 point of the 30M model's 0.97%, or above it | right — 1.02% | §33.143, §33.149 |
+| P329 | On MultiBLiMP, endings apart at width 1024 and full training is ahead at every seed, by at least 4 points | wrong — ahead at every seed, by +3.1 ± 0.2 points, not 4 | §33.143, §33.149 |
+| P330 | At 10k on ~38M tokens under BPE 17k, shuffled case (word-form values reassigned among types of similar frequency) ends within 0.001 of the null on average | wrong — 0.0011 ± 0.0004 below the null, just past the bound (0/4) | §33.144, §33.148 |
+| P331 | It gains less than half of case's +0.0032 over the null on average | right — it loses 0.0011 rather than gains | §33.144, §33.148 |
+| P332 | Set to one class at step 5,000 of 20k, English part of speech ends at least 0.002 below the empty slot on average, below it at four seeds of five or more | right — 0.0038 ± 0.0009 below, 5/5 | §33.144, §33.148 |
+| P333 | That deficit is within 0.002 of the switch to zeros' (+0.0039) | right — 0.0038 against 0.0039 | §33.144, §33.148 |
+| P334 | The null under the cut moved one letter off the rule's boundary gains less than half of endings apart's +0.0174 over BPE 17k's null at 10k | right — it loses 0.0207 ± 0.0008 | §33.144, §33.148 |
+| P335 | It gains less than +0.004, or loses | right — it loses | §33.144, §33.148 |
+| P336 | Its characters per token on held-out text are within 3% of endings apart's | right — 3.18 against 3.21 | §33.144, §33.148 |
+| P337 | Under the LLaMA-style block (rotary, RMSNorm, SwiGLU) the tokenizer's gain at width 128 and 10k is positive at every seed | right — +0.0141 to +0.0161 | §33.146, §33.149 |
+| P338 | It is within 0.003 of the standard block's on the same machine (+0.0175) | right — 0.0023 smaller | §33.146, §33.149 |
+| P339 | At 8 layers of width 512 and 10k the tokenizer's gain is positive at every seed | right — +0.0040 to +0.0101 | §33.146, §33.149 |
+| P340 | It is within 0.003 of 4 layers' under the same warm-up on the same machine (+0.0147) | wrong — 0.0068 smaller | §33.146, §33.149 |
 | P341 | At least 95 of 100 random minimal pairs for noun-phrase agreement and government are valid by a native speaker's check | pending | §33.147 |
 | P342 | On the three agreement phenomena together, the 5M model's endings-apart nulls at full training beat BPE 17k's at every seed | pending | §33.147 |
 | P343 | On preposition–case government, endings apart leads at every seed in the 5M model | pending | §33.147 |

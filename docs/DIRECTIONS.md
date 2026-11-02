@@ -45,6 +45,8 @@ The thesis text's list of 30–31 October (§33.143): fifteen limits a reviewer 
 - **Costs:** from the recorded timings (`scripts/ops/run_times.py`), on the second machine, with the thesis machine's in brackets.
 - **Deadlines:** results committed by the morning of 2 November reach the text; a single number by noon on 3 November can still go in as a sentence; the work is admitted on 4 November.
 
+**Answered** (§33.148, §33.149): items 2, 7, 13, 9, 10 and 11. At 85M parameters the gain at full training is +0.0071 (1.02%), the 30M model's, and MultiBLiMP +3.1; under the LLaMA-style block it holds (+0.0152 against +0.0175); at 8 layers it halves (+0.0079 against +0.0147); the cut one letter off the boundary loses 0.0207 to plain BPE; shuffled case costs 0.0011; the switch to a constant leaves the switch to zeros' deficit (+0.0038 against +0.0039). Item 6's pairs wait for the author's check (§33.147).
+
 **Answered** (§33.145): items 1, 12 and 14. At the best of three rates (3e-3, the reference 5.2% better) the 5M model's gain at full training is +0.0136 (1.52%), 0.0037 below the default's on the same machine; between plain baselines +0.0219 (2.31%), 0.0046 above the nulls'; the 1,000-step warm-up changes nothing at width 128.
 
 **Running** from 31 October (`second_2026-10-31.sh`, then `second_wide_2026-10-31.sh`; §33.143). The 5M model at 151M tokens and 50k unless noted:

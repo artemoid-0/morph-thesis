@@ -41,6 +41,7 @@ The drift is chance within training, not the seed's: a run repeated on another m
 **Q1 in Ukrainian, with morphology inside BPE: yes — and the gain lasts, to full training.**
 BPE that never joins a stem to its inflectional ending (cut by a dictionary rule from the word form alone) beats plain BPE of the same vocabulary size by **+0.0174 ± 0.0014 BPB (1.6%)** at a 10k budget, 4/4 from identical initial weights, though it reads 11% less text in the same steps.
 Unigram, cutting words elsewhere and into even more tokens, leads early, loses the lead by step 3,000 and gains nothing by the end (−0.0005 ± 0.0004): where the cuts fall matters, not how many there are.
+**It is the morpheme boundary:** BPE 17k trained with the same words cut as often, one letter off the rule's boundary (3.18 characters per token against endings apart's 3.21; 64.9% of words split against 64.4%), ends **0.0207 ± 0.0008 behind plain BPE 17k (−1.90%, 0/4)** and 0.0381 behind endings apart (§33.148).
 At width 512 Unigram's null ends **0.0056 ± 0.0009** behind BPE 17k's (0/4; on a second machine, where width 128 gives −0.0014 ± 0.0003; §33.126).
 Every tokenizer's validation stream decodes to the same text, byte for byte, so each one's bits per byte is a code length for that text (G-75).
 
@@ -59,7 +60,8 @@ At the same point of learning it starts above width 256's (+0.041 against +0.038
 At 20k it levels off from about step 7,500 at every seed, at **+0.0102 ± 0.0006 (1.25%, 4/4)**: smaller than at widths 128 and 256, but lasting (§33.94, §33.96, §33.100, §33.102).
 At full training (151M tokens, 50k, on a second machine) it is **+0.0072 ± 0.0003 (0.97%, 4/4)**, level from step 10,000 (+0.0078; +0.0072 at 25,000, +0.0077 at 45,000): less than half the 5M model's, and lasting (§33.142).
 
-**Beyond 30M parameters it is smaller again and lasts; with a longer warm-up it holds at every seed.**
+**Beyond 30M parameters it is smaller again at 10k and 20k, and at full training as large as at 30M.**
+At width 1024 (85M parameters) at full training (151M tokens, 50k, the 1,000-step warm-up, a second machine) it is **+0.0071 ± 0.0004 (1.02%, 4/4)**, level from step 10,000 (+0.0069; +0.0073 at 25,000, +0.0076 at 45,000), against width 512's 0.97%: from 30M parameters on, the gain at full training does not fall (§33.149).
 At width 1024 (85M parameters, on a second machine), with the 100-step warm-up of every other run, it is **+0.0067 ± 0.0030 (0.81%, 3/4)** at 10k and **+0.0075 ± 0.0018 (0.97%, 4/4)** at 20k, against width 512's +0.0141 ± 0.0016 and +0.0099 ± 0.0006 there, and level over the last 5,000 steps (+0.0002).
 Two seeds keep width 512's level (+0.0115, +0.0093 at 20k). At the other two the endings-apart null falls behind in early training, from about step 1,500, at both budgets, and keeps a smaller gain (+0.0033, +0.0058 at 20k; G-81).
 The fall is no spike: at 100-step resolution that null's validation BPB falls at every evaluation, and a rerun on the same machine repeats it to 3 × 10⁻⁵, so there it is the seed's (§33.122).
@@ -69,6 +71,10 @@ At the same point of learning the lead starts above width 512's (at 10k +0.059 a
 With the 100-step warm-up, by 20k the 85M model's BPE 17k null stops improving, after 4.3 passes over its ~38M-token text, so the last 1,500 steps add about 0.0025 to the gain (+0.0049 at step 18,500) (§33.120, §33.124).
 With the 1,000-step warm-up at 20k the gain is +0.0105 ± 0.0004 (1.36%, 4/4) on that text, level over the last 5,000 steps, and **+0.0082 ± 0.0005 (1.09%, 4/4)** on the 151M-token corpus, read about 1.1 times: smaller at every seed, by 0.0022 ± 0.0002, and still rising (+0.0008 over the last 5,000 steps).
 Repeating the text added to the gain: BPE 17k's null gains more from the larger corpus than the endings-apart null (+0.0170 against +0.0148) (§33.137, §33.141).
+
+**Under a modern block it holds; in a deeper model it falls, as in a wider one.**
+At width 128 and 10k the LLaMA-style block (rotary positions, RMSNorm, SwiGLU) improves BPE 17k's null by 0.0627 (5.8%) and keeps the gain at **+0.0152 ± 0.0004 (1.48%, 4/4)**, against +0.0175 ± 0.0015 under the standard block on the same machine.
+At width 512 and 10k, 8 layers instead of 4 improve the null by 0.0263 (3.0%) and halve the gain: **+0.0079 ± 0.0014 (0.93%, 4/4)** against +0.0147 ± 0.0022 under the same warm-up (§33.149).
 
 These gains are between the two tokenizers' nulls.
 In the 5M model at full training the gain between plain baselines, with no slot at all, is **+0.0219 ± 0.0007 (2.31%, 4/4)**, against +0.0172 ± 0.0013 between the nulls on the same machine: the null helps BPE 17k (+0.0021 ± 0.0010) and costs endings apart (0.0026 ± 0.0009), so the figure between the nulls is the conservative one (§33.145).
@@ -83,7 +89,7 @@ On MultiBLiMP's 2,744 Ukrainian subject–verb agreement pairs the endings-apart
 - ~38M, 10k: 69.0% against 64.8%, +4.3 ± 0.3; 20k: +4.5 ± 0.5;
 - width 256: +5.3 ± 0.3; width 512: **+6.8 ± 0.2** (20k: +5.9 ± 0.2), where the lead in bits per byte is half width 256's;
 - width 512 at full training (151M tokens, 50k, a second machine): 87.2% against 82.2%, **+5.0 ± 0.6** (§33.142);
-- width 1024 (85M parameters, a second machine), 10k: **+5.3 ± 0.4**, from +4.6 to +6.3 at every seed, also at the two where the lead in bits per byte is nearly gone; width 512 on that machine +5.9 ± 0.3; at 20k +4.7 ± 0.3 against +5.8 ± 0.3 (two seeds); with a 1,000-step warm-up **+5.9 ± 0.4**, as much as width 512's +6.0 ± 0.5 under it; at 20k with that warm-up +5.4 ± 0.3 on the 151M-token corpus and +5.1 ± 0.1 on ~38M tokens (§33.141).
+- width 1024 (85M parameters, a second machine), 10k: **+5.3 ± 0.4**, from +4.6 to +6.3 at every seed, also at the two where the lead in bits per byte is nearly gone; width 512 on that machine +5.9 ± 0.3; at 20k +4.7 ± 0.3 against +5.8 ± 0.3 (two seeds); with a 1,000-step warm-up **+5.9 ± 0.4**, as much as width 512's +6.0 ± 0.5 under it; at 20k with that warm-up +5.4 ± 0.3 on the 151M-token corpus and +5.1 ± 0.1 on ~38M tokens (§33.141); at full training 89.4% against 86.2%, **+3.1 ± 0.2 (4/4)**, smaller than at 30M (+5.0) and 5M (+4.9) (§33.149).
 
 The grammatical gain grows with the model up to 30M parameters, not beyond (on one machine 85M's is no larger than 30M's), and it is not the code length's.
 At full training it is about the same at 5M and 30M parameters: +4.9 and +5.0 points, on two machines (§33.142).
@@ -136,6 +142,7 @@ At a 10k-step budget Ukrainian case beats its same-shape null at every seed:
 On the same 151M tokens: +0.0055 ± 0.0006 at 5k steps, nothing at 20k (−0.0003 ± 0.0004) or 50k.
 On less data the null is the better reference — an empty slot (its 8 dims held at zero) ends 0.0032 ± 0.0013 worse at ~1.5M, 0.0015 ± 0.0005 at ~7.6M (0/4 each) — so there these are gains over the best model without the feature.
 Keeping two-fifths to two-thirds, the word form shows it is case, not only the tagger's right context; the shares are lower bounds, since it marks words unseen in train `none` and its model falls below the null on them (G-76, §33.74).
+**And it is case's content:** with the word form's values reassigned among word types of similar frequency, the same grouping of words costs 0.0011 ± 0.0004 at ~38M and 10k (0/4), where the word form gains +0.0011 and case in context +0.0032 (§33.148).
 **English agrees:** part of speech at 10k, **+0.0130 ± 0.0004** (4 seeds), five times Ukrainian case on 151M (+0.0026).
 
 *Against a null constant on every word (G-72, G-73, §33.55–§33.58; re-runs reproduce them exactly); first recorded +0.0096, +0.0052, +0.0052, +0.0044 and +0.0015 at 20k, when words unseen in the null's train split were scored as non-words and 20 runs read another corpus size's lexicon.* (§33.31–§33.33, §33.38)
@@ -192,6 +199,7 @@ Switched off at 5,000 of a 20k budget, 15,000 steps before the end, the model st
 At full training, 45,000 steps after the switch, the deficit halves: **0.0019 ± 0.0011** below (3/4; the fourth seed recovers by step 30,000).
 Over twice that budget it closes: switched off at 5,000 of 100k, the model ends **0.0005 ± 0.0010** below (2/4), within its seed spread from about step 75,000 (in the same runs −0.0048 at 10,000, −0.0020 at 30,000, −0.0012 at 50,000; on a second machine, §33.126).
 The reliance is temporary: the model leans on the feature while it is there and needs about 70,000 more steps to do without it.
+**Nor is it the input's sudden change:** set at step 5,000 to one class (NOUN) instead of zeros, keeping a shared vector in the slot, the model ends **0.0038 ± 0.0009** below the one never fed it (5/5), within 0.0001 of the switch to zeros at every seed; the constant's jump at the switch is larger (+0.0264 ± 0.0012) and gone within 500 steps (§33.148).
 **It is not lost knowledge of part of speech**: the switched model's deepest layer probes 0.5–1.3 points behind at the switch, within 0.3 points from 1,000 steps later to the end (5/5).
 Nor of the previous word's tag, which the feature carried: rebuilt from context within 1,000 steps of the switch, it ends **+2.0 ± 0.1 points** better read at the deepest layer than in the model never fed it (5/5).
 **The deficit is not general**: Ukrainian case, switched off at 5,000 of a 20k budget under endings apart, ends level with or ahead of the model never fed it (0.0008 ± 0.0006 ahead, 3/4), level again within 2,500 steps of the switch.
@@ -439,4 +447,4 @@ Each withdrawal was decided by a rule recorded before its result:
 
 Open questions that could change a claim are in [`GAPS.md`](GAPS.md); what runs next, and why, in [`DIRECTIONS.md`](DIRECTIONS.md), "The queue".
 
-Left open, as limitations: across model sizes, the half of the width difference that the previous word's tag does not account for (§33.83); the learning rate beyond the 5M model, where every run used the default 3·10⁻⁴ (§33.145).
+Left open, as limitations: across model sizes, the half of the width difference that the previous word's tag does not account for (§33.83); the learning rate beyond the 5M model, where every run used the default 3·10⁻⁴ (§33.145); the modern block and depth measured at 10k only (§33.149).

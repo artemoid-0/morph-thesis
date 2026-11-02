@@ -1,0 +1,107 @@
+{
+  "script": "paired_cells",
+  "args": {
+    "pair": [
+      [
+        "item 11 at step 5500: the switch to zeros over the switch to a constant",
+        "bpe_pos-LEARN-CAUSAL-OFF5000_bpe_17k_st20k",
+        "bpe_pos-LEARN-CAUSAL-CONST5000_bpe_17k_st20k"
+      ]
+    ],
+    "seeds": null,
+    "machine": "thesis",
+    "step": 5500,
+    "results": [
+      "/home/neko/PycharmProjects/Morph/results"
+    ]
+  },
+  "timestamp_utc": "2026-11-02T10:03:04+00:00",
+  "results": {
+    "pairs": [
+      {
+        "name": "item 11 at step 5500: the switch to zeros over the switch to a constant",
+        "A": "bpe_pos-LEARN-CAUSAL-OFF5000_bpe_17k_st20k",
+        "B": "bpe_pos-LEARN-CAUSAL-CONST5000_bpe_17k_st20k",
+        "seeds": {
+          "0": {
+            "effect": 0.0002241149829487199,
+            "A": 1.5723888505296737,
+            "B": 1.5726129655126224,
+            "machine": "4060",
+            "runs": [
+              "2a4088f908db",
+              "398c9e4a3fe2"
+            ]
+          },
+          "1": {
+            "effect": 0.00015568632454021625,
+            "A": 1.5714551981045939,
+            "B": 1.571610884429134,
+            "machine": "4060",
+            "runs": [
+              "78db298d34de",
+              "029a7fe25d02"
+            ]
+          },
+          "2": {
+            "effect": 0.00021147955852462985,
+            "A": 1.5706397275613304,
+            "B": 1.570851207119855,
+            "machine": "4060",
+            "runs": [
+              "44bc0e944578",
+              "8f98de56f94e"
+            ]
+          },
+          "3": {
+            "effect": 0.00022534340977098388,
+            "A": 1.570747170820074,
+            "B": 1.570972514229845,
+            "machine": "4060",
+            "runs": [
+              "f5a618f263d8",
+              "0ee1c6fb80b0"
+            ]
+          },
+          "4": {
+            "effect": 0.00017625391186815165,
+            "A": 1.569986410753357,
+            "B": 1.5701626646652251,
+            "machine": "4060",
+            "runs": [
+              "8a45d99a8019",
+              "dff88e18332e"
+            ]
+          }
+        },
+        "mean": 0.0001985756375305403,
+        "se": 1.3915882252764246e-05,
+        "positive": 5,
+        "n": 5,
+        "skipped_across_machines": {}
+      }
+    ]
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-11-02T10:03:04+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "478409db95526c2125d3ca14ac1eaa987705116b",
+    "git_dirty": true
+  },
+  "notes": [
+    "effect = B minus A in bits per byte at each seed (positive: A better); pairs on one machine only; each run's validation BPB at step 5500"
+  ]
+}
