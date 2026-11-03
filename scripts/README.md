@@ -85,6 +85,7 @@ Most read the run records only; `probe.py`, `probe_words.py`, `loss_by_kind.py` 
 | `dropout_masks.py` | Do two GPUs draw the same dropout masks, and compute the same numbers? | active |
 | `ending_gold_check.py` | Does the ending rule cut where a morpheme dictionary does? (citation forms of two Ukrainian dictionaries, read from a clone in the gitignored `external/`) | active |
 | `morph_causality_check.py` | How much do tagger-derived features depend on the words to their RIGHT? By word class with `--by-type` (any feature with `--by-type-attrs`); text from a cached stream with `--stream`. | active |
+| `multilingual_endings.py` | How widely used multilingual tokenizers (XLM-R, mBERT, Qwen2.5, GPT-4o's through tiktoken in its own environment) cut Ukrainian words beside the project's three: characters per token, words split, a boundary between stem and ending and at the endings rule's cut; writes a `multilingual_endings` audit record | active |
 | `multiroot_audit.py` | How many MorphoLex entries did the multi-root bug affect? | historical |
 | `oov_audit.py` | What falls through to character fallback, and why? | historical |
 | `reconstruction_audit.py` | Is the morpheme token stream information-preserving? | historical |

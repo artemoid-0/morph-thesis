@@ -184,12 +184,14 @@ def train_tokenizer(cfg, vocab, out, algorithm='bpe', pre_tokenizer='bytelevel',
 CASE_BEARING = ('NOUN', 'PROPN', 'ADJ')
 
 
-def tokenizer_stats(tok_path, texts, nlp):
+def tokenizer_stats(tok_path, texts, nlp, tok=None):
     """
     What a tokenizer does to words, measured on `texts` with spaCy's words.
-    Only alphabetic spaCy tokens count as words.
+    Only alphabetic spaCy tokens count as words. `tok`, if given, is used in place of
+    the file's: anything with `encode(text)` → `.ids`, `.offsets` (character spans)
+    and `get_vocab_size()` — another library's tokenizer, wrapped.
     """
-    tok = load_tokenizer(tok_path)
+    tok = tok if tok is not None else load_tokenizer(tok_path)
     rule = None
     from .endings import RULES, RULE_OF_LANGUAGE, common_prefix
     if getattr(nlp, 'lang', '') in RULE_OF_LANGUAGE:

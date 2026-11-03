@@ -62,12 +62,14 @@ loses by 0.083, and BPE 32k, with 1.9M more parameters, wins by 0.028.
 **Answered** (§33.153): item 8. On UD Ukrainian-IU's gold labels the tagger's case is right for 94.2% of the words with
 one, 81.1% where context decides, and 87.0% where it departs from the form's usual case (the form 8.3%).
 
+**Answered** (§33.154): the multilingual tokenizers. XLM-R's, mBERT's and GPT-4o's keep a Ukrainian ending apart for
+17–25% of the words the rule cuts; Qwen2.5's for 51%, by cutting every word into 3.5 tokens.
+
 **Without the GPU**, in order:
 1. item 3, where the gain sits, per word, with a bootstrap over articles: why the test articles give less;
 2. item 4, the gain as compute or model size;
 3. the probes at layer 0;
-4. the multilingual tokenizers' ending exposure (downloaded);
-5. the figures.
+4. the figures.
 
 **Optional**, if hours remain:
 - what case's +0.0015 at 30M is made of: 8 runs, ~10.8 h;

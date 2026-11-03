@@ -34,7 +34,8 @@ tokenizer's table holds at 95%; the features' one-sided 95% bound is 0.003, and 
 from about 0.002–0.006 (§33.151). On the held-out test articles the gain is 1.3% at 5M parameters and 0.83% at 30M,
 positive at every seed; at the same token length plain BPE 8k loses by 0.083, and BPE 32k wins by 0.028 (§33.152). On
 gold labels the tagger reads case where context decides: 81% of those words, and 87% where it departs from the form's
-usual case (§33.153).
+usual case (§33.153). XLM-R's, mBERT's and GPT-4o's tokenizers keep a Ukrainian ending apart for a quarter of words or
+fewer; Qwen2.5's for half, by cutting every word into 3.5 tokens (§33.154).
 
 ---
 
@@ -2340,3 +2341,49 @@ The tally is 223 right, 13 half right, 106 wrong, 10 never tested, 1 withdrawn a
    (§3.10). That is not because the feature is wrong where context decides.
 3. **One bound remains:** this is the tagger's reading of the sentence, including words to its right (the leak, G-38).
    The strictly causal feature is the form's majority case, right for 73% of words with a case on gold labels.
+
+### 33.154 Widely used multilingual tokenizers keep a Ukrainian ending apart for a quarter of words or fewer
+
+The thesis's tokenizer keeps every ending its rule finds apart from the stem. Do the tokenizers of widely used
+models already do so? `scripts/audits/multilingual_endings.py` (`multilingual_endings_20261103T071706`) measures
+four of them on the project's held-out text: the first 3,000 paragraphs of the validation split, words by
+uk_core_news_sm, 18,235 words the rule cuts. The measure is `tokenizer_stats`, now able to take another library's
+tokenizer. The four (`external/tokenizers/`, each at a recorded commit, its SHA-256 in the record):
+- XLM-R's, a SentencePiece Unigram model of 250k pieces;
+- mBERT's, WordPiece, 119k;
+- Qwen2.5's, byte-level BPE, 152k;
+- GPT-4o's `o200k_base`, byte-level BPE, 200k, through tiktoken in an environment of its own.
+
+The project's three tokenizers give the figures recorded on 7 October (§33.62), so the measure is the same.
+
+**Predictions** (recorded at 07:16 UTC, before the run):
+- **P354** (~50%): of the four, XLM-R's (a Unigram model) puts a boundary at the rule's cut for the most words.
+- **P355** (~70%): each of the four puts one there for fewer than 40% of those words.
+
+| tokenizer | vocabulary | characters per token | tokens per word | a boundary at the rule's cut | the ending a token of its own |
+|---|---|---|---|---|---|
+| BPE 17k (this work) | 17,000 | 3.59 | 1.73 | 8.8% | 8.7% |
+| **endings apart (this work)** | 17,000 | 3.21 | 1.99 | **100.0%** | 99.8% |
+| Unigram 17k (this work) | 17,000 | 3.07 | 1.85 | 43.3% | 43.2% |
+| XLM-R | 250,002 | 3.44 | 1.89 | 22.8% | 22.7% |
+| mBERT | 119,547 | 3.05 | 2.15 | 16.6% | 16.5% |
+| GPT-4o | 200,019 | 2.68 | 2.42 | 25.0% | 24.3% |
+| Qwen2.5 | 151,665 | 1.90 | 3.50 | 50.7% | 41.9% |
+
+- **XLM-R, mBERT and GPT-4o keep the ending apart for 17–25% of the words the rule cuts.**
+- **Qwen2.5 reaches half only by cutting every word finely:** 3.5 tokens per word, 1.9 characters per token, 81.7%
+  of words split.
+- **At about endings apart's token length** (mBERT 3.05 characters per token, XLM-R 3.44) the boundary falls at the cut
+  for a fifth of the words.
+
+**Verdicts:**
+- **P354 wrong:** Qwen2.5's 50.7% is the most, by cutting finely; XLM-R's is 22.8%.
+- **P355 wrong:** Qwen2.5's is above 40%. The other three are below 26%.
+
+The tally is 223 right, 13 half right, 108 wrong, 10 never tested, 1 withdrawn and none pending, of 355.
+
+**What it changes for the thesis.**
+1. **The finding is news for widely used tokenizers.** A large vocabulary does not learn the stem|ending boundary:
+   XLM-R, mBERT and GPT-4o keep a Ukrainian ending apart for a quarter of words or fewer.
+2. **Where one comes closer, it is by cutting everything:** Qwen2.5 spends 3.5 tokens on a Ukrainian word.
+   Endings apart keeps every ending apart at 1.99 tokens per word, with a vocabulary of 17,000.

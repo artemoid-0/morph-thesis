@@ -93,6 +93,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [§33.151](15_the_list_of_19_october.md#33151-item-5s-intervals-and-the-softwares-size-the-tokenizers-gains-hold-at-95-the-features-bound-is-0003) — item 5's intervals and the software's size: the tokenizer's gains hold at 95%, the features' bound is 0.003
 - [§33.152](15_the_list_of_19_october.md#33152-the-test-split-and-every-vocabulary-size-on-held-out-articles-the-gain-is-smaller-a-larger-vocabulary-gains-more) — the test split and every vocabulary size: on held-out articles the gain is smaller; a larger vocabulary gains more
 - [§33.153](15_the_list_of_19_october.md#33153-item-8-on-gold-labels-the-tagger-reads-case-where-context-decides) — on gold labels the tagger reads case where context decides
+- [§33.154](15_the_list_of_19_october.md#33154-widely-used-multilingual-tokenizers-keep-a-ukrainian-ending-apart-for-a-quarter-of-words-or-fewer) — widely used multilingual tokenizers keep a Ukrainian ending apart for a quarter of words or fewer
 - [§33.141](15_the_list_of_19_october.md#33141-item-1-without-repeating-the-text-the-gain-at-width-1024-is-smaller-and-still-rising) — without repeating the text the gain at width 1024 is smaller, and still rising
 - [§33.142](15_the_list_of_19_october.md#33142-full-training-at-30m-parameters-the-tokenizers-gain-is-smaller-and-lasts-case-stays-within-the-bound-english-gains-nothing) — full training at 30M parameters: the tokenizer's gain is smaller and lasts, case stays within the bound, English gains nothing
 
@@ -485,6 +486,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [33.151 Item 5's intervals and the software's size: the tokenizer's gains hold at 95%, the features' bound is 0.003](15_the_list_of_19_october.md#33151-item-5s-intervals-and-the-softwares-size-the-tokenizers-gains-hold-at-95-the-features-bound-is-0003)
 - [33.152 The test split and every vocabulary size: on held-out articles the gain is smaller; a larger vocabulary gains more](15_the_list_of_19_october.md#33152-the-test-split-and-every-vocabulary-size-on-held-out-articles-the-gain-is-smaller-a-larger-vocabulary-gains-more)
 - [33.153 Item 8: on gold labels the tagger reads case where context decides](15_the_list_of_19_october.md#33153-item-8-on-gold-labels-the-tagger-reads-case-where-context-decides)
+- [33.154 Widely used multilingual tokenizers keep a Ukrainian ending apart for a quarter of words or fewer](15_the_list_of_19_october.md#33154-widely-used-multilingual-tokenizers-keep-a-ukrainian-ending-apart-for-a-quarter-of-words-or-fewer)
 
 ### Appendices
 
