@@ -35,7 +35,8 @@ from about 0.002–0.006 (§33.151). On the held-out test articles the gain is 1
 positive at every seed; at the same token length plain BPE 8k loses by 0.083, and BPE 32k wins by 0.028 (§33.152). On
 gold labels the tagger reads case where context decides: 81% of those words, and 87% where it departs from the form's
 usual case (§33.153). XLM-R's, mBERT's and GPT-4o's tokenizers keep a Ukrainian ending apart for a quarter of words or
-fewer; Qwen2.5's for half, by cutting every word into 3.5 tokens (§33.154).
+fewer; Qwen2.5's for half, by cutting every word into 3.5 tokens (§33.154). Near 5M parameters the gain is worth about 15%
+more parameters, or 17% more training steps (§33.155).
 
 ---
 
@@ -2387,3 +2388,40 @@ The tally is 223 right, 13 half right, 108 wrong, 10 never tested, 1 withdrawn a
    XLM-R, mBERT and GPT-4o keep a Ukrainian ending apart for a quarter of words or fewer.
 2. **Where one comes closer, it is by cutting everything:** Qwen2.5 spends 3.5 tokens on a Ukrainian word.
    Endings apart keeps every ending apart at 1.99 tokens per word, with a vocabulary of 17,000.
+
+### 33.155 Item 4: the gain is worth about 15% more parameters, or 17% more training steps
+
+Item 4 asks what the gain is worth in a form a practitioner reads. `scripts/analysis/practical_value.py`
+(`practical_value_20261103T072121`) reads two forms from runs already made, each trained to the end of its own
+schedule. A step inside a cosine schedule is not a shorter budget, so none is used. Per seed, paired, BPE 17k's BPB
+is interpolated linearly in the logarithm of steps or parameters between two of its runs. The thesis machine's runs
+only.
+
+**Predictions** (recorded at 07:20 UTC, before the run):
+- **P356** (~65%): at width 128 and ~38M tokens, BPE 17k needs between 1.2 and 2 times the training steps to match
+  endings apart's null at 10k (its own 10k and 20k runs).
+- **P357** (~60%): at 10k it needs between 1.2 and 2 times the parameters (its widths 128 and 256).
+
+**Steps** (width 128, ~38M tokens): endings apart's null at 10k reaches 1.0714, 1.0715, 1.0739, 1.0722. BPE 17k's
+null takes 1.0874–1.0911 at 10k and 1.0132–1.0161 at 20k. To match, it needs **1.17 ± 0.01 times the steps**
+(1.13–1.19 by seed): about 11,700 of its own schedule instead of 10,000.
+
+**Parameters** (10k, ~38M tokens): BPE 17k's null at width 256, with 11.8M parameters, reaches 0.9826–0.9879. To match
+endings apart at width 128 (5.04M) it needs **1.15 ± 0.01 times the parameters** (1.12–1.17): about 5.8M. At 20k,
+1.14 ± 0.00 (1.13–1.15).
+
+**And the vocabulary** (§33.152): the endings rule gains 39% of what going from 17k to 32k gains. That step adds
+1.9M parameters.
+
+**Verdicts:**
+- **P356 wrong:** 1.17, just below 1.2.
+- **P357 wrong:** 1.15.
+
+The tally is 223 right, 13 half right, 110 wrong, 10 never tested, 1 withdrawn and none pending, of 357.
+
+**What it changes for the thesis** («Практична цінність»):
+1. **Keeping endings apart is worth about 15% more parameters, or 17% more training steps, at no cost.** At 5M
+   parameters plain BPE 17k would need about 5.8M parameters, or about 11,700 steps instead of 10,000, to match it.
+   The vocabulary and the parameter count stay the same.
+2. **Each form interpolates between two runs.** Between widths 128 and 256, and between 10k and 20k steps, so it is
+   read near the 5M model; at 30M parameters the gain is about half (§33.142).

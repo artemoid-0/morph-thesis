@@ -6,7 +6,7 @@ Each prediction was recorded in the [journey](record/journey/README.md) **before
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 223 right, 13 half right, 108 wrong, 10 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test, 2 whose condition was not met), 1 withdrawn — of 355.
+**Tally:** 223 right, 13 half right, 110 wrong, 10 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test, 2 whose condition was not met), 1 withdrawn — of 357.
 
 *Key to the tally (added 19 October 2026). Counted half right: P19, P46, P54 — with the eight
 whose outcome begins "half right" or "partly right". Counted right: P33, P172, P273, P303, P317 — right by their
@@ -389,3 +389,5 @@ The wrong ones carried the information:
 | P353 | Where the tagger and the form's majority case disagree, the tagger is right more often than the majority case | right — 87.0% against 8.3% | §33.153 |
 | P354 | Of four widely used multilingual tokenizers (XLM-R, mBERT, Qwen2.5, GPT-4o), XLM-R's, a Unigram model, puts a token boundary at the endings rule's cut for the most words the rule cuts | wrong — Qwen2.5's 50.7%, by cutting every word finely; XLM-R's 22.8% | §33.154 |
 | P355 | Each of the four puts one there for fewer than 40% of those words (endings apart: all of them; Unigram 17k: 43%) | wrong — Qwen2.5's 50.7%; the others 16.6–25.0% | §33.154 |
+| P356 | At width 128 and ~38M tokens, BPE 17k needs between 1.2 and 2 times the training steps to match endings apart's null at 10k (its own 10k and 20k runs, interpolated in log steps) | wrong — 1.17 ± 0.01 | §33.155 |
+| P357 | At 10k, BPE 17k needs between 1.2 and 2 times the parameters to match endings apart's null at width 128 (its widths 128 and 256, interpolated in log parameters) | wrong — 1.15 ± 0.01 | §33.155 |

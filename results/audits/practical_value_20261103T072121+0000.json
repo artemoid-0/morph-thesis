@@ -1,0 +1,280 @@
+{
+  "script": "practical_value",
+  "args": {},
+  "timestamp_utc": "2026-11-03T07:21:21+00:00",
+  "results": {
+    "forms": [
+      {
+        "name": "training steps, width 128, ~38M tokens",
+        "axis": "steps",
+        "target": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "low": [
+          "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+          10000
+        ],
+        "high": [
+          "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k",
+          20000
+        ],
+        "seeds": {
+          "0": {
+            "target_bpb": 1.0713626023248843,
+            "low_bpb": 1.0890597329958853,
+            "high_bpb": 1.0139536333335246,
+            "low_x": 10000,
+            "high_x": 20000,
+            "runs": [
+              "6dda8d847d8a",
+              "e9f3f153ec20",
+              "59edbb34487d"
+            ],
+            "equivalent": 11774.194847605477,
+            "multiple": 1.1774194847605477
+          },
+          "1": {
+            "target_bpb": 1.0715041880954754,
+            "low_bpb": 1.0910292587821706,
+            "high_bpb": 1.0146936348046556,
+            "low_x": 10000,
+            "high_x": 20000,
+            "runs": [
+              "ed3afe0e7a24",
+              "6f214dfa186f",
+              "714611177e59"
+            ],
+            "equivalent": 11939.805015581482,
+            "multiple": 1.1939805015581482
+          },
+          "2": {
+            "target_bpb": 1.0739479984593547,
+            "low_bpb": 1.0874361034319235,
+            "high_bpb": 1.0132254159368201,
+            "low_x": 10000,
+            "high_x": 20000,
+            "runs": [
+              "9b80b67971df",
+              "fe50426ea6ef",
+              "5f8f38ac41bd"
+            ],
+            "equivalent": 11342.622267435801,
+            "multiple": 1.1342622267435802
+          },
+          "3": {
+            "target_bpb": 1.0722412659548326,
+            "low_bpb": 1.0910644306821509,
+            "high_bpb": 1.0161241271334016,
+            "low_x": 10000,
+            "high_x": 20000,
+            "runs": [
+              "ad927855ba92",
+              "f7631513ec4e",
+              "feca24f3780d"
+            ],
+            "equivalent": 11901.764309081815,
+            "multiple": 1.1901764309081815
+          }
+        },
+        "summary": {
+          "mean": 1.1739596609926144,
+          "se": 0.013698157874651463,
+          "n": 4,
+          "positive": 4,
+          "values": [
+            1.1774194847605477,
+            1.1939805015581482,
+            1.1342622267435802,
+            1.1901764309081815
+          ]
+        },
+        "left_out": {}
+      },
+      {
+        "name": "parameters, 10k steps, ~38M tokens",
+        "axis": "params",
+        "target": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "low": [
+          "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+          null
+        ],
+        "high": [
+          "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k_w256",
+          null
+        ],
+        "seeds": {
+          "0": {
+            "target_bpb": 1.0713626023248843,
+            "low_bpb": 1.0890597329958853,
+            "high_bpb": 0.9825889197053445,
+            "low_x": 5043168,
+            "high_x": 11795168,
+            "runs": [
+              "6dda8d847d8a",
+              "e9f3f153ec20",
+              "a78a7af4172a"
+            ],
+            "equivalent": 5808141.376020174,
+            "multiple": 1.1516850868383075
+          },
+          "1": {
+            "target_bpb": 1.0715041880954754,
+            "low_bpb": 1.0910292587821706,
+            "high_bpb": 0.9878704594600646,
+            "low_x": 5043168,
+            "high_x": 11795168,
+            "runs": [
+              "ed3afe0e7a24",
+              "6f214dfa186f",
+              "e93ed932f8df"
+            ],
+            "equivalent": 5923043.602621176,
+            "multiple": 1.174468826464075
+          },
+          "2": {
+            "target_bpb": 1.0739479984593547,
+            "low_bpb": 1.0874361034319235,
+            "high_bpb": 0.985039050657709,
+            "low_x": 5043168,
+            "high_x": 11795168,
+            "runs": [
+              "9b80b67971df",
+              "fe50426ea6ef",
+              "af361ad5995e"
+            ],
+            "equivalent": 5640395.057179399,
+            "multiple": 1.1184229946691047
+          },
+          "3": {
+            "target_bpb": 1.0722412659548326,
+            "low_bpb": 1.0910644306821509,
+            "high_bpb": 0.984189508982369,
+            "low_x": 5043168,
+            "high_x": 11795168,
+            "runs": [
+              "ad927855ba92",
+              "f7631513ec4e",
+              "ecfcf44b5500"
+            ],
+            "equivalent": 5857240.528891736,
+            "multiple": 1.1614208626188411
+          }
+        },
+        "summary": {
+          "mean": 1.151499442647582,
+          "se": 0.011972583408890005,
+          "n": 4,
+          "positive": 4,
+          "values": [
+            1.1516850868383075,
+            1.174468826464075,
+            1.1184229946691047,
+            1.1614208626188411
+          ]
+        },
+        "left_out": {}
+      },
+      {
+        "name": "parameters, 20k steps, ~38M tokens",
+        "axis": "params",
+        "target": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k",
+        "low": [
+          "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k",
+          null
+        ],
+        "high": [
+          "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w256",
+          null
+        ],
+        "seeds": {
+          "0": {
+            "target_bpb": 0.9974311583397595,
+            "low_bpb": 1.0139536333335246,
+            "high_bpb": 0.899984060435043,
+            "low_x": 5043168,
+            "high_x": 11795168,
+            "runs": [
+              "8f398c5a967e",
+              "59edbb34487d",
+              "e3d0e6d4ba4b"
+            ],
+            "equivalent": 5704248.76892731,
+            "multiple": 1.1310844233083865
+          },
+          "1": {
+            "target_bpb": 0.9975998664330454,
+            "low_bpb": 1.0146936348046556,
+            "high_bpb": 0.9109671182210843,
+            "low_x": 5043168,
+            "high_x": 11795168,
+            "runs": [
+              "9272ed2841aa",
+              "714611177e59",
+              "1bb147ff101c"
+            ],
+            "equivalent": 5801141.571110296,
+            "multiple": 1.1502971091009255
+          },
+          "2": {
+            "target_bpb": 0.997761379223662,
+            "low_bpb": 1.0132254159368201,
+            "high_bpb": 0.9069181835111945,
+            "low_x": 5043168,
+            "high_x": 11795168,
+            "runs": [
+              "d2c01147fb4f",
+              "5f8f38ac41bd",
+              "76354ccb83e2"
+            ],
+            "equivalent": 5706637.8599528745,
+            "multiple": 1.1315581515334954
+          },
+          "3": {
+            "target_bpb": 0.9974297557754697,
+            "low_bpb": 1.0161241271334016,
+            "high_bpb": 0.898700791274417,
+            "low_x": 5043168,
+            "high_x": 11795168,
+            "runs": [
+              "cefc2d34b3fd",
+              "feca24f3780d",
+              "869aa8ae9fae"
+            ],
+            "equivalent": 5773646.066613803,
+            "multiple": 1.144845078850001
+          }
+        },
+        "summary": {
+          "mean": 1.139446190698202,
+          "se": 0.00482209099875707,
+          "n": 4,
+          "positive": 4,
+          "values": [
+            1.1310844233083865,
+            1.1502971091009255,
+            1.1315581515334954,
+            1.144845078850001
+          ]
+        },
+        "left_out": {}
+      }
+    ]
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-11-03T07:21:21+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "bcd3980fb09dc680d5b13a6364f3a973a36852d6",
+    "git_dirty": true
+  }
+}
