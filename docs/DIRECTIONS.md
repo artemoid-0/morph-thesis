@@ -24,7 +24,7 @@ Each direction's answer is stated once, in FINDINGS; the table gives its status 
 | D5 | the rare and novel tail | **closed**, screened at full training; the unseen-word version parked (§33.47) | [the rare tail](FINDINGS.md#no-benefit-in-the-rare-tail) |
 | D6 | the token-independent input | **parked — outside the thesis** (§33.59); G-71 closed (§33.58) | [what the slot did instead](FINDINGS.md#what-the-slot-did-instead-a-token-independent-input) |
 | D7 | tokenization | **answered** at four seeds (§33.61–§33.81); the exposure comparison against both references (§33.110–§33.118, §33.126; Unigram at width 512) | [Q1 in Ukrainian](FINDINGS.md#q1-in-ukrainian-morphology-inside-bpe); [in English](FINDINGS.md#q1-in-english-morphology-inside-bpe); [the tokenizer and the embedding](FINDINGS.md#morphology-in-the-tokenizer-and-in-the-embedding-ukrainian) |
-| D8 | scale and architecture: wider, deeper, a modern block | width 512 **answered** (§33.94, §33.102, §33.118); width 1024 **answered** (§33.120–§33.124, §33.132): smaller again and lasting; the split by seed was the 100-step warm-up's; depth and the RMSNorm and SwiGLU block (built, §33.54) not run | [Q1 in Ukrainian](FINDINGS.md#q1-in-ukrainian-morphology-inside-bpe) ("It peaks there"); [the null at 30M](FINDINGS.md#the-same-shape-null-is-not-neutral) |
+| D8 | scale and architecture: wider, deeper, a modern block | width 512 **answered** (§33.94, §33.102, §33.118); width 1024 **answered** (§33.120–§33.124, §33.132, §33.149): smaller again and lasting, at full training the 30M model's; the split by seed was the 100-step warm-up's; the modern block and depth **answered** at 10k (§33.149): the block keeps the gain, 8 layers halve it | [Q1 in Ukrainian](FINDINGS.md#q1-in-ukrainian-morphology-inside-bpe) ("It peaks there"); [the null at 30M](FINDINGS.md#the-same-shape-null-is-not-neutral) |
 | D9 | a second corpus per language | Ukrainian **answered** with UberText fiction (§33.85, §33.88, §33.108); no English corpus chosen | [Q1 in Ukrainian](FINDINGS.md#q1-in-ukrainian-morphology-inside-bpe) ("And on a second corpus") |
 
 **D3 — is the reliance deficit permanent?**
@@ -41,50 +41,31 @@ Also parked: morphology-factorized embeddings for parameter efficiency (Q1 partl
 
 ## The queue
 
-The thesis text's list of 30–31 October (§33.143): fifteen limits a reviewer could fairly call gaps, ranked by the text in three tiers.
-- **Costs:** from the recorded timings (`scripts/ops/run_times.py`), on the second machine, with the thesis machine's in brackets.
-- **Deadlines:** results committed by the morning of 2 November reach the text; a single number by noon on 3 November can still go in as a sentence; the work is admitted on 4 November.
+**Reviewed 3 November, after the text's list of 30–31 October** (journey §33.159).
+That list is answered: items 1–14 in §33.143–§33.158, item 15 dropped (below). Each answer's claim is in FINDINGS. The queue of
+25 October is answered too (§33.140–§33.142).
+- **Costs** come from the recorded timings (`scripts/ops/run_times.py`), on the second machine unless noted.
+- **Deadlines:** the work is admitted on 4 November; anything later serves the defence (7–11 December) and the article.
+- **Nothing runs before its hours are set.** Each piece is prepared and rehearsed, and its predictions recorded, first.
 
-**Answered** (§33.150): item 6. On 3,999 pairs for agreement inside the noun phrase and government, 98 of 100 valid by the author's check, endings apart makes fewer errors at every seed: 47% fewer at 5M parameters (agreement +0.6, government +1.5 points) and 63% fewer at 30M (+0.3, +0.6), both tokenizers near the ceiling; the same without the check's two kinds of error.
+Ranked by the claim each could move: a headline first, then the question the title asks, then the axes an examiner will ask about, then a secondary claim's firmness; within a rank, the cheaper first.
 
-**Answered** (§33.148, §33.149): items 2, 7, 13, 9, 10 and 11. At 85M parameters the gain at full training is +0.0071 (1.02%), the 30M model's, and MultiBLiMP +3.1; under the LLaMA-style block it holds (+0.0152 against +0.0175); at 8 layers it halves (+0.0079 against +0.0147); the cut one letter off the boundary loses 0.0207 to plain BPE; shuffled case costs 0.0011; the switch to a constant leaves the switch to zeros' deficit (+0.0038 against +0.0039).
+| # | candidate | the sentences it decides | cost | ready | its result moves |
+|---|---|---|---|---|---|
+| 1 | **A large held-out sample, and table 3.1 on it.** About 6,000 of the articles outside the 0.2 fraction: no model and no tokenizer saw them, ten times either held-out sample. Every row of the tokenizer's table is scored on it. | The headline is 1.75% on validation and 1.3% on the test articles, 2.5 standard errors apart (§33.152, §33.156). On this sample: *the gain is X%*, the figure the text gives. For each row: *it keeps its sign on unseen text*, or it is restated. | Scoring only, about 100 models: ~2 h of the second machine, ~1 h of the thesis machine. A tagger pass of minutes; the null derived on the second machine. | New code: the sample as a split (~1 h). | Fixes the headline's value. Moves no other candidate. |
+| 2a | **Shuffled case at 30M** (width 512, full training). | Case's +0.0015 at 30M is positive at every seed, but its interval includes zero (p = 0.073, §33.151). Level with case: *at 30M case's content does not act*. Near zero: *it does*. | 4 runs, ~5.4 h | The codes to derive on the second machine (CPU, beside); a chain piece. | Level: 2b drops. Near zero: 2b runs. |
+| 2b | **What case's +0.0015 at 30M is made of:** the word form and the leak's control at 30M. | *At 30M too, what the sentence adds is the leak*; or *context adds about 0.001*; or *nothing*. | 8 runs, ~10.8 h | Its codes exist on the second machine; a chain piece. | — |
+| 3a | **The minimal pairs at 85M** (width 1024, full training). | MultiBLiMP's gain fell to +3.1 there. *Fewer errors at every size trained*, or *not at 85M*. | Scoring, ~10 min | Ready. | — |
+| 3b | **Endings apart at 32k.** BPE 32k beats endings apart at 17k by 0.028 with 1.9M more parameters (§33.152). | A gain: *the rule adds to a larger vocabulary*. None: *at 32k the vocabulary holds what the rule gives*. | The tokenizer and its stream, ~2 h of CPU; 4 runs at 10k, ~25 min; BPE 32k's nulls exist on the second machine. | A tokenizer to train. | None: «Практична цінність» is restated "at 17k". |
+| 3c | **Ukrainian case as a target** (§3.8 has English only). | *It teaches early and stops paying, as in English*; or *it keeps paying*. | 4 runs, ~35 min | The target code exists; a chain piece. | — |
+| 4 | **100k steps at 5M.** The gain is flat from step 5,000 to 50,000. | *It lasts to 100k*, or *it fades after 50k*. | 8 runs, ~6.1 h | A chain piece. | — |
 
-**Answered** (§33.145): items 1, 12 and 14. At the best of three rates (3e-3, the reference 5.2% better) the 5M model's gain at full training is +0.0136 (1.52%), 0.0037 below the default's on the same machine; between plain baselines +0.0219 (2.31%), 0.0046 above the nulls'; the 1,000-step warm-up changes nothing at width 128.
-
-**Answered** (§33.151): the software's size, and item 5's intervals. Every row of the tokenizer's table holds at 95%
-(the headline +0.0141 to +0.0189); the features' one-sided 95% bound is 0.003, not 0.002, and four seeds see a feature's
-effect only from about 0.002–0.006.
-
-**Answered** (§33.152): the test split and every vocabulary size. On the held-out test articles the gain is +0.0126
-(1.3%) at 5M parameters and +0.0062 (0.83%) at 30M, positive at every seed; at nearly the same token length plain BPE 8k
-loses by 0.083, and BPE 32k, with 1.9M more parameters, wins by 0.028.
-
-**Answered** (§33.153): item 8. On UD Ukrainian-IU's gold labels the tagger's case is right for 94.2% of the words with
-one, 81.1% where context decides, and 87.0% where it departs from the form's usual case (the form 8.3%).
-
-**Answered** (§33.154): the multilingual tokenizers. XLM-R's, mBERT's and GPT-4o's keep a Ukrainian ending apart for
-17–25% of the words the rule cuts; Qwen2.5's for 51%, by cutting every word into 3.5 tokens.
-
-**Answered** (§33.155): item 4. Near 5M parameters plain BPE 17k needs 1.15 times the parameters, or 1.17 times the
-training steps, to match endings apart.
-
-**Answered** (§33.156): item 3 and the bootstrap over articles. 81% of the gain sits in the words the rule cuts, of
-middle and low frequency; over articles the headline's interval is +0.0142 to +0.0188 on validation, and the test
-articles differ by 2.5 standard errors.
-
-**Answered** (§33.157): the probes at layer 0. The lead is not in the ending's token (level at layer 0); the first
-layer builds it (+3.7, +2.9, +6.0 points on case, number, gender).
-
-**Answered** (§33.158): the figures — the law with all five conditions and bands, Figure 3.1 in two, and where the
-gain sits. Nothing without the GPU is left in the text's list.
-
-**Optional**, if hours remain:
-- what case's +0.0015 at 30M is made of: 8 runs, ~10.8 h;
-- 100k steps at 5M: 8 runs, ~6.1 h;
-- shuffled case at 30M: 4 runs, ~5.4 h;
-- Ukrainian case as a target: 4 runs, ~35 min.
-
-The queue of 25 October is answered (§33.140–§33.142): full training at 30M parameters and English at 30M. Its conditional pieces did not run: case kept +0.0015 over its null, and the tokenizer's gain was +0.0072.
+**What hours of the second machine buy:**
+- ~2.5 h: items 1 and 3a;
+- ~3.5 h: with 3b's runs and 3c, the stream built beside on the CPU;
+- ~9 h: with 2a;
+- ~20 h: with 2b, if 2a does not drop it;
+- ~26 h: with 4.
 
 **Dropped** by the sentence test (every outcome gives the same sentence, or none):
 - item 15 of the list of 30 October, the word-form control with an unseen-word class: it makes the split of case's lead at 10k exact, a number rather than the answer (G-76);

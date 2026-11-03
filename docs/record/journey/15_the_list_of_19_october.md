@@ -2536,3 +2536,21 @@ and now steps by 0.002.
 
 **What it changes for the thesis:** the figures the text asked for are drawn. Their captions are the text's; what
 each needs is in the channel.
+
+### 33.159 The queue reviewed after the text's list: a large held-out sample first
+
+The text's list of 30–31 October is answered (§33.143–§33.158). The queue is reviewed again, ranked by the claim each
+candidate could move (DIRECTIONS, "The queue", holds the table with costs, readiness and the sentences):
+1. **A headline:** the gain on a large sample of unseen articles, with every row of table 3.1 scored on it. The
+   headline is 1.75% on validation and 1.3% on the test articles, 2.5 standard errors apart (§33.152, §33.156). No
+   model and no tokenizer saw the articles outside the 0.2 fraction (the tokenizers were trained on it), so they
+   give a sample ten times either.
+2. **The question the title asks:** case at 30M parameters, where its +0.0015 has an interval that includes zero.
+   Shuffled case comes first, as it can make the larger piece unnecessary.
+3. **The axes an examiner will ask about:** model size (the minimal pairs at 85M), vocabulary (endings apart at 32k,
+   where plain BPE 32k leads by 0.028) and language (Ukrainian case as a target).
+4. **A secondary claim's firmness:** 100k steps at 5M.
+
+Two candidates are new, from this list's answers: the held-out sample and endings apart at 32k. Nothing is prepared
+yet. Each piece's predictions are recorded when it is, before it runs. The text's view of what it needs for the
+defence may reorder the queue.
