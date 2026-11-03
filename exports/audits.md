@@ -405,6 +405,7 @@
 | `temporal_profile` | 2026-10-10T15:52:40+00:00 | results_dir=results baseline=bpe_baseline_bpe_17k | curves, profiles |
 | `temporal_profile` | 2026-10-10T17:50:28+00:00 | results_dir=results baseline=bpe_baseline_bpe_17k | curves, profiles |
 | `temporal_profile` | 2026-10-11T12:48:43+00:00 | results_dir=results baseline=bpe_baseline_bpe_17k | curves, profiles |
+| `tokenizer_by_word` | 2026-11-03T07:25:22+00:00 | tol=1e-05 draws=10000 holdout=2000 | report |
 | `?` | ? | - | - |
 | `?` | ? | - | - |
 | `?` | ? | - | - |

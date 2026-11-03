@@ -68,10 +68,13 @@ one, 81.1% where context decides, and 87.0% where it departs from the form's usu
 **Answered** (§33.155): item 4. Near 5M parameters plain BPE 17k needs 1.15 times the parameters, or 1.17 times the
 training steps, to match endings apart.
 
+**Answered** (§33.156): item 3 and the bootstrap over articles. 81% of the gain sits in the words the rule cuts, of
+middle and low frequency; over articles the headline's interval is +0.0142 to +0.0188 on validation, and the test
+articles differ by 2.5 standard errors.
+
 **Without the GPU**, in order:
-1. item 3, where the gain sits, per word, with a bootstrap over articles: why the test articles give less;
-2. the probes at layer 0;
-3. the figures.
+1. the probes at layer 0;
+2. the figures: the law with all five conditions and bands, Figure 3.1 in two, a figure for item 3.
 
 **Optional**, if hours remain:
 - what case's +0.0015 at 30M is made of: 8 runs, ~10.8 h;

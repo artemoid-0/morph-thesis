@@ -378,9 +378,10 @@ def own_baseline(label):
 
 # ── a saved model, scored again ───────────────────────────────────────────────
 
-def rescore(run_id, results_dir=RESULTS, batches=0):
+def rescore(run_id, results_dir=RESULTS, batches=0, split='validation'):
     """A saved model's loss on each validation target, in nats (float32), as training evaluated
     it: its own context facts, the same windows, `batches` batches of its batch size (0: all).
+    `split='test'` scores the held-out test stream the same way (scripts/eval/evaluate_split.py).
     Returns (config, pipeline, dataset, losses, inputs, targets), the last three flat."""
     import dataclasses
     import numpy as np
@@ -400,7 +401,13 @@ def rescore(run_id, results_dir=RESULTS, batches=0):
     data_cfg = dataclasses.replace(cfg, frozen=dataclasses.replace(cfg.frozen, facts=tuple(facts),
                                                                    shuffle_codes=False))
     pipe = build_pipeline(data_cfg, verbose=False)
-    ds = make_val_dataset(pipe, data_cfg, verbose=False)
+    if split == 'validation':
+        ds = make_val_dataset(pipe, data_cfg, verbose=False)
+    else:
+        from .data.stream import build_stream
+        from .data.windows import LMWindowDataset
+        ds = LMWindowDataset(build_stream(pipe, data_cfg, split=split, max_articles=None, verbose=False),
+                             seq_len=data_cfg.data.seq_len, shuffle_codes=False, seed=data_cfg.train.seed)
     loaded = list(getattr(ds, 'fact_names', []) or [])
     if facts and loaded != facts:
         raise RuntimeError(f'{run_id}: the model reads {facts}, the loader gave {loaded} — refusing to score')

@@ -69,6 +69,7 @@ Most read the run records only; `probe.py`, `probe_words.py`, `loss_by_kind.py` 
 | `probe_words.py` | What a model builds for itself: a linear probe reads each word's case, number and gender in context from final checkpoints, at the word's last token (`--after N`: N units later), with case split by whether the form alone decides it; cells paired by seed (journey §33.84). | active |
 | `steps_saved.py` | What a feature's early help is worth in training steps. | historical |
 | `tokenizer_table.py` | D7's table from the run records: each feature's gain under each tokenizer, paired by seed; tokenizers against a reference (null against null — at the end and along training — and gain against gain); gains at a step and at matched null BPB, per seed. | active |
+| `tokenizer_by_word.py` | Where the tokenizer's gain sits: the full-training nulls scored token by token on validation and test, each target placed in its word (cut by the endings rule, not cut, not a word) and banded by the word's training count; paragraphs mapped to articles for a bootstrap over articles; writes a `tokenizer_by_word` audit record | active |
 | `tokenizer_widths.py` | The tokenizer's lead across model widths, at matched null BPB (D8). | active |
 | `temporal_profile.py` | When during training does a feature's gain appear, against the plain baseline (journey §32.2)? Superseded by `learning_law.py`'s same-shape nulls. | historical |
 

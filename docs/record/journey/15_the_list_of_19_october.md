@@ -36,7 +36,8 @@ positive at every seed; at the same token length plain BPE 8k loses by 0.083, an
 gold labels the tagger reads case where context decides: 81% of those words, and 87% where it departs from the form's
 usual case (§33.153). XLM-R's, mBERT's and GPT-4o's tokenizers keep a Ukrainian ending apart for a quarter of words or
 fewer; Qwen2.5's for half, by cutting every word into 3.5 tokens (§33.154). Near 5M parameters the gain is worth about 15%
-more parameters, or 17% more training steps (§33.155).
+more parameters, or 17% more training steps (§33.155). Four fifths of it sits in the words the rule cuts, of middle and
+low frequency; over articles the two held-out samples differ by 2.5 standard errors (§33.156).
 
 ---
 
@@ -2425,3 +2426,64 @@ The tally is 223 right, 13 half right, 110 wrong, 10 never tested, 1 withdrawn a
    The vocabulary and the parameter count stay the same.
 2. **Each form interpolates between two runs.** Between widths 128 and 256, and between 10k and 20k steps, so it is
    read near the 5M model; at 30M parameters the gain is about half (§33.142).
+
+### 33.156 Item 3: four fifths of the tokenizer's gain sits in the words the rule cuts
+
+Item 3 asks where the tokenizer's gain sits. The text places case's gain by target, not the tokenizer's. The
+bootstrap over articles asks whether the test articles' smaller gain (§33.152) is the text's sample.
+
+`scripts/analysis/tokenizer_by_word.py` (`tokenizer_by_word_20261103T072522`) scores the 5M model's full-training
+nulls again, token by token, on validation and on test. Every model's figure equals its record within 10⁻⁵. Each
+target is put in its word:
+- **a word the endings rule cuts,** a word it does not, or not a word (punctuation, digits, line breaks), as
+  `loss_by_kind.py` classifies;
+- **a band by the word's count in training,** from each tokenizer's training lexicon.
+
+Both streams of a split hold the same text, so each paragraph's loss is summed in bits and compared directly. The
+paragraphs are mapped back to their articles, and the count is checked. The gain is BPE 17k's loss minus endings
+apart's, over the text's bytes, paired by seed.
+
+**Predictions** (recorded at 07:24 UTC, before the run):
+- **P358** (~70%): more than half of the gain on validation sits in the words the rule cuts.
+- **P359** (~60%): a bootstrap over articles puts the validation and test gains within two standard errors of each
+  other.
+
+| bits per byte (share of the gain) | validation, 598 articles | test, 645 articles |
+|---|---|---|
+| all | +0.0166 ± 0.0008 | +0.0126 ± 0.0005 |
+| **words the rule cuts** | **+0.0134 ± 0.0003 (81%)** | **+0.0108 ± 0.0003 (86%)** |
+| — seen 1–99 times in training | +0.0065 (39%) | +0.0049 (39%) |
+| — seen 100–9,999 times | +0.0069 (41%) | +0.0061 (49%) |
+| — seen 10,000 times or more | −0.0002 (−1.5%) | −0.0003 (−2.5%) |
+| — unseen | +0.0002 | +0.0001 |
+| words the rule does not cut | +0.0038 ± 0.0004 (23%) | +0.0022 ± 0.0005 (18%) |
+| — seen 100–9,999 times | +0.0031 (19%) | +0.0031 (25%) |
+| not words | −0.0005 ± 0.0003 (−3%) | −0.0004 ± 0.0003 (−3%) |
+
+- **On the cut words every seed gains:** +0.0125 to +0.0141 on validation, +0.0101 to +0.0115 on test.
+- **The gain sits in the words of middle and low frequency.** The most frequent words, seen 10,000 times or more, give
+  nothing, nor do unseen ones.
+- **The uncut words gain a fifth.** That is the context around the cut words, or a better vocabulary for the rest.
+
+**The bootstrap over articles** (10,000 draws of the four seeds' mean gain):
+- validation +0.0166, standard error 0.0012, 95% from +0.0142 to +0.0188;
+- test +0.0126, standard error 0.0011, from +0.0104 to +0.0147;
+- validation minus test **+0.0040, standard error 0.0016 (z = 2.5).** Two random samples of articles differ that much
+  about once in a hundred, or the bootstrap understates how long articles spread.
+- On the cut words the test gives 0.0026 less, and on the uncut 0.0016 less.
+
+**Verdicts:**
+- **P358 right:** 81%.
+- **P359 wrong:** 2.5 standard errors apart.
+
+The tally is 224 right, 13 half right, 111 wrong, 10 never tested, 1 withdrawn and none pending, of 359.
+
+**The sentence** (the text's, item 3): mostly on cut words, so *the model predicts endings more accurately*. A fifth of
+the gain is on the other words.
+
+**What it changes for the thesis.**
+1. **Four fifths of the tokenizer's gain sits in the words the rule cuts,** and almost all of it in words of middle and
+   low frequency. A frequent word is learned whole under either tokenizer.
+2. **The text's sample matters.** Over articles, the headline's 95% interval is +0.0142 to +0.0188 on validation and
+   +0.0104 to +0.0147 on test. Seeds alone give +0.0141 to +0.0189.
+   - The two held-out samples differ by more than the bootstrap expects (z = 2.5). Both stay well above zero.
