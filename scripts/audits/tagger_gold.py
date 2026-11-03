@@ -14,7 +14,7 @@ it; a poor one bounds the answer by the tagger.
 
 HOW
 ---
-UD Ukrainian-IU's gold test and dev sentences (`external/ud_ukrainian_iu/`, CC BY-SA 4.0), each tagged by
+UD Ukrainian-IU's gold test and dev sentences (`external/ud_ukrainian_iu/`, CC BY-NC-SA 4.0), each tagged by
 uk_core_news_sm over the gold tokens, so no alignment is needed. For every word with a gold case:
   * the tagger's case in context;
   * the form's majority case: the training corpus's lexicon for `ucaselex` (BPE 17k at 0.2), looked up by
