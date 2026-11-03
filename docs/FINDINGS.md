@@ -364,6 +364,7 @@ Keeping endings apart makes that account more accurate where the form decides (p
 These are the features subject–verb agreement turns on, where those models judge better.
 Where only context decides a word's case, both tokenizers' models read it weakly, 10–13 points over that subset's floor, and endings apart is 2.5 points lower (0/4).
 Read one word later the models hold less, not more: a model this size states a word's grammar at the word and does not revise it.
+**The lead is built in the first layer, not given by the ending's token** (§33.157): at layer 0, the input vector at a word's last token, endings apart is level with BPE 17k within half a point on case, number and gender; at layer 1 it leads by +3.7, +2.9 and +6.0 points (4/4 each).
 
 *Four seeds each, one corpus, linear probes, the tagger's labels.* (§33.84)
 

@@ -96,6 +96,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [§33.154](15_the_list_of_19_october.md#33154-widely-used-multilingual-tokenizers-keep-a-ukrainian-ending-apart-for-a-quarter-of-words-or-fewer) — widely used multilingual tokenizers keep a Ukrainian ending apart for a quarter of words or fewer
 - [§33.155](15_the_list_of_19_october.md#33155-item-4-the-gain-is-worth-about-15-more-parameters-or-17-more-training-steps) — the gain is worth about 15% more parameters, or 17% more training steps
 - [§33.156](15_the_list_of_19_october.md#33156-item-3-four-fifths-of-the-tokenizers-gain-sits-in-the-words-the-rule-cuts) — four fifths of the tokenizer's gain sits in the words the rule cuts
+- [§33.157](15_the_list_of_19_october.md#33157-the-probes-at-layer-0-the-lead-is-not-in-the-endings-token-the-first-layer-builds-it) — the probes at layer 0: the lead is not in the ending's token; the first layer builds it
 - [§33.141](15_the_list_of_19_october.md#33141-item-1-without-repeating-the-text-the-gain-at-width-1024-is-smaller-and-still-rising) — without repeating the text the gain at width 1024 is smaller, and still rising
 - [§33.142](15_the_list_of_19_october.md#33142-full-training-at-30m-parameters-the-tokenizers-gain-is-smaller-and-lasts-case-stays-within-the-bound-english-gains-nothing) — full training at 30M parameters: the tokenizer's gain is smaller and lasts, case stays within the bound, English gains nothing
 
@@ -491,6 +492,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [33.154 Widely used multilingual tokenizers keep a Ukrainian ending apart for a quarter of words or fewer](15_the_list_of_19_october.md#33154-widely-used-multilingual-tokenizers-keep-a-ukrainian-ending-apart-for-a-quarter-of-words-or-fewer)
 - [33.155 Item 4: the gain is worth about 15% more parameters, or 17% more training steps](15_the_list_of_19_october.md#33155-item-4-the-gain-is-worth-about-15-more-parameters-or-17-more-training-steps)
 - [33.156 Item 3: four fifths of the tokenizer's gain sits in the words the rule cuts](15_the_list_of_19_october.md#33156-item-3-four-fifths-of-the-tokenizers-gain-sits-in-the-words-the-rule-cuts)
+- [33.157 The probes at layer 0: the lead is not in the ending's token; the first layer builds it](15_the_list_of_19_october.md#33157-the-probes-at-layer-0-the-lead-is-not-in-the-endings-token-the-first-layer-builds-it)
 
 ### Appendices
 

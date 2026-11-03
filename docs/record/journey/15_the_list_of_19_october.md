@@ -37,7 +37,8 @@ gold labels the tagger reads case where context decides: 81% of those words, and
 usual case (§33.153). XLM-R's, mBERT's and GPT-4o's tokenizers keep a Ukrainian ending apart for a quarter of words or
 fewer; Qwen2.5's for half, by cutting every word into 3.5 tokens (§33.154). Near 5M parameters the gain is worth about 15%
 more parameters, or 17% more training steps (§33.155). Four fifths of it sits in the words the rule cuts, of middle and
-low frequency; over articles the two held-out samples differ by 2.5 standard errors (§33.156).
+low frequency; over articles the two held-out samples differ by 2.5 standard errors (§33.156). The probes' lead is not in
+the ending's token: level at layer 0, it appears at layer 1 (§33.157).
 
 ---
 
@@ -2487,3 +2488,31 @@ the gain is on the other words.
 2. **The text's sample matters.** Over articles, the headline's 95% interval is +0.0142 to +0.0188 on validation and
    +0.0104 to +0.0147 on test. Seeds alone give +0.0141 to +0.0189.
    - The two held-out samples differ by more than the bootstrap expects (z = 2.5). Both stay well above zero.
+
+### 33.157 The probes at layer 0: the lead is not in the ending's token; the first layer builds it
+
+Under endings apart the word probes read a word's grammar best at layers 1–2, against layer 3 under BPE 17k (§33.84).
+The text asks whether the lead is already in the ending's token: layer 0, the input vector at a word's last token,
+which under endings apart is the ending itself. The record of 11 October holds every layer, layer 0 included
+(`probe_words_20261011T070939`: the nulls at full training, 151M tokens, 50k, four seeds; trained on even validation
+windows, tested on odd). It is read here by layer, paired by seed. No prediction was recorded: the figures were in a
+record made before.
+
+| endings apart minus BPE 17k, points | layer 0 | layer 1 | layer 2 | layer 3 | layer 4 |
+|---|---|---|---|---|---|
+| case, all words | +0.3 ± 0.2 (3/4) | **+3.7 ± 0.5 (4/4)** | +3.0 ± 0.2 | +0.3 ± 0.3 | −1.3 ± 0.4 |
+| case, where context decides | −1.5 ± 0.3 (0/4) | +3.1 ± 2.1 (3/4) | **+3.4 ± 1.0 (4/4)** | −1.0 ± 0.2 | −4.1 ± 0.3 |
+| number | +0.4 ± 0.2 (4/4) | **+2.9 ± 0.1 (4/4)** | +2.7 ± 0.1 | +2.0 ± 0.1 | +1.5 ± 0.2 |
+| gender | +0.4 ± 0.1 (4/4) | **+6.0 ± 0.3 (4/4)** | +4.7 ± 0.3 | +4.3 ± 0.1 | +3.3 ± 0.2 |
+
+- **At layer 0 the two tokenizers are level within half a point.** The ending's own vector says no more of a word's
+  case, number or gender than BPE 17k's last token. One ending serves many words and many readings.
+- **The lead appears at layer 1:** +3.7 points on case, +2.9 on number, +6.0 on gender. The first layer reads the
+  ending with its stem.
+- **Under BPE 17k the deeper layers catch up on case,** and pass it where context decides (layers 3–4). Number and
+  gender keep endings apart's lead to the last layer.
+
+**What it changes for the thesis.**
+1. **The lead is built, not given.** It is not in the ending's token but in the first layer, which joins the ending
+   to its stem: the model reads an ending it can see apart.
+2. **This fits where the gain sits** (§33.156): in the words the rule cuts, as better predictions of their endings.

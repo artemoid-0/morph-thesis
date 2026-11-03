@@ -72,9 +72,10 @@ training steps, to match endings apart.
 middle and low frequency; over articles the headline's interval is +0.0142 to +0.0188 on validation, and the test
 articles differ by 2.5 standard errors.
 
-**Without the GPU**, in order:
-1. the probes at layer 0;
-2. the figures: the law with all five conditions and bands, Figure 3.1 in two, a figure for item 3.
+**Answered** (§33.157): the probes at layer 0. The lead is not in the ending's token (level at layer 0); the first
+layer builds it (+3.7, +2.9, +6.0 points on case, number, gender).
+
+**Without the GPU:** the figures — the law with all five conditions and bands, Figure 3.1 in two, a figure for item 3.
 
 **Optional**, if hours remain:
 - what case's +0.0015 at 30M is made of: 8 runs, ~10.8 h;
