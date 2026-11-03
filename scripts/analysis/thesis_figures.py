@@ -12,13 +12,21 @@ controls and contrasts in grey.
   fig_q2_end        each feature against its same-shape null, end of training
   fig_early_help    a feature's gain over its null along training
   fig_law_ukrainian Ukrainian case's gain against the null's validation BPB: by data
-                    and budget, and by tokenizer
-  fig_law_english   English part of speech's: by schedule, and by model width
+                    and budget (all five conditions), and by tokenizer; bands, the
+                    standard error over seeds
+  fig_law_english   English part of speech's: by schedule, and by model width, with bands
   fig_tokenizer     BPE 17k with endings apart against BPE 17k, null against null,
                     along training and against the reference null's BPB, with
                     Unigram 17k for contrast; width 1024's runs, with the 1,000-step
                     warm-up it needs (journey §33.132), are all the second machine's,
                     and its legend key says so; so is width 512 at full training
+  fig_tokenizer_budget  the same lead at width 128 alone: the data and the budgets, with
+                    Unigram 17k (Figure 3.1's lines, split in two)
+  fig_tokenizer_width   the same lead at widths 256, 512 and 1024, with width 1024 at full
+                    training, and width 128 at 10k for reference
+  fig_tokenizer_by_word where the 5M model's lead at full training sits, by word, on
+                    validation and on test: from the `tokenizer_by_word` audit record
+                    (journey §33.156), the latest one
 
 A figure is drawn only if every run it is planned to show exists (as in
 demo_figures.py): one that silently dropped points would read as another result.
@@ -106,7 +114,10 @@ TXT = {
                   ('англійська: словозміна', EN('mconst'), EN('mfeatlex'))],
         'law': [  # panel: reference null BPB, conditions
             (1.10, [('151 млн токенів, 50 тис. кроків', UK('mconst'), UK('ucase')),
-                    ('38 млн токенів, 10 тис. кроків', U5('mconst', '_st10k'), U5('ucase', '_st10k'))]),
+                    ('151 млн токенів, 5 тис. кроків', UK('mconst', '0.2', '_st5k'), UK('ucase', '0.2', '_st5k')),
+                    ('38 млн токенів, 10 тис. кроків', U5('mconst', '_st10k'), U5('ucase', '_st10k')),
+                    ('7,6 млн токенів, 10 тис. кроків', UK('mconst', '0.01', '_st10k'), UK('ucase', '0.01', '_st10k')),
+                    ('1,5 млн токенів, 10 тис. кроків', UK('mconst', '0.002', '_st10k'), UK('ucase', '0.002', '_st10k'))]),
             (1.55, [('50 тис. кроків', EN('mconst'), EN('pos')),
                     ('20 тис. кроків', EN('mconst') + '_st20k', EN('pos') + '_st20k'),
                     ('10 тис. кроків', EN('mconst') + '_st10k', EN('pos') + '_st10k'),
@@ -135,6 +146,13 @@ TXT = {
         'tok_widths': [('ширина 128', '-'), ('ширина 256', '-.'), ('ширина 512', ':'),
                        ('ширина 1024 (друга машина)', LONG_DASH)],
         'unigram': 'Unigram 17k',
+        'tok_1024_full': '151 млн токенів, 50 тис. кроків, ширина 1024',
+        'by_word': {'cats': [('cut 1-99', 'поділені правилом, 1–99 разів'), ('cut 100-9,999', 'поділені, 100–9 999 разів'),
+                             ('cut 10,000+', 'поділені, 10 000 разів і більше'), ('cut unseen', 'поділені, не бачені'),
+                             ('uncut 1-99', 'не поділені, 1–99 разів'), ('uncut 100-9,999', 'не поділені, 100–9 999 разів'),
+                             ('uncut 10,000+', 'не поділені, 10 000 разів і більше'), ('uncut unseen', 'не поділені, не бачені'),
+                             ('non-word', 'не слова')],
+                    'splits': ('валідація', 'тест'), 'x': 'перевага над BPE 17k, біти на байт'},
     },
     'en': {
         'gain': 'gain over the control,\nbits per byte',
@@ -172,9 +190,17 @@ TXT = {
         'tok_widths': [('width 128', '-'), ('width 256', '-.'), ('width 512', ':'),
                        ('width 1024 (second machine)', LONG_DASH)],
         'unigram': 'Unigram 17k',
+        'tok_1024_full': '151M tokens, 50k steps, width 1024',
+        'by_word': {'cats': [('cut 1-99', 'cut by the rule, seen 1–99 times'), ('cut 100-9,999', 'cut, 100–9,999 times'),
+                             ('cut 10,000+', 'cut, 10,000 times or more'), ('cut unseen', 'cut, unseen'),
+                             ('uncut 1-99', 'not cut, 1–99 times'), ('uncut 100-9,999', 'not cut, 100–9,999 times'),
+                             ('uncut 10,000+', 'not cut, 10,000 times or more'), ('uncut unseen', 'not cut, unseen'),
+                             ('non-word', 'not words')],
+                    'splits': ('validation', 'test'), 'x': 'lead over BPE 17k, bits per byte'},
     },
 }
-_EN_LAW_NAMES = [['151M tokens, 50k steps', '38M tokens, 10k steps'],
+_EN_LAW_NAMES = [['151M tokens, 50k steps', '151M tokens, 5k steps', '38M tokens, 10k steps', '7.6M tokens, 10k steps',
+                  '1.5M tokens, 10k steps'],
                  ['50k steps', '20k steps', '10k steps', '5k steps'],
                  ['width 128, 50k steps', 'width 128, 10k steps', 'width 256, 10k steps', 'width 256, 20k steps',
                   'width 64, 10k steps'],
@@ -195,7 +221,24 @@ def needs(lang):
     for _, fr, x, _, _ in t['tok']:
         tok += [TOK('mconst', 'bpe_uk_17k', fr, x), TOK('mconst', 'bpeend_uk_17k', fr, x)]
     out['fig_tokenizer'] = tok + [TOK('mconst', 'unigram_uk_17k')]
+    out['fig_tokenizer_budget'] = [x for _, fr, xx, _, _ in tok_budget(t) for x in
+                                   (TOK('mconst', 'bpe_uk_17k', fr, xx), TOK('mconst', 'bpeend_uk_17k', fr, xx))] \
+        + [TOK('mconst', 'unigram_uk_17k')]
+    out['fig_tokenizer_width'] = [x for _, fr, xx, _, _ in tok_width(t) for x in
+                                  (TOK('mconst', 'bpe_uk_17k', fr, xx), TOK('mconst', 'bpeend_uk_17k', fr, xx))]
+    out['fig_tokenizer_by_word'] = []          # from an audit record, not runs
     return out
+
+
+def tok_budget(t):
+    """Figure 3.1's lines at width 128: the data and the budgets."""
+    return [row for row in t['tok'] if row[4] == '-']
+
+
+def tok_width(t):
+    """Figure 3.1's lines of the wider models, width 1024 at full training added, and width 128 at 10k."""
+    ref = [row for row in t['tok'] if row[4] == '-' and row[2] == '_st10k']
+    return ref + [row for row in t['tok'] if row[4] != '-'] + [(t['tok_1024_full'], '0.2', '_wu1000_w1024', 0, LONG_DASH)]
 
 
 _NAMED = set()
@@ -233,10 +276,11 @@ def early(R, base, feat):
 
 
 def law(R, null, feat):
-    """[(null BPB, gain)] averaged over the seeds, to each run's best step (the law's axis); the seeds."""
+    """[(null BPB, gain, standard error)] averaged over the seeds, to each run's best step (the law's
+    axis); the seeds."""
     pts, seeds, left = runs.gain_curve(R, null, feat)
     named(f'{feat} against {null}', left)
-    return [(b, g) for _, b, g, _ in pts], len(seeds)
+    return [(b, g, ms([x for _, x in v])[1]) for _, b, g, v in pts], len(seeds)
 
 
 def lead(R, ref, other):
@@ -308,7 +352,10 @@ def _law(R, t, path, panels, anchors):
             pts, ns = law(R, n, f)
             if not pts:
                 continue
-            ax.plot([a for a, _ in pts], [b for _, b in pts], '-', lw=1.4, color=SERIES[k], label=f'{name}  (n = {ns})')
+            xs, m, e = [p[0] for p in pts], [p[1] for p in pts], [p[2] for p in pts]
+            ax.plot(xs, m, '-', lw=1.4, color=SERIES[k], label=f'{name}  (n = {ns})')
+            ax.fill_between(xs, [u - v for u, v in zip(m, e)], [u + v for u, v in zip(m, e)], color=SERIES[k],
+                            alpha=0.14, lw=0)
         ax.axhline(0, color=INK, lw=0.8)
         ax.axvline(ref, color=GREY, lw=0.7, ls=':')
         ax.invert_xaxis()
@@ -332,24 +379,25 @@ def fig_law_english(R, t, path):
     _law(R, t, path, [t['law'][1], t['law'][2]], anchors=(-0.12, -0.36))
 
 
-def fig_tokenizer(R, t, path):
-    fig, (a, b) = plt.subplots(1, 2, figsize=(WIDTH, 11.0 * CM), sharey=True)
-    for name, fr, x, k, ls in t['tok']:
+def _tokenizer(R, t, path, rows, unigram, keys, widths, height=11.0):
+    fig, (a, b) = plt.subplots(1, 2, figsize=(WIDTH, height * CM), sharey=True)
+    for name, fr, x, k, ls in rows:
         pts = lead(R, TOK('mconst', 'bpe_uk_17k', fr, x), TOK('mconst', 'bpeend_uk_17k', fr, x))
         st_, rb, m, e = [p[0] for p in pts], [p[1] for p in pts], [p[2] for p in pts], [p[3] for p in pts]
         for ax, xs in ((a, st_), (b, rb)):
             ax.plot(xs, m, linestyle=ls, color=SERIES[k], lw=1.5)
             ax.fill_between(xs, [u - v for u, v in zip(m, e)], [u + v for u, v in zip(m, e)], color=SERIES[k], alpha=0.14, lw=0)
-    pts = lead(R, TOK('mconst', 'bpe_uk_17k'), TOK('mconst', 'unigram_uk_17k'))
-    st_, rb, m, e = [p[0] for p in pts], [p[1] for p in pts], [p[2] for p in pts], [p[3] for p in pts]
-    for ax, xs in ((a, st_), (b, rb)):
-        ax.plot(xs, m, '--', color=GREY, lw=1.4)
-        ax.fill_between(xs, [u - v for u, v in zip(m, e)], [u + v for u, v in zip(m, e)], color=GREY, alpha=0.14, lw=0)
-    # the contrast is labelled on its line, not in the legend (n = 4 as well): past its end and under
-    # the zero line, where nothing else runs (beside its end run the width-1024 lines, at step 2,000
-    # the width-512 ones)
-    a.annotate(t['unigram'], xy=(st_[-1], m[-1]), xytext=(4, -4), textcoords='offset points', color=MUTED,
-               fontsize=9.5, va='top', ha='left')
+    if unigram:
+        pts = lead(R, TOK('mconst', 'bpe_uk_17k'), TOK('mconst', 'unigram_uk_17k'))
+        st_, rb, m, e = [p[0] for p in pts], [p[1] for p in pts], [p[2] for p in pts], [p[3] for p in pts]
+        for ax, xs in ((a, st_), (b, rb)):
+            ax.plot(xs, m, '--', color=GREY, lw=1.4)
+            ax.fill_between(xs, [u - v for u, v in zip(m, e)], [u + v for u, v in zip(m, e)], color=GREY, alpha=0.14, lw=0)
+        # the contrast is labelled on its line, not in the legend (n = 4 as well): past its end and under
+        # the zero line, where nothing else runs (beside its end run the width-1024 lines, at step 2,000
+        # the width-512 ones)
+        a.annotate(t['unigram'], xy=(st_[-1], m[-1]), xytext=(4, -4), textcoords='offset points', color=MUTED,
+                   fontsize=9.5, va='top', ha='left')
     step_axis(a, t['lang'], 50000)
     b.invert_xaxis()
     numbers(b, t['lang'], 'x')
@@ -366,10 +414,12 @@ def fig_tokenizer(R, t, path):
     # (nine lines' full names overflowed the figure in Ukrainian); blank entries keep each key in its
     # own column, which the legend fills top to bottom
     from matplotlib.lines import Line2D
-    colours = [Line2D([], [], color=SERIES[k], lw=1.5) for _, k in t['tok_keys']]
-    widths = [Line2D([], [], color=INK, lw=1.5, ls=ls) for _, ls in t['tok_widths']]
-    blank = [Line2D([], [], lw=0)] * (len(widths) - len(colours))
-    fig.legend(colours + blank + widths, [n for n, _ in t['tok_keys']] + [''] * len(blank) + [n for n, _ in t['tok_widths']],
+    colours = [Line2D([], [], color=SERIES[k], lw=1.5) for _, k in keys]
+    lines = [Line2D([], [], color=INK, lw=1.5, ls=ls) for _, ls in widths]
+    blank = [Line2D([], [], lw=0)] * abs(len(lines) - len(colours))
+    left_, right_ = (colours, lines + blank) if len(colours) >= len(lines) else (colours + blank, lines)
+    fig.legend(left_ + right_, [n for n, _ in keys] + [''] * (len(left_) - len(keys)) + [n for n, _ in widths]
+               + [''] * (len(right_) - len(widths)),
                title=t['tok_title'], title_fontsize=9, loc='lower center', ncol=2, frameon=False, fontsize=8.8,
                bbox_to_anchor=(0.5, 0.0), alignment='left')
     fig.tight_layout(rect=(0, 0.25, 1, 1), w_pad=1.2)
@@ -377,8 +427,56 @@ def fig_tokenizer(R, t, path):
     plt.close(fig)
 
 
+def fig_tokenizer(R, t, path):
+    _tokenizer(R, t, path, t['tok'], True, t['tok_keys'], t['tok_widths'])
+
+
+def fig_tokenizer_budget(R, t, path):
+    keys = [kk for kk in t['tok_keys'] if kk[1] in {row[3] for row in tok_budget(t)}]
+    _tokenizer(R, t, path, tok_budget(t), True, keys, t['tok_widths'][:1], height=9.5)
+
+
+def fig_tokenizer_width(R, t, path):
+    _tokenizer(R, t, path, tok_width(t), False, t['tok_keys'], t['tok_widths'])
+
+
+def fig_tokenizer_by_word(R, t, path):
+    """Where the 5M model's lead at full training sits, by word (journey §33.156), validation and test."""
+    import glob
+    import json
+    recs = sorted(glob.glob(os.path.join(runs.AUDITS, 'tokenizer_by_word_*.json')))
+    if not recs:
+        print('  NOT DRAWN fig_tokenizer_by_word: no tokenizer_by_word record')
+        return
+    rep = json.load(open(recs[-1]))['results']['report']
+    w = t['by_word']
+    cats = w['cats']
+    fig, ax = plt.subplots(figsize=(WIDTH, 10.5 * CM))
+    import numpy as np
+    y = np.arange(len(cats))[::-1]
+    for j, (split, colour) in enumerate((('validation', SERIES[0]), ('test', SERIES[1]))):
+        m = [rep[split]['by'][k]['mean'] for k, _ in cats]
+        e = [rep[split]['by'][k]['se'] for k, _ in cats]
+        ax.barh(y + (0.2 if j == 0 else -0.2), m, height=0.38, color=colour, xerr=e, label=w['splits'][j],
+                error_kw={'elinewidth': 0.8, 'ecolor': INK, 'capsize': 0}, edgecolor='white', linewidth=0.6)
+    ax.set_yticks(y)
+    ax.set_yticklabels([n for _, n in cats])
+    ax.axvline(0, color=INK, lw=0.8)
+    ax.grid(axis='x', color='#e6e5e0', lw=0.6)
+    ax.set_axisbelow(True)
+    numbers(ax, t['lang'], 'x')
+    from matplotlib.ticker import MultipleLocator
+    ax.xaxis.set_major_locator(MultipleLocator(0.002))
+    ax.set_xlabel(w['x'])
+    ax.legend(frameon=False, loc='center right', fontsize=9.5)       # the counts are explained in the caption
+    fig.tight_layout()
+    fig.savefig(path)
+    plt.close(fig)
+
+
 FIGS = {'fig_q2_end': fig_q2_end, 'fig_early_help': fig_early_help, 'fig_law_ukrainian': fig_law_ukrainian,
-        'fig_law_english': fig_law_english, 'fig_tokenizer': fig_tokenizer}
+        'fig_law_english': fig_law_english, 'fig_tokenizer': fig_tokenizer, 'fig_tokenizer_budget': fig_tokenizer_budget,
+        'fig_tokenizer_width': fig_tokenizer_width, 'fig_tokenizer_by_word': fig_tokenizer_by_word}
 
 
 def main():

@@ -2516,3 +2516,23 @@ record made before.
 1. **The lead is built, not given.** It is not in the ending's token but in the first layer, which joins the ending
    to its stem: the model reads an ending it can see apart.
 2. **This fits where the gain sits** (§33.156): in the words the rule cuts, as better predictions of their endings.
+
+### 33.158 The text's figures: the law with five conditions and bands, Figure 3.1 in two, and where the gain sits
+
+The text's list of 30 October asks for three figures. `scripts/analysis/thesis_figures.py` draws them in Ukrainian and
+in English into `exports/figures/{uk,en}/`. The figures the text already holds keep their names.
+- **`fig_law_ukrainian`:** the Ukrainian law with all five conditions, each with a band of the standard error over
+  seeds. The five are 151M tokens at 50k and at 5k, and 10k on ~38M, ~7.6M and ~1.5M. Panel б keeps the six
+  tokenizers, now with bands. **`fig_law_english`** has its bands too.
+- **`fig_tokenizer_budget` and `fig_tokenizer_width`:** Figure 3.1's lines in two figures. The first holds width 128,
+  its data and budgets, with Unigram 17k. The second holds widths 256, 512 and 1024 with width 128 at 10k for
+  reference, and adds width 1024 at full training (§33.149). `fig_tokenizer` itself is unchanged.
+- **`fig_tokenizer_by_word`:** where the 5M model's lead at full training sits (§33.156). It reads the latest
+  `tokenizer_by_word` record: each word class and frequency band, validation and test, with the standard error over
+  seeds.
+
+Each was looked at in both languages before it went to `exports/`. One fix: the English bars' axis crowded its labels,
+and now steps by 0.002.
+
+**What it changes for the thesis:** the figures the text asked for are drawn. Their captions are the text's; what
+each needs is in the channel.
