@@ -6,7 +6,7 @@ Each prediction was recorded in the [journey](record/journey/README.md) **before
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 217 right, 13 half right, 105 wrong, 10 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test, 2 whose condition was not met), 1 withdrawn — of 346.
+**Tally:** 223 right, 13 half right, 106 wrong, 10 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test, 2 whose condition was not met), 1 withdrawn — of 353.
 
 *Key to the tally (added 19 October 2026). Counted half right: P19, P46, P54 — with the eight
 whose outcome begins "half right" or "partly right". Counted right: P33, P172, P273, P303, P317 — right by their
@@ -380,3 +380,10 @@ The wrong ones carried the information:
 | P344 | On the three agreement phenomena together, the 30M model's endings-apart nulls at full training beat BPE 17k's at every seed | right — +0.2 to +0.4 | §33.150 |
 | P345 | On preposition–case government, endings apart leads at every seed in the 30M model | right — +0.4 to +0.8 | §33.150 |
 | P346 | Without the two kinds of error the check found, the 5M model's result on agreement and on government keeps its sign and its count of seeds | right — +0.7 and +1.5, 4/4 each | §33.150 |
+| P347 | On the held-out test split the 5M model's tokenizer gain at full training is positive at every seed and within 0.002 of its validation value (+0.0165) | wrong — positive at every seed (+0.0126), but 0.0039 smaller | §33.152 |
+| P348 | At 30M parameters at full training, on the test split too, positive at every seed and within 0.002 of +0.0072 | right — +0.0062, 0.0010 smaller | §33.152 |
+| P349 | At ~38M tokens and 10k, endings apart's null beats BPE 8k's, of nearly the same characters per token, at every seed | right — +0.0829 | §33.152 |
+| P350 | BPE 32k's null, with 1.9M more embedding parameters, beats endings apart's at every seed | right — −0.0276, 0/4 | §33.152 |
+| P351 | On UD Ukrainian-IU's gold test labels the tagger's case is right for at least 90% of the words that have a case | right — 94.2% | §33.153 |
+| P352 | On the words whose gold case differs from their form's majority case in the corpus, where context decides, the tagger is right for at least 60% | right — 81.1% | §33.153 |
+| P353 | Where the tagger and the form's majority case disagree, the tagger is right more often than the majority case | right — 87.0% against 8.3% | §33.153 |

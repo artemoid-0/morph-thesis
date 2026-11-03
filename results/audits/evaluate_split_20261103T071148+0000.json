@@ -1,0 +1,61 @@
+{
+  "script": "evaluate_split",
+  "args": {
+    "runs": [
+      "c58ba0662048",
+      "57f76ed51760"
+    ],
+    "all": false,
+    "split": "validation",
+    "results_dir": "/home/neko/PycharmProjects/Morph/results",
+    "out": null,
+    "pair": []
+  },
+  "timestamp_utc": "2026-11-03T07:11:48+00:00",
+  "results": {
+    "rows": [
+      {
+        "run_id": "c58ba0662048",
+        "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+        "seed": 0,
+        "split": "validation",
+        "loss": 3.9865659917675473,
+        "ppl": 53.869582782511564,
+        "bpb": 0.9418680119835586,
+        "tokens": 325632,
+        "val_bpb": 0.9418680119835586
+      },
+      {
+        "run_id": "57f76ed51760",
+        "label": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "seed": 0,
+        "split": "validation",
+        "loss": 3.519076749199032,
+        "ppl": 33.753251357568814,
+        "bpb": 0.9265632305865169,
+        "tokens": 363008,
+        "val_bpb": 0.9265632305865169
+      }
+    ],
+    "pairs": []
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-11-03T07:11:48+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "b905a96eb2034009f52e3aeb7638bb0797831b1f",
+    "git_dirty": true
+  }
+}

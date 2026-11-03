@@ -55,14 +55,19 @@ The thesis text's list of 30–31 October (§33.143): fifteen limits a reviewer 
 (the headline +0.0141 to +0.0189); the features' one-sided 95% bound is 0.003, not 0.002, and four seeds see a feature's
 effect only from about 0.002–0.006.
 
+**Answered** (§33.152): the test split and every vocabulary size. On the held-out test articles the gain is +0.0126
+(1.3%) at 5M parameters and +0.0062 (0.83%) at 30M, positive at every seed; at nearly the same token length plain BPE 8k
+loses by 0.083, and BPE 32k, with 1.9M more parameters, wins by 0.028.
+
+**Answered** (§33.153): item 8. On UD Ukrainian-IU's gold labels the tagger's case is right for 94.2% of the words with
+one, 81.1% where context decides, and 87.0% where it departs from the form's usual case (the form 8.3%).
+
 **Without the GPU**, in order:
-1. the gain against every vocabulary size;
-2. the probes at layer 0;
-3. item 4, the gain as compute or model size;
-4. item 3, where the gain sits, per word;
-5. the test split (it needs test caches);
-6. item 8, the tagger on gold labels (the treebank is downloaded);
-7. the figures.
+1. item 3, where the gain sits, per word, with a bootstrap over articles: why the test articles give less;
+2. item 4, the gain as compute or model size;
+3. the probes at layer 0;
+4. the multilingual tokenizers' ending exposure (downloaded);
+5. the figures.
 
 **Optional**, if hours remain:
 - what case's +0.0015 at 30M is made of: 8 runs, ~10.8 h;

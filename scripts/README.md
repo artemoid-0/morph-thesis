@@ -89,6 +89,7 @@ Most read the run records only; `probe.py`, `probe_words.py`, `loss_by_kind.py` 
 | `oov_audit.py` | What falls through to character fallback, and why? | historical |
 | `reconstruction_audit.py` | Is the morpheme token stream information-preserving? | historical |
 | `stream_roundtrip.py` | Does every tokenizer's cached stream decode to the same text, byte for byte? The check bits per byte across tokenizers rests on (G-75). | active |
+| `tagger_gold.py` | The tagger's case against UD Ukrainian-IU's gold labels, where context decides: the tagger in context, the form's majority case from the training lexicon and the dictionary's ambiguity, over all words, by part of speech and where the tagger and the form part; writes a `tagger_gold` audit record | active |
 | `verify_channels.py` | Assert that a surface-channel ablation did what it says. | historical |
 
 ## `ops/` — run, watch, pack and verify experiments; keep the documents honest

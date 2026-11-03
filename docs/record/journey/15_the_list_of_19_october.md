@@ -31,7 +31,10 @@ to plain BPE, shuffled case gains nothing, and the switch to a constant leaves t
 block and halves at 8 layers (§33.149). Inside the noun phrase and after a preposition, near the ceiling, endings apart
 makes about half the errors at 5M parameters and a third at 30M, at every seed (§33.150). Every row of the
 tokenizer's table holds at 95%; the features' one-sided 95% bound is 0.003, and four seeds see a feature's effect only
-from about 0.002–0.006 (§33.151).
+from about 0.002–0.006 (§33.151). On the held-out test articles the gain is 1.3% at 5M parameters and 0.83% at 30M,
+positive at every seed; at the same token length plain BPE 8k loses by 0.083, and BPE 32k wins by 0.028 (§33.152). On
+gold labels the tagger reads case where context decides: 81% of those words, and 87% where it departs from the form's
+usual case (§33.153).
 
 ---
 
@@ -2205,3 +2208,135 @@ is measured against the added flat vector (§33.19). Against the null's two vect
    only from about 0.002–0.006. "No feature helps" stays a statement about effects of that size.
 3. **§3.1 can describe the software in figures:** 125 Python modules, 18,473 lines of code and 140 tests. The work
    is 1,056 models and 470.7 GPU-hours.
+
+### 33.152 The test split and every vocabulary size: on held-out articles the gain is smaller; a larger vocabulary gains more
+
+Two more of item 5's formalities. The headline nulls at full training are scored on the corpus's test split. That
+split holds articles kept out of training and never used to choose anything; the minimal pairs of §33.147 came from
+it, and no model saw them. And endings apart is compared with plain BPE at every vocabulary size.
+
+**The test streams.** The tagger reads the test split under each tokenizer, and the null is derived from that file,
+as for validation (`ukrainian_pipeline.md`). The derivation reads the train stream, packed on the thesis machine, so
+it ran on the second machine (`derive_lexical_codes_20261103T070704`, `…T070850`). The files both machines built are
+identical by SHA-256. The two streams hold 410,864 and 453,882 tokens for the same 2,336,304 bytes.
+
+**The scorer.** `evaluate_split.py` now writes a record and pairs runs by seed (`--pair`). On validation it
+reproduces two runs' recorded BPB exactly, 0.9419 and 0.9266 (`evaluate_split_20261103T071148`).
+
+**Predictions** (recorded at 07:01 and 07:03 UTC, before any score):
+- **P347** (~85%): on the test split the 5M model's gain at full training is positive at every seed and within 0.002
+  of its validation value (+0.0165).
+- **P348** (~85%): at 30M parameters too, within 0.002 of +0.0072.
+- **P349** (~90%): at ~38M tokens and 10k, endings apart's null beats BPE 8k's, of nearly the same characters per
+  token (3.13 against 3.21), at every seed.
+- **P350** (~85%): BPE 32k's null beats endings apart's at every seed. Its embedding has 1.9M more parameters, and
+  the records had it 0.045 ahead of BPE 17k's.
+
+**The 5M model on the test split** (`evaluate_split_20261103T071109`; the thesis machine):
+- **BPE 17k:** 0.9560, 0.9615, 0.9581, 0.9586.
+- **Endings apart:** 0.9443, 0.9482, 0.9464, 0.9449.
+- **The gain: +0.0126 ± 0.0005 (1.3%, 4/4),** +0.0117 to +0.0137; 95% interval +0.0109 to +0.0142. On validation it
+  is +0.0165 (1.75%), so the test split gives 0.0039 less.
+- **Every model is worse on the test split, endings apart's more:** +0.0144 against validation for BPE 17k, +0.0183
+  for endings apart.
+
+**The 30M model on the test split** (`evaluate_split_20261103T070937`; the second machine):
+- **The gain: +0.0062 ± 0.0004 (0.83%, 4/4),** +0.0051 to +0.0068; 95% interval +0.0049 to +0.0074. On validation it
+  is +0.0072, so 0.0010 less.
+- **The shifts are small here:** +0.0018 for BPE 17k, +0.0029 for endings apart.
+
+**Choosing the checkpoint does not explain it.** Every run's best step is its last evaluation, or step 49,500 at the
+same BPB. The two held-out samples differ instead:
+- BPE 17k takes 7.4% more tokens per byte on the test articles than on validation (0.176 against 0.164);
+- endings apart adds 10.5% more tokens there, against 11.4%, so fewer of the words the rule cuts.
+
+**Every vocabulary size** (`paired_cells_20261103T070353`; the thesis machine, ~38M tokens, 10k, the nulls):
+
+| endings apart's null over | gain | seeds |
+|---|---|---|
+| BPE 4k | +0.1510 ± 0.0006 | 4/4 |
+| BPE 8k (3.13 characters per token) | **+0.0829 ± 0.0007** | 4/4 |
+| BPE 17k | +0.0174 ± 0.0014 | 4/4 |
+| BPE 32k | **−0.0276 ± 0.0009** | 0/4 |
+| Unigram 17k (3.07) | +0.0179 ± 0.0012 | 4/4 |
+
+- **At about the same token length** (BPE 8k, Unigram 17k) plain tokenizers lose to endings apart by 0.083 and 0.018.
+- **BPE 32k, with longer tokens and 1.9M more parameters, beats it by 0.028.** Endings apart's gain is 39% of what
+  going from 17k to 32k gains (0.0450), and it adds no parameters.
+- **The vocabularies differ in size, so the embeddings do too.** BPE 8k's has 1.1M fewer parameters than the 17k
+  models'.
+
+**Verdicts:**
+- **P347 wrong:** positive at every seed, but 0.0039 smaller than on validation.
+- **P348 right:** 0.0010 smaller.
+- **P349 right:** +0.0829.
+- **P350 right:** −0.0276, 0/4.
+
+The tally is 220 right, 13 half right, 106 wrong, 10 never tested, 1 withdrawn and 3 pending, of 353.
+
+**What it changes for the thesis.**
+1. **On held-out articles the headline gain is 1.3%, not 1.75%.** It stays positive at every seed, with its interval
+   well above zero. At 30M parameters it is 0.83%, not 0.97%.
+   - The validation figures stay the table's: every comparison in the text is on validation.
+   - The test split is a second sample of articles. The gain depends on the text, which holds fewer of the words the
+     rule cuts.
+2. **The gain is not the shorter tokens'.** At nearly the same token length, plain BPE 8k loses by 0.083.
+3. **A larger vocabulary gains more, with more parameters:** BPE 32k beats endings apart by 0.028. At the same
+   vocabulary and parameters, the endings rule is worth 39% of going from 17k to 32k.
+
+### 33.153 Item 8: on gold labels the tagger reads case where context decides
+
+The contextual case feature is uk_core_news_sm's reading of each word in its sentence. Its published case F1 (0.963)
+is measured on Ukr-Synth, whose labels are themselves automatic, and over all words. Item 8 asks how it does on gold
+labels, where the context decides. The treebank is UD Ukrainian-IU, test and dev (`external/ud_ukrainian_iu/`). The
+tagger 3.8.0 was trained on Ukr-Synth (its model card), not on this treebank.
+
+`scripts/audits/tagger_gold.py` (`tagger_gold_20261103T070729`) tags each gold sentence over its gold tokens. For
+every word with a gold case it compares three readings:
+- **the tagger's case** in context;
+- **the form's majority case** in the training corpus: the lexicon of the strictly causal feature (BPE 17k at 0.2),
+  looked up by the word's key as the streams compute it;
+- **the dictionary's readings** (pymorphy3): a form is case-ambiguous when its readings carry two cases or more.
+
+**Predictions** (recorded at 07:06 UTC, before the run):
+- **P351** (~70%): the tagger's case is right for at least 90% of the words that have one.
+- **P352** (~65%): on the words whose gold case differs from their form's majority case, it is right for at least 60%.
+- **P353** (~85%): where the tagger and the majority case disagree, the tagger is right more often.
+
+**The test split** (898 sentences, 10,240 words with a gold case):
+
+| words | n | tagger | majority case |
+|---|---|---|---|
+| all | 10,240 | **94.2%** | 73.3% |
+| the dictionary gives one case | 2,547 | 98.4% | 93.4% |
+| the dictionary gives two or more | 5,825 | 92.3% | 72.7% |
+| unknown to the dictionary | 1,868 | 94.7% | 47.7% |
+| nouns and pronouns | 5,689 | 93.1% | 77.6% |
+| adjectives, determiners, numerals | 2,962 | 94.3% | 65.7% |
+| prepositions | 1,588 | 98.2% | 71.8% |
+| **context decides** (gold ≠ the form's majority) | 1,890 | **81.1%** | 0% |
+| **the tagger departs from the majority** | 1,762 | **87.0%** | 8.3% |
+
+- **The majority case is known for 91.7% of the words.** A word unseen in the training text counts against it.
+- **Among the words it knows, the majority case is right for 79.9%.**
+- **Of 6,977 words gold gives no case, the tagger gives one to 93 (1.3%).**
+- **Dev agrees** (673 sentences, 7,141 words): 94.7% over all, 83.7% where context decides, and 88.8% where the tagger
+  departs from the majority (7.9% for the majority case).
+
+**Verdicts:**
+- **P351 right:** 94.2%.
+- **P352 right:** 81.1%.
+- **P353 right:** 87.0% against 8.3%.
+
+The tally is 223 right, 13 half right, 106 wrong, 10 never tested, 1 withdrawn and none pending, of 353.
+
+**The sentence** (the text's, item 8): accurate, so *the context is read by the tagger; the model does not need it*.
+
+**What it changes for the thesis.**
+1. **The contextual feature is accurate where it matters.** One word in five has a case other than its form's usual
+   one, and the tagger reads 81% of them. Where it departs from the form's usual case it is right 87% of the time,
+   against 8% for the form.
+2. **So the negative answer is not the tagger's.** The models gain nothing at full training from what the sentence adds
+   (§3.10). That is not because the feature is wrong where context decides.
+3. **One bound remains:** this is the tagger's reading of the sentence, including words to its right (the leak, G-38).
+   The strictly causal feature is the form's majority case, right for 73% of words with a case on gold labels.

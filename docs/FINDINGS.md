@@ -41,12 +41,13 @@ The drift is chance within training, not the seed's: a run repeated on another m
 **Q1 in Ukrainian, with morphology inside BPE: yes — and the gain lasts, to full training.**
 BPE that never joins a stem to its inflectional ending (cut by a dictionary rule from the word form alone) beats plain BPE of the same vocabulary size by **+0.0174 ± 0.0014 BPB (1.6%)** at a 10k budget, 4/4 from identical initial weights, though it reads 11% less text in the same steps.
 Unigram, cutting words elsewhere and into even more tokens, leads early, loses the lead by step 3,000 and gains nothing by the end (−0.0005 ± 0.0004): where the cuts fall matters, not how many there are.
+A second length control agrees: plain BPE 8k, of nearly endings apart's token length (3.13 characters per token against 3.21), ends **0.0829 ± 0.0007** behind it (4/4); BPE 32k, with longer tokens and 1.9M more parameters, ends 0.0276 ahead — endings apart's gain is 39% of what going from 17k to 32k gains, with no parameters added (~38M, 10k; §33.152).
 **It is the morpheme boundary:** BPE 17k trained with the same words cut as often, one letter off the rule's boundary (3.18 characters per token against endings apart's 3.21; 64.9% of words split against 64.4%), ends **0.0207 ± 0.0008 behind plain BPE 17k (−1.90%, 0/4)** and 0.0381 behind endings apart (§33.148).
 At width 512 Unigram's null ends **0.0056 ± 0.0009** behind BPE 17k's (0/4; on a second machine, where width 128 gives −0.0014 ± 0.0003; §33.126).
 Every tokenizer's validation stream decodes to the same text, byte for byte, so each one's bits per byte is a code length for that text (G-75).
 
 **At widths 128 and 256 it does not fade as a feature does.**
-At 20k it is +0.0169 ± 0.0007 (4/4); **at full training on four times the text (151M tokens, 50k) +0.0165 ± 0.0008 (1.75%, 4/4)**, its 95% interval +0.0141 to +0.0189 (every row of the tokenizer's table excludes zero, §33.151), flat from step 5,000 while the null falls from 1.13 to 0.944: about 0.017 at two corpus sizes and three budgets, wherever the null stands between 1.21 and 0.944 BPB.
+At 20k it is +0.0169 ± 0.0007 (4/4); **at full training on four times the text (151M tokens, 50k) +0.0165 ± 0.0008 (1.75%, 4/4)**, its 95% interval +0.0141 to +0.0189 (every row of the tokenizer's table excludes zero, §33.151); on the held-out test articles **+0.0126 ± 0.0005 (1.3%, 4/4)**, interval +0.0109 to +0.0142 — every model scores worse there, endings apart's 0.0039 more (§33.152), flat from step 5,000 while the null falls from 1.13 to 0.944: about 0.017 at two corpus sizes and three budgets, wherever the null stands between 1.21 and 0.944 BPB.
 At width 256 (four times the core's parameters) it is larger at every matched null BPB: **+0.0254 ± 0.0012 (2.6%, 4/4)** at 10k, settling at **+0.0218 ± 0.0029 (2.4%, 4/4)** at 20k, flat from step 7,500 (width 128 at 20k: +0.0169, 1.7%).
 
 **At a better learning rate it is smaller.**
@@ -58,7 +59,7 @@ The larger models ran at the default rate only.
 At width 512 (30M parameters, four times width 128) it is **+0.0125 ± 0.0009 (1.4%, 4/4)** at 10k, below both smaller widths.
 At the same point of learning it starts above width 256's (+0.041 against +0.038 at null BPB 1.18), then falls as a feature's gain does — below width 256's from 1.11 on, at width 128's level near 0.98 (+0.018), +0.014 at 0.92 — while the smaller widths' leads hold flat.
 At 20k it levels off from about step 7,500 at every seed, at **+0.0102 ± 0.0006 (1.25%, 4/4)**: smaller than at widths 128 and 256, but lasting (§33.94, §33.96, §33.100, §33.102).
-At full training (151M tokens, 50k, on a second machine) it is **+0.0072 ± 0.0003 (0.97%, 4/4)**, level from step 10,000 (+0.0078; +0.0072 at 25,000, +0.0077 at 45,000): less than half the 5M model's, and lasting (§33.142).
+At full training (151M tokens, 50k, on a second machine) it is **+0.0072 ± 0.0003 (0.97%, 4/4)**, level from step 10,000 (+0.0078; +0.0072 at 25,000, +0.0077 at 45,000): less than half the 5M model's, and lasting (§33.142); on the test articles +0.0062 ± 0.0004 (0.83%, 4/4; §33.152).
 
 **Beyond 30M parameters it is smaller again at 10k and 20k, and at full training as large as at 30M.**
 At width 1024 (85M parameters) at full training (151M tokens, 50k, the 1,000-step warm-up, a second machine) it is **+0.0071 ± 0.0004 (1.02%, 4/4)**, level from step 10,000 (+0.0069; +0.0073 at 25,000, +0.0076 at 45,000), against width 512's 0.97%: from 30M parameters on, the gain at full training does not fall (§33.149).
@@ -169,6 +170,8 @@ Under endings apart case leads its word form by +0.0014 ± 0.0002 (4/4), the lea
 On the law's axis, context without the leak falls as a feature's gain does (+0.0011 to +0.0013 over the word form at null BPB 1.25 to 1.05, +0.0002 at 0.94), while the leak, carrying the case of the noun being predicted, keeps +0.0012 to +0.0014 to the end.
 Under BPE 17k, on a second machine, the lead is +0.0005 ± 0.0007 (+0.0006 ± 0.0004 on the thesis machine), the leak +0.0006 ± 0.0001 (4/4), and the control level with the word form (−0.0001 ± 0.0007; §33.114).
 A context-aware feature helps before the model has learned to read the context itself; after that, it adds what the tagger saw of the word being predicted.
+**Not because the tagger misreads the context** (UD Ukrainian-IU's gold labels, §33.153): its case is right for **94.2%** of the words with one; where the gold case is not the form's usual one (one word in five) for **81.1%**; and where it departs from the form's usual case it is right **87.0%** of the time, the form 8.3%.
+The feature carries the context where context decides; the models at full training do not need it.
 
 **And in English.**
 Part of speech from a causal tagger (each word tagged from its left context alone) leads the word form by only +0.0006 ± 0.0004 at 10k and +0.0004 ± 0.0003 at 20k (3/4 each), against the tagged feature's +0.0031 and +0.0025; the leak is +0.0025 ± 0.0004 and +0.0021 ± 0.0005 (4/4 each), four fifths of the lead (§33.99, §33.107).

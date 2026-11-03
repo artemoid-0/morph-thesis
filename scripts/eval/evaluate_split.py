@@ -24,6 +24,13 @@ cache is comparable, and re-scoring is about a minute per checkpoint.
 
     python scripts/eval/evaluate_split.py --all --split test
     python scripts/eval/evaluate_split.py --runs <id> <id> --split test
+    python scripts/eval/evaluate_split.py --runs <id> ... --pair REFERENCE CELL
+
+--pair REFERENCE CELL (labels) also pairs the scored runs by seed: the gain is the reference's BPB
+minus the cell's (positive: the cell is better), on the split and on validation, with its mean ±
+standard error and 95% interval (morphlm.runs.interval). Every run scored here comes from one
+results directory, so from one machine. The rows and the pairs go to an `evaluate_split` audit
+record (journey §33.152).
 """
 
 import os
@@ -86,7 +93,12 @@ def main():
     ap.add_argument('--results-dir', default=os.path.join(ROOT, 'results'))
     ap.add_argument('--out', default=None,
                     help='write a JSON summary here')
+    ap.add_argument('--pair', nargs=2, action='append', default=[], metavar=('REFERENCE', 'CELL'),
+                    help="pair two labels' scored runs by seed (repeatable)")
     args = ap.parse_args()
+    from morphlm import runs as R
+    from morphlm.record import AuditRecord
+    rec = AuditRecord('evaluate_split', args, out_dir=os.path.join(ROOT, 'results', 'audits'))
 
     if args.all:
         ids = [d for d in sorted(os.listdir(args.results_dir))
@@ -151,6 +163,25 @@ def main():
         print('    some arms overfit the validation split more than others, and')
         print('    the comparisons themselves would need restating.')
 
+    pairs = []
+    for ref, cell in args.pair:
+        by = {(r['label'], r['seed']): r for r in rows}
+        seeds = sorted(s for (l, s) in by if l == ref and (cell, s) in by)
+        entry = {'reference': ref, 'cell': cell, 'seeds': seeds}
+        for key, name in (('bpb', args.split), ('val_bpb', 'validation')):
+            g = [by[(ref, s)][key] - by[(cell, s)][key] for s in seeds
+                 if by[(ref, s)][key] is not None and by[(cell, s)][key] is not None]
+            entry[name] = {'per_seed': g, 'interval': R.interval(g), 'positive': sum(x > 0 for x in g)}
+        pairs.append(entry)
+        print(f'  {cell} over {ref}, seeds {seeds}:')
+        for name in (args.split, 'validation'):
+            iv, e = entry[name]['interval'], entry[name]
+            if iv:
+                print(f'    {name:10} {iv["mean"]:+.4f} ± {iv["se"]:.4f} [{iv["low"]:+.4f}, {iv["high"]:+.4f}] '
+                      f'({e["positive"]}/{len(e["per_seed"])}): ' + ', '.join(f'{x:+.4f}' for x in e['per_seed']))
+    rec.add('rows', rows)
+    rec.add('pairs', pairs)
+    rec.write()
     if args.out:
         with open(args.out, 'w') as f:
             json.dump(rows, f, indent=2)

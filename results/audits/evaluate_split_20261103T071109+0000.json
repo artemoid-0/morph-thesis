@@ -1,0 +1,191 @@
+{
+  "script": "evaluate_split",
+  "args": {
+    "runs": [
+      "c58ba0662048",
+      "07dd78de8832",
+      "fe24a14162b2",
+      "b60e2ee58522",
+      "57f76ed51760",
+      "ae75b666d616",
+      "7e17426e0388",
+      "0d7539f05ca2"
+    ],
+    "all": false,
+    "split": "test",
+    "results_dir": "/home/neko/PycharmProjects/Morph/results",
+    "out": null,
+    "pair": [
+      [
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2"
+      ]
+    ]
+  },
+  "timestamp_utc": "2026-11-03T07:11:09+00:00",
+  "results": {
+    "rows": [
+      {
+        "run_id": "c58ba0662048",
+        "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+        "seed": 0,
+        "split": "test",
+        "loss": 3.7679584085792674,
+        "ppl": 43.29159081228634,
+        "bpb": 0.9559812550589014,
+        "tokens": 410624,
+        "val_bpb": 0.9418680119835586
+      },
+      {
+        "run_id": "07dd78de8832",
+        "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+        "seed": 1,
+        "split": "test",
+        "loss": 3.789657726549448,
+        "ppl": 44.24125507719949,
+        "bpb": 0.9614866611641874,
+        "tokens": 410624,
+        "val_bpb": 0.9463833955949095
+      },
+      {
+        "run_id": "fe24a14162b2",
+        "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+        "seed": 2,
+        "split": "test",
+        "loss": 3.7764639158795896,
+        "ppl": 43.66137813907539,
+        "bpb": 0.958139215594071,
+        "tokens": 410624,
+        "val_bpb": 0.9437313787160518
+      },
+      {
+        "run_id": "b60e2ee58522",
+        "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+        "seed": 3,
+        "split": "test",
+        "loss": 3.7782433710787955,
+        "ppl": 43.73914077245123,
+        "bpb": 0.9585906870887629,
+        "tokens": 410624,
+        "val_bpb": 0.9448127109353418
+      },
+      {
+        "run_id": "57f76ed51760",
+        "label": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "seed": 0,
+        "split": "test",
+        "loss": 3.3691031539951437,
+        "ppl": 29.05245978788885,
+        "bpb": 0.9442836162793216,
+        "tokens": 453632,
+        "val_bpb": 0.9265632305865169
+      },
+      {
+        "run_id": "ae75b666d616",
+        "label": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "seed": 1,
+        "split": "test",
+        "loss": 3.383089909435126,
+        "ppl": 29.46166448990297,
+        "bpb": 0.9482037883260632,
+        "tokens": 453632,
+        "val_bpb": 0.9285904866165768
+      },
+      {
+        "run_id": "7e17426e0388",
+        "label": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "seed": 2,
+        "split": "test",
+        "loss": 3.3767573004651554,
+        "ppl": 29.27568477898853,
+        "bpb": 0.9464289008781808,
+        "tokens": 453632,
+        "val_bpb": 0.9286164869586717
+      },
+      {
+        "run_id": "0d7539f05ca2",
+        "label": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "seed": 3,
+        "split": "test",
+        "loss": 3.371431959940133,
+        "ppl": 29.120196170791946,
+        "bpb": 0.9449363280541865,
+        "tokens": 453632,
+        "val_bpb": 0.9269252048849128
+      }
+    ],
+    "pairs": [
+      {
+        "reference": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+        "cell": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "seeds": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "test": {
+          "per_seed": [
+            0.011697638779579855,
+            0.013282872838124127,
+            0.011710314715890235,
+            0.013654359034576458
+          ],
+          "interval": {
+            "mean": 0.012586296342042669,
+            "se": 0.0005150269250853671,
+            "sd": 0.0010300538501707341,
+            "n": 4,
+            "low": 0.010947250807183114,
+            "high": 0.014225341876902223,
+            "upper": 0.013798341875476988,
+            "lower": 0.01137425080860835,
+            "p": 0.000150194829648731,
+            "mde": 0.0021429851211771955
+          },
+          "positive": 4
+        },
+        "validation": {
+          "per_seed": [
+            0.015304781397041722,
+            0.017792908978332633,
+            0.015114891757380122,
+            0.017887506050428992
+          ],
+          "interval": {
+            "mean": 0.016525022045795867,
+            "se": 0.0007605565181583601,
+            "sd": 0.0015211130363167202,
+            "n": 4,
+            "low": 0.014104591764623356,
+            "high": 0.018945452326968377,
+            "upper": 0.01831488794572994,
+            "lower": 0.014735156145861796,
+            "p": 0.0002133718635106696,
+            "mde": 0.0031646137761779064
+          },
+          "positive": 4
+        }
+      }
+    ]
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-11-03T07:11:09+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "b905a96eb2034009f52e3aeb7638bb0797831b1f",
+    "git_dirty": true
+  }
+}

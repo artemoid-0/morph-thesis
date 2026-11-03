@@ -1,0 +1,315 @@
+{
+  "script": "tagger_gold",
+  "args": {
+    "treebank": "/home/neko/PycharmProjects/Morph/external/ud_ukrainian_iu",
+    "bpe_path": "/home/neko/PycharmProjects/Morph/data/bpe_uk_17k.json",
+    "lexicon": "/home/neko/PycharmProjects/Morph/data/cache/lexicon_ucase_bpe_uk_17k.npz"
+  },
+  "timestamp_utc": "2026-11-03T07:07:29+00:00",
+  "results": {
+    "tagger": {
+      "model": "core_news_sm",
+      "version": "3.8.0",
+      "sources": [
+        "Ukr-Synth (e5d9eaf3)"
+      ]
+    },
+    "test": {
+      "all": {
+        "n": 10240,
+        "tagger": {
+          "n": 10240,
+          "right": 9651,
+          "share": 0.94248046875
+        },
+        "majority": {
+          "n": 10240,
+          "right": 7502,
+          "share": 0.7326171875
+        },
+        "majority_known": 9392
+      },
+      "nouns and pronouns": {
+        "n": 5689,
+        "tagger": {
+          "n": 5689,
+          "right": 5297,
+          "share": 0.9310950957989101
+        },
+        "majority": {
+          "n": 5689,
+          "right": 4414,
+          "share": 0.7758832835296186
+        },
+        "majority_known": 5408
+      },
+      "dictionary: ambiguous": {
+        "n": 5825,
+        "tagger": {
+          "n": 5825,
+          "right": 5375,
+          "share": 0.9227467811158798
+        },
+        "majority": {
+          "n": 5825,
+          "right": 4233,
+          "share": 0.7266952789699571
+        },
+        "majority_known": 5599
+      },
+      "adjectives, determiners, numerals": {
+        "n": 2962,
+        "tagger": {
+          "n": 2962,
+          "right": 2793,
+          "share": 0.9429439567859554
+        },
+        "majority": {
+          "n": 2962,
+          "right": 1947,
+          "share": 0.6573261309925725
+        },
+        "majority_known": 2397
+      },
+      "dictionary: one case": {
+        "n": 2547,
+        "tagger": {
+          "n": 2547,
+          "right": 2507,
+          "share": 0.9842952493129171
+        },
+        "majority": {
+          "n": 2547,
+          "right": 2378,
+          "share": 0.933647428347075
+        },
+        "majority_known": 2434
+      },
+      "context decides (gold \u2260 majority)": {
+        "n": 1890,
+        "tagger": {
+          "n": 1890,
+          "right": 1533,
+          "share": 0.8111111111111111
+        },
+        "majority": {
+          "n": 1890,
+          "right": 0,
+          "share": 0.0
+        },
+        "majority_known": 1890
+      },
+      "tagger \u2260 majority": {
+        "n": 1762,
+        "tagger": {
+          "n": 1762,
+          "right": 1533,
+          "share": 0.8700340522133939
+        },
+        "majority": {
+          "n": 1762,
+          "right": 146,
+          "share": 0.08286038592508513
+        },
+        "majority_known": 1762
+      },
+      "prepositions": {
+        "n": 1588,
+        "tagger": {
+          "n": 1588,
+          "right": 1560,
+          "share": 0.982367758186398
+        },
+        "majority": {
+          "n": 1588,
+          "right": 1140,
+          "share": 0.7178841309823678
+        },
+        "majority_known": 1586
+      },
+      "dictionary: unknown": {
+        "n": 1868,
+        "tagger": {
+          "n": 1868,
+          "right": 1769,
+          "share": 0.9470021413276232
+        },
+        "majority": {
+          "n": 1868,
+          "right": 891,
+          "share": 0.47698072805139186
+        },
+        "majority_known": 1359
+      },
+      "other": {
+        "n": 1,
+        "tagger": {
+          "n": 1,
+          "right": 1,
+          "share": 1.0
+        },
+        "majority": {
+          "n": 1,
+          "right": 1,
+          "share": 1.0
+        },
+        "majority_known": 1
+      },
+      "no gold case": {
+        "n": 6977,
+        "tagger_gives_one": 93
+      }
+    },
+    "dev": {
+      "all": {
+        "n": 7141,
+        "tagger": {
+          "n": 7141,
+          "right": 6760,
+          "share": 0.9466461279932783
+        },
+        "majority": {
+          "n": 7141,
+          "right": 5267,
+          "share": 0.7375717686598515
+        },
+        "majority_known": 6686
+      },
+      "nouns and pronouns": {
+        "n": 4073,
+        "tagger": {
+          "n": 4073,
+          "right": 3808,
+          "share": 0.9349373925853179
+        },
+        "majority": {
+          "n": 4073,
+          "right": 3158,
+          "share": 0.7753498649643997
+        },
+        "majority_known": 3899
+      },
+      "dictionary: one case": {
+        "n": 1675,
+        "tagger": {
+          "n": 1675,
+          "right": 1638,
+          "share": 0.9779104477611941
+        },
+        "majority": {
+          "n": 1675,
+          "right": 1568,
+          "share": 0.9361194029850747
+        },
+        "majority_known": 1608
+      },
+      "adjectives, determiners, numerals": {
+        "n": 1911,
+        "tagger": {
+          "n": 1911,
+          "right": 1816,
+          "share": 0.9502878074306645
+        },
+        "majority": {
+          "n": 1911,
+          "right": 1284,
+          "share": 0.6718995290423861
+        },
+        "majority_known": 1630
+      },
+      "dictionary: ambiguous": {
+        "n": 4191,
+        "tagger": {
+          "n": 4191,
+          "right": 3910,
+          "share": 0.9329515628728228
+        },
+        "majority": {
+          "n": 4191,
+          "right": 3020,
+          "share": 0.7205917442137915
+        },
+        "majority_known": 4043
+      },
+      "context decides (gold \u2260 majority)": {
+        "n": 1419,
+        "tagger": {
+          "n": 1419,
+          "right": 1187,
+          "share": 0.8365045806906272
+        },
+        "majority": {
+          "n": 1419,
+          "right": 0,
+          "share": 0.0
+        },
+        "majority_known": 1419
+      },
+      "tagger \u2260 majority": {
+        "n": 1337,
+        "tagger": {
+          "n": 1337,
+          "right": 1187,
+          "share": 0.8878085265519821
+        },
+        "majority": {
+          "n": 1337,
+          "right": 105,
+          "share": 0.07853403141361257
+        },
+        "majority_known": 1337
+      },
+      "prepositions": {
+        "n": 1157,
+        "tagger": {
+          "n": 1157,
+          "right": 1136,
+          "share": 0.9818496110630942
+        },
+        "majority": {
+          "n": 1157,
+          "right": 825,
+          "share": 0.7130509939498704
+        },
+        "majority_known": 1157
+      },
+      "dictionary: unknown": {
+        "n": 1275,
+        "tagger": {
+          "n": 1275,
+          "right": 1212,
+          "share": 0.9505882352941176
+        },
+        "majority": {
+          "n": 1275,
+          "right": 679,
+          "share": 0.5325490196078432
+        },
+        "majority_known": 1035
+      },
+      "no gold case": {
+        "n": 5465,
+        "tagger_gives_one": 36
+      }
+    }
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-11-03T07:07:29+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "b905a96eb2034009f52e3aeb7638bb0797831b1f",
+    "git_dirty": true
+  }
+}

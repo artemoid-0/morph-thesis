@@ -1,0 +1,191 @@
+{
+  "script": "evaluate_split",
+  "args": {
+    "runs": [
+      "ae4ee76ed3f6",
+      "4b055123e509",
+      "24403887879a",
+      "189021be282e",
+      "ae245ee3f706",
+      "ce52ac238dc9",
+      "9081e44ff649",
+      "f4d6528b2ecb"
+    ],
+    "all": false,
+    "split": "test",
+    "results_dir": "/home/vyzserver/morph/code/results",
+    "out": null,
+    "pair": [
+      [
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_w512",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_w512"
+      ]
+    ]
+  },
+  "timestamp_utc": "2026-11-03T07:09:37+00:00",
+  "results": {
+    "rows": [
+      {
+        "run_id": "ae4ee76ed3f6",
+        "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_w512",
+        "seed": 0,
+        "split": "test",
+        "loss": 2.9425126816566447,
+        "ppl": 18.963435575600112,
+        "bpb": 0.7465546753467237,
+        "tokens": 410624,
+        "val_bpb": 0.744721941495806
+      },
+      {
+        "run_id": "4b055123e509",
+        "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_w512",
+        "seed": 1,
+        "split": "test",
+        "loss": 2.943355466362247,
+        "ppl": 18.979424405693244,
+        "bpb": 0.746768501056363,
+        "tokens": 410624,
+        "val_bpb": 0.7450169355330675
+      },
+      {
+        "run_id": "24403887879a",
+        "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_w512",
+        "seed": 2,
+        "split": "test",
+        "loss": 2.9407333756920107,
+        "ppl": 18.929723822226507,
+        "bpb": 0.7461032417148313,
+        "tokens": 410624,
+        "val_bpb": 0.7441707813849999
+      },
+      {
+        "run_id": "189021be282e",
+        "label": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_w512",
+        "seed": 3,
+        "split": "test",
+        "loss": 2.9381795654867653,
+        "ppl": 18.88144257715566,
+        "bpb": 0.7454553060370823,
+        "tokens": 410624,
+        "val_bpb": 0.7438180459853082
+      },
+      {
+        "run_id": "ae245ee3f706",
+        "label": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_w512",
+        "seed": 0,
+        "split": "test",
+        "loss": 2.6396787102012547,
+        "ppl": 14.008702031560682,
+        "bpb": 0.739842398511485,
+        "tokens": 453632,
+        "val_bpb": 0.7371470702959722
+      },
+      {
+        "run_id": "ce52ac238dc9",
+        "label": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_w512",
+        "seed": 1,
+        "split": "test",
+        "loss": 2.642914584205059,
+        "ppl": 14.054105847186829,
+        "bpb": 0.7407493410022523,
+        "tokens": 453632,
+        "val_bpb": 0.7377645002397859
+      },
+      {
+        "run_id": "9081e44ff649",
+        "label": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_w512",
+        "seed": 2,
+        "split": "test",
+        "loss": 2.6376344355718815,
+        "ppl": 13.980093649065385,
+        "bpb": 0.7392694344461361,
+        "tokens": 453632,
+        "val_bpb": 0.7365343405938032
+      },
+      {
+        "run_id": "f4d6528b2ecb",
+        "label": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_w512",
+        "seed": 3,
+        "split": "test",
+        "loss": 2.641575108801538,
+        "ppl": 14.0352933203573,
+        "bpb": 0.7403739162615601,
+        "tokens": 453632,
+        "val_bpb": 0.7373539089955669
+      }
+    ],
+    "pairs": [
+      {
+        "reference": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_w512",
+        "cell": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_w512",
+        "seeds": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "test": {
+          "per_seed": [
+            0.006712276835238673,
+            0.006019160054110739,
+            0.006833807268695202,
+            0.005081389775522194
+          ],
+          "interval": {
+            "mean": 0.006161658483391702,
+            "se": 0.0004023111195046735,
+            "sd": 0.000804622239009347,
+            "n": 4,
+            "low": 0.004881324947549503,
+            "high": 0.0074419920192339015,
+            "upper": 0.007108442761448186,
+            "lower": 0.005214874205335218,
+            "p": 0.0006045588785954514,
+            "mde": 0.001673983827233407
+          },
+          "positive": 4
+        },
+        "validation": {
+          "per_seed": [
+            0.007574871199833799,
+            0.007252435293281567,
+            0.007636440791196741,
+            0.006464136989741354
+          ],
+          "interval": {
+            "mean": 0.007231971068513365,
+            "se": 0.00026943833766531275,
+            "sd": 0.0005388766753306255,
+            "n": 4,
+            "low": 0.006374498026308607,
+            "high": 0.008089444110718123,
+            "upper": 0.007866057400308699,
+            "lower": 0.006597884736718032,
+            "p": 0.00011347833717212374,
+            "mde": 0.0011211109954994613
+          },
+          "positive": 4
+        }
+      }
+    ]
+  },
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+    "timestamp_utc": "2026-11-03T07:09:37+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 5090 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": null,
+    "git_dirty": false
+  }
+}
