@@ -21,7 +21,7 @@ machine, and the seeds left out are named (FINDINGS, method point 11). Findings 
 | `check_cache.py` | The health of a built cache, in any language. | active |
 | `corpus_info.py` | Look at a dataset before it becomes a corpus: splits, sizes, fields, samples, estimates. | active |
 | `fiction_full.sh` | UberText fiction's two conditions at fraction 0.4, built from the public source on a machine that has none of it; CPU only. | historical |
-| `make_minimal_pairs_uk.py` | Ukrainian minimal pairs beyond subject–verb agreement, from the held-out test split: an adjective agreeing with its noun in case, number or gender, and a noun in the case its preposition governs; the changed form unambiguously wrong by the dictionary; MultiBLiMP's table format, with a stratified sample for a native speaker's check. | active |
+| `make_minimal_pairs_uk.py` | Ukrainian minimal pairs beyond subject–verb agreement, from the held-out test split: an adjective agreeing with its noun in case, number or gender, and a noun in the case its preposition governs; the changed form unambiguously wrong by the dictionary; MultiBLiMP's table format, with a stratified sample for a native speaker's check; `--refine` drops the check's two kinds of error from a built table (an adjective form that is a noun too, a noun of two lexemes). | active |
 | `derive_lexical_codes.py` | A strictly causal version of a contextual feature; and the controls derived the same way — the constant null, frequency bands, a shuffle, and `--recode-pos` (G-38: prepositions read from their form, `ucaseprep`). | active |
 | `derive_causal_pos.py` | `poscausal`: part of speech from a strictly causal tagger, every word tagged from its left context only. | active |
 | `derive_causal_ud.py` | `ugendercausal`, `unumbercausal`: Ukrainian gender and number from a strictly causal tagger, for every given tokenizer's stream; paragraphs decoded from the stream (G-75). | active |
@@ -40,7 +40,7 @@ machine, and the seeds left out are named (FINDINGS, method point 11). Findings 
 |---|---|---|
 | `blimp_eval.py` | BLiMP minimal pairs on existing checkpoints, paired by seed; `--machine second` scores the second machine's runs. | active |
 | `blimp_item_split.py` | Is a BLiMP gain agreement, or a shifted preference? From a blimp_eval record's per-item margins. | historical |
-| `multiblimp_eval.py` | MultiBLiMP's Ukrainian subject–verb agreement pairs on saved checkpoints, paired by seed; the scoring path must first reproduce the cached ids and codes of validation paragraphs; `--machine second` scores the second machine's runs. | active |
+| `multiblimp_eval.py` | MultiBLiMP's Ukrainian subject–verb agreement pairs on saved checkpoints, paired by seed; the scoring path must first reproduce the cached ids and codes of validation paragraphs; `--machine second` scores the second machine's runs; `--data` scores another table of the same shape, such as the noun-phrase and government pairs. | active |
 | `checkpoint_survey.py` | What is in results/, and which checkpoints still load? | historical |
 | `evaluate_split.py` | Score saved checkpoints on a HELD-OUT split. | historical |
 | `lookahead_check.py` | How much of the word-identity gain is within-word lookahead? | historical |

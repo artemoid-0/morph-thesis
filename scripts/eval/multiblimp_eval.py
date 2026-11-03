@@ -37,9 +37,15 @@ audit record.
     python scripts/eval/multiblimp_eval.py --labels 'bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2' 'bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2'
     python scripts/eval/multiblimp_eval.py --labels '*_ukwiki0.05_st10k' --device cpu --threads 4
     python scripts/eval/multiblimp_eval.py --labels '*_ukwiki0.05_st10k' --machine second
+    python scripts/eval/multiblimp_eval.py --labels '…' --data data/minimal_pairs/uk_np_pp_v1.tsv
 
 --machine second scores the second machine's runs, its twins' models included
 (results/audits/device_twins_models/; morphlm/runs.py).
+
+--data scores another table of the same shape: `make_minimal_pairs_uk.py`'s pairs (journey §33.147)
+test an adjective agreeing with its noun in case, number and gender (AN-C, AN-#, AN-G; reported
+together as "noun phrase" too) and a preposition's government (PP-C). Only the phenomena a table
+holds are reported.
 """
 import os
 import sys
@@ -60,7 +66,11 @@ from morphlm import runs as R  # noqa: E402   (`runs` names the run ids scored h
 from blimp_eval import encode, locate, score, self_check  # noqa: E402   (beside this script)
 
 DATA = os.path.join(ROOT, 'external', 'multiblimp', 'ukr', 'data.tsv')
-PHENOMENA = {'SV-#': 'number', 'SV-G': 'gender', 'SV-P': 'person'}
+PHENOMENA = {'SV-#': 'number', 'SV-G': 'gender', 'SV-P': 'person',
+             'AN-C': 'adjective case', 'AN-#': 'adjective number', 'AN-G': 'adjective gender',
+             'PP-C': 'government'}
+#: phenomena also reported together, when a table holds every one of them
+GROUPS = {'noun phrase': ('adjective case', 'adjective number', 'adjective gender')}
 
 
 def load_pairs(path):
@@ -183,13 +193,15 @@ def main():
     good, bad = [r['sen'] for r in rows], [r['wrong_sen'] for r in rows]
     phen = np.array([PHENOMENA[r['phenomenon']] for r in rows])
     n = len(rows)
+    masks = {p: phen == p for p in PHENOMENA.values() if (phen == p).any()}
+    masks.update({g: np.isin(phen, ps) for g, ps in GROUPS.items() if all(p in masks for p in ps)})
     where = {}
     for pat in a.labels:                 # in the order of the patterns
         where.update({k: v for k, v in locate([], [pat], R.results_of(a), a.machine).items() if k not in where})
     runs = [r for r in where if os.path.exists(os.path.join(where[r][0], r, 'model.pt'))]
     if not runs:
         raise SystemExit('no checkpoints matched')
-    print(f'  {n:,} pairs ({", ".join(f"{k} {int((phen == k).sum())}" for k in PHENOMENA.values())}); '
+    print(f'  {n:,} pairs ({", ".join(f"{k} {int(m.sum())}" for k, m in masks.items())}); '
           f'{len(runs)} checkpoint(s); device {device}', flush=True)
 
     enc, checked = Encoder(), {}
@@ -210,17 +222,16 @@ def main():
         worst = self_check(model, device, seqs, codes, nones)
         nll = score(model, device, seqs, codes, nones, range(len(seqs)), a.batch)
         margin = np.array([nll[n + i] - nll[i] for i in range(n)])
-        acc = {p: float((margin[phen == p] > 0).mean()) for p in PHENOMENA.values()}
+        acc = {p: float((margin[m] > 0).mean()) for p, m in masks.items()}
         acc['all'] = float((margin > 0).mean())
-        mar = {p: float(margin[phen == p].mean()) for p in PHENOMENA.values()}
+        mar = {p: float(margin[m].mean()) for p, m in masks.items()}
         mar['all'] = float(margin.mean())
         per_run[rid] = {'label': cfg.label(), 'seed': cfg.train.seed,
                         'machine': R.machine(where[rid][1]) or R.gpu(where[rid][1]),
                         'accuracy': acc, 'margin': mar, 'batch_check_max_diff': worst}
         items[rid] = margin.astype(np.float32)
         print(f'  {rid}  {cfg.label()}  seed {cfg.train.seed}: accuracy {100 * acc["all"]:.1f}% '
-              f'(number {100 * acc["number"]:.1f}, gender {100 * acc["gender"]:.1f}, '
-              f'person {100 * acc["person"]:.1f}); {time.time() - t0:.0f}s', flush=True)
+              f'({", ".join(f"{p} {100 * acc[p]:.1f}" for p in masks)}); {time.time() - t0:.0f}s', flush=True)
         del model
 
     if a.check_only:
@@ -236,7 +247,7 @@ def main():
             per_run[rid]['accuracy']['same length'] = float((m[same] > 0).mean())
             per_run[rid]['margin']['same length'] = float(m[same].mean())
         rec.add('same_length_pairs', {'count': int(same.sum()),
-                                      'by_phenomenon': {p: int((same & (phen == p)).sum()) for p in PHENOMENA.values()}})
+                                      'by_phenomenon': {p: int((same & m).sum()) for p, m in masks.items()}})
         print(f'  pairs of equal token length under every tokenizer scored: {int(same.sum()):,} of {n:,}')
     by = defaultdict(dict)
     for rid, r in per_run.items():
@@ -252,7 +263,7 @@ def main():
         if left:
             left_out[l] = {str(s): list(m) for s, m in left.items()}
             print(f'  {l} against {ref}: {R.left_out(left)}')
-    keys = ['all'] + list(PHENOMENA.values()) + (['same length'] if a.by_length else [])
+    keys = ['all'] + list(masks) + (['same length'] if a.by_length else [])
     summary = {}
     print(f'\n  MultiBLiMP, Ukrainian — accuracy, mean over seeds; paired by seed against {ref}: '
           f'points, mean ± se (seeds agreeing in sign)')

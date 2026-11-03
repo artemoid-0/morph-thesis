@@ -91,7 +91,15 @@ On MultiBLiMP's 2,744 Ukrainian subject–verb agreement pairs the endings-apart
 - width 512 at full training (151M tokens, 50k, a second machine): 87.2% against 82.2%, **+5.0 ± 0.6** (§33.142);
 - width 1024 (85M parameters, a second machine), 10k: **+5.3 ± 0.4**, from +4.6 to +6.3 at every seed, also at the two where the lead in bits per byte is nearly gone; width 512 on that machine +5.9 ± 0.3; at 20k +4.7 ± 0.3 against +5.8 ± 0.3 (two seeds); with a 1,000-step warm-up **+5.9 ± 0.4**, as much as width 512's +6.0 ± 0.5 under it; at 20k with that warm-up +5.4 ± 0.3 on the 151M-token corpus and +5.1 ± 0.1 on ~38M tokens (§33.141); at full training 89.4% against 86.2%, **+3.1 ± 0.2 (4/4)**, smaller than at 30M (+5.0) and 5M (+4.9) (§33.149).
 
-The grammatical gain grows with the model up to 30M parameters, not beyond (on one machine 85M's is no larger than 30M's), and it is not the code length's.
+**Beyond subject–verb agreement** (§33.147, §33.150).
+The thesis's own 3,999 pairs come from the test split: an adjective agreeing with the noun after it in case, number or gender, and a noun after a preposition in a case the preposition governs.
+A native speaker's check found 98 of 100 valid.
+Both tokenizers are near the ceiling, and endings apart makes fewer errors at every seed:
+- 5M at full training: 99.0% against 98.2%, +0.8 ± 0.1 points, **47% fewer errors**; agreement in the noun phrase **+0.6 ± 0.1**, government **+1.5 ± 0.3** (4/4 each); an adjective's number alone +0.2 ± 0.2 (2/4);
+- 30M at full training: 99.8% against 99.4%, +0.4 ± 0.1, **63% fewer errors**; agreement +0.3 ± 0.0, government +0.6 ± 0.1 (4/4 each);
+- the same without the check's two kinds of error (3,520 pairs), and on the pairs of equal token length.
+
+MultiBLiMP's gain grows with the model up to 30M parameters, not beyond (on one machine 85M's is no larger than 30M's), and it is not the code length's.
 At full training it is about the same at 5M and 30M parameters: +4.9 and +5.0 points, on two machines (§33.142).
 Between machines it moves more than within one: width 512's twins gain 0.9 ± 0.4 points less than the thesis machine's models, at every seed (§33.122).
 Exposing more endings elsewhere does not do it: BPE 4k is 1.2 points below BPE 17k, Unigram level with it.
@@ -100,7 +108,7 @@ Exposing more endings elsewhere does not do it: BPE 4k is 1.2 points below BPE 1
 On UberText 2.0's fiction (novels and prose; both tokenizers trained on it) endings apart beats BPE 17k at every seed: **+0.0097 ± 0.0010 BPB (0.8%, 4/4)** at 10k, half its share on Wikipedia, and **+5.3 ± 0.6 points (4/4)** on MultiBLiMP, as much as on Wikipedia or more.
 At full training on four times that text (154M tokens, 50k) it is **+0.0155 ± 0.0010 (1.45%, 4/4)**, flat from step 20,000 — near its share on Wikipedia, so the smaller share belonged to the 10k budget — and +2.3 ± 0.3 points (4/4) on MultiBLiMP, from 88.1% (§33.108, §33.109).
 
-*Two corpora (fiction at 10k, and at full training on a second machine), two corpus sizes and three budgets on Wikipedia, four widths (512 at 20k: seeds 2–3 on a second machine, and at full training on it; 1024 on a second machine).* (§33.61–§33.68, §33.76, §33.79, §33.86, §33.88, §33.94, §33.96, §33.100, §33.102, §33.108, §33.120, §33.122, §33.124, §33.132, §33.139, §33.141, §33.142)
+*Two corpora (fiction at 10k, and at full training on a second machine), two corpus sizes and three budgets on Wikipedia, four widths (512 at 20k: seeds 2–3 on a second machine, and at full training on it; 1024 on a second machine); two grammar tests, MultiBLiMP's subject–verb pairs and the thesis's own pairs inside the noun phrase and after a preposition.* (§33.61–§33.68, §33.76, §33.79, §33.86, §33.88, §33.94, §33.96, §33.100, §33.102, §33.108, §33.120, §33.122, §33.124, §33.132, §33.139, §33.141, §33.142, §33.150)
 
 ### Q2: no feature beats its null at the end of training
 

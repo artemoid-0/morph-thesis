@@ -89,6 +89,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [§33.147](15_the_list_of_19_october.md#33147-item-6-prepared-minimal-pairs-for-agreement-in-the-noun-phrase-and-for-government) — minimal pairs for agreement in the noun phrase and for government, prepared
 - [§33.148](15_the_list_of_19_october.md#33148-items-9-10-and-11-the-morpheme-boundary-matters-cases-content-acts-and-the-deficit-is-not-the-inputs-change) — the morpheme boundary matters; case's content acts; the deficit is not the input's change
 - [§33.149](15_the_list_of_19_october.md#33149-items-2-7-and-13-at-85m-parameters-the-gain-at-full-training-is-the-30m-models-it-holds-under-a-modern-block-and-falls-with-depth) — at 85M parameters the gain at full training is the 30M model's; it holds under a modern block and falls with depth
+- [§33.150](15_the_list_of_19_october.md#33150-item-6-the-tokenizers-grammatical-gain-covers-agreement-in-the-noun-phrase-and-government) — the tokenizer's grammatical gain covers agreement in the noun phrase and government
 - [§33.141](15_the_list_of_19_october.md#33141-item-1-without-repeating-the-text-the-gain-at-width-1024-is-smaller-and-still-rising) — without repeating the text the gain at width 1024 is smaller, and still rising
 - [§33.142](15_the_list_of_19_october.md#33142-full-training-at-30m-parameters-the-tokenizers-gain-is-smaller-and-lasts-case-stays-within-the-bound-english-gains-nothing) — full training at 30M parameters: the tokenizer's gain is smaller and lasts, case stays within the bound, English gains nothing
 
@@ -477,6 +478,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [33.147 Item 6 prepared: minimal pairs for agreement in the noun phrase and for government](15_the_list_of_19_october.md#33147-item-6-prepared-minimal-pairs-for-agreement-in-the-noun-phrase-and-for-government)
 - [33.148 Items 9, 10 and 11: the morpheme boundary matters, case's content acts, and the deficit is not the input's change](15_the_list_of_19_october.md#33148-items-9-10-and-11-the-morpheme-boundary-matters-cases-content-acts-and-the-deficit-is-not-the-inputs-change)
 - [33.149 Items 2, 7 and 13: at 85M parameters the gain at full training is the 30M model's; it holds under a modern block and falls with depth](15_the_list_of_19_october.md#33149-items-2-7-and-13-at-85m-parameters-the-gain-at-full-training-is-the-30m-models-it-holds-under-a-modern-block-and-falls-with-depth)
+- [33.150 Item 6: the tokenizer's grammatical gain covers agreement in the noun phrase and government](15_the_list_of_19_october.md#33150-item-6-the-tokenizers-grammatical-gain-covers-agreement-in-the-noun-phrase-and-government)
 
 ### Appendices
 

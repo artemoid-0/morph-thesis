@@ -28,11 +28,22 @@ Each pair is one row of a MultiBLiMP-style table (`sen`, `wrong_sen`, `phenomeno
 changed), so `scripts/eval/multiblimp_eval.py --data` scores it as it scores MultiBLiMP. A sample for
 a native speaker's check is drawn by `--sample`, stratified by phenomenon, with a fixed seed.
 
+THE CHECK'S TWO ERRORS (journey §33.150)
+----------------------------------------
+The check of v1 found 98 of 100 pairs valid. Both errors are the dictionary's, and `--refine` drops
+each kind from a built table, keeping the rest and their item numbers:
+  also a noun   the new adjective form is a noun too (черговим, of черговий, the person on duty: «створення
+                черговим блоку» reads as creation by the person on duty), so the wrong sentence can be right;
+  two lexemes   the noun's readings in its case and number belong to lexemes whose forms in the new case
+                differ (голів, of гол and of голова: голах, головах), so the change may swap the word.
+
     python scripts/data/make_minimal_pairs_uk.py --out data/minimal_pairs/uk_np_pp_v1.tsv
     python scripts/data/make_minimal_pairs_uk.py --out data/minimal_pairs/uk_np_pp_v1.tsv --sample 100
+    python scripts/data/make_minimal_pairs_uk.py --refine data/minimal_pairs/uk_np_pp_v1.tsv --out data/minimal_pairs/uk_np_pp_v2.tsv
 """
 import os
 import re
+import csv
 import sys
 import json
 import random
@@ -162,6 +173,67 @@ class Inflector:
             return f.word, f'{case}→{c}'
         return None
 
+    def also_noun(self, w):
+        """The dictionary reads the word as a noun too: a substantivized adjective."""
+        return bool(self.readings(w, 'NOUN'))
+
+    def lexemes_differ(self, w, case, number, new_case):
+        """The word's noun readings in this case and number belong to lexemes whose forms in new_case differ."""
+        forms = {f.word for p in self.readings(w, 'NOUN') if p.tag.case == case and num(p.tag) == number
+                 for f in [p.inflect({new_case})] if f is not None}
+        return len(forms) > 1
+
+
+def read_table(path):
+    return list(csv.DictReader(open(path, newline='', encoding='utf-8'), delimiter='\t', quoting=csv.QUOTE_NONE))
+
+
+def changed_token(doc, row):
+    """The spaCy token of the changed word: where the two sentences first differ, back to the word's start."""
+    i = next((k for k, (x, y) in enumerate(zip(row['sen'], row['wrong_sen'])) if x != y), len(row['sen']))
+    while i > 0 and row['sen'][i - 1].isalpha():
+        i -= 1
+    return next((t for t in doc if t.idx == i and t.text == row['word']), None)
+
+
+def refine(a, nlp, inf):
+    """--refine: the table without the check's two kinds of error (THE CHECK'S TWO ERRORS, above)."""
+    rows = read_table(a.refine)
+    pp = [r for r in rows if r['phenomenon'] == 'PP-C']
+    number = {}                             # the tagger's number of each PP-C noun, as the build read it
+    for r, doc in zip(pp, nlp.pipe((r['sen'] for r in pp), batch_size=64)):
+        tok = changed_token(doc, r)
+        number[r['item']] = NUMBER.get(morph_of(tok, 'Number')) if tok is not None else None
+    kept, dropped = [], defaultdict(list)
+    for r in rows:
+        if r['phenomenon'] == 'PP-C':
+            old, new = r['change'].split('→')
+            if number[r['item']] is None:
+                dropped['noun not found'].append(r['item'])
+                continue
+            if inf.lexemes_differ(r['word'], old, number[r['item']], new):
+                dropped['two lexemes'].append(r['item'])
+                continue
+        elif inf.also_noun(r['wrong_word']):
+            dropped['also a noun'].append(r['item'])
+            continue
+        kept.append(r)
+    write_table(a.out, kept, list(rows[0]))
+    src = json.load(open(a.refine[:-4] + '.json'))
+    meta = {'script': 'scripts/data/make_minimal_pairs_uk.py', 'args': vars(a),
+            'refined_from': os.path.relpath(a.refine, ROOT), 'phenomena': PHENOMENA,
+            'dropped': {k: {'count': len(v), 'items': [int(i) for i in v]} for k, v in dropped.items()},
+            'kept': dict(Counter(r['phenomenon'] for r in kept))}
+    if 'sample' in src:
+        left = {int(r['item']) for r in kept}
+        meta['sample'] = {'path': src['sample']['path'], 'kept': [i for i in src['sample']['items'] if i in left]}
+    meta['made_utc'] = datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+    json.dump(meta, open(a.out[:-4] + '.json', 'w'), indent=1, ensure_ascii=False)
+    print(f'{len(rows):,} pairs of {a.refine}; dropped {({k: len(v) for k, v in dropped.items()})}; '
+          f'kept {meta["kept"]} -> {a.out}')
+    if 'sample' in meta:
+        print(f'  of the checked sample {len(meta["sample"]["kept"])} of {len(src["sample"]["items"])} kept')
+
 
 def write_table(path, rows, cols):
     """Tab-separated, unquoted, as MultiBLiMP's table is read (csv.QUOTE_NONE): no field holds a tab."""
@@ -210,15 +282,18 @@ def main():
     ap.add_argument('--per-phenomenon', type=int, default=1000, help='pairs kept per phenomenon, one per sentence')
     ap.add_argument('--seed', type=int, default=0)
     ap.add_argument('--sample', type=int, default=0, help='also write a stratified sample of this many for a check')
+    ap.add_argument('--refine', help="a built table: write it to --out without the check's two kinds of error")
     a = ap.parse_args()
 
     import spacy
     import pymorphy3
     from morphlm.config import ExperimentConfig, apply_overrides
     from morphlm.data.stream import load_corpus
+    nlp = spacy.load('uk_core_news_sm', disable=['ner'])
+    if a.refine:
+        return refine(a, nlp, Inflector())
     cfg = apply_overrides(ExperimentConfig(), ['data.pipeline=bpe', 'data.corpus=ukwiki', 'data.corpus_fraction=1.0',
                                                'data.corpus_holdout=2000', 'data.spacy_model=uk_core_news_sm'])
-    nlp = spacy.load('uk_core_news_sm', disable=['ner'])
     inf, rng = Inflector(), random.Random(a.seed)
     rows, paragraphs = [], 0
     # paragraphs, as the streams see them (each starts after a newline)

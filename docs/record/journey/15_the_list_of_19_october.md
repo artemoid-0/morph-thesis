@@ -28,7 +28,8 @@ apart gains nothing at 30M (§33.142). At the best of three learning rates the 5
 smaller than at the default; between plain baselines 2.31%, larger (§33.145). The cut one letter off the boundary loses
 to plain BPE, shuffled case gains nothing, and the switch to a constant leaves the deficit the switch to zeros does
 (§33.148). At 85M parameters the gain at full training is the 30M model's, +0.0071 (1.02%); it holds under a modern
-block and halves at 8 layers (§33.149).
+block and halves at 8 layers (§33.149). Inside the noun phrase and after a preposition, near the ceiling, endings apart
+makes about half the errors at 5M parameters and a third at 30M, at every seed (§33.150).
 
 ---
 
@@ -2067,3 +2068,86 @@ The tally is 211 right, 13 half right, 105 wrong, 10 never tested, 1 withdrawn a
 2. **The grammatical gain is smaller at 85M:** +3.1 points against +5.0 and +4.9. It is positive at every seed.
 3. **A modern block keeps the gain,** at 5M parameters and 10k.
 4. **Depth reduces it, as width does,** at 10k: two models of 30M-parameter width, 4 and 8 layers.
+
+### 33.150 Item 6: the tokenizer's grammatical gain covers agreement in the noun phrase and government
+
+**The check.** A native speaker marked the hundred pairs of §33.147 on 3 November
+(`data/minimal_pairs/uk_np_pp_v1_sample100_check.tsv`).
+Each mark was then checked a second time, independently, and none changed. Two rules were settled along the way:
+- **Only the changed phrase is judged.** An error elsewhere in the source sentence is in both sentences, so it
+  does not decide the pair. The pairs with one (#019, #044, #048, #078, #090) are valid.
+- **Disagreeing in two features is still disagreeing.** «рідкісним види» (#056) is dative plural, against the
+  noun's case only, or instrumental singular, against its case and number. Neither reading agrees.
+
+**98 of the 100 are valid.** Both errors come from the dictionary, not from the rule:
+- **#020, also a noun:** «створення чергового блоку → черговим блоку». «черговим» is also the noun черговий,
+  the person on duty, so the wrong sentence reads as "the block's creation by the person on duty".
+- **#034, two lexemes:** «один з голів → з головах». «голів» there is of гол, a goal, and the builder inflected
+  голова's form.
+
+**The scoring.** `multiblimp_eval.py` now reads the four phenomena, and reports the three of agreement together
+as "noun phrase". It scores only the phenomena a table holds. Each null at full training is paired by seed on
+its own machine.
+
+**The 5M model** (thesis machine; `multiblimp_eval_20261103T062800`, and `…T062944` with the length split):
+- **All 3,999 pairs:** BPE 17k 98.2%, endings apart 99.0%, **+0.8 ± 0.1 points (4/4)**.
+- **Agreement in the noun phrase:** 98.6% against 99.2%, **+0.6 ± 0.1 (4/4)**: +0.5, +0.9, +0.5, +0.7.
+  - case +0.5 ± 0.0 (4/4), gender +1.2 ± 0.2 (4/4), number +0.2 ± 0.2 (2/4).
+- **Government:** 97.0% against 98.5%, **+1.5 ± 0.3 (4/4)**: +1.3, +1.4, +2.3, +0.8.
+- **The errors:** BPE 17k makes 67–79, endings apart 36–41, **47% fewer**.
+- **On the 2,371 pairs of equal token length under both tokenizers:** +0.6 ± 0.1 (4/4).
+
+**The 30M model** (width 512, 151M tokens, 50k; second machine; `multiblimp_eval_20261103T062855`):
+- **All pairs:** 99.4% against 99.8%, **+0.4 ± 0.1 (4/4)**.
+- **Agreement:** +0.3 ± 0.0 (4/4): +0.3, +0.2, +0.4, +0.3.
+  - case +0.2 ± 0.1 (4/4), number +0.4 ± 0.1 (4/4), gender +0.3 ± 0.1 (3/4).
+- **Government:** 99.0% against 99.6%, **+0.6 ± 0.1 (4/4)**.
+- **The errors:** 21–26 against 7–11, **63% fewer**.
+
+**Both tokenizers are near the ceiling.** Each pair changes one word next to the word it must agree with or
+follow, and the new form is wrong by every reading. On MultiBLiMP's subject–verb pairs BPE 17k's nulls reach
+71.4% and 82.2%. Here the gain is in the few errors left, and in errors it is larger than MultiBLiMP's: 47% and
+63% fewer here, against 17% and 28% fewer there (76.3% against 71.4%; 87.2% against 82.2%).
+
+**The margin is not compared.** The mean log-probability margin is larger under BPE 17k (9.3–9.5 nats against
+8.1–8.4). A wrong form costs BPE 17k more tokens than it costs endings apart, where the ending is a token of its
+own. Accuracy is compared, as for MultiBLiMP.
+
+**Without the two kinds of error.** `make_minimal_pairs_uk.py --refine` drops them from the built table, by the
+dictionary, and writes `uk_np_pp_v2.tsv`:
+- **also a noun:** 459 pairs whose new adjective form is a noun too;
+- **two lexemes:** 20 pairs whose noun's readings belong to lexemes with different forms in the new case;
+- **kept:** 3,520 pairs, among them 89 of the checked hundred, all valid.
+
+On it (`multiblimp_eval_20261103T063313`), the 5M model:
+- **All pairs:** +1.0 ± 0.1 (4/4).
+- **Agreement:** +0.7 ± 0.1 (4/4).
+- **Government:** +1.5 ± 0.3 (4/4). Its errors are the same pairs as in v1.
+- **The errors:** 51% fewer.
+- **On the 2,105 pairs of equal length:** +0.6 ± 0.1 (4/4).
+
+**Predictions** for the 30M model and the second table were recorded at 06:27 UTC, before either was scored:
+- **P344** (~70%): on agreement, the 30M model's endings-apart nulls lead at every seed.
+- **P345** (~60%): on government they lead at every seed.
+- **P346** (~90%): without the two kinds of error, the 5M model's result on agreement and on government keeps its
+  sign and its count of seeds.
+
+**Verdicts:**
+- **P341 right:** 98 of 100.
+- **P342 right:** +0.5 to +0.9.
+- **P343 right:** +0.8 to +2.3.
+- **P344 right:** +0.2 to +0.4.
+- **P345 right:** +0.4 to +0.8.
+- **P346 right:** +0.7 and +1.5, 4/4 each.
+
+The tally is 217 right, 13 half right, 105 wrong, 10 never tested, 1 withdrawn and none pending, of 346.
+
+**The sentence** (§33.147): a gain, so *it covers agreement in the noun phrase and government*.
+
+**What it changes for the thesis.**
+1. **The grammatical gain is no longer one phenomenon's.** Inside the noun phrase and after a preposition,
+   endings apart makes about half the errors at 5M parameters and about a third at 30M, at every seed.
+2. **Near the ceiling the points are small:** +0.6 and +1.5 at 5M. The claim is about errors.
+3. **An adjective's number gains nothing at 5M** (2/4), and does at 30M (4/4).
+4. **The set is in the repository, with its builder and its check.** It has 3,999 pairs from the test split, 98
+   of 100 valid. The refined table without the check's two kinds of error gives the same result.

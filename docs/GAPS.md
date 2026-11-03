@@ -40,7 +40,7 @@ Closing any of these would be a different project: a hole in a claim is closed, 
 
 | # | limitation |
 |---|---|
-| G-07 | **No downstream task.** Standard benchmarks are uninformative at 5M parameters. The evidence beyond bits per byte is the probe suite (journey §25, §29.11, §30.6b) and minimal pairs: BLiMP in English, MultiBLiMP's subject–verb agreement in Ukrainian (journey §33.79). |
+| G-07 | **No downstream task.** Standard benchmarks are uninformative at 5M parameters. The evidence beyond bits per byte is the probe suite (journey §25, §29.11, §30.6b) and minimal pairs: BLiMP in English, MultiBLiMP's subject–verb agreement in Ukrainian (journey §33.79), and the thesis's own Ukrainian pairs for agreement in the noun phrase and government (journey §33.150). |
 | G-11 | **No tokenizer-free baseline** (ByT5, CANINE, Charformer). The comparison is between tokenizer families at fixed architecture. |
 | G-12 | **No run reached convergence.** All stopped still improving at the 50,000-step ceiling, so every comparison is at fixed compute. |
 | G-13 | **Small models, two languages: widths 64–512, 1.8M to 30M parameters, most cells about 5M** (`docs/reference/apparatus.md`), in English and Ukrainian. MorphPiece uses 117M, Hou et al. 132–979M. Hou et al. find English the weakest case for morphological approaches, which makes a small effect in English *expected* rather than disappointing. *(Until 19 October: "English only, 3.4–5.2M parameters".)* |
