@@ -46,7 +46,7 @@ At width 512 Unigram's null ends **0.0056 ± 0.0009** behind BPE 17k's (0/4; on 
 Every tokenizer's validation stream decodes to the same text, byte for byte, so each one's bits per byte is a code length for that text (G-75).
 
 **At widths 128 and 256 it does not fade as a feature does.**
-At 20k it is +0.0169 ± 0.0007 (4/4); **at full training on four times the text (151M tokens, 50k) +0.0165 ± 0.0008 (1.75%, 4/4)**, flat from step 5,000 while the null falls from 1.13 to 0.944: about 0.017 at two corpus sizes and three budgets, wherever the null stands between 1.21 and 0.944 BPB.
+At 20k it is +0.0169 ± 0.0007 (4/4); **at full training on four times the text (151M tokens, 50k) +0.0165 ± 0.0008 (1.75%, 4/4)**, its 95% interval +0.0141 to +0.0189 (every row of the tokenizer's table excludes zero, §33.151), flat from step 5,000 while the null falls from 1.13 to 0.944: about 0.017 at two corpus sizes and three budgets, wherever the null stands between 1.21 and 0.944 BPB.
 At width 256 (four times the core's parameters) it is larger at every matched null BPB: **+0.0254 ± 0.0012 (2.6%, 4/4)** at 10k, settling at **+0.0218 ± 0.0029 (2.4%, 4/4)** at 20k, flat from step 7,500 (width 128 at 20k: +0.0169, 1.7%).
 
 **At a better learning rate it is smaller.**
@@ -132,9 +132,9 @@ Identity-like features (inflection bundles, lemma and root hashes) do worse than
 BLiMP shows no grammatical gain from any feature, and MultiBLiMP none from Ukrainian case: within 0.4 points of its null at both sizes, under both tokenizers.
 **At 30M parameters too, by the bound:** at full training (151M tokens, 50k, on a second machine) case (tagger) under BPE 17k ends **+0.0015 ± 0.0005** over its null — within 0.002, but positive at every seed and level from step 10,000 (+0.0017), where in the 5M model it ends below its null (§33.142).
 
-*Four seeds for every row, none beyond 0.002 on average.
+*Four seeds for every row, none beyond 0.002 on average; at the one-sided 95% bound none beyond +0.0031 (part of speech, strictly causal; four rows pass 0.002), and four seeds detect a feature's effect with 80% power only from 0.002–0.006, row by row (§33.151).
 The frequency band and strictly causal part of speech (read from the word form) have seeds 2–3 from a second machine, each against the null's twin there; per seed they range from −0.0037 to +0.0023 (§33.114).
-The Ukrainian rows are against a null constant on every word; first recorded −0.0009 and −0.0015 (G-73, §33.56).* (§33.9–§33.19, §33.79, §33.142)
+The Ukrainian rows are against a null constant on every word; first recorded −0.0009 and −0.0015 (G-73, §33.56).* (§33.9–§33.19, §33.79, §33.142, §33.151)
 
 ### Before the model has learned it, features help
 

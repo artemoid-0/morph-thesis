@@ -51,16 +51,18 @@ The thesis text's list of 30–31 October (§33.143): fifteen limits a reviewer 
 
 **Answered** (§33.145): items 1, 12 and 14. At the best of three rates (3e-3, the reference 5.2% better) the 5M model's gain at full training is +0.0136 (1.52%), 0.0037 below the default's on the same machine; between plain baselines +0.0219 (2.31%), 0.0046 above the nulls'; the 1,000-step warm-up changes nothing at width 128.
 
+**Answered** (§33.151): the software's size, and item 5's intervals. Every row of the tokenizer's table holds at 95%
+(the headline +0.0141 to +0.0189); the features' one-sided 95% bound is 0.003, not 0.002, and four seeds see a feature's
+effect only from about 0.002–0.006.
+
 **Without the GPU**, in order:
-1. the software's size;
-2. 95% intervals, one-sided upper bounds and the minimum detectable effect;
-3. the gain against every vocabulary size;
-4. the probes at layer 0;
-5. item 4, the gain as compute or model size;
-6. item 3, where the gain sits, per word;
-7. the test split (it needs test caches);
-8. item 8, the tagger on gold labels (the treebank is downloaded);
-9. the figures.
+1. the gain against every vocabulary size;
+2. the probes at layer 0;
+3. item 4, the gain as compute or model size;
+4. item 3, where the gain sits, per word;
+5. the test split (it needs test caches);
+6. item 8, the tagger on gold labels (the treebank is downloaded);
+7. the figures.
 
 **Optional**, if hours remain:
 - what case's +0.0015 at 30M is made of: 8 runs, ~10.8 h;

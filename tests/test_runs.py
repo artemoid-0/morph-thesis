@@ -239,6 +239,20 @@ def test_fit_linear():
     print('  fit_linear: deterministic, reads a linear property OK')
 
 
+def test_interval():
+    # Student's t against the printed tables, and the normal limit
+    for p, df, want in [(0.975, 3, 3.1824), (0.95, 3, 2.3534), (0.80, 3, 0.9785), (0.975, 1, 12.7062),
+                        (0.975, 10, 2.2281), (0.95, 30, 1.6973), (0.975, 100000, 1.9600)]:
+        assert abs(runs.t_quantile(p, df) - want) < 5e-4, (p, df, runs.t_quantile(p, df))
+    assert abs(runs.t_cdf(0.0, 3) - 0.5) < 1e-12 and abs(runs.t_cdf(-3.1824, 3) - 0.025) < 1e-4
+    iv = runs.interval([0.010, 0.012, 0.014, 0.016])
+    se = math.sqrt(sum((x - 0.013) ** 2 for x in [0.010, 0.012, 0.014, 0.016]) / 3) / 2
+    assert abs(iv['mean'] - 0.013) < 1e-12 and abs(iv['se'] - se) < 1e-12
+    assert abs(iv['low'] - (0.013 - 3.1824 * se)) < 1e-6 and abs(iv['upper'] - (0.013 + 2.3534 * se)) < 1e-6
+    assert abs(iv['mde'] - (3.1824 + 0.9785) * se) < 1e-6 and iv['p'] < 0.01
+    assert runs.interval([0.01]) is None
+
+
 if __name__ == '__main__':
     import inspect
     for _name, _fn in list(globals().items()):

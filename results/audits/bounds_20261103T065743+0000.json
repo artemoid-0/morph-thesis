@@ -1,0 +1,1583 @@
+{
+  "script": "bounds",
+  "args": {},
+  "timestamp_utc": "2026-11-03T06:57:43+00:00",
+  "results": {
+    "rows": [
+      {
+        "table": "tokenizer",
+        "name": "Wikipedia, 38M tokens, width 128, 10k",
+        "ref": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "cell": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k",
+        "printed": [
+          0.0174,
+          0.0014
+        ],
+        "machines": {
+          "thesis": null
+        },
+        "seeds": {
+          "0": {
+            "gain": 0.017697130671000982,
+            "machine": "thesis",
+            "runs": [
+              "e9f3f153ec20",
+              "6dda8d847d8a"
+            ]
+          },
+          "1": {
+            "gain": 0.01952507068669518,
+            "machine": "thesis",
+            "runs": [
+              "6f214dfa186f",
+              "ed3afe0e7a24"
+            ]
+          },
+          "2": {
+            "gain": 0.013488104972568804,
+            "machine": "thesis",
+            "runs": [
+              "fe50426ea6ef",
+              "9b80b67971df"
+            ]
+          },
+          "3": {
+            "gain": 0.018823164727318265,
+            "machine": "thesis",
+            "runs": [
+              "f7631513ec4e",
+              "ad927855ba92"
+            ]
+          }
+        },
+        "interval": {
+          "mean": 0.017383367764395807,
+          "se": 0.001351894537330841,
+          "sd": 0.002703789074661682,
+          "n": 4,
+          "low": 0.013081035988934049,
+          "high": 0.021685699539857564,
+          "upper": 0.020564866936258534,
+          "lower": 0.014201868592533081,
+          "p": 0.0010151294757660967,
+          "mde": 0.005625123149475187
+        }
+      },
+      {
+        "table": "tokenizer",
+        "name": "Wikipedia, 38M tokens, width 128, 20k",
+        "ref": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k",
+        "cell": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k",
+        "printed": [
+          0.0169,
+          0.0007
+        ],
+        "machines": {
+          "thesis": null
+        },
+        "seeds": {
+          "0": {
+            "gain": 0.016522474993765135,
+            "machine": "thesis",
+            "runs": [
+              "59edbb34487d",
+              "8f398c5a967e"
+            ]
+          },
+          "1": {
+            "gain": 0.01709376837161014,
+            "machine": "thesis",
+            "runs": [
+              "714611177e59",
+              "9272ed2841aa"
+            ]
+          },
+          "2": {
+            "gain": 0.015464036713158102,
+            "machine": "thesis",
+            "runs": [
+              "5f8f38ac41bd",
+              "d2c01147fb4f"
+            ]
+          },
+          "3": {
+            "gain": 0.01869437135793195,
+            "machine": "thesis",
+            "runs": [
+              "feca24f3780d",
+              "cefc2d34b3fd"
+            ]
+          }
+        },
+        "interval": {
+          "mean": 0.016943662859116332,
+          "se": 0.0006741788006177443,
+          "sd": 0.0013483576012354886,
+          "n": 4,
+          "low": 0.014798125025989792,
+          "high": 0.01908920069224287,
+          "upper": 0.01853025059700868,
+          "lower": 0.015357075121223985,
+          "p": 0.0001381352044094175,
+          "mde": 0.0028052031231133034
+        }
+      },
+      {
+        "table": "tokenizer",
+        "name": "Wikipedia, 151M tokens, width 128, 50k",
+        "ref": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+        "cell": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2",
+        "printed": [
+          0.0165,
+          0.0008
+        ],
+        "machines": {
+          "thesis": null
+        },
+        "seeds": {
+          "0": {
+            "gain": 0.015304781397041722,
+            "machine": "thesis",
+            "runs": [
+              "c58ba0662048",
+              "57f76ed51760"
+            ]
+          },
+          "1": {
+            "gain": 0.017792908978332633,
+            "machine": "thesis",
+            "runs": [
+              "07dd78de8832",
+              "ae75b666d616"
+            ]
+          },
+          "2": {
+            "gain": 0.015114891757380122,
+            "machine": "thesis",
+            "runs": [
+              "fe24a14162b2",
+              "7e17426e0388"
+            ]
+          },
+          "3": {
+            "gain": 0.017887506050428992,
+            "machine": "thesis",
+            "runs": [
+              "b60e2ee58522",
+              "0d7539f05ca2"
+            ]
+          }
+        },
+        "interval": {
+          "mean": 0.016525022045795867,
+          "se": 0.0007605565181583601,
+          "sd": 0.0015211130363167202,
+          "n": 4,
+          "low": 0.014104591764623356,
+          "high": 0.018945452326968377,
+          "upper": 0.01831488794572994,
+          "lower": 0.014735156145861796,
+          "p": 0.0002133718635106696,
+          "mde": 0.0031646137761779064
+        }
+      },
+      {
+        "table": "tokenizer",
+        "name": "Wikipedia, 38M tokens, width 256, 10k",
+        "ref": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k_w256",
+        "cell": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k_w256",
+        "printed": [
+          0.0254,
+          0.0012
+        ],
+        "machines": {
+          "thesis": null
+        },
+        "seeds": {
+          "0": {
+            "gain": 0.023164521097152502,
+            "machine": "thesis",
+            "runs": [
+              "a78a7af4172a",
+              "e36663315ca9"
+            ]
+          },
+          "1": {
+            "gain": 0.028615617602359422,
+            "machine": "thesis",
+            "runs": [
+              "e93ed932f8df",
+              "daa3d853c242"
+            ]
+          },
+          "2": {
+            "gain": 0.02454711513329222,
+            "machine": "thesis",
+            "runs": [
+              "af361ad5995e",
+              "c1d5883ba167"
+            ]
+          },
+          "3": {
+            "gain": 0.02522982035971244,
+            "machine": "thesis",
+            "runs": [
+              "ecfcf44b5500",
+              "858c11130f5f"
+            ]
+          }
+        },
+        "interval": {
+          "mean": 0.025389268548129146,
+          "se": 0.0011580686342380052,
+          "sd": 0.0023161372684760103,
+          "n": 4,
+          "low": 0.02170377730183346,
+          "high": 0.02907475979442483,
+          "upper": 0.02811462492693575,
+          "lower": 0.02266391216932254,
+          "p": 0.00020772072300001554,
+          "mde": 0.004818629340713961
+        }
+      },
+      {
+        "table": "tokenizer",
+        "name": "Wikipedia, 38M tokens, width 256, 20k",
+        "ref": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w256",
+        "cell": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w256",
+        "printed": [
+          0.0218,
+          0.0029
+        ],
+        "machines": {
+          "thesis": null
+        },
+        "seeds": {
+          "0": {
+            "gain": 0.018767817045675983,
+            "machine": "thesis",
+            "runs": [
+              "e3d0e6d4ba4b",
+              "0570bbe45a96"
+            ]
+          },
+          "1": {
+            "gain": 0.030383824090520095,
+            "machine": "thesis",
+            "runs": [
+              "1bb147ff101c",
+              "98f05daaec40"
+            ]
+          },
+          "2": {
+            "gain": 0.02049618600949432,
+            "machine": "thesis",
+            "runs": [
+              "76354ccb83e2",
+              "08d8a6c40cda"
+            ]
+          },
+          "3": {
+            "gain": 0.01757922827918179,
+            "machine": "thesis",
+            "runs": [
+              "869aa8ae9fae",
+              "d6e23f5f7585"
+            ]
+          }
+        },
+        "interval": {
+          "mean": 0.021806763856218048,
+          "se": 0.0029210561920816067,
+          "sd": 0.005842112384163213,
+          "n": 4,
+          "low": 0.01251065937020185,
+          "high": 0.031102868342234247,
+          "upper": 0.028681070689664346,
+          "lower": 0.01493245702277175,
+          "p": 0.0049768152932818666,
+          "mde": 0.012154277092825436
+        }
+      },
+      {
+        "table": "tokenizer",
+        "name": "Wikipedia, 38M tokens, width 512, 10k",
+        "ref": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k_w512",
+        "cell": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st10k_w512",
+        "printed": [
+          0.0125,
+          0.0009
+        ],
+        "machines": {
+          "thesis": null
+        },
+        "seeds": {
+          "0": {
+            "gain": 0.013864533732636408,
+            "machine": "thesis",
+            "runs": [
+              "4d86892143a8",
+              "9a629673512a"
+            ]
+          },
+          "1": {
+            "gain": 0.013576170497403783,
+            "machine": "thesis",
+            "runs": [
+              "f74001fa0d30",
+              "60b7b8cfd85e"
+            ]
+          },
+          "2": {
+            "gain": 0.009870322635540107,
+            "machine": "thesis",
+            "runs": [
+              "7b5b05c0cc73",
+              "01b8e928b510"
+            ]
+          },
+          "3": {
+            "gain": 0.012829685214547415,
+            "machine": "thesis",
+            "runs": [
+              "cb0c22a0c51f",
+              "8d5f03b6a890"
+            ]
+          }
+        },
+        "interval": {
+          "mean": 0.012535178020031928,
+          "se": 0.0009146511473623604,
+          "sd": 0.0018293022947247209,
+          "n": 4,
+          "low": 0.009624349855485083,
+          "high": 0.015446006184578774,
+          "upper": 0.01468768458583404,
+          "lower": 0.010382671454229817,
+          "p": 0.0008405888532290184,
+          "mde": 0.003805788987712244
+        }
+      },
+      {
+        "table": "tokenizer",
+        "name": "Wikipedia, 38M tokens, width 512, 20k (seeds 2-3: second machine)",
+        "ref": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st20k_w512",
+        "cell": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_st20k_w512",
+        "printed": [
+          0.0102,
+          0.0006
+        ],
+        "machines": {
+          "thesis": [
+            0,
+            1
+          ],
+          "second": [
+            2,
+            3
+          ]
+        },
+        "seeds": {
+          "0": {
+            "gain": 0.011472445367836537,
+            "machine": "thesis",
+            "runs": [
+              "111cea3bd51d",
+              "46e78eb45605"
+            ]
+          },
+          "1": {
+            "gain": 0.009719283287147995,
+            "machine": "thesis",
+            "runs": [
+              "a6754f725bcc",
+              "f01c48619628"
+            ]
+          },
+          "2": {
+            "gain": 0.010737436318577043,
+            "machine": "second",
+            "runs": [
+              "7c67de57b1be",
+              "f518b23725ad"
+            ]
+          },
+          "3": {
+            "gain": 0.00882574270396086,
+            "machine": "second",
+            "runs": [
+              "3836680f746a",
+              "665fb7c3d0bd"
+            ]
+          }
+        },
+        "interval": {
+          "mean": 0.010188726919380608,
+          "se": 0.0005793040620002408,
+          "sd": 0.0011586081240004815,
+          "n": 4,
+          "low": 0.0083451228476321,
+          "high": 0.012032330991129117,
+          "upper": 0.011552039916524141,
+          "lower": 0.008825413922237076,
+          "p": 0.00040068157748929245,
+          "mde": 0.0024104370568553395
+        }
+      },
+      {
+        "table": "tokenizer",
+        "name": "Wikipedia, 151M tokens, width 512, 50k (second machine)",
+        "ref": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_w512",
+        "cell": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_w512",
+        "printed": [
+          0.0072,
+          0.0003
+        ],
+        "machines": {
+          "second": null
+        },
+        "seeds": {
+          "0": {
+            "gain": 0.007574871199833799,
+            "machine": "second",
+            "runs": [
+              "ae4ee76ed3f6",
+              "ae245ee3f706"
+            ]
+          },
+          "1": {
+            "gain": 0.007252435293281567,
+            "machine": "second",
+            "runs": [
+              "4b055123e509",
+              "ce52ac238dc9"
+            ]
+          },
+          "2": {
+            "gain": 0.007636440791196741,
+            "machine": "second",
+            "runs": [
+              "24403887879a",
+              "9081e44ff649"
+            ]
+          },
+          "3": {
+            "gain": 0.006464136989741354,
+            "machine": "second",
+            "runs": [
+              "189021be282e",
+              "f4d6528b2ecb"
+            ]
+          }
+        },
+        "interval": {
+          "mean": 0.007231971068513365,
+          "se": 0.00026943833766531275,
+          "sd": 0.0005388766753306255,
+          "n": 4,
+          "low": 0.006374498026308607,
+          "high": 0.008089444110718123,
+          "upper": 0.007866057400308699,
+          "lower": 0.006597884736718032,
+          "p": 0.00011347833717212374,
+          "mde": 0.0011211109954994613
+        }
+      },
+      {
+        "table": "tokenizer",
+        "name": "Wikipedia, 38M tokens, width 1024, 10k, warm-up 1,000 (second machine)",
+        "ref": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_wu1000_st10k_w1024",
+        "cell": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_wu1000_st10k_w1024",
+        "printed": [
+          0.011,
+          0.0011
+        ],
+        "machines": {
+          "second": null
+        },
+        "seeds": {
+          "0": {
+            "gain": 0.009504632949751013,
+            "machine": "second",
+            "runs": [
+              "06fdb94e8989",
+              "e8fc7779b2eb"
+            ]
+          },
+          "1": {
+            "gain": 0.014326925469896334,
+            "machine": "second",
+            "runs": [
+              "7e04ebfa877e",
+              "d8fd1b4ba740"
+            ]
+          },
+          "2": {
+            "gain": 0.00996396995573745,
+            "machine": "second",
+            "runs": [
+              "4325e2466023",
+              "9a28a2243d93"
+            ]
+          },
+          "3": {
+            "gain": 0.010313269953421966,
+            "machine": "second",
+            "runs": [
+              "59b25ce83d64",
+              "4e4fb151f2ef"
+            ]
+          }
+        },
+        "interval": {
+          "mean": 0.011027199582201691,
+          "se": 0.0011123006502146517,
+          "sd": 0.0022246013004293035,
+          "n": 4,
+          "low": 0.0074873624875614105,
+          "high": 0.014567036676841972,
+          "upper": 0.013644847260923142,
+          "lower": 0.00840955190348024,
+          "p": 0.0021830246264562536,
+          "mde": 0.004628192483899019
+        }
+      },
+      {
+        "table": "tokenizer",
+        "name": "Wikipedia, 38M tokens, width 1024, 20k, warm-up 1,000 (second machine)",
+        "ref": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_wu1000_st20k_w1024",
+        "cell": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.05_wu1000_st20k_w1024",
+        "printed": [
+          0.0105,
+          0.0004
+        ],
+        "machines": {
+          "second": null
+        },
+        "seeds": {
+          "0": {
+            "gain": 0.010497956723761304,
+            "machine": "second",
+            "runs": [
+              "d4927fe56ab1",
+              "67727dc64bc3"
+            ]
+          },
+          "1": {
+            "gain": 0.011154745000521604,
+            "machine": "second",
+            "runs": [
+              "cba901979f67",
+              "2e9ea57b898b"
+            ]
+          },
+          "2": {
+            "gain": 0.009199262736396707,
+            "machine": "second",
+            "runs": [
+              "2d872152aec5",
+              "136245cf1399"
+            ]
+          },
+          "3": {
+            "gain": 0.011019677064201705,
+            "machine": "second",
+            "runs": [
+              "d769d766eded",
+              "aff57dc86e5d"
+            ]
+          }
+        },
+        "interval": {
+          "mean": 0.01046791038122033,
+          "se": 0.0004459594428622041,
+          "sd": 0.0008919188857244082,
+          "n": 4,
+          "low": 0.009048668399977129,
+          "high": 0.011887152362463531,
+          "upper": 0.011517415027456833,
+          "lower": 0.009418405734983827,
+          "p": 0.00016941289649530233,
+          "mde": 0.0018556009485208328
+        }
+      },
+      {
+        "table": "tokenizer",
+        "name": "Wikipedia, 151M tokens, width 1024, 20k, warm-up 1,000 (second machine)",
+        "ref": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_wu1000_st20k_w1024",
+        "cell": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_wu1000_st20k_w1024",
+        "printed": [
+          0.0082,
+          0.0005
+        ],
+        "machines": {
+          "second": null
+        },
+        "seeds": {
+          "0": {
+            "gain": 0.007662078147552154,
+            "machine": "second",
+            "runs": [
+              "1bd87cdcabf7",
+              "6c8218474231"
+            ]
+          },
+          "1": {
+            "gain": 0.008876353770852718,
+            "machine": "second",
+            "runs": [
+              "a9063df661b8",
+              "413c3fe90c4c"
+            ]
+          },
+          "2": {
+            "gain": 0.0071877117820956515,
+            "machine": "second",
+            "runs": [
+              "4be05466fa0f",
+              "5dcad058f827"
+            ]
+          },
+          "3": {
+            "gain": 0.009207474929481263,
+            "machine": "second",
+            "runs": [
+              "4dd44cca40d4",
+              "13c830a0c9c8"
+            ]
+          }
+        },
+        "interval": {
+          "mean": 0.008233404657495447,
+          "se": 0.000481498012089986,
+          "sd": 0.000962996024179972,
+          "n": 4,
+          "low": 0.006701063087918222,
+          "high": 0.009765746227072672,
+          "upper": 0.009366544473077784,
+          "lower": 0.007100264841913109,
+          "p": 0.0004357069316949236,
+          "mde": 0.0020034740428652477
+        }
+      },
+      {
+        "table": "tokenizer",
+        "name": "Wikipedia, 151M tokens, width 1024, 50k, warm-up 1,000 (second machine)",
+        "ref": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_wu1000_w1024",
+        "cell": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_wu1000_w1024",
+        "printed": [
+          0.0071,
+          0.0004
+        ],
+        "machines": {
+          "second": null
+        },
+        "seeds": {
+          "0": {
+            "gain": 0.0073500167727952315,
+            "machine": "second",
+            "runs": [
+              "97c5c50f6c9b",
+              "c8ed2430ba65"
+            ]
+          },
+          "1": {
+            "gain": 0.007835779078864125,
+            "machine": "second",
+            "runs": [
+              "a3330dc45f59",
+              "39ddcd8a1229"
+            ]
+          },
+          "2": {
+            "gain": 0.005828809830634274,
+            "machine": "second",
+            "runs": [
+              "223638c7a023",
+              "852e5c4e2976"
+            ]
+          },
+          "3": {
+            "gain": 0.0074248545917099396,
+            "machine": "second",
+            "runs": [
+              "0fd3e4b67103",
+              "9442c0904f77"
+            ]
+          }
+        },
+        "interval": {
+          "mean": 0.007109865068500892,
+          "se": 0.0004401652070259215,
+          "sd": 0.000880330414051843,
+          "n": 4,
+          "low": 0.005709062931686812,
+          "high": 0.008510667205314973,
+          "upper": 0.00814573377198767,
+          "lower": 0.006073996365014115,
+          "p": 0.0005161473673929162,
+          "mde": 0.001831491604754607
+        }
+      },
+      {
+        "table": "tokenizer",
+        "name": "Fiction, 33.4M tokens, width 128, 10k",
+        "ref": "bpe_mconst-LEARN-CAUSAL_bpe_ukf_17k_ukfiction0.1_st10k",
+        "cell": "bpe_mconst-LEARN-CAUSAL_bpeend_ukf_17k_ukfiction0.1_st10k",
+        "printed": [
+          0.0097,
+          0.001
+        ],
+        "machines": {
+          "thesis": null
+        },
+        "seeds": {
+          "0": {
+            "gain": 0.011561540160434314,
+            "machine": "thesis",
+            "runs": [
+              "b508f665f108",
+              "2c2b97fbf8a1"
+            ]
+          },
+          "1": {
+            "gain": 0.007135363738134393,
+            "machine": "thesis",
+            "runs": [
+              "f070d27c0a38",
+              "4e22e478b349"
+            ]
+          },
+          "2": {
+            "gain": 0.00899284143550605,
+            "machine": "thesis",
+            "runs": [
+              "f1e7d0cb0b6f",
+              "2bbf399c25da"
+            ]
+          },
+          "3": {
+            "gain": 0.011295154447464206,
+            "machine": "thesis",
+            "runs": [
+              "d149e30c60c9",
+              "8731bd289ad8"
+            ]
+          }
+        },
+        "interval": {
+          "mean": 0.00974622494538474,
+          "se": 0.0010439801598084652,
+          "sd": 0.0020879603196169304,
+          "n": 4,
+          "low": 0.006423814143012799,
+          "high": 0.013068635747756682,
+          "upper": 0.012203089680136545,
+          "lower": 0.007289360210632936,
+          "p": 0.002602459340873109,
+          "mde": 0.0043439164834011435
+        }
+      },
+      {
+        "table": "tokenizer",
+        "name": "Fiction, four times the text, width 128, 50k (second machine)",
+        "ref": "bpe_mconst-LEARN-CAUSAL_bpe_ukf_17k_ukfiction0.4",
+        "cell": "bpe_mconst-LEARN-CAUSAL_bpeend_ukf_17k_ukfiction0.4",
+        "printed": [
+          0.0155,
+          0.001
+        ],
+        "machines": {
+          "second": null
+        },
+        "seeds": {
+          "0": {
+            "gain": 0.017605249484548224,
+            "machine": "second",
+            "runs": [
+              "4633e79e2383",
+              "675972138d44"
+            ]
+          },
+          "1": {
+            "gain": 0.014724330725554235,
+            "machine": "second",
+            "runs": [
+              "7d9a0cf7ec92",
+              "1fb25d577ae0"
+            ]
+          },
+          "2": {
+            "gain": 0.012913027957090817,
+            "machine": "second",
+            "runs": [
+              "36533d9a9bb4",
+              "bffd51e1f484"
+            ]
+          },
+          "3": {
+            "gain": 0.016666214354982944,
+            "machine": "second",
+            "runs": [
+              "7ac3d9fd4b75",
+              "d206dba3a4af"
+            ]
+          }
+        },
+        "interval": {
+          "mean": 0.015477205630544055,
+          "se": 0.00104419586903656,
+          "sd": 0.00208839173807312,
+          "n": 4,
+          "low": 0.012154108345136147,
+          "high": 0.018800302915951965,
+          "upper": 0.017934578007505808,
+          "lower": 0.013019833253582304,
+          "p": 0.0006662971021711428,
+          "mde": 0.004344814031944322
+        }
+      },
+      {
+        "table": "tokenizer",
+        "name": "Unigram 17k against BPE 17k, Wikipedia, 38M tokens, width 128, 10k",
+        "ref": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.05_st10k",
+        "cell": "bpe_mconst-LEARN-CAUSAL_unigram_uk_17k_ukwiki0.05_st10k",
+        "printed": [
+          -0.0005,
+          0.0004
+        ],
+        "machines": {
+          "thesis": null
+        },
+        "seeds": {
+          "0": {
+            "gain": 6.809203242075235e-05,
+            "machine": "thesis",
+            "runs": [
+              "e9f3f153ec20",
+              "d81e089f0452"
+            ]
+          },
+          "1": {
+            "gain": -0.0010584466867342712,
+            "machine": "thesis",
+            "runs": [
+              "6f214dfa186f",
+              "0409e515dfb3"
+            ]
+          },
+          "2": {
+            "gain": -0.0012906712596121306,
+            "machine": "thesis",
+            "runs": [
+              "fe50426ea6ef",
+              "0e26ca4f1a5d"
+            ]
+          },
+          "3": {
+            "gain": 0.00020561625097426095,
+            "machine": "thesis",
+            "runs": [
+              "f7631513ec4e",
+              "8c9007651234"
+            ]
+          }
+        },
+        "interval": {
+          "mean": -0.0005188524157378471,
+          "se": 0.0003825599015539288,
+          "sd": 0.0007651198031078576,
+          "n": 4,
+          "low": -0.0017363287609878457,
+          "high": 0.0006986239295121515,
+          "upper": 0.00038145006820055336,
+          "lower": -0.0014191548996762477,
+          "p": 0.26806336570495204,
+          "mde": 0.0015918006167409495
+        }
+      },
+      {
+        "table": "features",
+        "name": "English: word structure, its own input dims",
+        "ref": "bpe_mconst-LEARN-CAUSAL_bpe_17k",
+        "cell": "bpe_mstruct-LEARN-CAUSAL_bpe_17k",
+        "printed": [
+          0.0004,
+          0.0005
+        ],
+        "machines": {
+          "thesis": null
+        },
+        "seeds": {
+          "0": {
+            "gain": -0.0002192813938197702,
+            "machine": "thesis",
+            "runs": [
+              "c8fe0eb7cfe8",
+              "648675b80ba0"
+            ]
+          },
+          "1": {
+            "gain": 0.0009638076923734751,
+            "machine": "thesis",
+            "runs": [
+              "8ba64cd4a185",
+              "93556c318fcc"
+            ]
+          },
+          "2": {
+            "gain": -0.000857707536351171,
+            "machine": "thesis",
+            "runs": [
+              "0096ec5ce160",
+              "c249334b1bdb"
+            ]
+          },
+          "3": {
+            "gain": 0.001539700292525481,
+            "machine": "thesis",
+            "runs": [
+              "4b388cef56ed",
+              "61156897cb7e"
+            ]
+          }
+        },
+        "interval": {
+          "mean": 0.0003566297636820037,
+          "se": 0.0005457876306231622,
+          "sd": 0.0010915752612463245,
+          "n": 4,
+          "low": -0.0013803100648642262,
+          "high": 0.0020935695922282335,
+          "upper": 0.0016410664167576764,
+          "lower": -0.0009278068893936689,
+          "p": 0.5600977504882201,
+          "mde": 0.002270977913541365
+        }
+      },
+      {
+        "table": "features",
+        "name": "English: word structure, added to a full-width embedding (against the added flat vector, \u00a733.19)",
+        "ref": "bpe_mflat-LEARN-CAUSAL-ADD_bpe_17k",
+        "cell": "bpe_mstruct-LEARN-CAUSAL-ADD_bpe_17k",
+        "printed": [
+          -0.0013,
+          null
+        ],
+        "machines": {
+          "thesis": null
+        },
+        "seeds": {
+          "0": {
+            "gain": -0.0016018730707267892,
+            "machine": "thesis",
+            "runs": [
+              "b971ec29693f",
+              "91d70215bdb3"
+            ]
+          },
+          "1": {
+            "gain": 0.00036588306267426596,
+            "machine": "thesis",
+            "runs": [
+              "7052673db23b",
+              "7a46ca7f0ba9"
+            ]
+          },
+          "2": {
+            "gain": -0.003231021184081362,
+            "machine": "thesis",
+            "runs": [
+              "875da4db22b8",
+              "1d75b444499f"
+            ]
+          },
+          "3": {
+            "gain": -0.0006507503923547375,
+            "machine": "thesis",
+            "runs": [
+              "bba7b753f381",
+              "0746729523aa"
+            ]
+          }
+        },
+        "interval": {
+          "mean": -0.0012794403961221557,
+          "se": 0.0007645789040645767,
+          "sd": 0.0015291578081291534,
+          "n": 4,
+          "low": -0.003712671704460332,
+          "high": 0.0011537909122160206,
+          "upper": 0.0005198916397242685,
+          "lower": -0.00307877243196858,
+          "p": 0.19284360027096903,
+          "mde": 0.003181350596582444
+        }
+      },
+      {
+        "table": "features",
+        "name": "English: structure shuffled among words of similar frequency",
+        "ref": "bpe_mconst-LEARN-CAUSAL_bpe_17k",
+        "cell": "bpe_mstructshuf-LEARN-CAUSAL_bpe_17k",
+        "printed": [
+          0.0015,
+          0.0005
+        ],
+        "machines": {
+          "thesis": null
+        },
+        "seeds": {
+          "0": {
+            "gain": 0.0005652263468689522,
+            "machine": "thesis",
+            "runs": [
+              "c8fe0eb7cfe8",
+              "e189f96ecd25"
+            ]
+          },
+          "1": {
+            "gain": 0.0027796816417213766,
+            "machine": "thesis",
+            "runs": [
+              "8ba64cd4a185",
+              "ee684acb4e9a"
+            ]
+          },
+          "2": {
+            "gain": 0.0019600378255510975,
+            "machine": "thesis",
+            "runs": [
+              "0096ec5ce160",
+              "3ce1ac5acaaf"
+            ]
+          },
+          "3": {
+            "gain": 0.0007505074215066188,
+            "machine": "thesis",
+            "runs": [
+              "4b388cef56ed",
+              "a871dbf91d50"
+            ]
+          }
+        },
+        "interval": {
+          "mean": 0.0015138633089120113,
+          "se": 0.0005231309625359251,
+          "sd": 0.0010462619250718502,
+          "n": 4,
+          "low": -0.0001509728899899516,
+          "high": 0.003178699507813974,
+          "upper": 0.002744980587756739,
+          "lower": 0.0002827460300672837,
+          "p": 0.06281567880875505,
+          "mde": 0.0021767053614833312
+        }
+      },
+      {
+        "table": "features",
+        "name": "English: real structure against its shuffled version",
+        "ref": "bpe_mstructshuf-LEARN-CAUSAL_bpe_17k",
+        "cell": "bpe_mstruct-LEARN-CAUSAL_bpe_17k",
+        "printed": [
+          -0.0012,
+          0.0008
+        ],
+        "machines": {
+          "thesis": null
+        },
+        "seeds": {
+          "0": {
+            "gain": -0.0007845077406887224,
+            "machine": "thesis",
+            "runs": [
+              "e189f96ecd25",
+              "648675b80ba0"
+            ]
+          },
+          "1": {
+            "gain": -0.0018158739493479015,
+            "machine": "thesis",
+            "runs": [
+              "ee684acb4e9a",
+              "93556c318fcc"
+            ]
+          },
+          "2": {
+            "gain": -0.0028177453619022685,
+            "machine": "thesis",
+            "runs": [
+              "3ce1ac5acaaf",
+              "c249334b1bdb"
+            ]
+          },
+          "3": {
+            "gain": 0.0007891928710188623,
+            "machine": "thesis",
+            "runs": [
+              "a871dbf91d50",
+              "61156897cb7e"
+            ]
+          }
+        },
+        "interval": {
+          "mean": -0.0011572335452300075,
+          "se": 0.0007702059786450614,
+          "sd": 0.0015404119572901228,
+          "n": 4,
+          "low": -0.003608372716276403,
+          "high": 0.001293905625816388,
+          "upper": 0.0006553410421790322,
+          "lower": -0.0029698081326390473,
+          "p": 0.22998492728481712,
+          "mde": 0.0032047643959672713
+        }
+      },
+      {
+        "table": "features",
+        "name": "English: frequency band (seeds 2-3: second machine)",
+        "ref": "bpe_mconst-LEARN-CAUSAL_bpe_17k",
+        "cell": "bpe_mfreq-LEARN-CAUSAL_bpe_17k",
+        "printed": [
+          -0.0005,
+          0.0011
+        ],
+        "machines": {
+          "thesis": [
+            0,
+            1
+          ],
+          "second": [
+            2,
+            3
+          ]
+        },
+        "seeds": {
+          "0": {
+            "gain": 0.0003983682652870524,
+            "machine": "thesis",
+            "runs": [
+              "c8fe0eb7cfe8",
+              "10b7adbeef86"
+            ]
+          },
+          "1": {
+            "gain": 0.0009050634136076319,
+            "machine": "thesis",
+            "runs": [
+              "8ba64cd4a185",
+              "8ba5756b2ccf"
+            ]
+          },
+          "2": {
+            "gain": -0.0036261620976585363,
+            "machine": "second",
+            "runs": [
+              "39fbcc499aab",
+              "188cbcabf2bf"
+            ]
+          },
+          "3": {
+            "gain": 0.0003335263280610512,
+            "machine": "second",
+            "runs": [
+              "f6326a6a5897",
+              "bbdabc3d72ca"
+            ]
+          }
+        },
+        "interval": {
+          "mean": -0.0004973010226757002,
+          "se": 0.0010507495419471984,
+          "sd": 0.002101499083894397,
+          "n": 4,
+          "low": -0.0038412550202241067,
+          "high": 0.0028466529748727063,
+          "upper": 0.001975494528477599,
+          "lower": -0.0029700965738289993,
+          "p": 0.668319214881751,
+          "mde": 0.004372083331572165
+        }
+      },
+      {
+        "table": "features",
+        "name": "English: part of speech (tagger)",
+        "ref": "bpe_mconst-LEARN-CAUSAL_bpe_17k",
+        "cell": "bpe_pos-LEARN-CAUSAL_bpe_17k",
+        "printed": [
+          0.0012,
+          0.0007
+        ],
+        "machines": {
+          "thesis": null
+        },
+        "seeds": {
+          "0": {
+            "gain": -0.00038575376146687823,
+            "machine": "thesis",
+            "runs": [
+              "c8fe0eb7cfe8",
+              "06b2a3bb429b"
+            ]
+          },
+          "1": {
+            "gain": 0.0008065420947476198,
+            "machine": "thesis",
+            "runs": [
+              "8ba64cd4a185",
+              "b0dc64d5199a"
+            ]
+          },
+          "2": {
+            "gain": 0.0013317507371033432,
+            "machine": "thesis",
+            "runs": [
+              "0096ec5ce160",
+              "dbfe3b1319f3"
+            ]
+          },
+          "3": {
+            "gain": 0.003046210435595942,
+            "machine": "thesis",
+            "runs": [
+              "4b388cef56ed",
+              "7da5336046e7"
+            ]
+          }
+        },
+        "interval": {
+          "mean": 0.0011996873764950067,
+          "se": 0.0007126987999562386,
+          "sd": 0.0014253975999124772,
+          "n": 4,
+          "low": -0.0010684382862058551,
+          "high": 0.0034678130391958685,
+          "upper": 0.0028769266723391563,
+          "lower": -0.0004775519193491429,
+          "p": 0.19090590212903713,
+          "mde": 0.0029654817055125952
+        }
+      },
+      {
+        "table": "features",
+        "name": "English: part of speech, strictly causal (seeds 2-3: second machine)",
+        "ref": "bpe_mconst-LEARN-CAUSAL_bpe_17k",
+        "cell": "bpe_poslex-LEARN-CAUSAL_bpe_17k",
+        "printed": [
+          -0.0001,
+          0.0014
+        ],
+        "machines": {
+          "thesis": [
+            0,
+            1
+          ],
+          "second": [
+            2,
+            3
+          ]
+        },
+        "seeds": {
+          "0": {
+            "gain": 0.002266718060831785,
+            "machine": "thesis",
+            "runs": [
+              "c8fe0eb7cfe8",
+              "85fc254b2c6d"
+            ]
+          },
+          "1": {
+            "gain": -0.0037446305142541103,
+            "machine": "thesis",
+            "runs": [
+              "8ba64cd4a185",
+              "2a508f0432d6"
+            ]
+          },
+          "2": {
+            "gain": -0.0007962944084951573,
+            "machine": "second",
+            "runs": [
+              "39fbcc499aab",
+              "8baf68a07b66"
+            ]
+          },
+          "3": {
+            "gain": 0.0018106738622454266,
+            "machine": "second",
+            "runs": [
+              "f6326a6a5897",
+              "35ce555cced3"
+            ]
+          }
+        },
+        "interval": {
+          "mean": -0.00011588324991801402,
+          "se": 0.001385014361103559,
+          "sd": 0.002770028722207118,
+          "n": 4,
+          "low": -0.004523617086176906,
+          "high": 0.004291850586340878,
+          "upper": 0.003143558904178507,
+          "lower": -0.003375325404014535,
+          "p": 0.9385897097917253,
+          "mde": 0.005762932040824276
+        }
+      },
+      {
+        "table": "features",
+        "name": "English: inflection, strictly causal",
+        "ref": "bpe_mconst-LEARN-CAUSAL_bpe_17k",
+        "cell": "bpe_mfeatlex-LEARN-CAUSAL_bpe_17k",
+        "printed": [
+          -0.0046,
+          0.0013
+        ],
+        "machines": {
+          "thesis": null
+        },
+        "seeds": {
+          "0": {
+            "gain": -0.00735333506595004,
+            "machine": "thesis",
+            "runs": [
+              "c8fe0eb7cfe8",
+              "a9f4a2434cfd"
+            ]
+          },
+          "1": {
+            "gain": -0.005145143554643683,
+            "machine": "thesis",
+            "runs": [
+              "8ba64cd4a185",
+              "599e62772132"
+            ]
+          },
+          "2": {
+            "gain": -0.0011902837590951343,
+            "machine": "thesis",
+            "runs": [
+              "0096ec5ce160",
+              "93924df20400"
+            ]
+          },
+          "3": {
+            "gain": -0.0048577584691178455,
+            "machine": "thesis",
+            "runs": [
+              "4b388cef56ed",
+              "72a166890758"
+            ]
+          }
+        },
+        "interval": {
+          "mean": -0.004636630212201676,
+          "se": 0.0012768865997243805,
+          "sd": 0.002553773199448761,
+          "n": 4,
+          "low": -0.008700253253760802,
+          "high": -0.0005730071706425482,
+          "upper": -0.0016316519780218896,
+          "lower": -0.0076416084463814616,
+          "p": 0.03596313007473029,
+          "mde": 0.00531302122541716
+        }
+      },
+      {
+        "table": "features",
+        "name": "Ukrainian: case (tagger)",
+        "ref": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+        "cell": "bpe_ucase-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+        "printed": [
+          -0.0013,
+          0.0008
+        ],
+        "machines": {
+          "thesis": null
+        },
+        "seeds": {
+          "0": {
+            "gain": -0.0030069211179095667,
+            "machine": "thesis",
+            "runs": [
+              "c58ba0662048",
+              "bac159440880"
+            ]
+          },
+          "1": {
+            "gain": -0.002536876732837534,
+            "machine": "thesis",
+            "runs": [
+              "07dd78de8832",
+              "cdc32b5a7b8d"
+            ]
+          },
+          "2": {
+            "gain": 0.00016845384521557705,
+            "machine": "thesis",
+            "runs": [
+              "fe24a14162b2",
+              "ab9aca6d45cb"
+            ]
+          },
+          "3": {
+            "gain": -1.790727264594505e-05,
+            "machine": "thesis",
+            "runs": [
+              "b60e2ee58522",
+              "712e9ef58f03"
+            ]
+          }
+        },
+        "interval": {
+          "mean": -0.0013483128195443672,
+          "se": 0.000828363129809514,
+          "sd": 0.001656726259619028,
+          "n": 4,
+          "low": -0.003984534001439901,
+          "high": 0.0012879083623511664,
+          "upper": 0.0006011266808873374,
+          "lower": -0.003297752319976072,
+          "p": 0.20207359062332153,
+          "mde": 0.0034467515689967534
+        }
+      },
+      {
+        "table": "features",
+        "name": "Ukrainian: case, strictly causal",
+        "ref": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+        "cell": "bpe_ucaselex-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2",
+        "printed": [
+          -0.002,
+          0.001
+        ],
+        "machines": {
+          "thesis": null
+        },
+        "seeds": {
+          "0": {
+            "gain": -0.003918030268892703,
+            "machine": "thesis",
+            "runs": [
+              "c58ba0662048",
+              "bead5a1a1c56"
+            ]
+          },
+          "1": {
+            "gain": -0.0031417118979756298,
+            "machine": "thesis",
+            "runs": [
+              "07dd78de8832",
+              "575cbf7ff922"
+            ]
+          },
+          "2": {
+            "gain": 0.0007215259498186688,
+            "machine": "thesis",
+            "runs": [
+              "fe24a14162b2",
+              "e496bac53fbb"
+            ]
+          },
+          "3": {
+            "gain": -0.001477830205934394,
+            "machine": "thesis",
+            "runs": [
+              "b60e2ee58522",
+              "8fbb7117749c"
+            ]
+          }
+        },
+        "interval": {
+          "mean": -0.0019540116057460144,
+          "se": 0.0010268581218988017,
+          "sd": 0.0020537162437976033,
+          "n": 4,
+          "low": -0.00522193244183342,
+          "high": 0.0013139092303413912,
+          "upper": 0.00046255875105989663,
+          "lower": -0.0043705819625519254,
+          "p": 0.15319266776471507,
+          "mde": 0.004272673077090766
+        }
+      },
+      {
+        "table": "features",
+        "name": "Ukrainian at 30M parameters: case (tagger; second machine)",
+        "ref": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_w512",
+        "cell": "bpe_ucase-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_w512",
+        "printed": [
+          0.0015,
+          0.0005
+        ],
+        "machines": {
+          "second": null
+        },
+        "seeds": {
+          "0": {
+            "gain": 0.0020317458267932187,
+            "machine": "second",
+            "runs": [
+              "ae4ee76ed3f6",
+              "30a4bd92efcf"
+            ]
+          },
+          "1": {
+            "gain": 0.0026658585519452327,
+            "machine": "second",
+            "runs": [
+              "4b055123e509",
+              "af7000aaf78f"
+            ]
+          },
+          "2": {
+            "gain": 0.0009361393710608512,
+            "machine": "second",
+            "runs": [
+              "24403887879a",
+              "191f7bab5fa1"
+            ]
+          },
+          "3": {
+            "gain": 0.00024369825851622284,
+            "machine": "second",
+            "runs": [
+              "189021be282e",
+              "fcf439c8ef2b"
+            ]
+          }
+        },
+        "interval": {
+          "mean": 0.0014693605020788814,
+          "se": 0.0005427136711814703,
+          "sd": 0.0010854273423629407,
+          "n": 4,
+          "low": -0.00025779661559954424,
+          "high": 0.003196517619757307,
+          "upper": 0.0027465630114044126,
+          "lower": 0.00019215799275335032,
+          "p": 0.0733234543875878,
+          "mde": 0.0022581874184705373
+        }
+      }
+    ]
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-11-03T06:57:43+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "76bedf4c75d19383327f067bc40d08f5521b7243",
+    "git_dirty": true
+  }
+}

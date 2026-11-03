@@ -13,6 +13,7 @@
 | `blimp_eval` | 2026-10-17T09:48:16+00:00 | runs=['f8b6493b28dc', '0f77800048f2', '46dacef2d41c', 'c43d5daf3da4', '85e6bf6f8a5a', '7cd76965bb65', '887b5d008438', '0e00fdf8ed0c'] results_dir=results all=True local=external/blimp batch=256 | annotation, reference, runs, skipped, summary |
 | `blimp_item_split` | 2026-09-26T22:52:28+00:00 | record=results/audits/blimp_eval_20260926T120531+0000.json paradigms=['anaphor_gender_agreement', 'anaphor_number_agreement', 'ellipsis_n_bar_1', 'ellipsis_n_bar_2'] results_dir=results top=8 | groups, record |
 | `blimp_item_split` | 2026-09-27T17:39:08+00:00 | paradigms=['anaphor_gender_agreement', 'anaphor_number_agreement', 'ellipsis_n_bar_1', 'ellipsis_n_bar_2'] results_dir=results top=8 | groups, record |
+| `bounds` | 2026-11-03T06:57:43+00:00 | - | rows |
 | `check_cache` | 2026-09-28T22:47:41+00:00 | bpe_path=data/bpe_uk_17k.json cache_dir=data/cache corpus=ukwiki corpus_fraction=0.2 corpus_holdout=2000 split=validation | facts, split |
 | `check_cache` | 2026-09-28T23:11:02+00:00 | bpe_path=data/bpe_uk_17k.json cache_dir=data/cache corpus=ukwiki corpus_fraction=0.2 corpus_holdout=2000 split=validation | facts, split |
 | `check_cache` | 2026-09-28T23:32:28+00:00 | bpe_path=data/bpe_uk_17k.json cache_dir=data/cache corpus=ukwiki corpus_fraction=0.2 corpus_holdout=2000 split=validation | facts, split |
@@ -367,6 +368,7 @@
 | `?` | ? | - | - |
 | `?` | ? | labels=['bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2', 'bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2'] facts=['ucase', 'unumber', 'ugender'] split_fact=ucaselex results_dir=/home/neko/PycharmProjects/Morph/results epochs=300 device=cpu threads=12 audit_dir=/home/neko/PycharmProjects/Morph/results/audits | - |
 | `?` | ? | labels=['bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2', 'bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2'] facts=['ucase', 'unumber', 'ugender'] split_fact=ucaselex results_dir=/home/neko/PycharmProjects/Morph/results after=1 epochs=300 device=cpu threads=12 audit_dir=/home/neko/PycharmProjects/Morph/results/audits | - |
+| `software_size` | 2026-11-03T06:53:33+00:00 | - | head, parts, tests, total |
 | `scripts/analysis/steps_saved.py` | 20261012T003033+0000 | - | 3 rows |
 | `stream_roundtrip` | 2026-10-07T21:17:36+00:00 | corpus=ukwiki corpus_fraction=0.05 corpus_holdout=2000 tokenizers=['bpe_uk_4k', 'bpe_uk_8k', 'bpe_uk_17k', 'bpe_uk_32k', 'unigram_uk_17k', 'bpeend_uk_17k'] splits=['validation'] cache_dir=/home/neko/PycharmProjects/Morph/data/cache audit_dir=/home/neko/PycharmProjects/Morph/results/audits | validation |
 | `stream_roundtrip` | 2026-10-11T07:49:37+00:00 | corpus=wikitext103 corpus_fraction=0.05 corpus_holdout=2000 tokenizers=['bpe_17k', 'bpeend_17k'] splits=['validation'] cache_dir=/home/neko/PycharmProjects/Morph/data/cache audit_dir=/home/neko/PycharmProjects/Morph/results/audits | validation |
@@ -431,6 +433,7 @@
 | `work_size` | 2026-10-24T02:14:11+00:00 | results=/home/neko/PycharmProjects/Morph/results | batch_window, per_machine, rows, total |
 | `work_size` | 2026-10-24T02:14:50+00:00 | results=/home/neko/PycharmProjects/Morph/results | batch_window, per_machine, rows, total |
 | `work_size` | 2026-10-26T10:20:23+00:00 | results=/home/neko/PycharmProjects/Morph/results | batch_window, per_machine, rows, total |
+| `work_size` | 2026-11-03T06:53:44+00:00 | results=/home/neko/PycharmProjects/Morph/results | batch_window, per_machine, rows, total |
 
 ## Caveats recorded with the numbers
 

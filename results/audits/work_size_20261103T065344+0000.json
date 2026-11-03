@@ -1,0 +1,83 @@
+{
+  "script": "work_size",
+  "args": {
+    "results": "/home/neko/PycharmProjects/Morph/results"
+  },
+  "timestamp_utc": "2026-11-03T06:53:44+00:00",
+  "results": {
+    "batch_window": [
+      32,
+      256
+    ],
+    "rows": [
+      {
+        "machine": "second machine (RTX 5090 Laptop)",
+        "records": "runs",
+        "models": 314,
+        "gpu_hours": 156.3,
+        "steps": 7966000,
+        "tokens": 65257472000
+      },
+      {
+        "machine": "second machine (RTX 5090 Laptop)",
+        "records": "twins",
+        "models": 160,
+        "gpu_hours": 26.8,
+        "steps": 3441500,
+        "tokens": 28192768000
+      },
+      {
+        "machine": "thesis machine (RTX 4060 Laptop)",
+        "records": "runs",
+        "models": 557,
+        "gpu_hours": 263.7,
+        "steps": 13291500,
+        "tokens": 108883968000
+      },
+      {
+        "machine": "thesis machine (RTX 4060 Laptop)",
+        "records": "run, no environment recorded (September)",
+        "models": 25,
+        "gpu_hours": 23.8,
+        "steps": 1249975,
+        "tokens": 10239795200
+      }
+    ],
+    "per_machine": {
+      "second machine (RTX 5090 Laptop)": {
+        "models": 474,
+        "gpu_hours": 183.1,
+        "tokens": 93450240000
+      },
+      "thesis machine (RTX 4060 Laptop)": {
+        "models": 582,
+        "gpu_hours": 287.5,
+        "tokens": 119123763200
+      }
+    },
+    "total": {
+      "models": 1056,
+      "gpu_hours": 470.7,
+      "tokens": 212574003200
+    }
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-11-03T06:53:44+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "76bedf4c75d19383327f067bc40d08f5521b7243",
+    "git_dirty": true
+  }
+}

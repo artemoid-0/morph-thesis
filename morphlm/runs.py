@@ -292,6 +292,64 @@ def summary(xs, se_one=None):
             'n': len(xs), 'positive': sum(x > 0 for x in xs), 'values': xs}
 
 
+def _betacf(a, b, x):
+    """The continued fraction of the regularized incomplete beta function (modified Lentz)."""
+    tiny, c, d = 1e-300, 1.0, 1.0 - (a + b) * x / (a + 1.0)
+    d = 1.0 / (d if abs(d) > tiny else tiny)
+    h = d
+    for m in range(1, 300):
+        for num in (m * (b - m) * x / ((a + 2 * m - 1) * (a + 2 * m)),
+                    -(a + m) * (a + b + m) * x / ((a + 2 * m) * (a + 2 * m + 1))):
+            d = 1.0 + num * d
+            d = 1.0 / (d if abs(d) > tiny else tiny)
+            c = 1.0 + num / c
+            c = c if abs(c) > tiny else tiny
+            h *= d * c
+        if abs(d * c - 1.0) < 1e-15:
+            break
+    return h
+
+
+def t_cdf(t, df):
+    """Student's t distribution function, from the regularized incomplete beta function."""
+    if t == 0:
+        return 0.5
+    x = df / (df + t * t)
+    if x <= 0.0:
+        return 1.0 if t > 0 else 0.0
+    a, b = df / 2.0, 0.5
+    lbeta = math.lgamma(a + b) - math.lgamma(a) - math.lgamma(b)
+    front = math.exp(math.log(x) * a + math.log1p(-x) * b + lbeta)
+    ib = front * _betacf(a, b, x) / a if x < (a + 1) / (a + b + 2) else 1.0 - front * _betacf(b, a, 1 - x) / b
+    return 1.0 - 0.5 * ib if t > 0 else 0.5 * ib
+
+
+def t_quantile(p, df):
+    """The p-quantile of Student's t with df degrees of freedom, by bisection on t_cdf."""
+    lo, hi = -1e3, 1e3
+    for _ in range(200):
+        mid = (lo + hi) / 2
+        lo, hi = (mid, hi) if t_cdf(mid, df) < p else (lo, mid)
+    return (lo + hi) / 2
+
+
+def interval(xs, level=0.95, power=0.80):
+    """Per-seed effects → the mean, its two-sided `level` t-interval, the one-sided `level` bounds
+    (each side's), the two-sided t-test's p, and the minimum detectable effect: the true effect a
+    paired t-test at these seeds detects with probability `power`, two-sided at 1 − `level`, given
+    the seeds' observed spread ((t₁₋α/₂ + t_power) · sd / √n). None below two values."""
+    xs = [x for x in xs if x is not None]
+    n = len(xs)
+    if n < 2:
+        return None
+    m, sd = st.mean(xs), st.stdev(xs)
+    se = sd / math.sqrt(n)
+    two, one, pw = t_quantile(1 - (1 - level) / 2, n - 1), t_quantile(level, n - 1), t_quantile(power, n - 1)
+    p = 2 * (1 - t_cdf(abs(m) / se, n - 1)) if se > 0 else 0.0
+    return {'mean': m, 'se': se, 'sd': sd, 'n': n, 'low': m - two * se, 'high': m + two * se,
+            'upper': m + one * se, 'lower': m - one * se, 'p': p, 'mde': (two + pw) * se}
+
+
 def agree(xs):
     """How many values share the commoner sign (zeros count for neither)."""
     return max(sum(x > 0 for x in xs), sum(x < 0 for x in xs))

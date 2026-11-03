@@ -29,7 +29,9 @@ smaller than at the default; between plain baselines 2.31%, larger (§33.145). T
 to plain BPE, shuffled case gains nothing, and the switch to a constant leaves the deficit the switch to zeros does
 (§33.148). At 85M parameters the gain at full training is the 30M model's, +0.0071 (1.02%); it holds under a modern
 block and halves at 8 layers (§33.149). Inside the noun phrase and after a preposition, near the ceiling, endings apart
-makes about half the errors at 5M parameters and a third at 30M, at every seed (§33.150).
+makes about half the errors at 5M parameters and a third at 30M, at every seed (§33.150). Every row of the
+tokenizer's table holds at 95%; the features' one-sided 95% bound is 0.003, and four seeds see a feature's effect only
+from about 0.002–0.006 (§33.151).
 
 ---
 
@@ -2151,3 +2153,55 @@ The tally is 217 right, 13 half right, 105 wrong, 10 never tested, 1 withdrawn a
 3. **An adjective's number gains nothing at 5M** (2/4), and does at 30M (4/4).
 4. **The set is in the repository, with its builder and its check.** It has 3,999 pairs from the test split, 98
    of 100 valid. The refined table without the check's two kinds of error gives the same result.
+
+### 33.151 Item 5's intervals and the software's size: the tokenizer's gains hold at 95%, the features' bound is 0.003
+
+The text's list of 30 October asks for 95% intervals on the headline effects, one-sided upper bounds for the
+features' table, the smallest effect four seeds can detect, and the software's size for §3.1. None of it trains,
+and every figure below is a function of records already made, so no prediction was recorded.
+
+**The software's size** (`software_size_20261103T065333`, `scripts/ops/software_size.py`, HEAD's tree at
+`76bedf4`):
+- **125 Python modules:** 41 in the package, 71 scripts and 13 test files, with 27,039 lines. 18,473 of them are
+  code: not blank, not a comment, not a docstring.
+- **51 shell scripts,** 47 of them chains, with 4,380 lines of code.
+- **140 test functions** in the 13 test files.
+
+**The work's size, recounted** (`work_size_20261103T065344`):
+- **1,056 trained models:** 582 on the thesis machine and 474 on the second, 160 of them repeats.
+- **470.7 GPU-hours** (287.5 and 183.1), and **212.6 billion training tokens** (119.1 and 93.5).
+- On 26 October it was 989 models, 425.3 hours and 196.8 billion tokens.
+
+**The intervals** (`bounds_20261103T065743`, `scripts/analysis/bounds.py`). Each row of the text's two tables is
+recomputed from the run records, paired by seed on one machine. Each must reproduce its printed mean and standard
+error within rounding, and all do. The check found one row's reference: structure added to a full-width embedding
+is measured against the added flat vector (§33.19). Against the null's two vectors it would be −0.0017.
+
+**The tokenizer's gain:**
+- **Every row's 95% interval excludes zero,** with t-test p from 0.0001 to 0.005.
+- **The 5M model at full training:** +0.0165, interval +0.0141 to +0.0189, at least +0.0147 at the one-sided 95%
+  bound.
+- **At 30M and 85M parameters at full training:** +0.0072 (+0.0064 to +0.0081) and +0.0071 (+0.0057 to +0.0085).
+- **Unigram against BPE 17k:** −0.0005, from −0.0017 to +0.0007, p = 0.27.
+- **Four seeds of four alone is p = 1/16,** one-sided, by the sign test. The t-test uses the size as well, and is
+  stronger.
+
+**The features against their null:**
+- **The one-sided 95% upper bounds run from −0.0016 (inflection) to +0.0031** (part of speech, strictly causal).
+- **Four rows are above 0.002:** part of speech strictly causal +0.0031, part of speech from the tagger +0.0029,
+  shuffled structure +0.0027, case at 30M parameters +0.0027. The frequency band's is +0.0020.
+- **So "none beyond 0.002" holds for the means.** At the one-sided 95% bound it is 0.003.
+- **Inflection's −0.0046 is below zero at 95%** (p = 0.036): the identity-like features' loss is real.
+- **Case at 30M** is positive at every seed, but p = 0.073 and its interval includes zero.
+
+**What four seeds can detect** (80% power at α = 0.05, each row's own spread, (t₀.₉₇₅ + t₀.₈₀) · se):
+- the features' rows, 0.0022 to 0.0058;
+- the tokenizer's rows, 0.0011 to 0.0122; the headline's is 0.0032.
+- A feature's effect below about 0.002–0.006, row by row, can be missed.
+
+**What it changes for the thesis.**
+1. **The tokenizer's gains are significant row by row.** The table can carry the intervals.
+2. **The features' bound reads 0.003 at 95%.** The means are within 0.002, and four seeds see a feature's effect
+   only from about 0.002–0.006. "No feature helps" stays a statement about effects of that size.
+3. **§3.1 can describe the software in figures:** 125 Python modules, 18,473 lines of code and 140 tests. The work
+   is 1,056 models and 470.7 GPU-hours.
