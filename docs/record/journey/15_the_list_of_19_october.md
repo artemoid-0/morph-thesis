@@ -2554,3 +2554,37 @@ candidate could move (DIRECTIONS, "The queue", holds the table with costs, readi
 Two candidates are new, from this list's answers: the held-out sample and endings apart at 32k. Nothing is prepared
 yet. Each piece's predictions are recorded when it is, before it runs. The text's view of what it needs for the
 defence may reorder the queue.
+
+### 33.160 The review's remarks: the learning rate at 30M parameters, prepared
+
+The review of the submitted text asks two things. First, why the larger models train at 3·10⁻⁴, and whether that rate
+is optimal; nothing justified it. Second, what the tokenizer costs in computation, and how the model does on text rich
+in new words. The text now states both as limits. Three checks would turn them into numbers:
+- the learning rate at 30M parameters (this section);
+- the gain on words the dictionary does not know (§33.161);
+- the endings rule's cost (§33.162).
+
+**The chain** (`scripts/chains/second_2026-11-25.sh`, the second machine, piece `lr512`). The 30M model (width 512)
+at full training, 151M tokens and 50k. The nulls under BPE 17k and endings apart run at a peak rate of 1·10⁻³, all
+else as at 3·10⁻⁴ (the 100-step warm-up, the cosine schedule), seeds 0–3, a seed's two runs together. Each is paired
+by seed with this machine's nulls at 3·10⁻⁴ (§33.142).
+- At 5M parameters the best of three rates was 3·10⁻³, and there the gain at full training was smaller: 1.52%
+  against 1.75% (§33.145). A larger model usually wants a lower rate, hence 1·10⁻³.
+- **The guard:** the first seed's BPE 17k null must end within 0.05 of its run at 3·10⁻⁴ (0.7447). A rate that
+  diverges stops the chain before it spends the other seeds.
+- **Cost:** 8 runs of about 81 minutes, ~11.5 h with the margin, seed by seed. Seeds 0–1 are done after ~5.7 h.
+- **The rehearsal** (the stub `python`, a copy of the code under `scratch/`) ran four scenarios: the plan, 8 runs;
+  a passing first seed, 8 runs in seed order; a diverging first seed, 2 runs and the rest skipped; and a near
+  `END_BY`, which leaves the sets that cannot end in time.
+- **Only the chain file is new on that machine.** Its code is the one its last chains ran: the chain library and
+  the run lookup are unchanged since then, and the training loop's changes are inert at their defaults.
+
+**Predictions** (recorded at 23:09 UTC on 24 November, before the launch):
+- **P364** (~65%): at 1·10⁻³, BPE 17k's null ends at least 1% below its run at 3·10⁻⁴, at every seed.
+- **P365** (~75%): the tokenizer's gain at 30M parameters and full training is positive at every seed.
+- **P366** (~55%): it is smaller than at 3·10⁻⁴ (+0.0072), as the 5M model's was at its best rate.
+
+**The sentences** (the text's):
+- *at 1·10⁻³ the 30M model's gain is X% at every seed, and the null Y% better than at 3·10⁻⁴: the gain is not an
+  artefact of the slow rate*;
+- or *at 1·10⁻³ the gain at 30M vanishes*. That one changes the claim that the gain holds from 5M to 85M parameters.

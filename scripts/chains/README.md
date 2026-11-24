@@ -53,6 +53,7 @@
 | `second_wide_2026-10-31.sh` | item 2 of that list, after the chain of 31 October: the nulls at width 1024, 151M tokens, 50k, the 1,000-step warm-up, under BPE 17k and endings apart, seeds 0–3; then MultiBLiMP on them | journey §33.143 |
 | `tulpar_2026-10-31.sh` | the first tier of that list on the thesis machine: shuffled case under BPE 17k, ~38M tokens, 10k; English part of speech set to one class at step 5,000 of 20k; the null under the cut moved one letter off the rule's boundary, once its data is built beside the chain | journey §33.144 |
 | `second_block_2026-10-31.sh` | items 7 and 13 of that list, after width 1024's chain: the nulls under BPE 17k and endings apart with the LLaMA-style block at width 128, and at 8 layers of width 512 with the 1,000-step warm-up, ~38M tokens, 10k, seeds 0–3 | journey §33.146 |
+| `second_2026-11-25.sh` | the review's remark on the learning rate: the 30M model's nulls at full training at a peak of 1e-3, seeds 0–3; a first seed that diverges stops it | §33.160 |
 | `guard.sh` | not a chain: sourced by every chain so it cannot run twice | §33.30 |
 | `lib/chain_v1.sh` | not a chain: the body the chains of 16–19 October repeated — the preamble with `guard.sh` and the log, the helpers, one seed-piece runner (twin, sanity and pair checks), the wait for a training run, the PLAN and STOP ending — sourced by chains written after it; frozen once a dated chain sources it, a change going into `chain_v2.sh`; tested by `tests/test_chainlib.py` | — |
 
