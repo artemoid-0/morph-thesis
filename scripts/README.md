@@ -70,6 +70,7 @@ Most read the run records only; `probe.py`, `probe_words.py`, `loss_by_kind.py` 
 | `steps_saved.py` | What a feature's early help is worth in training steps. | historical |
 | `tokenizer_table.py` | D7's table from the run records: each feature's gain under each tokenizer, paired by seed; tokenizers against a reference (null against null — at the end and along training — and gain against gain); gains at a step and at matched null BPB, per seed. | active |
 | `tokenizer_by_word.py` | Where the tokenizer's gain sits: the full-training nulls scored token by token on validation and test, each target placed in its word (cut by the endings rule, not cut, not a word) and banded by the word's training count; paragraphs mapped to articles for a bootstrap over articles; writes a `tokenizer_by_word` audit record | active |
+| `tokenizer_known_words.py` | The tokenizer's gain on words the morphological analyzer knows and does not know: the full-training nulls scored token by token, each word read as the endings rule reads it and marked by pymorphy3's `word_is_known`, cut or not, its share of the text and its gain per byte; writes a `tokenizer_known_words` audit record | active |
 | `tokenizer_widths.py` | The tokenizer's lead across model widths, at matched null BPB (D8). | active |
 | `temporal_profile.py` | When during training does a feature's gain appear, against the plain baseline (journey §32.2)? Superseded by `learning_law.py`'s same-shape nulls. | historical |
 
@@ -109,6 +110,7 @@ Most read the run records only; `probe.py`, `probe_words.py`, `loss_by_kind.py` 
 | `project_health.sh` | Diagnose a PyCharm project that shows no files. | historical |
 | `quarantine.py` | Move invalid runs out of results/, keeping the record. | active |
 | `run_batch.py` | Run a block of experiments unattended, safely. | historical |
+| `rule_cost.py` | What the endings rule costs on the CPU: marking the training text from a cold cache (words, distinct forms, time per form), encoding the validation text with and without the rule (cold and warm), set against one training run and the stream's build; writes a `rule_cost` audit record | active |
 | `run_ids.py` | The run id a command line would produce, without running it; `--done` tells a chain whether a cell's seed is already finished, `--bpb` what it scored. | active |
 | `run_times.py` | How long runs of a kind took, from their records — the source of every estimate in a queue review. | active |
 | `software_size.py` | The software's size from HEAD's tree: Python modules and shell scripts by part, their lines and lines of code (no blanks, comments or docstrings), and the tests; writes a `software_size` audit record | active |

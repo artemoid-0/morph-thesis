@@ -38,7 +38,8 @@ usual case (§33.153). XLM-R's, mBERT's and GPT-4o's tokenizers keep a Ukrainian
 fewer; Qwen2.5's for half, by cutting every word into 3.5 tokens (§33.154). Near 5M parameters the gain is worth about 15%
 more parameters, or 17% more training steps (§33.155). Four fifths of it sits in the words the rule cuts, of middle and
 low frequency; over articles the two held-out samples differ by 2.5 standard errors (§33.156). The probes' lead is not in
-the ending's token: level at layer 0, it appears at layer 1 (§33.157).
+the ending's token: level at layer 0, it appears at layer 1 (§33.157). The gain is the dictionary's: nothing on the
+13–16% of words outside it, and the rule's cuts by the analyzer's guesses cost (§33.161).
 
 ---
 
@@ -2588,3 +2589,54 @@ by seed with this machine's nulls at 3·10⁻⁴ (§33.142).
 - *at 1·10⁻³ the 30M model's gain is X% at every seed, and the null Y% better than at 3·10⁻⁴: the gain is not an
   artefact of the slow rate*;
 - or *at 1·10⁻³ the gain at 30M vanishes*. That one changes the claim that the gain holds from 5M to 85M parameters.
+
+### 33.161 The review's remarks: outside the dictionary the tokenizer gains nothing
+
+The review asks how the model does on text rich in new words: neologisms, slang, surzhyk. The endings rule reads a
+word's ending from pymorphy3's readings of the form. For a form outside its dictionary those are the analyzer's
+guesses, so the rule cuts new words too (кринжов|ий, тіктокерк|и) or leaves them whole where the guesses disagree
+(вайбовий). The text now says so in §2.4, and so do the rule's docstring, FINDINGS, `conditions.md` and
+`related_work.md`, which had read as if the rule used the dictionary alone.
+
+`scripts/analysis/tokenizer_known_words.py` scores the 5M model's full-training nulls again, token by token, on
+validation and on test. The record is `tokenizer_known_words_20261124T232726`; `…T231850` is the same run without the
+two groups. Every model's figure equals its record. Each target is put in its word, as item 3 does (§33.156), and each
+word is read from the text as the rule reads it, with one apostrophe for all. pymorphy3's `word_is_known` marks it
+known or not. The classes' cut agrees with the stream's for 99.7% of word targets.
+
+**Predictions** (recorded at 23:09 UTC on 24 November, before the run):
+- **P360** (~50%): words pymorphy3 does not know are less than a tenth of the validation text's words.
+- **P361** (~55%): per byte, the gain on those words is at least half the gain on the words it knows.
+
+| words | validation: share of words (bytes) | the gain per byte of their own text | test: share | per byte |
+|---|---|---|---|---|
+| **known to the dictionary** | 87.0% (90.2%) | **+0.0201 ± 0.0006 (4/4)** | 83.8% (87.6%) | **+0.0168 ± 0.0005 (4/4)** |
+| — cut by the rule | 47.3% (64.1%) | +0.0228 ± 0.0006 (4/4) | 45.7% (62.4%) | +0.0193 ± 0.0005 |
+| — not cut | 39.8% (26.1%) | +0.0138 ± 0.0011 (4/4) | 38.1% (25.2%) | +0.0109 ± 0.0010 |
+| **not known** | 13.0% (9.8%) | **−0.0018 ± 0.0019 (2/4)** | 16.2% (12.4%) | **−0.0077 ± 0.0030 (0/4)** |
+| — cut by the analyzer's guesses | 1.6% (2.3%) | **−0.0111 ± 0.0018 (0/4)** | 1.6% (2.3%) | −0.0087 ± 0.0032 (0/4) |
+| — Cyrillic, not cut | 4.4% (4.3%) | +0.0045 ± 0.0023 (4/4) | 3.8% (3.8%) | −0.0084 ± 0.0036 (0/4) |
+| — another script | 7.0% (3.2%) | −0.0036 ± 0.0059 (2/4) | 10.8% (6.3%) | −0.0068 ± 0.0041 (1/4) |
+
+- **Over the whole text,** the known words give +0.0170 of validation's gain, the unknown −0.0002, and punctuation and
+  digits −0.0006.
+- **The unknown words the rule cuts** are mostly names, Russian words and parts of hyphenated compounds, as a listing of
+  the most frequent ones shows: Храпаченк|а, Рибінськ|ого, Киевско|й, російськ|о. Cutting them by guesses costs at
+  every seed.
+
+**Verdicts:**
+- **P360 wrong:** 13.0% of the words, 16.2% on test.
+- **P361 wrong:** nothing, −0.0018 against +0.0201.
+
+The tally is 224 right, 13 half right, 113 wrong, 10 never tested, 1 withdrawn and 5 pending, of 366.
+
+**The sentence** (the text's): *outside the dictionary there is no gain: on text rich in new words the gain will be
+smaller*.
+
+**What it changes for the thesis.**
+1. **The gain is the dictionary's.** It is +0.020 bits per byte of the words the dictionary knows and nothing on the
+   13–16% it does not: names, foreign and Russian words, other scripts. On text with more unknown words (neologisms,
+   slang, surzhyk) the gain should shrink with their share. That text was not studied.
+2. **The analyzer's guesses do not help.** Where the rule cuts an unknown word by them (1.6% of words) it costs 0.009 to
+   0.011 bits per byte of their text, at every seed. A rule cutting only the dictionary's words would keep the gain and
+   lose that cost, a next step the text can name.

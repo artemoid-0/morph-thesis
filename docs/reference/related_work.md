@@ -79,7 +79,7 @@ language models perform worse for morphologically complex languages?*, COLING
   scaled by the "byte premium": data size explains it.
 - *Used:* journey §33.59 — a morphology-aware tokenizer is not guaranteed to
   help, which is why it is measured. *Compared* (journey §33.65): in Ukrainian,
-  every inflectional boundary placed by a dictionary rule helped by 1.6%, while
+  every inflectional boundary placed by a rule on a morphological analyzer's readings helped by 1.6%, while
   Unigram's own boundaries, which expose 43% of endings, gave nothing: partial
   alignment did not help, full alignment did.
 

@@ -80,8 +80,8 @@ class HFTokenizer:
     """A tokenizer.json, with no special tokens added."""
 
     def __init__(self, path):
-        from tokenizers import Tokenizer
-        self.tok = Tokenizer.from_file(path)
+        from morphlm.data.tokenization import load_tokenizer
+        self.tok = load_tokenizer(path)          # no sidecar beside it: the plain tokenizer, as the file holds it
 
     def encode(self, text):
         e = self.tok.encode(text, add_special_tokens=False)

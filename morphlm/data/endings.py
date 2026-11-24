@@ -5,7 +5,10 @@ word form alone, and a tokenizer that never joins a stem to its ending
 
 THE RULE (`uk_endings_v1`). The stem is what a word form shares with its lemma's
 stem; the ending is the rest. pymorphy3 (Ukrainian dictionary) gives every
-reading of the lowercased form, with no context: part of speech and lemma. For
+reading of the lowercased form, with no context: part of speech and lemma. For a
+form outside its dictionary the readings are the analyzer's guesses, so new words
+are cut too (кринжовий → кринжов|ий, тіктокерки → тіктокерк|и) or left whole
+where the guesses disagree (вайбовий; journey §33.161). For
 an inflecting part of speech the lemma's stem is the lemma minus its citation
 ending (книга → книг, важливий → важлив, зібратися → зібра; a lemma ending in a
 consonant is its own stem), and the cut falls after the longest common prefix

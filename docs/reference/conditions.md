@@ -91,7 +91,8 @@ from `$REHEARSAL_DATA/<dataset>[__<config>]/<split>.jsonl`.
   WikiText-103): BPE that never joins a stem to its ending, by the rule of the corpus's
   language (`morphlm/data/endings.py`). Each rule reads the word alone, and cuts only where
   every reading of the form gives the same cut. The Ukrainian rule (`uk_endings_v1`) takes
-  pymorphy3's readings of the form, the lemma minus its citation ending as the stem; the
+  pymorphy3's readings of the form (for a form outside its dictionary, the analyzer's guesses), the lemma minus its
+  citation ending as the stem; the
   English one (`en_endings_v1`) the readings spaCy's English rule lemmatizer gives a noun,
   verb or adjective, the stem being what the form shares with the lemma (journey §33.85).
   Training text and encoded text are both marked, so every ending is its own token or

@@ -6,7 +6,7 @@ Each prediction was recorded in the [journey](record/journey/README.md) **before
 existed, usually with the outcome that would make it wrong. This table
 collects them all; the verdict and its evidence are in the section given.
 
-**Tally:** 224 right, 13 half right, 111 wrong, 10 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test, 2 whose condition was not met), 1 withdrawn, 7 pending — of 366.
+**Tally:** 224 right, 13 half right, 113 wrong, 10 never tested (3 deferred, 2 parked as outside the thesis, 3 dropped by the sentence test, 2 whose condition was not met), 1 withdrawn, 5 pending — of 366.
 
 *Key to the tally (added 19 October 2026). Counted half right: P19, P46, P54 — with the eight
 whose outcome begins "half right" or "partly right". Counted right: P33, P172, P273, P303, P317 — right by their
@@ -393,8 +393,8 @@ The wrong ones carried the information:
 | P357 | At 10k, BPE 17k needs between 1.2 and 2 times the parameters to match endings apart's null at width 128 (its widths 128 and 256, interpolated in log parameters) | wrong — 1.15 ± 0.01 | §33.155 |
 | P358 | At full training in the 5M model, more than half of the tokenizer's gain on validation sits in the words the endings rule cuts | right — 81% | §33.156 |
 | P359 | A bootstrap over articles puts the validation and test gains within two standard errors of each other: the difference is the text's | wrong — 2.5 standard errors apart | §33.156 |
-| P360 | Words pymorphy3 does not know are less than a tenth of the validation text's words | pending | §33.161 |
-| P361 | Per byte, the 5M model's tokenizer gain on those words is at least half its gain on the words it knows | pending | §33.161 |
+| P360 | Words pymorphy3 does not know are less than a tenth of the validation text's words | wrong — 13.0% (16.2% on test) | §33.161 |
+| P361 | Per byte, the 5M model's tokenizer gain on those words is at least half its gain on the words it knows | wrong — −0.0018 against +0.0201 | §33.161 |
 | P362 | Marking the training text with the endings rule from a cold cache takes less than a fifth of one 5M training run on the same machine | pending | §33.162 |
 | P363 | With the rule, encoding the validation text is at least 3 times slower than plain BPE | pending | §33.162 |
 | P364 | At a peak rate of 1e-3, the 30M model's BPE 17k null at full training ends at least 1% below its run at 3e-4, at every seed | pending | §33.160 |

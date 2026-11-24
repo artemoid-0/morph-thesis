@@ -376,6 +376,8 @@
 | `?` | ? | - | - |
 | `?` | ? | labels=['bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2', 'bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2'] facts=['ucase', 'unumber', 'ugender'] split_fact=ucaselex results_dir=/home/neko/PycharmProjects/Morph/results epochs=300 device=cpu threads=12 audit_dir=/home/neko/PycharmProjects/Morph/results/audits | - |
 | `?` | ? | labels=['bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2', 'bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2'] facts=['ucase', 'unumber', 'ugender'] split_fact=ucaselex results_dir=/home/neko/PycharmProjects/Morph/results after=1 epochs=300 device=cpu threads=12 audit_dir=/home/neko/PycharmProjects/Morph/results/audits | - |
+| `rule_cost` | 2026-11-24T23:34:24+00:00 | limit=100000 fraction=0.2 | against, cpu, training_text, validation_encoding |
+| `rule_cost` | 2026-11-24T23:35:36+00:00 | fraction=0.2 | against, cpu, training_text, validation_encoding |
 | `software_size` | 2026-11-03T06:53:33+00:00 | - | head, parts, tests, total |
 | `scripts/analysis/steps_saved.py` | 20261012T003033+0000 | - | 3 rows |
 | `stream_roundtrip` | 2026-10-07T21:17:36+00:00 | corpus=ukwiki corpus_fraction=0.05 corpus_holdout=2000 tokenizers=['bpe_uk_4k', 'bpe_uk_8k', 'bpe_uk_17k', 'bpe_uk_32k', 'unigram_uk_17k', 'bpeend_uk_17k'] splits=['validation'] cache_dir=/home/neko/PycharmProjects/Morph/data/cache audit_dir=/home/neko/PycharmProjects/Morph/results/audits | validation |
@@ -406,6 +408,8 @@
 | `temporal_profile` | 2026-10-10T17:50:28+00:00 | results_dir=results baseline=bpe_baseline_bpe_17k | curves, profiles |
 | `temporal_profile` | 2026-10-11T12:48:43+00:00 | results_dir=results baseline=bpe_baseline_bpe_17k | curves, profiles |
 | `tokenizer_by_word` | 2026-11-03T07:25:22+00:00 | tol=1e-05 draws=10000 holdout=2000 | report |
+| `tokenizer_known_words` | 2026-11-24T23:18:50+00:00 | tol=1e-05 splits=['validation', 'test'] | report |
+| `tokenizer_known_words` | 2026-11-24T23:27:26+00:00 | tol=1e-05 splits=['validation', 'test'] | report |
 | `?` | ? | - | - |
 | `?` | ? | - | - |
 | `?` | ? | - | - |

@@ -39,9 +39,10 @@ The drift is chance within training, not the seed's: a run repeated on another m
 ### Q1 in Ukrainian: morphology inside BPE
 
 **Q1 in Ukrainian, with morphology inside BPE: yes — and the gain lasts, to full training.**
-BPE that never joins a stem to its inflectional ending (cut by a dictionary rule from the word form alone) beats plain BPE of the same vocabulary size by **+0.0174 ± 0.0014 BPB (1.6%)** at a 10k budget, 4/4 from identical initial weights, though it reads 11% less text in the same steps.
+BPE that never joins a stem to its inflectional ending (cut by a rule from the word form alone, on the morphological analyzer's readings — for a word outside its dictionary, its guesses) beats plain BPE of the same vocabulary size by **+0.0174 ± 0.0014 BPB (1.6%)** at a 10k budget, 4/4 from identical initial weights, though it reads 11% less text in the same steps.
 Unigram, cutting words elsewhere and into even more tokens, leads early, loses the lead by step 3,000 and gains nothing by the end (−0.0005 ± 0.0004): where the cuts fall matters, not how many there are.
 **Where it sits** (5M, full training; §33.156): **81% of the gain is in the words the rule cuts** (+0.0134 ± 0.0003 of +0.0166 on validation; 86% on test), almost all of it in words seen 1–9,999 times in training; the most frequent words and unseen ones give nothing; the uncut words a fifth (+0.0038), punctuation none. Over articles the headline's 95% interval is +0.0142 to +0.0188 on validation, +0.0104 to +0.0147 on test; the two samples differ by 2.5 standard errors.
+**It is the dictionary's** (5M, full training; §33.161): per byte of their text, the words pymorphy3 knows gain **+0.0201 ± 0.0006** (4/4; 87% of words), the 13% it does not know **−0.0018 ± 0.0019** — names, foreign and Russian words, other scripts; where the rule cuts an unknown word by the analyzer's guesses, it costs at every seed (−0.0111 ± 0.0018 per byte). On text rich in new words the gain should be smaller; such text was not studied.
 **What it is worth** near 5M parameters (~38M tokens): plain BPE 17k needs **1.15 ± 0.01 times the parameters** (about 5.8M) or **1.17 ± 0.01 times the training steps** to match it, each read between two runs trained to their own end (§33.155).
 Widely used tokenizers do not keep the ending apart: at the rule's cut XLM-R's puts a token boundary for 22.8% of the words, mBERT's 16.6%, GPT-4o's 25.0%, and Qwen2.5's 50.7% only by cutting a Ukrainian word into 3.5 tokens (§33.154).
 A second length control agrees: plain BPE 8k, of nearly endings apart's token length (3.13 characters per token against 3.21), ends **0.0829 ± 0.0007** behind it (4/4); BPE 32k, with longer tokens and 1.9M more parameters, ends 0.0276 ahead — endings apart's gain is 39% of what going from 17k to 32k gains, with no parameters added (~38M, 10k; §33.152).
@@ -55,7 +56,7 @@ At width 256 (four times the core's parameters) it is larger at every matched nu
 
 **At a better learning rate it is smaller.**
 The default rate, 3·10⁻⁴, is not the best for the 5M model at full training: BPE 17k's null ends **0.0491 ± 0.0007 BPB (5.2%)** lower at 3·10⁻³ (4/4), 0.0381 lower at 1·10⁻³ (seed 0), on a second machine; 3·10⁻³ is the best of the three for both tokenizers.
-There the gain is **+0.0136 ± 0.0011 (1.52%, 4/4)**, against +0.0172 ± 0.0013 (1.82%) at the default on the same machine: 0.0036 ± 0.0010 less, at every seed (§33.145).
+There the gain is **+0.0136 ± 0.0011 (1.52%, 4/4)**, against +0.0172 ± 0.0013 (1.82%) at the default on the same machine: 0.0037 ± 0.0009 less, at every seed (§33.145).
 The larger models ran at the default rate only.
 
 **It peaks there.**
