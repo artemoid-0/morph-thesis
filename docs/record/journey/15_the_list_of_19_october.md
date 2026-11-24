@@ -39,7 +39,8 @@ fewer; Qwen2.5's for half, by cutting every word into 3.5 tokens (§33.154). Nea
 more parameters, or 17% more training steps (§33.155). Four fifths of it sits in the words the rule cuts, of middle and
 low frequency; over articles the two held-out samples differ by 2.5 standard errors (§33.156). The probes' lead is not in
 the ending's token: level at layer 0, it appears at layer 1 (§33.157). The gain is the dictionary's: nothing on the
-13–16% of words outside it, and the rule's cuts by the analyzer's guesses cost (§33.161).
+13–16% of words outside it, and the rule's cuts by the analyzer's guesses cost (§33.161). The rule costs 4.5 CPU-minutes
+to mark the training text, 8% of one training run, and encodes at half plain BPE's speed (§33.162).
 
 ---
 
@@ -2640,3 +2641,46 @@ smaller*.
 2. **The analyzer's guesses do not help.** Where the rule cuts an unknown word by them (1.6% of words) it costs 0.009 to
    0.011 bits per byte of their text, at every seed. A rule cutting only the dictionary's words would keep the gain and
    lose that cost, a next step the text can name.
+
+### 33.162 The review's remarks: the endings rule costs minutes of CPU once, and encodes at half plain BPE's speed
+
+The review asks what the tokenizer costs in computation. `scripts/ops/rule_cost.py` times the rule on the thesis
+machine's CPU (an i7-12650H, one process, nothing else running). The record is `rule_cost_20261124T233536`;
+`…T233424` timed a sample of 100,000 paragraphs first.
+
+**Predictions** (recorded at 23:09 UTC on 24 November, before the run):
+- **P362** (~60%): marking the training text with the rule from a cold cache takes less than a fifth of one 5M
+  training run on the same machine.
+- **P363** (~60%): with the rule, encoding the validation text is at least 3 times slower than plain BPE.
+
+**Marking the training text, from a cold cache** (the 0.2 fraction's training paragraphs):
+- 5,290,743 paragraphs, 933.5 MB, 68,373,666 words, 34,008,294 of them cut; 1,512,356 distinct forms parsed.
+- Marking takes **269 s (3.47 MB/s)**: 0.18 ms per distinct form, 3.9 µs per word. Reading the corpus adds 76 s.
+
+**Encoding the validation text** (1.98 MB, each paragraph alone):
+- **Plain BPE 17k** runs at 4.04 MB/s.
+- **Endings apart** runs at **0.56 MB/s from a cold cache (7.3 times slower)** and **2.01 MB/s warm (2.0 times
+  slower)**. Of the warm time, marking takes 0.18 s and BPE on the marked text 0.57 s. Parsing a new form costs
+  0.068 ms.
+- **The same text takes 11.9% more tokens:** 351,907 against 314,616.
+
+**Against the training:**
+- One 5M training run of 50k on this machine takes 53.9 min (the median of four). Marking the training text is
+  **8.3%** of it.
+- The endings-apart stream's build took 4.7 h, tagging included; marking is 1.6% of that.
+- The streams are encoded once and cached, as in this work.
+
+**Verdicts:**
+- **P362 right:** 8.3%.
+- **P363 right by its letter:** 7.3 times from a cold cache; warm, with the cache filled, 2.0 times.
+
+The tally is 226 right, 13 half right, 113 wrong, 10 never tested, 1 withdrawn and 3 pending, of 366.
+
+**The sentence** (the text's): *marking the training text takes 4.5 minutes of one CPU core, 8% of one training run;
+encoding is 2 times slower than plain BPE (7 times from a cold start)*.
+
+**What it changes for the thesis.** The cost and the saving, side by side, with item 4 (§33.155):
+1. **In training:** the rule costs 4.5 CPU-minutes, once. It saves about 15% of the training, since plain BPE needs
+   1.17 times the steps to match.
+2. **In use:** the same text takes about 12% more tokens, so 12% more of the model's computation per byte. Encoding
+   on the CPU is 2 times slower than plain BPE's. The rule also needs the analyzer and its dictionary.

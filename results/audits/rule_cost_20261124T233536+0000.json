@@ -1,0 +1,71 @@
+{
+  "script": "rule_cost",
+  "args": {
+    "limit": 0,
+    "fraction": "0.2"
+  },
+  "timestamp_utc": "2026-11-24T23:35:36+00:00",
+  "results": {
+    "cpu": {
+      "cpus": 16,
+      "model": "12th Gen Intel(R) Core(TM) i7-12650H"
+    },
+    "training_text": {
+      "paragraphs": 5290743,
+      "bytes": 933524169,
+      "words": 68373666,
+      "cuts": 34008294,
+      "distinct_forms": 1512356,
+      "marking_seconds": 268.76738112289877,
+      "reading_and_marking_seconds": 344.84858171999986,
+      "marking_mb_per_s": 3.4733536677694126,
+      "seconds_per_distinct_form": 0.00017771436164692623,
+      "microseconds_per_word": 3.930861058742978
+    },
+    "validation_encoding": {
+      "paragraphs": 11251,
+      "bytes": 1978615,
+      "tokens_plain": 314616,
+      "tokens_endings": 351907,
+      "plain_seconds": 0.48938320799970825,
+      "endings_cold_seconds": 3.5560379779999494,
+      "endings_warm_seconds": 0.9850117549995048,
+      "marking_cold_seconds": 2.6048615760000757,
+      "marking_warm_seconds": 0.1776339989992266,
+      "bpe_on_marked_seconds": 0.5695165889992495,
+      "distinct_forms": 35528,
+      "mb_per_s": {
+        "plain": 4.043079058816378,
+        "endings_cold": 0.5564099743144049,
+        "endings_warm": 2.008722220783035
+      },
+      "slower_cold": 7.266366969424234,
+      "slower_warm": 2.0127616536448305,
+      "parse_ms_per_form": 0.0683187226131741
+    },
+    "against": {
+      "training_run_minutes": 53.8989328165849,
+      "training_runs_timed": 4,
+      "stream_build_seconds": 16976.4,
+      "marking_share_of_run": 0.08310844237476196,
+      "marking_share_of_build": 0.01583182424559381
+    }
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-11-24T23:35:36+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": false,
+    "cuda": "13.0",
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "ed9ca8e6aa928c7180b5dc87d0ce97cf67004e02",
+    "git_dirty": true
+  }
+}
