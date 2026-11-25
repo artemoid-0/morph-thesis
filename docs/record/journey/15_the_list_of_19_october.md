@@ -2684,3 +2684,34 @@ encoding is 2 times slower than plain BPE (7 times from a cold start)*.
    1.17 times the steps to match.
 2. **In use:** the same text takes about 12% more tokens, so 12% more of the model's computation per byte. Encoding
    on the CPU is 2 times slower than plain BPE's. The rule also needs the analyzer and its dictionary.
+
+### 33.163 The learning rate at 30M parameters, two seeds: at 1·10⁻³ the gain is larger, and the reference barely moves
+
+The chain of §33.160 ran on the second machine from 01:12 Kyiv on 25 November. Seeds 0–1, four runs of about 81
+minutes, ended by 06:37 with no guard tripped and no error. Seeds 2–3 follow. Each pair is on the second machine
+(`paired_cells_20261125T050224`, seeds 0–1).
+
+**The nulls at 1·10⁻³** (width 512, 151M tokens, 50k):
+- **BPE 17k:** 0.7436, 0.7441.
+- **Endings apart:** 0.7332, 0.7328.
+- **The gain: +0.0104, +0.0113, +0.0109 ± 0.0005 (1.46%, 2/2).** At 3·10⁻⁴ the same seeds give +0.0076 and +0.0073,
+  +0.0074 ± 0.0002.
+
+**Each null at 1·10⁻³ against 3·10⁻⁴:**
+- **BPE 17k** is better by only +0.0010 ± 0.0001 (0.13%).
+- **Endings apart** is better by +0.0045 ± 0.0005 (0.61%).
+- So the higher rate helps the tokenizer with endings apart four times as much as the reference.
+
+**The predictions read at two seeds** (their verdicts come at four, §33.160):
+- **P364** (the reference at least 1% better) is heading wrong: 0.13%.
+- **P365** (the gain positive at every seed) holds so far.
+- **P366** (the gain smaller than at 3·10⁻⁴) is heading wrong: it is larger.
+
+**The sentence** (the text's, at two seeds): *at 1·10⁻³ the 30M model's gain is 1.46% at every seed, and the reference
+null is only 0.1% better than at 3·10⁻⁴: the gain is not an artefact of the slow rate*.
+
+**What it changes for the thesis.**
+1. **The gain at 30M is not the slow rate's.** At the faster rate it is larger: +0.0109 (1.46%) against +0.0074.
+2. **3·10⁻⁴ is close to the reference's best of the two rates.** At 1·10⁻³ BPE 17k's null gains 0.1%. The text's
+   estimate at 3·10⁻⁴ is conservative for the gain.
+3. **Seeds 2–3 end about 12:40 Kyiv;** the verdicts and the four-seed figure follow.

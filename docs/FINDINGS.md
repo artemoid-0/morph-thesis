@@ -65,6 +65,7 @@ At width 512 (30M parameters, four times width 128) it is **+0.0125 ± 0.0009 (1
 At the same point of learning it starts above width 256's (+0.041 against +0.038 at null BPB 1.18), then falls as a feature's gain does — below width 256's from 1.11 on, at width 128's level near 0.98 (+0.018), +0.014 at 0.92 — while the smaller widths' leads hold flat.
 At 20k it levels off from about step 7,500 at every seed, at **+0.0102 ± 0.0006 (1.25%, 4/4)**: smaller than at widths 128 and 256, but lasting (§33.94, §33.96, §33.100, §33.102).
 At full training (151M tokens, 50k, on a second machine) it is **+0.0072 ± 0.0003 (0.97%, 4/4)**, level from step 10,000 (+0.0078; +0.0072 at 25,000, +0.0077 at 45,000): less than half the 5M model's, and lasting (§33.142); on the test articles +0.0062 ± 0.0004 (0.83%, 4/4; §33.152).
+At a peak rate of 1e-3 instead of 3e-4 it is larger, **+0.0109 ± 0.0005 (1.46%, 2/2** so far), while BPE 17k's null is only 0.13% better: the gain is not the slow rate's (§33.163).
 
 **Beyond 30M parameters it is smaller again at 10k and 20k, and at full training as large as at 30M.**
 At width 1024 (85M parameters) at full training (151M tokens, 50k, the 1,000-step warm-up, a second machine) it is **+0.0071 ± 0.0004 (1.02%, 4/4)**, level from step 10,000 (+0.0069; +0.0073 at 25,000, +0.0076 at 45,000), against width 512's 0.97%: from 30M parameters on, the gain at full training does not fall (§33.149).

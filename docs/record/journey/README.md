@@ -102,6 +102,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [§33.160](15_the_list_of_19_october.md#33160-the-reviews-remarks-the-learning-rate-at-30m-parameters-prepared) — the review's remarks: the learning rate at 30M parameters, prepared
 - [§33.161](15_the_list_of_19_october.md#33161-the-reviews-remarks-outside-the-dictionary-the-tokenizer-gains-nothing) — the review's remarks: outside the dictionary the tokenizer gains nothing
 - [§33.162](15_the_list_of_19_october.md#33162-the-reviews-remarks-the-endings-rule-costs-minutes-of-cpu-once-and-encodes-at-half-plain-bpes-speed) — the review's remarks: the endings rule costs minutes of CPU once, and encodes at half plain BPE's speed
+- [§33.163](15_the_list_of_19_october.md#33163-the-learning-rate-at-30m-parameters-two-seeds-at-110³-the-gain-is-larger-and-the-reference-barely-moves) — the learning rate at 30M parameters, two seeds: at 1·10⁻³ the gain is larger, and the reference barely moves
 - [§33.141](15_the_list_of_19_october.md#33141-item-1-without-repeating-the-text-the-gain-at-width-1024-is-smaller-and-still-rising) — without repeating the text the gain at width 1024 is smaller, and still rising
 - [§33.142](15_the_list_of_19_october.md#33142-full-training-at-30m-parameters-the-tokenizers-gain-is-smaller-and-lasts-case-stays-within-the-bound-english-gains-nothing) — full training at 30M parameters: the tokenizer's gain is smaller and lasts, case stays within the bound, English gains nothing
 
@@ -503,6 +504,7 @@ Where each question of the thesis was worked on, across the parts. A section may
 - [33.160 The review's remarks: the learning rate at 30M parameters, prepared](15_the_list_of_19_october.md#33160-the-reviews-remarks-the-learning-rate-at-30m-parameters-prepared)
 - [33.161 The review's remarks: outside the dictionary the tokenizer gains nothing](15_the_list_of_19_october.md#33161-the-reviews-remarks-outside-the-dictionary-the-tokenizer-gains-nothing)
 - [33.162 The review's remarks: the endings rule costs minutes of CPU once, and encodes at half plain BPE's speed](15_the_list_of_19_october.md#33162-the-reviews-remarks-the-endings-rule-costs-minutes-of-cpu-once-and-encodes-at-half-plain-bpes-speed)
+- [33.163 The learning rate at 30M parameters, two seeds: at 1·10⁻³ the gain is larger, and the reference barely moves](15_the_list_of_19_october.md#33163-the-learning-rate-at-30m-parameters-two-seeds-at-110³-the-gain-is-larger-and-the-reference-barely-moves)
 
 ### Appendices
 
