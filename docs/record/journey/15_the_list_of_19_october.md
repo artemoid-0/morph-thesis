@@ -40,7 +40,8 @@ more parameters, or 17% more training steps (§33.155). Four fifths of it sits i
 low frequency; over articles the two held-out samples differ by 2.5 standard errors (§33.156). The probes' lead is not in
 the ending's token: level at layer 0, it appears at layer 1 (§33.157). The gain is the dictionary's: nothing on the
 13–16% of words outside it, and the rule's cuts by the analyzer's guesses cost (§33.161). The rule costs 4.5 CPU-minutes
-to mark the training text, 8% of one training run, and encodes at half plain BPE's speed (§33.162).
+to mark the training text, 8% of one training run, and encodes at half plain BPE's speed (§33.162). At 30M parameters a
+peak rate of 1·10⁻³ leaves the reference level and raises the gain to 1.44% (§33.163–§33.164).
 
 ---
 
@@ -2715,3 +2716,38 @@ null is only 0.1% better than at 3·10⁻⁴: the gain is not an artefact of the
 2. **3·10⁻⁴ is close to the reference's best of the two rates.** At 1·10⁻³ BPE 17k's null gains 0.1%. The text's
    estimate at 3·10⁻⁴ is conservative for the gain.
 3. **Seeds 2–3 end about 12:40 Kyiv;** the verdicts and the four-seed figure follow.
+
+### 33.164 The learning rate at 30M parameters, four seeds: the gain is 1.44% at 1·10⁻³, and the reference does not move
+
+Seeds 2–3 of the chain of §33.160 ended at 11:56 Kyiv on 25 November. The chain completed with no guard tripped, and
+all eight runs' best step is their last evaluation, or step 49,500. Paired by seed on the second machine
+(`paired_cells_20261125T100110`).
+
+**The nulls at 1·10⁻³** (width 512, 151M tokens, 50k):
+- **BPE 17k:** 0.7436, 0.7441, 0.7439, 0.7441.
+- **Endings apart:** 0.7332, 0.7328, 0.7337, 0.7333.
+- **The gain: +0.0104, +0.0113, +0.0102, +0.0107; +0.0107 ± 0.0002 (1.44%, 4/4).** At 3·10⁻⁴ it is +0.0072 ± 0.0003
+  (0.97%, 4/4).
+
+**Each null at 1·10⁻³ against 3·10⁻⁴:**
+- **BPE 17k:** +0.0011, +0.0009, +0.0003, −0.0002; **+0.0005 ± 0.0003 (0.07%, 3/4)**.
+- **Endings apart:** +0.0040 ± 0.0004 (0.54%, 4/4).
+
+**Verdicts:**
+- **P364 wrong:** BPE 17k's null is 0.07% better, not 1%, and at three seeds of four.
+- **P365 right:** +0.0102 to +0.0113.
+- **P366 wrong:** the gain is larger, +0.0107 against +0.0072.
+
+The tally is 227 right, 13 half right, 115 wrong, 10 never tested, 1 withdrawn and none pending, of 366.
+
+**The sentence** (the text's): *at 1·10⁻³ the 30M model's gain is 1.44% at every seed, and the reference null is only
+0.07% better than at 3·10⁻⁴: the gain is not an artefact of the slow rate*.
+
+**What it changes for the thesis.**
+1. **At 30M parameters, 3·10⁻⁴ is as good as 1·10⁻³ for the reference.** BPE 17k's null is level at the two rates,
+   within 0.0005. The answer to the review: the rate was not tuned, and at this size the faster one does not improve
+   the reference.
+2. **The gain is not the slow rate's.** At the faster rate it is larger, 1.44% against 0.97%. Endings apart profits
+   from the faster rate, plain BPE does not.
+3. **The size series reads at 3·10⁻⁴,** as the text says: 1.75 / 0.97 / 1.02%. At 5M parameters the best of three
+   rates gave a smaller gain (1.52%, §33.145); at 30M the faster rate gives a larger one.

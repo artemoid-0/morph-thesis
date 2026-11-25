@@ -1,0 +1,268 @@
+{
+  "script": "paired_cells",
+  "args": {
+    "pair": [
+      [
+        "the gain at 1e-3, 30M, full training",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_lr0.001_w512",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_lr0.001_w512"
+      ],
+      [
+        "the gain at 3e-4, 30M, full training",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_w512",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_w512"
+      ],
+      [
+        "BPE 17k null, 1e-3 over 3e-4",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_lr0.001_w512",
+        "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_w512"
+      ],
+      [
+        "endings apart null, 1e-3 over 3e-4",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_lr0.001_w512",
+        "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_w512"
+      ]
+    ],
+    "seeds": null,
+    "machine": "second",
+    "step": null,
+    "results": [
+      "/home/neko/PycharmProjects/Morph/results"
+    ]
+  },
+  "timestamp_utc": "2026-11-25T10:01:10+00:00",
+  "results": {
+    "pairs": [
+      {
+        "name": "the gain at 1e-3, 30M, full training",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_lr0.001_w512",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_lr0.001_w512",
+        "seeds": {
+          "0": {
+            "effect": 0.01041542890221836,
+            "A": 0.7331740695243576,
+            "B": 0.743589498426576,
+            "machine": "5090",
+            "runs": [
+              "d31a32bc75b5",
+              "fa4952de814c"
+            ]
+          },
+          "1": {
+            "effect": 0.011315870906842607,
+            "A": 0.732808992159825,
+            "B": 0.7441248630666676,
+            "machine": "5090",
+            "runs": [
+              "28a329071ac0",
+              "597bd4920417"
+            ]
+          },
+          "2": {
+            "effect": 0.010162610462176591,
+            "A": 0.7336970214767897,
+            "B": 0.7438596319389663,
+            "machine": "5090",
+            "runs": [
+              "c3e926a3862b",
+              "b895a4c85ddf"
+            ]
+          },
+          "3": {
+            "effect": 0.010744747961120127,
+            "A": 0.7333182787391701,
+            "B": 0.7440630267002902,
+            "machine": "5090",
+            "runs": [
+              "bd08b4f3c654",
+              "baed22bc0884"
+            ]
+          }
+        },
+        "mean": 0.010659664558089421,
+        "se": 0.00024909164770517715,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "the gain at 3e-4, 30M, full training",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_w512",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_w512",
+        "seeds": {
+          "0": {
+            "effect": 0.007574871199833799,
+            "A": 0.7371470702959722,
+            "B": 0.744721941495806,
+            "machine": "5090",
+            "runs": [
+              "ae245ee3f706",
+              "ae4ee76ed3f6"
+            ]
+          },
+          "1": {
+            "effect": 0.007252435293281567,
+            "A": 0.7377645002397859,
+            "B": 0.7450169355330675,
+            "machine": "5090",
+            "runs": [
+              "ce52ac238dc9",
+              "4b055123e509"
+            ]
+          },
+          "2": {
+            "effect": 0.007636440791196741,
+            "A": 0.7365343405938032,
+            "B": 0.7441707813849999,
+            "machine": "5090",
+            "runs": [
+              "9081e44ff649",
+              "24403887879a"
+            ]
+          },
+          "3": {
+            "effect": 0.006464136989741354,
+            "A": 0.7373539089955669,
+            "B": 0.7438180459853082,
+            "machine": "5090",
+            "runs": [
+              "f4d6528b2ecb",
+              "189021be282e"
+            ]
+          }
+        },
+        "mean": 0.007231971068513365,
+        "se": 0.00026943833766531275,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "BPE 17k null, 1e-3 over 3e-4",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_lr0.001_w512",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpe_uk_17k_ukwiki0.2_w512",
+        "seeds": {
+          "0": {
+            "effect": 0.0011324430692299936,
+            "A": 0.743589498426576,
+            "B": 0.744721941495806,
+            "machine": "5090",
+            "runs": [
+              "fa4952de814c",
+              "ae4ee76ed3f6"
+            ]
+          },
+          "1": {
+            "effect": 0.0008920724663998847,
+            "A": 0.7441248630666676,
+            "B": 0.7450169355330675,
+            "machine": "5090",
+            "runs": [
+              "597bd4920417",
+              "4b055123e509"
+            ]
+          },
+          "2": {
+            "effect": 0.0003111494460336095,
+            "A": 0.7438596319389663,
+            "B": 0.7441707813849999,
+            "machine": "5090",
+            "runs": [
+              "b895a4c85ddf",
+              "24403887879a"
+            ]
+          },
+          "3": {
+            "effect": -0.0002449807149820238,
+            "A": 0.7440630267002902,
+            "B": 0.7438180459853082,
+            "machine": "5090",
+            "runs": [
+              "baed22bc0884",
+              "189021be282e"
+            ]
+          }
+        },
+        "mean": 0.000522671066670366,
+        "se": 0.00030853281066722257,
+        "positive": 3,
+        "n": 4,
+        "skipped_across_machines": {}
+      },
+      {
+        "name": "endings apart null, 1e-3 over 3e-4",
+        "A": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_lr0.001_w512",
+        "B": "bpe_mconst-LEARN-CAUSAL_bpeend_uk_17k_ukwiki0.2_w512",
+        "seeds": {
+          "0": {
+            "effect": 0.003973000771614554,
+            "A": 0.7331740695243576,
+            "B": 0.7371470702959722,
+            "machine": "5090",
+            "runs": [
+              "d31a32bc75b5",
+              "ae245ee3f706"
+            ]
+          },
+          "1": {
+            "effect": 0.004955508079960924,
+            "A": 0.732808992159825,
+            "B": 0.7377645002397859,
+            "machine": "5090",
+            "runs": [
+              "28a329071ac0",
+              "ce52ac238dc9"
+            ]
+          },
+          "2": {
+            "effect": 0.0028373191170134593,
+            "A": 0.7336970214767897,
+            "B": 0.7365343405938032,
+            "machine": "5090",
+            "runs": [
+              "c3e926a3862b",
+              "9081e44ff649"
+            ]
+          },
+          "3": {
+            "effect": 0.0040356302563967494,
+            "A": 0.7333182787391701,
+            "B": 0.7373539089955669,
+            "machine": "5090",
+            "runs": [
+              "bd08b4f3c654",
+              "f4d6528b2ecb"
+            ]
+          }
+        },
+        "mean": 0.003950364556246422,
+        "se": 0.0004336825154928836,
+        "positive": 4,
+        "n": 4,
+        "skipped_across_machines": {}
+      }
+    ]
+  },
+  "environment": {
+    "python": "3.10.20",
+    "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.39",
+    "timestamp_utc": "2026-11-25T10:01:10+00:00",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_count": 1,
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "spacy": "3.8.14",
+    "tokenizers": "0.22.2",
+    "datasets": "4.8.4",
+    "pymorphy3": "2.0.6",
+    "spacy_models_installed": "en_core_web_sm 3.8.0, uk_core_news_sm 3.8.0",
+    "git_commit": "0573a38216603cc319a5ce5eaa70b2f9d4783a8b",
+    "git_dirty": true
+  },
+  "notes": [
+    "effect = B minus A in bits per byte at each seed (positive: A better); pairs on one machine only"
+  ]
+}
